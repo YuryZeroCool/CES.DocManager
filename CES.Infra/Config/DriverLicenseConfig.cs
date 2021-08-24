@@ -1,0 +1,29 @@
+﻿using CES.Infra.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CES.Infra.Config
+{
+    public class DriverLicenseConfig : IEntityTypeConfiguration<DriverLicenseEntity>
+    {
+        public void Configure(EntityTypeBuilder<DriverLicenseEntity> builder)
+        {
+            builder.Property(t => t.Category)
+                .HasColumnType("NCHAR(15)");
+
+            builder.Property(t => t.IssueDate)
+                .HasColumnType("DATE");
+
+            builder.Property(t => t.ExpiryDate)
+             .HasColumnType("DATE");
+
+            builder.HasIndex(p => p.SerialNumber)
+                .IsUnique(true);
+        }
+    }
+}

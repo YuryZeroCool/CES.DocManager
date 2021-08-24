@@ -1,0 +1,31 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:55292",
+      "sslPort": 44311
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "https://localhost:5001/swagger",
+      "environmentVariables": {
+        "CONNECTION_STRING": "Server=DESKTOP-M6S9KU1\\SQLEXPRESS;Database=DocManager_dev;Trusted_Connection=True;",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "CES.DocManger.WebApi": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "https://localhost:5001/swagger",
+      "environmentVariables": {
+        "CONNECTION_STRING": "Server=DESKTOP-M6S9KU1\\SQLEXPRESS;Database=DocManager_dev;Trusted_Connection=True;",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+    }
+  }
+}
