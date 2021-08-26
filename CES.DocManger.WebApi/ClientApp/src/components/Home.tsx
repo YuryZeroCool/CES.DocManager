@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ExpiryDriverLicense from './ExpiryDriverLicense';
 import Headers from './Header';
 
 export class Home extends Component {
@@ -8,6 +9,9 @@ export class Home extends Component {
     return (
       <>
         <Headers></Headers>
+        <main>
+          <ExpiryDriverLicense></ExpiryDriverLicense>
+        </main>
       </>
     );
   }

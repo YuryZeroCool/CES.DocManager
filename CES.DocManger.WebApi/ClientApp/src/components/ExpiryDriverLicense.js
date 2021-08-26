@@ -17,9 +17,11 @@ class ExpiryDriverLicense extends React.Component {
   };
 
   componentDidMount() {
-    axios.get(`https://localhost:5001/api/Employee/date/100`).then((res) => {
-      this.setState({ employees: res.data });
-    });
+    axios
+      .get(`https://localhost:5001/api/Employee/expiringDriverLicense/1`)
+      .then((res) => {
+        this.setState({ employees: res.data });
+      });
   }
 
   row() {
@@ -44,6 +46,7 @@ class ExpiryDriverLicense extends React.Component {
   render() {
     return (
       <div>
+        <h3>Водители, у которых заканчиваются права</h3>
         <Table responsive="sm">
           <thead>
             <tr>

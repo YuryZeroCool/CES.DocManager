@@ -77,7 +77,7 @@ namespace CES.DocManger.WebApi.Controllers
         }
 
         [HttpGet("expiringDriverLicense/{numberMonths}")]
-        public ICollection<DriverEndLicense> getExpiringDriverLicense(int month)
+        public ICollection<DriverEndLicense> getExpiringDriverLicense(int numberMonths)
         {
             List<DriverEndLicense> dates = new List<DriverEndLicense>();
             var date = _context.DriverLicenses.Join(_context.Employees,
@@ -90,7 +90,7 @@ namespace CES.DocManger.WebApi.Controllers
                     BthDate = c.BthDate,
                     DivisionNumber = c.DivisionNumber.Name,
                     ExpiryDate = p.ExpiryDate,
-                }).Where(p => p.ExpiryDate <= DateTime.Now.AddMonths(month));
+                }).Where(p => p.ExpiryDate <= DateTime.Now.AddMonths(numberMonths));
             foreach (var item in date)
             {
                 dates.Add(new DriverEndLicense()

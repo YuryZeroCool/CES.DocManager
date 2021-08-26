@@ -13,6 +13,8 @@ namespace CES.Infra
 
         public virtual DbSet<Division> Divisions { get; set; }
 
+        public virtual DbSet<DriverMedicalCertificateEntity> DriverMedicalCertificate { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
         {
             dbContextOptionsBuilder.LogTo(Console.WriteLine);
@@ -24,11 +26,7 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new EmployeeConfig());
             modelBuilder.ApplyConfiguration(new DriverLicenseConfig());
             modelBuilder.ApplyConfiguration(new DivisionConfig());
-        }
-
-        public object ToList()
-        {
-            throw new NotImplementedException();
+            modelBuilder.ApplyConfiguration(new MedicalCertificateConfig());
         }
     }
 }
