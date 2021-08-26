@@ -32,18 +32,18 @@ namespace CES.DocManger.WebApi.Controllers
         }
  
         [HttpGet]
-        public IEnumerable<EmployeeViewModel> Get()
+        public IEnumerable<EmployeeView> getAllEmployees()
         {
             var data = _context.Employees.Include(p=>p.DivisionNumber).ToList();
-            return _mapper.Map<List<EmployeeViewModel>>(data);
+            return _mapper.Map<List<EmployeeView>>(data);
         }
 
-        [HttpGet("division/{divisionNumber}")]
-        public IEnumerable<EmployeeView> GetNameEmployee( string divisionNumber)
+        [HttpGet("firstName/{divisionNumber}")]
+        public IEnumerable<EmployeeFirstLastName> getFirstLastName( string divisionNumber)
         {
             var data = _context.Divisions.FirstOrDefault(x => x.Name == divisionNumber);
             var emp = _context.Employees.Where(x => x.DivisionNumber == data).ToList();
-            return emp.Select(x => new EmployeeView
+            return emp.Select(x => new EmployeeFirstLastName
             {
                 FirstName = x.FirstName,
 
@@ -53,14 +53,31 @@ namespace CES.DocManger.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<EmployeeViewModel> Get(int id)
+        public async Task<EmployeeView> getEmployee(int id)
         {
-            var data = await _context.Employees.FirstOrDefaultAsync(x => x.Id == id);
-            return _mapper.Map<EmployeeViewModel>(data);
+            var date = await   _context.Divisions.Join(_context.Employees,
+                p => p.Id,
+                c => c.Id,
+                (p, c) => new
+                {
+                    Id = c.Id,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    PersonnelNumber = c.PersonnelNumber,
+                    BthDate = c.BthDate,
+                    DivisionNumber = c.DivisionNumber.Name,
+                }).Where(p => p.Id == id).FirstOrDefaultAsync(x => x.Id == id);
+            return new EmployeeView { 
+            LastName = date.LastName,
+            FirstName = date.FirstName,
+            PersonnelNumber = date.PersonnelNumber,
+            DivisionNumber = date.DivisionNumber,
+            BthDate = date.BthDate
+            };
         }
 
-        [HttpGet("date/{month}")]
-        public ICollection<DriverEndLicense> getExpiryDate(int month)
+        [HttpGet("expiringDriverLicense/{numberMonths}")]
+        public ICollection<DriverEndLicense> getExpiringDriverLicense(int month)
         {
             List<DriverEndLicense> dates = new List<DriverEndLicense>();
             var date = _context.DriverLicenses.Join(_context.Employees,
@@ -70,13 +87,9 @@ namespace CES.DocManger.WebApi.Controllers
                 {
                     FirstName = c.FirstName,
                     LastName = c.LastName,
-                    //PersonnelNumber = c.PersonnelNumber,
                     BthDate = c.BthDate,
                     DivisionNumber = c.DivisionNumber.Name,
-                    //SerialNumber = p.SerialNumber,
-                    //IssueDate = p.IssueDate,
                     ExpiryDate = p.ExpiryDate,
-                    //Category = p.Category
                 }).Where(p => p.ExpiryDate <= DateTime.Now.AddMonths(month));
             foreach (var item in date)
             {
@@ -86,18 +99,14 @@ namespace CES.DocManger.WebApi.Controllers
                     LastName = item.LastName.ToString(),
                     DivisionNumber = item.DivisionNumber,
                     BthDate = item.BthDate,
-                    //SerialNumber = item.SerialNumber.ToString(),
-                    //IssueDate = item.IssueDate,
                     ExpiryDate = item.ExpiryDate,
-                    //Category = item.Category,
-                    //PersonnelNumber = item.PersonnelNumber
                 }) ;
             };
             return  dates;
         }
 
         [HttpPost]
-        public async Task<int> Post([FromBody] EmployeeViewModel model)
+        public async Task<int> createEmployee([FromBody] EmployeeView model)
         {
             var employee =  _mapper.Map<EmployeeEntity>(model);
             employee.DivisionNumber = _context.Divisions.FirstOrDefault(x => x.Name == model.DivisionNumber);
@@ -108,7 +117,7 @@ namespace CES.DocManger.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] UpdateEmployeeViewModel model)
+        public async Task<IActionResult> Put(int id, [FromBody] EmployeeView model)
         {
             var employee = await _context.Employees.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
             if (employee == null)
@@ -125,7 +134,7 @@ namespace CES.DocManger.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> deleteEmployee(int id)
         {
             var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == id);
             if (employee == null)

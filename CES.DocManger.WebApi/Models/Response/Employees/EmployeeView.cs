@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CES.DocManger.WebApi.Models.Response.Employees;
+using System;
 
-namespace CES.DocManger.WebApi.Models.Response.Employees
+namespace CES.DocManger.WebApi.Models.Request
 {
-    public class EmployeeView
+    public class EmployeeView:EmployeeFirstLastName
     {
-        public string FirstName { get; set; }
+   
+        public string DivisionNumber { get; set; }
 
-        public string LastName { get; set; }
+        public int PersonnelNumber { get; set; }
+
+        public DateTime BthDate { get; set; }
     }
 }
