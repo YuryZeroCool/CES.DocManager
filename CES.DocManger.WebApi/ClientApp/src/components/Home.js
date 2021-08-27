@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ExpiryDriverLicense from './ExpiryDriverLicense';
 import Headers from './Header';
 
-export class Home extends Component {
+export class Home extends React.Component {
   static displayName = Home.name;
 
   render() {

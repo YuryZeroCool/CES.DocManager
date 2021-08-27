@@ -15,9 +15,10 @@ namespace CES.DocManger.WebApi.Mapper
                 .ForMember(dest => dest.DivisionNumber, opt => opt.MapFrom(src => src.DivisionNumber.Name));
 
             CreateMap<EmployeeView, EmployeeEntity>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
-                .ForMember(dest => dest.DivisionNumber, opt => opt.MapFrom(src => src.DivisionNumber))
+                .ForMember(dest => dest.DivisionNumber, opt => opt.Ignore())
                 .ForMember(dest => dest.PersonnelNumber, opt => opt.MapFrom(src => src.PersonnelNumber))
                 .ForMember(dest => dest.BthDate, opt => opt.MapFrom(src => src.BthDate));
 

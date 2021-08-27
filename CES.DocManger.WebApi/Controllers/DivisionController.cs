@@ -25,7 +25,7 @@ namespace CES.DocManger.WebApi.Controllers
         }
 
         [HttpGet]
-        public ICollection<DivisionViewModel> aetAllDivisions()
+        public ICollection<DivisionViewModel> GetAllDivisions()
         {
             var data = _docMangerContex.Divisions.ToList();
             return _mapper.Map<List<DivisionViewModel>>(data);
