@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
+using CES.DocManger.WebApi.Models.Response.DriverLicense;
 using CES.Infra;
+using CES.Infra.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CES.DocManger.WebApi.Controllers
 {
@@ -17,14 +21,15 @@ namespace CES.DocManger.WebApi.Controllers
             _mapper = mapper;
             _context = context;
         }
-    //    [HttpPost]
-    //    public async Task<int> Post([FromBody] DriverLicense model)
-    //    {
-    //        var license = _mapper.Map<EmployeeEntity>(model);
-    //        var employees = _context.Employees.Where(x => x.FirstName == model.Employee || x.LastName == ).ToList();
-    //        await _context.Employees.AddAsync(employee);
-    //        await _context.SaveChangesAsync();
-    //        return employee.Id;
-    //    }
+        [HttpPost]
+        public async Task<int> Post([FromBody] DriverLicense model)
+        {
+            var license = _mapper.Map<DriverLicenseEntity>(model);
+            license.EmployeeId =   _context.Employees
+                .FirstOrDefault(x => x.FirstName==model.FirstName &&  x.LastName==model.LastName ).Id;
+            await _context.DriverLicenses.AddAsync(license);
+             await _context.SaveChangesAsync();
+            return license.Id;
+        }
     }
 }

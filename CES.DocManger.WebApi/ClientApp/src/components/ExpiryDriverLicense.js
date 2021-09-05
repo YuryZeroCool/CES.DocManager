@@ -6,7 +6,7 @@ class ExpiryDriverLicense extends React.Component {
   state = {
     employees: [
       {
-        bthDate: '',
+        birthDate: '',
         divisionNumber: 0,
         expiryDate: '',
         firstName: '',
@@ -16,21 +16,19 @@ class ExpiryDriverLicense extends React.Component {
     counter: 0,
   };
 
-  componentDidMount() {
-    axios
-      .get(`https://localhost:5001/api/Employee/expiringDriverLicense/1`)
-      .then((res) => {
-        this.setState({ employees: res.data });
-      });
+  async componentDidMount() {
+    let res = await axios.get(
+      `https://localhost:5001/api/Employee/expiringDriverLicense/1`
+    );
+    this.setState({ employees: res.data });
   }
 
   row() {
     let bthDate = null;
     let expiryDate = null;
     return this.state.employees.map((element, index) => {
-      bthDate = element.bthDate.slice(0, 10);
+      bthDate = element.birthDate.slice(0, 10);
       expiryDate = element.expiryDate.slice(0, 10);
-
       return (
         <tr key={`${index}`}>
           <td>{index + 1}</td>

@@ -7,7 +7,9 @@ namespace CES.DocManger.WebApi.Models.Response.DriverLicense
 {
     public class DriverLicense
     {
-        public string Employee { get; set; }
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
 
         public string SerialNumber { get; set; }
 

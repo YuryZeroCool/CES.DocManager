@@ -3,11 +3,16 @@ import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
+import { Formik } from 'formik';
+import * as yup from 'yup';
+import '../styles/employee.scss';
 
 class Employee extends React.Component {
   constructor() {
     super();
-    this.handleChange = this.handleChange.bind(this);
+    this.submitForm = this.submitForm.bind(this);
+    this.validationsSchema = this.validationsSchema.bind(this);
+    this.closeEmployee = this.closeEmployee.bind(this);
   }
   state = {
     divisions: [
@@ -15,24 +20,13 @@ class Employee extends React.Component {
         divisionNamber: '',
       },
     ],
-    data: {
-      firstName: '',
-      lastName: '',
-      divisionNumber: '',
-      personnelNumber: null,
-      birthDate: '',
-      id: 0,
-    },
   };
 
-  handleChange(event) {
-    let key = { ...this.state.data };
-    key[event.target.name] = event.target.value;
-    this.setState({ data: key });
+  closeEmployee() {
+    this.props.show(false);
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
+  submitForm(value) {
     fetch('https://localhost:5001/api/Employee', {
       method: 'POST',
       headers: {
@@ -41,9 +35,9 @@ class Employee extends React.Component {
         'Content-Type': 'application/json',
         'access-control-allow-headers': 'X-Custom-Header',
       },
-      body: JSON.stringify(this.state.data),
+      body: JSON.stringify(value),
     });
-    this.props.close(false);
+    this.closeEmployee();
   }
 
   componentDidMount() {
@@ -57,119 +51,186 @@ class Employee extends React.Component {
     });
   }
 
+  validationsSchema() {
+    return yup.object().shape({
+      lastName: yup
+        .string()
+        .typeError('Должно быть строкой')
+        .required('Обязательно для заполнения'),
+      firstName: yup
+        .string()
+        .typeError('Должно быть строкой')
+        .required('Обязательно для заполнения'),
+      birthDate: yup
+        .date()
+        .min(new Date(1940, 0, 1), 'Ты не такой старый')
+        .max(new Date(), 'Ты сегодня родился?')
+        .typeError('Введите дату рождения в верном формате')
+        .required('Обязательно для заполнения'),
+      divisionNumber: yup
+        .string()
+        .typeError('Выберите смену')
+        .required('Обязательно для заполнения'),
+      personnelNumber: yup
+        .number()
+        .typeError('Вводите только цифры')
+        .required('Обязательно для заполнения')
+        .test(
+          'personnelNumber',
+          'Такой табельный номер существует',
+          async (value) => {
+            if (value !== undefined) {
+              const res = await fetch(
+                `https://localhost:5001/api/Employee/isPersonalNumber/${value}`
+              );
+
+              if (await res.json()) {
+                return false;
+              }
+              return true;
+            }
+          }
+        ),
+    });
+  }
+
   render() {
     return (
       <>
-        <Form
-          method="post"
-          onSubmit={(event) => {
-            this.handleSubmit(event);
+        <Formik
+          initialValues={{
+            firstName: '',
+            lastName: '',
+            divisionNumber: '',
+            personnelNumber: '',
+            birthDate: '',
           }}
+          validateOnBlur={true}
+          validateOnChange={false}
+          onSubmit={(value) => this.submitForm(value)}
+          validationSchema={this.validationsSchema}
         >
-          <Form.Row>
-            <Form.Group as={Col} controlId="formGridLastName">
-              <Form.Label>Фамилия</Form.Label>
-              <Form.Control
-                type="text"
-                name="lastName"
-                placeholder="Введите фамилию"
-                onChange={this.handleChange}
-              />
-            </Form.Group>
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            isValid,
+            handleSubmit,
+            dirty,
+          }) => (
+            <Form onSubmit={handleSubmit}>
+              <Form.Row>
+                <Form.Group as={Col} controlId="formGridLastName">
+                  <Form.Label>Фамилия</Form.Label>
+                  <Form.Control
+                    type={'text'}
+                    name={'lastName'}
+                    placeholder="Введите фамилию"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.lastName}
+                  />
 
-            <Form.Group as={Col} controlId="formGridFirstName">
-              <Form.Label>Имя и отчество</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Введите имя и отчество"
-                name="firstName"
-                onChange={this.handleChange}
-              />
-            </Form.Group>
+                  {touched.lastName && errors.lastName ? (
+                    <p>{errors.lastName}</p>
+                  ) : null}
+                </Form.Group>
 
-            <Form.Group as={Col} controlId="formGridBirthDate">
-              <Form.Label>Дата рождения</Form.Label>
-              <Form.Control
-                type="date"
-                min="1940-01-01"
-                max="2050-12-31"
-                name="birthDate"
-                onChange={this.handleChange}
-              />
-            </Form.Group>
-          </Form.Row>
+                <Form.Group as={Col} controlId="formGridFirstName">
+                  <Form.Label>Имя и отчество</Form.Label>
+                  <Form.Control
+                    type={'text'}
+                    placeholder="Введите имя и отчество"
+                    name={'firstName'}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.firstName}
+                  />
+                  {touched.firstName && errors.firstName ? (
+                    <p>{errors.firstName}</p>
+                  ) : (
+                    <p></p>
+                  )}
+                </Form.Group>
 
-          {/* <Form.Row>
-            <Form.Group as={Col} controlId="formGridDriverLicense">
-              <Form.Label>Серия прав</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Введите серию прав"
-                name="driverLicense"
-                onChange={this.handleChange}
-              />
-            </Form.Group>
+                <Form.Group as={Col} controlId="formGridBirthDate">
+                  <Form.Label>Дата рождения</Form.Label>
+                  <Form.Control
+                    type={'date'}
+                    min="1940-01-01"
+                    max="2050-12-31"
+                    name={'birthDate'}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.birthDate}
+                  />
+                  {touched.birthDate && errors.birthDate ? (
+                    <p>{errors.birthDate}</p>
+                  ) : (
+                    <p></p>
+                  )}
+                </Form.Group>
+              </Form.Row>
 
-            <Form.Group as={Col} controlId="formGridIssueDate">
-              <Form.Label>Дата выдачи прав</Form.Label>
-              <Form.Control
-                type="date"
-                name="issueDate"
-                onChange={this.handleChange}
-              />
-            </Form.Group>
+              <Form.Row>
+                <Form.Group as={Col} controlId="formGridDivision">
+                  <Form.Label>Смена</Form.Label>
+                  <Form.Control
+                    as="select"
+                    //defaultValue="Выбрать смену..."
+                    name="divisionNumber"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.divisionNumber}
+                  >
+                    <option>Выбрать смену...</option>
+                    {this.row()}
+                  </Form.Control>
+                  {touched.divisionNumber && errors.divisionNumber ? (
+                    <p>{errors.divisionNumber}</p>
+                  ) : (
+                    <p></p>
+                  )}
+                </Form.Group>
 
-            <Form.Group as={Col} controlId="formGridExpirySate">
-              <Form.Label>Действительно до</Form.Label>
-              <Form.Control
-                type="date"
-                name="expirySate"
-                onChange={this.handleChange}
-              />
-            </Form.Group>
-          </Form.Row> */}
+                <Form.Group as={Col} controlId="formGridPersonnelNumber">
+                  <Form.Label>Табельный номер</Form.Label>
+                  <Form.Control
+                    type={'text'}
+                    name="personnelNumber"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.personnelNumber}
+                  />
+                  {touched.personnelNumber && errors.personnelNumber ? (
+                    <p>{errors.personnelNumber}</p>
+                  ) : (
+                    <p></p>
+                  )}
+                </Form.Group>
+              </Form.Row>
 
-          <Form.Row>
-            {/* <Form.Group as={Col} controlId="formGridCategory">
-              <Form.Label>Категория</Form.Label>
-              <Form.Control
-                type="text"
-                name="category"
-                onChange={this.handleChange}
-              />
-            </Form.Group> */}
-
-            <Form.Group as={Col} controlId="formGridDivision">
-              <Form.Label>Смена</Form.Label>
-              <Form.Control
-                as="select"
-                defaultValue="Выбрать смену..."
-                name="divisionNumber"
-                onChange={this.handleChange}
+              <Button
+                variant="primary"
+                type={'submit'}
+                disable={(!isValid && !dirty).toString()}
+                //onClick={handleSubmit}
               >
-                <option>Выбрать смену...</option>
-                {this.row()}
-              </Form.Control>
-            </Form.Group>
+                Сохранить
+              </Button>
 
-            <Form.Group as={Col} controlId="formGridPersonnelNumber">
-              <Form.Label>Табельный номер</Form.Label>
-              <Form.Control
-                type="text"
-                name="personnelNumber"
-                onChange={this.handleChange}
-              />
-            </Form.Group>
-          </Form.Row>
-
-          <Form.Group id="formGridCheckbox">
-            <Form.Check type="checkbox" label="Все верно" />
-          </Form.Group>
-
-          <Button variant="primary" type="submit">
-            Сохранить
-          </Button>
-        </Form>
+              <Button
+                variant="primary"
+                type={'button'}
+                onClick={this.closeEmployee}
+              >
+                Закрыть
+              </Button>
+            </Form>
+          )}
+        </Formik>
       </>
     );
   }

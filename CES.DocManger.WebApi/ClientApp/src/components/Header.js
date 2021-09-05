@@ -1,28 +1,17 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
-import Employee from './Employee';
 
 class Headers extends React.Component {
   constructor() {
     super();
     this.addEmployee = this.addEmployee.bind(this);
   }
-  state = {
-    isOpen: false,
-  };
 
   addEmployee() {
-    let ut = { ...this.state.isOpen };
-    ut = true;
-    this.setState({ isOpen: ut });
+    this.props.show(true);
   }
 
-  closeEmployee = (close) => {
-    let ut = { ...this.state.isOpen };
-    ut = close;
-    this.setState({ isOpen: ut });
-  };
   render() {
     return (
       <header>
@@ -55,9 +44,6 @@ class Headers extends React.Component {
           <Button variant="success" onClick={this.addEmployee}>
             Добавить водителя
           </Button>
-          {this.state.isOpen && (
-            <Employee close={this.closeEmployee}></Employee>
-          )}
           <Button variant="success" onClick={this.addEmployee}>
             Добавить права
           </Button>

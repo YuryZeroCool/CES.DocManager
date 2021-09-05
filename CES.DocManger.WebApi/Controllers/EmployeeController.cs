@@ -16,7 +16,7 @@ using CES.DocManger.WebApi.Models.Response.Employees;
 namespace CES.DocManger.WebApi.Controllers
 {
     [EnableCors("MyPolicy")]
-   
+
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeeController : ControllerBase
@@ -30,12 +30,21 @@ namespace CES.DocManger.WebApi.Controllers
             _context = context;
             _mapper = mapper;
         }
- 
+
         [HttpGet]
         public IEnumerable<EmployeeView> GetAllEmployees()
         {
-            var data = _context.Employees.Include(p=>p.DivisionNumber).ToList();
+            var data = _context.Employees.Include(p => p.DivisionNumber).ToList();
             return _mapper.Map<List<EmployeeView>>(data);
+        }
+
+        [HttpGet("isPersonalNumber/{personalNumber}")]
+        public async Task<bool> GetIsPersonalNumber(int personalNumber)
+        {
+           var number = await _context.Employees.FirstOrDefaultAsync(x => x.PersonnelNumber == personalNumber);
+            if (number != null) return true;
+            return false;
+
         }
 
         [HttpGet("firstName/{divisionNumber}")]
@@ -45,9 +54,12 @@ namespace CES.DocManger.WebApi.Controllers
             var emp = _context.Employees.Where(x => x.DivisionNumber == data).ToList();
             return emp.Select(x => new EmployeeFirstLastName
             {
+                Id= x.Id,
+               
                 FirstName = x.FirstName,
 
-                LastName = x.LastName
+                LastName = x.LastName,
+
             }).ToList();
 
         }
@@ -75,7 +87,7 @@ namespace CES.DocManger.WebApi.Controllers
                 FirstName = date.FirstName,
                 PersonnelNumber = date.PersonnelNumber,
                 DivisionNumber = date.DivisionNumber,
-                BthDate = date.BthDate
+                BirthDate = date.BthDate
             };
         }
 
@@ -92,16 +104,16 @@ namespace CES.DocManger.WebApi.Controllers
                     c.LastName,
                     c.BthDate,
                     DivisionNumber = c.DivisionNumber.Name,
-                    ExpiryDate = p.ExpiryDate,
+                    p.ExpiryDate,
                 }).Where(p => p.ExpiryDate <= DateTime.Now.AddMonths(numberMonths));
             foreach (var item in date)
             {
                 dates.Add(new DriverEndLicense()
                 {
-                    FirstName = item.FirstName.ToString(),
-                    LastName = item.LastName.ToString(),
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
                     DivisionNumber = item.DivisionNumber,
-                    BthDate = item.BthDate,
+                    BirthDate = item.BthDate,
                     ExpiryDate = item.ExpiryDate,
                 }) ;
             };
