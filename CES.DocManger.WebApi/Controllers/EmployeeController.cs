@@ -91,6 +91,35 @@ namespace CES.DocManger.WebApi.Controllers
             };
         }
 
+        [HttpGet("expiringDriverLicense/noDriverLicense")]
+        public ICollection<NoEmployeDriverlicense> GetNoDriverLicense()
+        {
+            List<NoEmployeDriverlicense> list = new();
+                       
+            var query = from b in _context.Employees
+                        join p in _context.DriverLicenses
+                            on b.Id equals p.EmployeeId into grouping
+                        from p in grouping.DefaultIfEmpty()
+                        select new {
+                        FirstName = b.FirstName,
+                        LastName = b.LastName,
+                        SerialNumber= p.SerialNumber
+                        };
+            
+            foreach (var item in query.Where(c=>c.SerialNumber==null))
+            {
+
+                list.Add(new NoEmployeDriverlicense()
+                {
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
+                    SerialNumber = item.SerialNumber
+                });
+   
+            }
+            return list;
+        }
+
         [HttpGet("expiringDriverLicense/{numberMonths}")]
         public ICollection<DriverEndLicense> GetExpiringDriverLicense(int numberMonths)
         {

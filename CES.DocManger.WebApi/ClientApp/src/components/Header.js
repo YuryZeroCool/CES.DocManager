@@ -6,10 +6,15 @@ class Headers extends React.Component {
   constructor() {
     super();
     this.addEmployee = this.addEmployee.bind(this);
+    this.addDriverLicense = this.addDriverLicense.bind(this);
   }
 
   addEmployee() {
     this.props.show(true);
+  }
+
+  addDriverLicense() {
+    this.props.showFormLicense(true);
   }
 
   render() {
@@ -44,7 +49,7 @@ class Headers extends React.Component {
           <Button variant="success" onClick={this.addEmployee}>
             Добавить водителя
           </Button>
-          <Button variant="success" onClick={this.addEmployee}>
+          <Button variant="success" onClick={this.addDriverLicense}>
             Добавить права
           </Button>
         </nav>

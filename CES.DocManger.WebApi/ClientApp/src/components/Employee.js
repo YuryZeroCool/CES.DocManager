@@ -179,7 +179,6 @@ class Employee extends React.Component {
                   <Form.Label>Смена</Form.Label>
                   <Form.Control
                     as="select"
-                    //defaultValue="Выбрать смену..."
                     name="divisionNumber"
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -216,7 +215,6 @@ class Employee extends React.Component {
                 variant="primary"
                 type={'submit'}
                 disable={(!isValid && !dirty).toString()}
-                //onClick={handleSubmit}
               >
                 Сохранить
               </Button>
