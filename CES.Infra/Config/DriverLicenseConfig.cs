@@ -14,7 +14,7 @@ namespace CES.Infra.Config
         public void Configure(EntityTypeBuilder<DriverLicenseEntity> builder)
         {
             builder.Property(t => t.Category)
-                .HasColumnType("NCHAR(15)");
+                .HasColumnType("NCHAR(30)");
 
             builder.Property(t => t.IssueDate)
                 .HasColumnType("DATE");

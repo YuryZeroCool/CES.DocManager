@@ -2,12 +2,14 @@
 using CES.DocManger.WebApi.Models.Response.DriverLicense;
 using CES.Infra;
 using CES.Infra.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CES.DocManger.WebApi.Controllers
 {
+    [EnableCors("MyPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class DriverLicensesController : ControllerBase

@@ -1,15 +1,15 @@
-import React from 'react';
-import axios from 'axios';
-import Form from 'react-bootstrap/Form';
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import { Formik } from 'formik';
-import * as yup from 'yup';
+import React from "react";
+import axios from "axios";
+import Form from "react-bootstrap/Form";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import { Formik } from "formik";
+import * as yup from "yup";
 
 class DriverLicense extends React.Component {
   constructor() {
     super();
-    // this.submitForm = this.submitForm.bind(this);
+    this.submitForm = this.submitForm.bind(this);
     this.validationsSchema = this.validationsSchema.bind(this);
     this.closeDriverLicense = this.closeDriverLicense.bind(this);
   }
@@ -17,7 +17,8 @@ class DriverLicense extends React.Component {
   state = {
     drivers: [
       {
-        lastName: '',
+        lastName: "",
+        firstName: "",
       },
     ],
   };
@@ -26,19 +27,28 @@ class DriverLicense extends React.Component {
     this.props.showFormLicense(false);
   }
 
-  // submitForm(value) {
-  //   fetch('https://localhost:5001/api/Employee', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Access-Control-Allow-Origin': '*',
-  //       Accept: 'application/json',
-  //       'Content-Type': 'application/json',
-  //       'access-control-allow-headers': 'X-Custom-Header',
-  //     },
-  //     body: JSON.stringify(value),
-  //   });
-  //   this.closeDriverLicense();
-  // }
+  submitForm(value) {
+    let arrEmp = Object.values(value)[4].split(" ");
+
+    fetch("https://localhost:5001/api/DriverLicenses", {
+      method: "POST",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "access-control-allow-headers": "X-Custom-Header",
+      },
+      body: JSON.stringify({
+        firstName: arrEmp[1] + " " + arrEmp[2],
+        lastName: arrEmp[0],
+        serialNumber: value.serialNumber,
+        issueDate: value.issueDate,
+        expiryDate: value.expiryDate,
+        category: value.category,
+      }),
+    });
+     this.closeDriverLicense();
+  }
 
   componentDidMount() {
     axios
@@ -52,7 +62,7 @@ class DriverLicense extends React.Component {
 
   row() {
     return this.state.drivers.map((el, index) => {
-      return <option key={index}>{el.lastName}</option>;
+      return <option key={index}>{el.lastName + " " + el.firstName}</option>;
     });
   }
 
@@ -60,26 +70,26 @@ class DriverLicense extends React.Component {
     return yup.object().shape({
       serialNumber: yup
         .string()
-        .typeError('Должно быть строкой')
-        .required('Обязательно для заполнения'),
+        .typeError("Должно быть строкой")
+        .required("Обязательно для заполнения"),
       issueDate: yup
         .date()
-        .typeError('Выберите дату выдачи прав')
-        .required('Обязательно для заполнения'),
+        .typeError("Выберите дату выдачи прав")
+        .required("Обязательно для заполнения"),
       expiryDate: yup
         .date()
-        .min(new Date(2000, 0, 1))
+        .min(new Date(1950, 0, 1))
         .max(new Date(2050, 11, 31))
-        .typeError('Выберите дату окончания прав')
-        .required('Обязательно для заполнения'),
+        .typeError("Выберите дату окончания прав")
+        .required("Обязательно для заполнения"),
       category: yup
         .string()
-        .typeError('Введите категорию')
-        .required('Обязательно для заполнения'),
+        .typeError("Введите категорию")
+        .required("Обязательно для заполнения"),
       lastName: yup
         .string()
-        .typeError('Выберите ФИО водителя')
-        .required('Обязательно для заполнения'),
+        .typeError("Выберите ФИО водителя")
+        .required("Обязательно для заполнения"),
     });
   }
 
@@ -88,15 +98,15 @@ class DriverLicense extends React.Component {
       <>
         <Formik
           initialValues={{
-            serialNumber: '',
-            issueDate: '',
-            expiryDate: '',
-            category: '',
-            lastName: '',
+            serialNumber: "",
+            issueDate: "",
+            expiryDate: "",
+            category: "",
+            lastName: "",
           }}
           validateOnBlur={true}
           validateOnChange={false}
-          // onSubmit={(value) => this.submitForm(value)}
+          onSubmit={(value) => this.submitForm(value)}
           validationSchema={this.validationsSchema}
         >
           {({
@@ -109,13 +119,13 @@ class DriverLicense extends React.Component {
             handleSubmit,
             dirty,
           }) => (
-            <Form>
+            <Form onSubmit={handleSubmit}>
               <Form.Row>
                 <Form.Group as={Col} controlId="formGridSerialNumber">
                   <Form.Label>Серийный номер</Form.Label>
                   <Form.Control
-                    type={'text'}
-                    name={'serialNumber'}
+                    type={"text"}
+                    name={"serialNumber"}
                     placeholder="Введите серийный номер"
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -130,10 +140,10 @@ class DriverLicense extends React.Component {
                 <Form.Group as={Col} controlId="formGridIssueDate">
                   <Form.Label>Дата выдачи</Form.Label>
                   <Form.Control
-                    type={'date'}
-                    min="2000-01-01"
+                    type={"date"}
+                    min="1950-01-01"
                     max="2050-12-31"
-                    name={'issueDate'}
+                    name={"issueDate"}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.issueDate}
@@ -148,10 +158,10 @@ class DriverLicense extends React.Component {
                 <Form.Group as={Col} controlId="formGridExpiryDate">
                   <Form.Label>Дата окончания прав</Form.Label>
                   <Form.Control
-                    type={'date'}
+                    type={"date"}
                     min="2000-01-01"
                     max="2050-12-31"
-                    name={'expiryDate'}
+                    name={"expiryDate"}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     value={values.expiryDate}
@@ -168,8 +178,8 @@ class DriverLicense extends React.Component {
                 <Form.Group as={Col} controlId="formGridCategory">
                   <Form.Label>Категории</Form.Label>
                   <Form.Control
-                    type={'text'}
-                    name={'category'}
+                    type={"text"}
+                    name={"category"}
                     placeholder="Введите категории"
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -203,7 +213,7 @@ class DriverLicense extends React.Component {
 
               <Button
                 variant="primary"
-                type={'submit'}
+                type={"submit"}
                 disable={(!isValid && !dirty).toString()}
               >
                 Сохранить
@@ -211,7 +221,7 @@ class DriverLicense extends React.Component {
 
               <Button
                 variant="primary"
-                type={'button'}
+                type={"button"}
                 onClick={this.closeDriverLicense}
               >
                 Закрыть
