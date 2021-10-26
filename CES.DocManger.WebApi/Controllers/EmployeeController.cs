@@ -12,6 +12,7 @@ using System;
 using System.Data;
 using Microsoft.AspNetCore.Cors;
 using CES.DocManger.WebApi.Models.Response.Employees;
+using CES.DocManger.WebApi.Models.Response.DriverMedicalCertificate;
 
 namespace CES.DocManger.WebApi.Controllers
 {
@@ -101,7 +102,7 @@ namespace CES.DocManger.WebApi.Controllers
                             on b.Id equals p.EmployeeId into grouping
                         from p in grouping.DefaultIfEmpty()
                         select new {
-                        FirstName = b.FirstName,
+                            FirstName = b.FirstName,
                         LastName = b.LastName,
                         SerialNumber= p.SerialNumber
                         };
@@ -148,6 +149,36 @@ namespace CES.DocManger.WebApi.Controllers
             };
             return  dates;
         }
+
+        [HttpGet("expiringDriverMedicalCertificate/{numberMonths}")]
+        public ICollection<ExpiringDriverMedicalCertificateView> GetExpiringDriverMedicalCertificate(int numberMonths)
+        {
+            List<ExpiringDriverMedicalCertificateView> dates = new();
+            var date = _context.DriverMedicalCertificate.Join(_context.Employees,
+                p => p.EmployeeId,
+                c => c.Id,
+                (p, c) => new
+                {
+                    c.FirstName,
+                    c.LastName,
+                    c.BthDate,
+                    DivisionNumber = c.DivisionNumber.Name,
+                    p.ExpiryDate,
+                }).Where(p => p.ExpiryDate <= DateTime.Now.AddMonths(numberMonths));
+            foreach (var item in date)
+            {
+                dates.Add(new ExpiringDriverMedicalCertificateView()
+                {
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
+                    DivisionNumber = item.DivisionNumber,
+                    BirthDate = item.BthDate,
+                    ExpiryDate = item.ExpiryDate,
+                });
+            };
+            return dates;
+        }
+
 
         [HttpPost]
         public async Task<int> CreateEmployee([FromBody] EmployeeView model)

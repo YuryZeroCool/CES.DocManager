@@ -2,6 +2,7 @@
 using CES.DocManger.WebApi.Models.Request;
 using CES.DocManger.WebApi.Models.Response;
 using CES.DocManger.WebApi.Models.Response.DriverLicense;
+using CES.DocManger.WebApi.Models.Response.DriverMedicalCertificate;
 using CES.DocManger.WebApi.Models.Response.Employees;
 using CES.Infra.Models;
 
@@ -36,6 +37,13 @@ namespace CES.DocManger.WebApi.Mapper
                 .ForMember(dest => dest.IssueDate, opt => opt.MapFrom(src => src.IssueDate))
                 .ForMember(dest => dest.ExpiryDate, opt => opt.MapFrom(src => src.ExpiryDate))
                 .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category));
+
+
+            CreateMap<DriverMedicalCertificateEntity, DriverMedicalCertificatecView>().ReverseMap()
+               .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.SerialNumber, opt => opt.MapFrom(src => src.SerialNumber))
+                .ForMember(dest => dest.IssueDate, opt => opt.MapFrom(src => src.IssueDate))
+                .ForMember(dest => dest.ExpiryDate, opt => opt.MapFrom(src => src.ExpiryDate));
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace CES.DocManger.WebApi.Models.Response.DriverLicense
+namespace CES.DocManger.WebApi.Models.Response.DriverMedicalCertificate
 {
-    public class DriverLicense
+    public class DriverMedicalCertificatecView
     {
         public string FirstName { get; set; }
 
@@ -14,6 +14,5 @@ namespace CES.DocManger.WebApi.Models.Response.DriverLicense
 
         public DateTime ExpiryDate { get; set; }
 
-        public string Category { get; set; }
     }
 }

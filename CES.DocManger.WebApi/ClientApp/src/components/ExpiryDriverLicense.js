@@ -1,6 +1,7 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
 import axios from 'axios';
+import "../styles/expiryDriverLicense.scss";
 
 class ExpiryDriverLicense extends React.Component {
   state = {
@@ -43,7 +44,7 @@ class ExpiryDriverLicense extends React.Component {
   }
   render() {
     return (
-      <div>
+      <div className="expiry-driver-license">
         <h3>Водители, у которых заканчиваются права</h3>
         <Table responsive="sm">
           <thead>

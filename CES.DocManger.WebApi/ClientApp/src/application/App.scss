@@ -1,18 +1,17 @@
+#root {
+  position: relative;
+}
+
 body {
-  background: url('https://localhost:5001/images/bg1920.jpg') no-repeat;
-  background-size: cover;
+  background-color: #f7f7f7;
 }
 
-@media screen and (max-width: 1024px) {
-  body {
-    background: url('https://localhost:5001/images/bg1024.jpg') no-repeat;
-    background-size: cover;
-  }
+.wrapper {
+  max-width: 1200px;
+  height: 100%;
+  margin: 0 auto;
 }
 
-@media screen and (max-width: 470px) {
-  body {
-    background: url('https://localhost:5001/images/bg470.jpg') no-repeat;
-    background-size: cover;
-  }
+main {
+  padding-top: 9rem;
 }

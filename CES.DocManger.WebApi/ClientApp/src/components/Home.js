@@ -1,8 +1,8 @@
-import React from 'react';
-import ExpiryDriverLicense from './ExpiryDriverLicense';
-import Headers from './Header';
-import Employee from './Employee';
-import DriverLicense from './DriverLicense';
+import React from "react";
+import ExpiryDriverLicense from "./ExpiryDriverLicense";
+import Headers from "./Header";
+import Employee from "./Employee";
+import DriverLicense from "./DriverLicense";
 
 export class Home extends React.Component {
   state = {
@@ -26,13 +26,15 @@ export class Home extends React.Component {
           showFormLicense={this.handleShowDriverLicense}
         ></Headers>
         <main>
-          {this.state.isOpen && <Employee show={this.handleShow}></Employee>}
-          {this.state.drLicenseIsOpen && (
-            <DriverLicense
-              showFormLicense={this.handleShowDriverLicense}
-            ></DriverLicense>
-          )}
-          <ExpiryDriverLicense></ExpiryDriverLicense>
+          <div className="wrapper">
+            {this.state.isOpen && <Employee show={this.handleShow}></Employee>}
+            {this.state.drLicenseIsOpen && (
+              <DriverLicense
+                showFormLicense={this.handleShowDriverLicense}
+              ></DriverLicense>
+            )}
+            <ExpiryDriverLicense></ExpiryDriverLicense>
+          </div>
         </main>
       </>
     );

@@ -1,5 +1,4 @@
 using CES.DocManger.WebApi.Extensions;
-using CES.DocManger.WebApi.Mapper;
 using CES.Infra;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,8 +6,6 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Text.Json.Serialization;
 
 namespace CES.DocManger.WebApi
 {
