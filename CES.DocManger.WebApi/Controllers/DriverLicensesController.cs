@@ -4,6 +4,7 @@ using CES.Infra;
 using CES.Infra.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,6 +24,15 @@ namespace CES.DocManger.WebApi.Controllers
             _mapper = mapper;
             _context = context;
         }
+
+        [HttpGet("isPersonalSerialNumber/{SerialNumber}")]
+        public async Task<bool> GetIsPersonalNumber(string SerialNumber)
+        {
+            var serialNumber = await _context.DriverLicenses.FirstOrDefaultAsync(x => x.SerialNumber == SerialNumber);
+            if (serialNumber != null) return true;
+            return false;
+        }
+
         [HttpPost]
         public async Task<int> Post([FromBody] DriverLicense model)
         {

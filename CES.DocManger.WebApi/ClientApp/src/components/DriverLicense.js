@@ -30,13 +30,13 @@ class DriverLicense extends React.Component {
   submitForm(value) {
     let arrEmp = Object.values(value)[4].split(" ");
 
-    fetch("https://localhost:5001/api/DriverLicenses", {
+    fetch(process.env.REACT_APP_DRIVER_LICENSES, {
       method: "POST",
       headers: {
-        "Access-Control-Allow-Origin": "*",
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "access-control-allow-headers": "X-Custom-Header",
+        'Access-Control-Allow-Origin': '*',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'access-control-allow-headers': 'X-Custom-Header',
       },
       body: JSON.stringify({
         firstName: arrEmp[1] + " " + arrEmp[2],
@@ -53,7 +53,7 @@ class DriverLicense extends React.Component {
   componentDidMount() {
     axios
       .get(
-        `https://localhost:5001/api/Employee/expiringDriverLicense/noDriverLicense`
+        process.env.REACT_APP_NO_DRIVER_LICENSE
       )
       .then((res) => {
         this.setState({ drivers: res.data });
@@ -71,7 +71,23 @@ class DriverLicense extends React.Component {
       serialNumber: yup
         .string()
         .typeError("Должно быть строкой")
-        .required("Обязательно для заполнения"),
+        .required("Обязательно для заполнения")
+        .test(
+          'serialNumber',
+          'Удостоверение с таким номеров уже существует',
+          async (value) => {
+            if (value !== undefined) {
+              const res = await fetch(
+               `${process.env.REACT_APP_IS_SERIAL_NUMBER}${value}`
+              );
+
+              if (await res.json()) {
+                return false;
+              }
+              return true;
+            }
+          }
+        ),
       issueDate: yup
         .date()
         .typeError("Выберите дату выдачи прав")

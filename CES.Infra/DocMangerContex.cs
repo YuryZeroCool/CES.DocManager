@@ -2,6 +2,7 @@
 using CES.Infra.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Configuration;
 
 namespace CES.Infra
 {
@@ -14,11 +15,14 @@ namespace CES.Infra
         public virtual DbSet<Division> Divisions { get; set; }
 
         public virtual DbSet<DriverMedicalCertificateEntity> DriverMedicalCertificate { get; set; }
-
+        public DocMangerContex(DbContextOptions<DocMangerContex> options)
+    : base(options)
+        { }
         protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
         {
             dbContextOptionsBuilder.LogTo(Console.WriteLine);
-            dbContextOptionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+             dbContextOptionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+            //dbContextOptionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["CONNECTION_STRING"].ConnectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

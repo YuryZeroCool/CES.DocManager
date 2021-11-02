@@ -3,6 +3,7 @@ using CES.Infra;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,16 +21,19 @@ namespace CES.DocManger.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-
+            //string baseUrl = "http://del24061988-001-site1.btempurl.com";
+            string baseUrl = "http://localhost:3000";
             services.AddCors(options =>
             {
                 options.AddPolicy(name: "MyPolicy",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000")
+                        builder.WithOrigins(baseUrl)
                                 .WithMethods("PUT", "POST", "DELETE", "GET").AllowAnyMethod().AllowAnyHeader();
                     });
             });
+            //services.AddDbContext<DocMangerContex>(options =>
+            //options.UseSqlServer(Configuration.GetConnectionString("CONNECTION_STRING")));
             services.AddDbContext<DocMangerContex>();
             services.AddControllersWithViews();
             services.AddSwaggerGen();

@@ -8,7 +8,10 @@
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
     <UseMSDeployExe>True</UseMSDeployExe>
-    <AllowUntrustedCertificate>true</AllowUntrustedCertificate>
+    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+    <ApplicationIcon />
+    <OutputType>WinExe</OutputType>
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,6 +47,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\js\" />
     <Folder Include="wwwroot\css\" />
   </ItemGroup>

@@ -19,7 +19,7 @@ class ExpiryDriverLicense extends React.Component {
 
   async componentDidMount() {
     let res = await axios.get(
-      `https://localhost:5001/api/Employee/expiringDriverLicense/1`
+      process.env.REACT_APP_EXPIRING_DRIVER_LICENSE
     );
     this.setState({ employees: res.data });
   }

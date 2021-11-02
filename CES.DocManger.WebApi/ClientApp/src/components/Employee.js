@@ -27,11 +27,11 @@ class Employee extends React.Component {
   }
 
   submitForm(value) {
-    fetch('https://localhost:5001/api/Employee', {
+    fetch(process.env.REACT_APP_EMPLOYEE, {
       method: 'POST',
       headers: {
         'Access-Control-Allow-Origin': '*',
-        Accept: 'application/json',
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
         'access-control-allow-headers': 'X-Custom-Header',
       },
@@ -41,7 +41,7 @@ class Employee extends React.Component {
   }
 
   componentDidMount() {
-    axios.get(`https://localhost:5001/api/Division`).then((res) => {
+    axios.get(process.env.REACT_APP_DIVISION).then((res) => {
       this.setState({ divisions: res.data });
     });
   }
@@ -81,7 +81,7 @@ class Employee extends React.Component {
           async (value) => {
             if (value !== undefined) {
               const res = await fetch(
-                `https://localhost:5001/api/Employee/isPersonalNumber/${value}`
+               `${process.env.REACT_APP_IS_PERSONAL_NUMBER}${value}`
               );
 
               if (await res.json()) {
