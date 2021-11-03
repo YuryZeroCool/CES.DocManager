@@ -3,11 +3,13 @@ import ExpiryDriverLicense from "./ExpiryDriverLicense";
 import Headers from "./Header";
 import Employee from "./Employee";
 import DriverLicense from "./DriverLicense";
+import DriverMedicalCertificate from "./DriverMedicalCertificate";
 
 export class Home extends React.Component {
   state = {
     isOpen: false,
     drLicenseIsOpen: false,
+    medicalCertificate: false,
   };
 
   handleShow = (value) => {
@@ -18,12 +20,17 @@ export class Home extends React.Component {
     this.setState({ drLicenseIsOpen: value });
   };
 
+  handleShowMedicalCertificate = (value) => {
+    this.setState({ medicalCertificate: value });
+  };
+
   render() {
     return (
       <>
         <Headers
           show={this.handleShow}
           showFormLicense={this.handleShowDriverLicense}
+          showMedicalCertificate ={this.handleShowMedicalCertificate}
         ></Headers>
         <main>
           <div className="wrapper">
@@ -33,7 +40,12 @@ export class Home extends React.Component {
                 showFormLicense={this.handleShowDriverLicense}
               ></DriverLicense>
             )}
-            <ExpiryDriverLicense></ExpiryDriverLicense>
+            {this.state.medicalCertificate && (
+              <DriverMedicalCertificate
+              showMedicalCertificate={this.handleShowMedicalCertificate}
+              ></DriverMedicalCertificate>
+            )}
+            {(!this.state.isOpen && !this.state.drLicenseIsOpen && !this.state.medicalCertificate) && <ExpiryDriverLicense></ExpiryDriverLicense>}
           </div>
         </main>
       </>

@@ -6,12 +6,12 @@ import Button from "react-bootstrap/Button";
 import { Formik } from "formik";
 import * as yup from "yup";
 
-class DriverLicense extends React.Component {
+class DriverMedicalCertificate extends React.Component {
   constructor() {
     super();
     this.submitForm = this.submitForm.bind(this);
     this.validationsSchema = this.validationsSchema.bind(this);
-    this.closeDriverLicense = this.closeDriverLicense.bind(this);
+    this.closeMedicalCertificate = this.closeMedicalCertificate.bind(this);
   }
 
   state = {
@@ -23,14 +23,29 @@ class DriverLicense extends React.Component {
     ],
   };
 
-  closeDriverLicense() {
-    this.props.showFormLicense(false);
+  componentDidMount() {
+    axios
+      .get(
+        process.env.REACT_APP_NO_DRIVER_MEDICAL_CERTIFICATE
+      )
+      .then((res) => {
+        this.setState({ drivers: res.data });
+      });
+  }
+
+  closeMedicalCertificate() {
+    this.props.showMedicalCertificate(false);
+  }
+  
+  row() {
+    return this.state.drivers.map((el, index) => {
+      return <option key={index}>{el.lastName + " " + el.firstName}</option>;
+    });
   }
 
   submitForm(value) {
-    let arrEmp = Object.values(value)[4].split(" ");
-
-    fetch(process.env.REACT_APP_DRIVER_LICENSES, {
+    let arrEmp = Object.values(value)[3].split(" ");
+    fetch(process.env.REACT_APP_DRIVER_MEDICAL_CERTIFICATE, {
       method: "POST",
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -44,26 +59,9 @@ class DriverLicense extends React.Component {
         serialNumber: value.serialNumber,
         issueDate: value.issueDate,
         expiryDate: value.expiryDate,
-        category: value.category,
       }),
     });
-     this.closeDriverLicense();
-  }
-
-  componentDidMount() {
-    axios
-      .get(
-        process.env.REACT_APP_NO_DRIVER_LICENSE
-      )
-      .then((res) => {
-        this.setState({ drivers: res.data });
-      });
-  }
-
-  row() {
-    return this.state.drivers.map((el, index) => {
-      return <option key={index}>{el.lastName + " " + el.firstName}</option>;
-    });
+    this.closeMedicalCertificate();
   }
 
   validationsSchema() {
@@ -71,36 +69,16 @@ class DriverLicense extends React.Component {
       serialNumber: yup
         .string()
         .typeError("Должно быть строкой")
-        .required("Обязательно для заполнения")
-        .test(
-          'serialNumber',
-          'Удостоверение с таким номеров уже существует',
-          async (value) => {
-            if (value !== undefined) {
-              const res = await fetch(
-               `${process.env.REACT_APP_IS_SERIAL_NUMBER}${value}`
-              );
-
-              if (await res.json()) {
-                return false;
-              }
-              return true;
-            }
-          }
-        ),
+        .required("Обязательно для заполнения"),
       issueDate: yup
         .date()
-        .typeError("Выберите дату выдачи прав")
+        .typeError("Выберите дату выдачи медицинской справки")
         .required("Обязательно для заполнения"),
       expiryDate: yup
         .date()
         .min(new Date(1950, 0, 1))
         .max(new Date(2050, 11, 31))
-        .typeError("Выберите дату окончания прав")
-        .required("Обязательно для заполнения"),
-      category: yup
-        .string()
-        .typeError("Введите категорию")
+        .typeError("Выберите дату окончания медицинской справки")
         .required("Обязательно для заполнения"),
       fullName: yup
         .string()
@@ -112,13 +90,12 @@ class DriverLicense extends React.Component {
   render() {
     return (
       <>
-      <h3>Добавление водительского удостоверения</h3>
+        <h3>Добавление медицинской справки</h3>
         <Formik
           initialValues={{
             serialNumber: "",
             issueDate: "",
             expiryDate: "",
-            category: "",
             fullName: "",
           }}
           validateOnBlur={true}
@@ -192,22 +169,6 @@ class DriverLicense extends React.Component {
               </Form.Row>
 
               <Form.Row>
-                <Form.Group as={Col} controlId="formGridCategory">
-                  <Form.Label>Категории</Form.Label>
-                  <Form.Control
-                    type={"text"}
-                    name={"category"}
-                    placeholder="Введите категории"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.category}
-                  />
-
-                  {touched.category && errors.category ? (
-                    <p>{errors.category}</p>
-                  ) : null}
-                </Form.Group>
-
                 <Form.Group as={Col} controlId="formGridFullName">
                   <Form.Label>ФИО водителя</Form.Label>
                   <Form.Control
@@ -239,7 +200,7 @@ class DriverLicense extends React.Component {
               <Button
                 variant="primary"
                 type={"button"}
-                onClick={this.closeDriverLicense}
+                onClick={this.closeMedicalCertificate}
               >
                 Закрыть
               </Button>
@@ -251,4 +212,4 @@ class DriverLicense extends React.Component {
   }
 }
 
-export default DriverLicense;
+export default DriverMedicalCertificate;

@@ -8,14 +8,25 @@ class Headers extends React.Component {
     super();
     this.addEmployee = this.addEmployee.bind(this);
     this.addDriverLicense = this.addDriverLicense.bind(this);
+    this.addMedicalCertificate = this.addMedicalCertificate.bind(this);
   }
 
   addEmployee() {
     this.props.show(true);
+    this.props.showFormLicense(false);
+    this.props.showMedicalCertificate(false);
   }
 
   addDriverLicense() {
     this.props.showFormLicense(true);
+    this.props.show(false);
+    this.props.showMedicalCertificate(false);
+  }
+
+  addMedicalCertificate() {
+    this.props.showMedicalCertificate(true);
+    this.props.showFormLicense(false);
+    this.props.show(false);
   }
 
   render() {
@@ -63,7 +74,7 @@ class Headers extends React.Component {
                 </Button>
               </li>
               <li>
-                <Button variant="success">Добавить медсправку</Button>
+                <Button variant="success" onClick={this.addMedicalCertificate}>Добавить медсправку</Button>
               </li>
             </ul>
           </nav>

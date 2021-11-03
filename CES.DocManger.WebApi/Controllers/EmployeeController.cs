@@ -179,6 +179,35 @@ namespace CES.DocManger.WebApi.Controllers
             return dates;
         }
 
+        [HttpGet("expiringDriverLicense/noDriverMedicalCertificate")]
+        public ICollection<NoEmployeDriverMedicalCertificate> GetNoMedicalCertificate()
+        {
+            List<NoEmployeDriverMedicalCertificate> list = new();
+
+            var query = from b in _context.Employees
+                        join p in _context.DriverMedicalCertificate
+                            on b.Id equals p.EmployeeId into grouping
+                        from p in grouping.DefaultIfEmpty()
+                        select new
+                        {
+                            FirstName = b.FirstName,
+                            LastName = b.LastName,
+                            SerialNumber = p.SerialNumber
+                        };
+
+            foreach (var item in query.Where(c => c.SerialNumber == null))
+            {
+
+                list.Add(new NoEmployeDriverMedicalCertificate()
+                {
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
+                    SerialNumber = item.SerialNumber
+                });
+
+            }
+            return list;
+        }
 
         [HttpPost]
         public async Task<int> CreateEmployee([FromBody] EmployeeView model)
