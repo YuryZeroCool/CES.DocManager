@@ -32,9 +32,9 @@ namespace CES.DocManger.WebApi
                                 .WithMethods("PUT", "POST", "DELETE", "GET").AllowAnyMethod().AllowAnyHeader();
                     });
             });
-            //services.AddDbContext<DocMangerContex>(options =>
-            //options.UseSqlServer(Configuration.GetConnectionString("CONNECTION_STRING")));
-            services.AddDbContext<DocMangerContex>();
+            services.AddDbContext<DocMangerContex>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("CONNECTION_STRING")));
+            //services.AddDbContext<DocMangerContex>();
             services.AddControllersWithViews();
             services.AddSwaggerGen();
             services.AddMapper();

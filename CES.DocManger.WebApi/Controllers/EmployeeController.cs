@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using CES.DocManger.WebApi.Models.Request;
 using CES.DocManger.WebApi.Models.Response;
+using CES.DocManger.WebApi.Models.Response.DriverMedicalCertificate;
+using CES.DocManger.WebApi.Models.Response.Employees;
 using CES.Infra;
 using CES.Infra.Models;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Data;
-using Microsoft.AspNetCore.Cors;
-using CES.DocManger.WebApi.Models.Response.Employees;
-using CES.DocManger.WebApi.Models.Response.DriverMedicalCertificate;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CES.DocManger.WebApi.Controllers
 {
@@ -207,6 +207,77 @@ namespace CES.DocManger.WebApi.Controllers
 
             }
             return list;
+        }
+
+        [HttpGet("AllInformationEmployee/{employeeFullName}")]
+        public Object GetAllInformationEmployee(int employeeFullName)
+        {
+            Object query = null;
+            if (_context.DriverMedicalCertificate.Any(p => p.EmployeeId == employeeFullName)
+                && _context.DriverLicenses.Any(p => p.EmployeeId == employeeFullName))
+            {
+                query = from b in _context.Employees
+                        join p in _context.DriverLicenses on b.Id equals p.EmployeeId
+                        join c in _context.DriverMedicalCertificate on b.Id equals c.EmployeeId
+                        where b.Id == employeeFullName
+                        select new
+                        {
+                            b.Id,
+                            b.FirstName,
+                            b.LastName,
+                            b.PersonnelNumber,
+                            b.BthDate,
+                            DivisionNumber = b.DivisionNumber.Name,
+                            p.IssueDate,
+                            p.ExpiryDate,
+                            p.SerialNumber,
+                            p.Category,
+                            NumberMedicalCertificate = c.SerialNumber,
+                            IssueDateMedicalCertificate = c.IssueDate,
+                            ExpiryDateMedicalCertificate = c.ExpiryDate
+                        };
+                return query;
+            }
+
+            if (_context.DriverMedicalCertificate.Any(p => p.EmployeeId == employeeFullName))
+            {
+                query = from b in _context.Employees
+                        join c in _context.DriverMedicalCertificate on b.Id equals c.EmployeeId
+                        where b.Id == employeeFullName
+                        select new
+                        {
+                            b.Id,
+                            b.FirstName,
+                            b.LastName,
+                            b.PersonnelNumber,
+                            b.BthDate,
+                            DivisionNumber = b.DivisionNumber.Name,
+                            NumberMedicalCertificate = c.SerialNumber,
+                            IssueDateMedicalCertificate = c.IssueDate,
+                            ExpiryDateMedicalCertificate = c.ExpiryDate
+                        };
+                return query;
+            }
+            else
+            {
+                query = from b in _context.Employees
+                        join p in _context.DriverLicenses on b.Id equals p.EmployeeId
+                        where b.Id == employeeFullName
+                        select new
+                        {
+                            b.Id,
+                            b.FirstName,
+                            b.LastName,
+                            b.PersonnelNumber,
+                            b.BthDate,
+                            DivisionNumber = b.DivisionNumber.Name,
+                            p.IssueDate,
+                            p.ExpiryDate,
+                            p.SerialNumber,
+                            p.Category,
+                        };
+            }
+            return query;
         }
 
         [HttpPost]
