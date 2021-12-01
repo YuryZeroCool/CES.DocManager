@@ -5,11 +5,11 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './application/App';
 import registerServiceWorker from './registerServiceWorker';
 
-const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
+//const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
 
 ReactDOM.render(
-  <BrowserRouter basename={baseUrl}>
+  <BrowserRouter basename={"http://localhost:3000/login"}>
     <App />
   </BrowserRouter>,
   rootElement

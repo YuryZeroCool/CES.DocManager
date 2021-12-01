@@ -1,327 +1,150 @@
 ﻿using AutoMapper;
-using CES.DocManger.WebApi.Models.Request;
-using CES.DocManger.WebApi.Models.Response;
-using CES.DocManger.WebApi.Models.Response.DriverMedicalCertificate;
-using CES.DocManger.WebApi.Models.Response.Employees;
-using CES.Infra;
-using CES.Infra.Models;
-using Microsoft.AspNetCore.Cors;
+using CES.DocManger.WebApi.Models;
+using CES.Domain.Models.Request.Employee;
+using CES.Domain.Models.Response.Employees;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CES.DocManger.WebApi.Controllers
 {
-    [EnableCors("MyPolicy")]
+    //[EnableCors("MyPolicy")]
 
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private readonly DocMangerContex _context;
+        private readonly IMediator _mediator;
 
         private readonly IMapper _mapper;
 
-        public EmployeeController(DocMangerContex context, IMapper mapper)
+        public EmployeeController(IMediator mediator, IMapper mapper)
         {
-            _context = context;
+            _mediator = mediator;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public IEnumerable<EmployeeView> GetAllEmployees()
+        public async Task<IEnumerable<GetEmployeeFullNameResponse>> GetAllEmployees()
         {
-            var data = _context.Employees.Include(p => p.DivisionNumber).ToList();
-            return _mapper.Map<List<EmployeeView>>(data);
+            var response = await _mediator.Send(new GetEmployeeFullNameRequest());
+            return _mapper.Map<IEnumerable<GetEmployeeFullNameResponse>>(response);
         }
 
         [HttpGet("isPersonalNumber/{personalNumber}")]
         public async Task<bool> GetIsPersonalNumber(int personalNumber)
         {
-           var number = await _context.Employees.FirstOrDefaultAsync(x => x.PersonnelNumber == personalNumber);
-            if (number != null) return true;
-            return false;
-
+           return await _mediator.Send(new GetIsValidNumberNumberRequest { Id = personalNumber });
         }
 
         [HttpGet("firstName/{divisionNumber}")]
-        public IEnumerable<EmployeeFirstLastName> GetFirstLastName( string divisionNumber)
+        public async Task<IEnumerable<GetEmployeeFullNameResponse>> GetShiftEmployees(string divisionNumber)
         {
-            var data = _context.Divisions.FirstOrDefault(x => x.Name == divisionNumber);
-            var emp = _context.Employees.Where(x => x.DivisionNumber == data).ToList();
-            return emp.Select(x => new EmployeeFirstLastName
-            {
-                Id= x.Id,
-               
-                FirstName = x.FirstName,
-
-                LastName = x.LastName,
-
-            }).ToList();
-
+            var response = await _mediator.Send(new GetEmployeeFullNameRequest() { divisionNumber = divisionNumber});
+            return _mapper.Map<IEnumerable<GetEmployeeFullNameResponse>>(response);
         }
 
-        [HttpGet("{id}")]
-        public async Task<EmployeeView> GetEmployee(int id)
+        //[HttpGet("{id}")]
+        //public async Task<EmployeeView> GetEmployee(int id)
+        //{
+        //    var date = await _context.Employees.Join(_context.Divisions,
+        //       p => p.DivisionNumberId,
+        //       c => c.Id,
+        //       (p, c) => new
+        //       {
+        //           p.Id,
+        //           p.FirstName,
+        //           p.LastName,
+        //           p.PersonnelNumber,
+        //           DivisionNumber = c.Name,
+        //           p.BthDate,
+        //       }).FirstOrDefaultAsync(p => p.Id == id);
+
+        //    return new EmployeeView
+        //    {
+        //        Id = date.Id,
+        //        LastName = date.LastName,
+        //        FirstName = date.FirstName,
+        //        PersonnelNumber = date.PersonnelNumber,
+        //        DivisionNumber = date.DivisionNumber,
+        //        BirthDate = date.BthDate
+        //    };
+        //}
+
+        [HttpGet("noDriverLicense")]
+        public async Task<IEnumerable<GetEmployeeFullNameResponse>> GetListEmployeesNoDriverLicense()
         {
-            var date = await _context.Employees.Join(_context.Divisions,
-               p => p.DivisionNumberId,
-               c => c.Id,
-               (p, c) => new
-               {
-                   p.Id,
-                   p.FirstName,
-                   p.LastName,
-                   p.PersonnelNumber,
-                   DivisionNumber = c.Name,
-                   p.BthDate,
-               }).FirstOrDefaultAsync(p => p.Id == id);
-
-            return new EmployeeView
-            {
-                Id = date.Id,
-                LastName = date.LastName,
-                FirstName = date.FirstName,
-                PersonnelNumber = date.PersonnelNumber,
-                DivisionNumber = date.DivisionNumber,
-                BirthDate = date.BthDate
-            };
-        }
-
-        [HttpGet("expiringDriverLicense/noDriverLicense")]
-        public ICollection<NoEmployeDriverlicense> GetNoDriverLicense()
-        {
-            List<NoEmployeDriverlicense> list = new();
-                       
-            var query = from b in _context.Employees
-                        join p in _context.DriverLicenses
-                            on b.Id equals p.EmployeeId into grouping
-                        from p in grouping.DefaultIfEmpty()
-                        select new {
-                            FirstName = b.FirstName,
-                        LastName = b.LastName,
-                        SerialNumber= p.SerialNumber
-                        };
-            
-            foreach (var item in query.Where(c=>c.SerialNumber==null))
-            {
-
-                list.Add(new NoEmployeDriverlicense()
-                {
-                    FirstName = item.FirstName,
-                    LastName = item.LastName,
-                    SerialNumber = item.SerialNumber
-                });
-   
-            }
-            return list;
+            return await _mediator.Send(new ListEmployeesNoDriverLicenseRequest()); 
         }
 
         [HttpGet("expiringDriverLicense/{numberMonths}")]
-        public ICollection<DriverEndLicense> GetExpiringDriverLicense(int numberMonths)
+        public async Task<IEnumerable<ExpiringDocumentEmployeeResponse>>  GetExpiringDriverLicense(int numberMonth)
         {
-            List<DriverEndLicense> dates = new ();
-            var date = _context.DriverLicenses.Join(_context.Employees,
-                p => p.EmployeeId,
-                c => c.Id,
-                (p, c) => new
-                {
-                    c.FirstName,
-                    c.LastName,
-                    c.BthDate,
-                    DivisionNumber = c.DivisionNumber.Name,
-                    p.ExpiryDate,
-                }).Where(p => p.ExpiryDate <= DateTime.Now.AddMonths(numberMonths));
-            foreach (var item in date)
-            {
-                dates.Add(new DriverEndLicense()
-                {
-                    FirstName = item.FirstName,
-                    LastName = item.LastName,
-                    DivisionNumber = item.DivisionNumber,
-                    BirthDate = item.BthDate,
-                    ExpiryDate = item.ExpiryDate,
-                }) ;
-            };
-            return  dates;
+            return await _mediator.Send(new GetExpiringDocumentEmployeeRequest() {numberMonth = numberMonth});
+
         }
 
         [HttpGet("expiringDriverMedicalCertificate/{numberMonths}")]
-        public ICollection<ExpiringDriverMedicalCertificateView> GetExpiringDriverMedicalCertificate(int numberMonths)
+        public async  Task<IEnumerable<ExpiringDocumentEmployeeResponse>> GetExpiringDriverMedicalCertificate(int numberMonth)
         {
-            List<ExpiringDriverMedicalCertificateView> dates = new();
-            var date = _context.DriverMedicalCertificate.Join(_context.Employees,
-                p => p.EmployeeId,
-                c => c.Id,
-                (p, c) => new
-                {
-                    c.FirstName,
-                    c.LastName,
-                    c.BthDate,
-                    DivisionNumber = c.DivisionNumber.Name,
-                    p.ExpiryDate,
-                }).Where(p => p.ExpiryDate <= DateTime.Now.AddMonths(numberMonths));
-            foreach (var item in date)
-            {
-                dates.Add(new ExpiringDriverMedicalCertificateView()
-                {
-                    FirstName = item.FirstName,
-                    LastName = item.LastName,
-                    DivisionNumber = item.DivisionNumber,
-                    BirthDate = item.BthDate,
-                    ExpiryDate = item.ExpiryDate,
-                });
-            };
-            return dates;
+            return await _mediator.Send(new GetExpiringDocumentEmployeeRequest() 
+            { 
+                numberMonth = numberMonth,
+                nameDocument = "DriverMedicalCertificate"
+            });
         }
 
-        [HttpGet("expiringDriverLicense/noDriverMedicalCertificate")]
-        public ICollection<NoEmployeDriverMedicalCertificate> GetNoMedicalCertificate()
+        [HttpGet("medicalCertificate/noDriverMedicalCertificate")]
+        public async Task <IEnumerable<GetEmployeeFullNameResponse>> GetNoMedicalCertificate()
         {
-            List<NoEmployeDriverMedicalCertificate> list = new();
-
-            var query = from b in _context.Employees
-                        join p in _context.DriverMedicalCertificate
-                            on b.Id equals p.EmployeeId into grouping
-                        from p in grouping.DefaultIfEmpty()
-                        select new
-                        {
-                            FirstName = b.FirstName,
-                            LastName = b.LastName,
-                            SerialNumber = p.SerialNumber
-                        };
-
-            foreach (var item in query.Where(c => c.SerialNumber == null))
-            {
-
-                list.Add(new NoEmployeDriverMedicalCertificate()
-                {
-                    FirstName = item.FirstName,
-                    LastName = item.LastName,
-                    SerialNumber = item.SerialNumber
-                });
-
-            }
-            return list;
+            return await _mediator.Send(new GetNoMedicalCertificateRequest());
         }
 
-        [HttpGet("AllInformationEmployee/{employeeFullName}")]
-        public Object GetAllInformationEmployee(int employeeFullName)
+        [HttpGet("AllInformationEmployee")]
+        public async Task<object> GetAllInformationEmployee([FromQuery()]GetEmployeeViewModel model )
         {
-            Object query = null;
-            if (_context.DriverMedicalCertificate.Any(p => p.EmployeeId == employeeFullName)
-                && _context.DriverLicenses.Any(p => p.EmployeeId == employeeFullName))
-            {
-                query = from b in _context.Employees
-                        join p in _context.DriverLicenses on b.Id equals p.EmployeeId
-                        join c in _context.DriverMedicalCertificate on b.Id equals c.EmployeeId
-                        where b.Id == employeeFullName
-                        select new
-                        {
-                            b.Id,
-                            b.FirstName,
-                            b.LastName,
-                            b.PersonnelNumber,
-                            b.BthDate,
-                            DivisionNumber = b.DivisionNumber.Name,
-                            p.IssueDate,
-                            p.ExpiryDate,
-                            p.SerialNumber,
-                            p.Category,
-                            NumberMedicalCertificate = c.SerialNumber,
-                            IssueDateMedicalCertificate = c.IssueDate,
-                            ExpiryDateMedicalCertificate = c.ExpiryDate
-                        };
-                return query;
-            }
-
-            if (_context.DriverMedicalCertificate.Any(p => p.EmployeeId == employeeFullName))
-            {
-                query = from b in _context.Employees
-                        join c in _context.DriverMedicalCertificate on b.Id equals c.EmployeeId
-                        where b.Id == employeeFullName
-                        select new
-                        {
-                            b.Id,
-                            b.FirstName,
-                            b.LastName,
-                            b.PersonnelNumber,
-                            b.BthDate,
-                            DivisionNumber = b.DivisionNumber.Name,
-                            NumberMedicalCertificate = c.SerialNumber,
-                            IssueDateMedicalCertificate = c.IssueDate,
-                            ExpiryDateMedicalCertificate = c.ExpiryDate
-                        };
-                return query;
-            }
-            else
-            {
-                query = from b in _context.Employees
-                        join p in _context.DriverLicenses on b.Id equals p.EmployeeId
-                        where b.Id == employeeFullName
-                        select new
-                        {
-                            b.Id,
-                            b.FirstName,
-                            b.LastName,
-                            b.PersonnelNumber,
-                            b.BthDate,
-                            DivisionNumber = b.DivisionNumber.Name,
-                            p.IssueDate,
-                            p.ExpiryDate,
-                            p.SerialNumber,
-                            p.Category,
-                        };
-            }
-            return query;
+            return await _mediator.Send(_mapper.Map<GetAllInformationEmployeeRequest>(model));
         }
 
         [HttpPost]
-        public async Task<int> CreateEmployee([FromBody] EmployeeView model)
+        public async Task CreateEmployee([FromBody]CreateEmployeeViewModel model)
         {
-            var employee =  _mapper.Map<EmployeeEntity>(model);
-            employee.DivisionNumberId = _context.Divisions
-                .FirstOrDefault(x => x.Name == model.DivisionNumber).Id;
-          
-           await _context.Employees.AddAsync(employee);
-            await _context.SaveChangesAsync();
-            return employee.Id;
+            await _mediator.Send(_mapper.Map<CreateEmployeeRequest>(model));
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] EmployeeView model)
-        {
-            var employee = await _context.Employees.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> Put(int id, [FromBody] EmployeeView model)
+        //{
+        //    var employee = await _context.Employees.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+        //    if (employee == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var newEmployee = _mapper.Map<EmployeeEntity>(model);
-            newEmployee.Id = id;
-            _context.Employees.Update(newEmployee);
-            await _context.SaveChangesAsync();
+        //    var newEmployee = _mapper.Map<EmployeeEntity>(model);
+        //    newEmployee.Id = id;
+        //    _context.Employees.Update(newEmployee);
+        //    await _context.SaveChangesAsync();
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmployee(int id)
-        {
-            var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteEmployee(int id)
+        //{
 
-            _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
 
-            return Ok();
-        }
+        //    var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == id);
+        //    if (employee == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _context.Employees.Remove(employee);
+        //    await _context.SaveChangesAsync();
+
+        //    return Ok();
+        //}
     }
 }

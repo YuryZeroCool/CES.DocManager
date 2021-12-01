@@ -1,8 +1,6 @@
 ﻿using CES.Infra.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-
 
 namespace CES.Infra.Config
 {

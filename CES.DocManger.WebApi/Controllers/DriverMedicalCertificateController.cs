@@ -1,39 +1,30 @@
 ﻿using AutoMapper;
-using CES.DocManger.WebApi.Models.Response.DriverMedicalCertificate;
-using CES.Infra;
-using CES.Infra.Models;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Threading.Tasks;
+using CES.DocManger.WebApi.Models;
+using CES.Domain.Models.Request.DriverMedicalCertificate;
+using MediatR;
 
 namespace CES.DocManger.WebApi.Controllers
 {
-    [EnableCors("MyPolicy")]
+   // [EnableCors("MyPolicy")]
 
     [Route("api/[controller]")]
     [ApiController]
     public class DriverMedicalCertificateController : ControllerBase
     {
-        private readonly DocMangerContex _context;
-
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
-        public DriverMedicalCertificateController(DocMangerContex context, IMapper mapper)
+        public DriverMedicalCertificateController(IMediator mediator, IMapper mapper)
         {
             _mapper = mapper;
-            _context = context;
+            _mediator = mediator;
         }
         [HttpPost]
-        public async Task<int> Post([FromBody] DriverMedicalCertificatecView model)
+        public async Task Post([FromBody] CreateMedicalCertificateViewModel model)
         {
-            var license = _mapper.Map<DriverMedicalCertificateEntity>(model);
-            license.EmployeeId = _context.Employees
-                .FirstOrDefault(x => x.FirstName == model.FirstName && x.LastName == model.LastName).Id;
-            await _context.DriverMedicalCertificate.AddAsync(license);
-            await _context.SaveChangesAsync();
-            return license.Id;
+            await _mediator.Send(_mapper.Map<CreateMedicalCertificateViewModel, CreateMedicalCertificateRequest>(model));
         }
-
     }
 }

@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using CES.DocManger.WebApi.Models.Response.DriverLicense;
-using CES.Infra;
-using CES.Infra.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Threading.Tasks;
+using CES.DocManger.WebApi.Models;
+using CES.Domain.Models.Request.DriverLicense;
+using MediatR;
 
 namespace CES.DocManger.WebApi.Controllers
 {
@@ -15,33 +13,27 @@ namespace CES.DocManger.WebApi.Controllers
     [ApiController]
     public class DriverLicensesController : ControllerBase
     {
-        private readonly DocMangerContex _context;
 
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
-        public DriverLicensesController(DocMangerContex context, IMapper mapper)
+        public DriverLicensesController( IMediator mediator, IMapper mapper)
         {
+            _mediator = mediator;
             _mapper = mapper;
-            _context = context;
         }
 
         [HttpGet("isPersonalSerialNumber/{SerialNumber}")]
         public async Task<bool> GetIsPersonalNumber(string SerialNumber)
         {
-            var serialNumber = await _context.DriverLicenses.FirstOrDefaultAsync(x => x.SerialNumber == SerialNumber);
-            if (serialNumber != null) return true;
-            return false;
+            return  await _mediator.Send(new IsPersonalSerialNumberRequest() {SerialNumber = SerialNumber});
+
         }
 
         [HttpPost]
-        public async Task<int> Post([FromBody] DriverLicense model)
+        public async Task Post([FromBody] CreateDriverLicenseViewModel model)
         {
-            var license = _mapper.Map<DriverLicenseEntity>(model);
-            license.EmployeeId =   _context.Employees
-                .FirstOrDefault(x => x.FirstName==model.FirstName &&  x.LastName==model.LastName ).Id;
-            await _context.DriverLicenses.AddAsync(license);
-             await _context.SaveChangesAsync();
-            return license.Id;
+             await _mediator.Send(_mapper.Map<CreateDriverLicenseViewModel, CreateDriverLicenseRequest>(model));
         }
     }
 }

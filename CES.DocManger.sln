@@ -5,7 +5,11 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CES.DocManger.WebApi", "CES.DocManger.WebApi\CES.DocManger.WebApi.csproj", "{F451BC0B-BB86-4EE4-80B6-ED9E8388640F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CES.Infra", "CES.Infra\CES.Infra.csproj", "{D070F29C-A5B4-4AB3-B7A2-DE9D51C3FA46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CES.Infra", "CES.Infra\CES.Infra.csproj", "{D070F29C-A5B4-4AB3-B7A2-DE9D51C3FA46}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CES.InfraSecurity", "CES.InfraSecurity\CES.InfraSecurity.csproj", "{DC3BC63F-AE6E-4F51-89CC-EB94601BA662}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CES.Domain", "CES.Domain\CES.Domain.csproj", "{EE9DAA3E-10ED-4110-8F6E-391FE2BB7FBA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{D070F29C-A5B4-4AB3-B7A2-DE9D51C3FA46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D070F29C-A5B4-4AB3-B7A2-DE9D51C3FA46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D070F29C-A5B4-4AB3-B7A2-DE9D51C3FA46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC3BC63F-AE6E-4F51-89CC-EB94601BA662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC3BC63F-AE6E-4F51-89CC-EB94601BA662}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC3BC63F-AE6E-4F51-89CC-EB94601BA662}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC3BC63F-AE6E-4F51-89CC-EB94601BA662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE9DAA3E-10ED-4110-8F6E-391FE2BB7FBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE9DAA3E-10ED-4110-8F6E-391FE2BB7FBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE9DAA3E-10ED-4110-8F6E-391FE2BB7FBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE9DAA3E-10ED-4110-8F6E-391FE2BB7FBA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
