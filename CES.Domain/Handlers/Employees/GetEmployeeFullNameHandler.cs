@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CES.Domain.Exception;
 using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Response.Employees;
 using CES.Infra;
@@ -7,6 +8,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,18 +28,23 @@ namespace CES.Domain.Handlers.Employees
 
         public async Task<IEnumerable<GetEmployeeFullNameResponse>> Handle(GetEmployeeFullNameRequest request, CancellationToken cancellationToken)
         {
-            if(request.divisionNumber != null)
+       
+            if (request.divisionNumber != null)
             {
-                var division =  _mangerContex.Divisions.FirstOrDefault(x => x.Name == request.divisionNumber);
+                var division = _mangerContex.Divisions.FirstOrDefault(x => x.Name == request.divisionNumber);
+
+                if (division == null) throw new System.Exception("Не существует такого подразделение");
                 var emp = _mangerContex.Employees.Where(x => x.DivisionNumber == division).ToList();
+
+                if (emp == null) throw new System.Exception("Нет сотрудников");
                 return await Task.FromResult(emp.Select(x => new GetEmployeeFullNameResponse
                 {
                     FirstName = x.FirstName,
-                   LastName = x.LastName,
+                    LastName = x.LastName,
                 }));
             }
             List<EmployeeEntity> data = await _mangerContex.Employees.ToListAsync();
-            return  _mapper.Map<IEnumerable<GetEmployeeFullNameResponse>>(data);
+            return _mapper.Map<IEnumerable<GetEmployeeFullNameResponse>>(data); 
         }
     }
 }

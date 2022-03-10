@@ -1,25 +1,31 @@
 {
+  
+  "include": [
+    "./src/"
+  ],
+  "exclude": [
+    "node_modules/*"
+  ],
+
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2016",
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
     "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
+    "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react"
-  },
-  "include": [
-    "src/application"
-  ]
+    "noEmit": true
+  }
 }

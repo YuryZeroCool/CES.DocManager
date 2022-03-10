@@ -1,31 +1,26 @@
 ﻿using AutoMapper;
-using CES.DocManger.WebApi.Models.Response;
-using CES.DocManger.WebApi.Security;
-using CES.Infra;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using CES.DocManger.WebApi.Models;
 using CES.Domain.Models.Request.Departments;
 using CES.Domain.Models.Response.Departments;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
 namespace CES.DocManger.WebApi.Controllers
 {
-    [EnableCors("MyPolicy")]
-    [Route("api/[controller]")]
 
+    [EnableCors("MyPolicy")]
     [ApiController]
-    //[Authorize(Roles = "admin")]
+    [Route("api/[controller]")]
     public class DivisionController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
-
+       
         public DivisionController(IMediator mediator, IMapper mapper)
         {
             _mapper = mapper;
@@ -33,6 +28,8 @@ namespace CES.DocManger.WebApi.Controllers
 
         }
 
+        [Authorize(AuthenticationSchemes =
+            JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet]
         public async Task<IEnumerable<GetDivisionNumberResponse>> GetAllDivisions()
         {

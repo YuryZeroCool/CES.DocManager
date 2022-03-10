@@ -1,0 +1,60 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using CES.DocManger.WebApi.Security;
+using CES.Domain.Interfaces;
+using CES.InfraSecurity.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+
+namespace CES.Domain.Security
+{
+     
+    public class JwtGeneratorAccessToken : IJwtGenerator
+    {
+        private readonly SymmetricSecurityKey _key;
+
+        public JwtGeneratorAccessToken(IConfiguration config)
+        {
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey:TOKEN_KEY_AccessToken"]));
+
+        }
+        public async Task<string> CreateTokenAsync(UserEntity userEntity, IList<string> roles)
+        {
+            var now = DateTime.UtcNow;
+
+            var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
+
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.Name,userEntity.DisplayName),
+              
+            };
+
+            claims.AddRange(roles.Select(item => new Claim(ClaimTypes.Role, item)));
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Issuer = AuthOptions.ISSUER,
+                Audience = AuthOptions.AUDIENCE,
+                IssuedAt = now,
+                Expires = DateTime.Now.AddMinutes(5),
+               SigningCredentials = credentials
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return  await Task.FromResult(tokenHandler.WriteToken(token));
+        }
+
+        public bool ValidateToken(string tokenRefresh)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

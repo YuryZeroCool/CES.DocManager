@@ -6,6 +6,6 @@
 
         public const string AUDIENCE = "MyAuthClient"; // потребитель токена
 
-        public const int LIFETIME = 1; // время жизни токена - 1 минута
+        public const int LIFETIME = 5; // время жизни токена - 1 минута
     }
 }

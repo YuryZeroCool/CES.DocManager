@@ -5,7 +5,9 @@ using CES.Domain.Models.Request.DriverMedicalCertificate;
 using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Response.Departments;
 using CES.Domain.Models.Response.Employees;
+using CES.Domain.Security.User.Registration;
 using CES.Infra.Models;
+using CES.InfraSecurity.Models;
 
 namespace CES.Domain.Mapper
 {
@@ -34,6 +36,7 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
                 .ForMember(dest => dest.Employee, opt => opt.Ignore());
 
+            //CreateDriverLicenseRequest => DriverLicenseEntity
             CreateMap<CreateDriverLicenseRequest, DriverLicenseEntity>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.SerialNumber, opt => opt.MapFrom(src => src.SerialNumber))
@@ -46,6 +49,19 @@ namespace CES.Domain.Mapper
             CreateMap<Division,GetDivisionNumberResponse>()
                 .ForMember(dest => dest.DivisionNumber,opt=>opt.MapFrom(src=>src.Name));
             
+            //Create User 
+            CreateMap<UserModelRequest, UserEntity>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.EmailAddress))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.EmailAddress));
+
+
+
+
+
 
             //CreateMap<EmployeeEntity,GetEmployeeFirstLastNameResponse>()
             //    .ForMember(dest=> dest.Id, opt=>opt.Ignore())

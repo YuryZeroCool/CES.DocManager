@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CES.InfraSecurity.Models
 {
-    public class DocMangerIdentityDbContext : IdentityDbContext<IdentityUser>
+    public class DocMangerIdentityDbContext : IdentityDbContext<UserEntity, AppRoleEntity, string>
     {
         public DocMangerIdentityDbContext(DbContextOptions<DocMangerIdentityDbContext> options)
-            :base(options) 
+            : base(options)
         {
             //Database.EnsureCreated();
         }

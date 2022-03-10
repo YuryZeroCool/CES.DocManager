@@ -9,7 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CES.Infra", "CES.Infra\CES.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CES.InfraSecurity", "CES.InfraSecurity\CES.InfraSecurity.csproj", "{DC3BC63F-AE6E-4F51-89CC-EB94601BA662}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CES.Domain", "CES.Domain\CES.Domain.csproj", "{EE9DAA3E-10ED-4110-8F6E-391FE2BB7FBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CES.Domain", "CES.Domain\CES.Domain.csproj", "{EE9DAA3E-10ED-4110-8F6E-391FE2BB7FBA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CES.XmlFormat", "CES.XmlFormat\CES.XmlFormat.csproj", "{E8A563FE-F111-4645-99E3-9B2A17D601EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CES.DocManager.Tests", "CES.DocManager.Tests\CES.DocManager.Tests.csproj", "{1F62226E-923E-4AE3-88C5-419DCFB25DC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{EE9DAA3E-10ED-4110-8F6E-391FE2BB7FBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE9DAA3E-10ED-4110-8F6E-391FE2BB7FBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE9DAA3E-10ED-4110-8F6E-391FE2BB7FBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8A563FE-F111-4645-99E3-9B2A17D601EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8A563FE-F111-4645-99E3-9B2A17D601EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8A563FE-F111-4645-99E3-9B2A17D601EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8A563FE-F111-4645-99E3-9B2A17D601EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F62226E-923E-4AE3-88C5-419DCFB25DC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F62226E-923E-4AE3-88C5-419DCFB25DC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F62226E-923E-4AE3-88C5-419DCFB25DC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F62226E-923E-4AE3-88C5-419DCFB25DC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

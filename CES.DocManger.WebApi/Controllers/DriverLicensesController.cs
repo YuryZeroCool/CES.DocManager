@@ -8,7 +8,7 @@ using MediatR;
 
 namespace CES.DocManger.WebApi.Controllers
 {
-    [EnableCors("MyPolicy")]
+   // [EnableCors("MyPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class DriverLicensesController : ControllerBase

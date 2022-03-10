@@ -25,8 +25,6 @@ namespace CES.DocManger.WebApi.Security
                 }
             }
 
-             //userMgr = provider.GetRequiredService<UserManager<IdentityUser>>();
-
             var adminResult = await userMgr.CreateAsync(DefaultUsers.Administrator, "User123!");
             var userResult = await userMgr.CreateAsync(DefaultUsers.User, "User123!");
             var moderatorResult = await userMgr.CreateAsync(DefaultUsers.Moderator, "User123!");

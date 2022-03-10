@@ -4,6 +4,7 @@ using CES.Domain.Models.Request.DriverLicense;
 using CES.Domain.Models.Request.DriverMedicalCertificate;
 using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Response.Departments;
+using CES.Domain.Security.User.Login;
 
 namespace CES.DocManger.WebApi.Mapper
 {
@@ -39,6 +40,11 @@ namespace CES.DocManger.WebApi.Mapper
 
             CreateMap<GetDivisionNumberResponse, GetDivisionViewModel>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.DivisionNumber));
+
+            CreateMap<LoginResponse, LoginViewModel>()
+             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+
 
             ////CreateMap<AddEmployeeViewModel, CreateEmployeeRequest>()
             ////   .ForMember(dest => dest )

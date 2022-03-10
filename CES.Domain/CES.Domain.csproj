@@ -8,19 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Security\User\Login\" />
     <Folder Include="Security\User\Models\" />
-    <Folder Include="Security\User\Registration\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CES.InfraSecurity\CES.InfraSecurity.csproj" />
     <ProjectReference Include="..\CES.Infra\CES.Infra.csproj" />
+    <ProjectReference Include="..\CES.XmlFormat\CES.XmlFormat.csproj" />
   </ItemGroup>
 
 </Project>

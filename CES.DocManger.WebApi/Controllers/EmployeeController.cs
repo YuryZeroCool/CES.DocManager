@@ -3,8 +3,12 @@ using CES.DocManger.WebApi.Models;
 using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Response.Employees;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.IO.Pipelines;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace CES.DocManger.WebApi.Controllers
@@ -26,10 +30,31 @@ namespace CES.DocManger.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<GetEmployeeFullNameResponse>> GetAllEmployees()
+        [Produces(typeof(IEnumerable<GetEmployeeFullNameResponse>))]
+        public async Task<Object> GetAllEmployees()
         {
-            var response = await _mediator.Send(new GetEmployeeFullNameRequest());
-            return _mapper.Map<IEnumerable<GetEmployeeFullNameResponse>>(response);
+            try
+            {
+                var response = await _mediator.Send(new GetEmployeeFullNameRequest());
+                return _mapper.Map<IEnumerable<GetEmployeeFullNameResponse>>(response);
+            }
+            catch (Microsoft.Data.SqlClient.SqlException)
+            {
+                HttpContext.Response.StatusCode=(int)HttpStatusCode.NotExtended;
+               
+                return null;
+            }
+            catch (Exception e)
+            {
+      
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                
+                 return  new 
+                 {
+                     statusCode =  404,
+                     title = e.Message
+                 };
+            }
         }
 
         [HttpGet("isPersonalNumber/{personalNumber}")]
@@ -41,8 +66,16 @@ namespace CES.DocManger.WebApi.Controllers
         [HttpGet("firstName/{divisionNumber}")]
         public async Task<IEnumerable<GetEmployeeFullNameResponse>> GetShiftEmployees(string divisionNumber)
         {
-            var response = await _mediator.Send(new GetEmployeeFullNameRequest() { divisionNumber = divisionNumber});
-            return _mapper.Map<IEnumerable<GetEmployeeFullNameResponse>>(response);
+            try
+            {
+                var response = await _mediator.Send(new GetEmployeeFullNameRequest() { divisionNumber = divisionNumber });
+                return _mapper.Map<IEnumerable<GetEmployeeFullNameResponse>>(response);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         //[HttpGet("{id}")]
@@ -75,7 +108,15 @@ namespace CES.DocManger.WebApi.Controllers
         [HttpGet("noDriverLicense")]
         public async Task<IEnumerable<GetEmployeeFullNameResponse>> GetListEmployeesNoDriverLicense()
         {
-            return await _mediator.Send(new ListEmployeesNoDriverLicenseRequest()); 
+            try
+            {
+                return await _mediator.Send(new ListEmployeesNoDriverLicenseRequest());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+          
         }
 
         [HttpGet("expiringDriverLicense/{numberMonths}")]
