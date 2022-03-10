@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using CES.DocManger.WebApi.Models;
 using CES.Domain.Security.User.UpDateToken;
-using System.Linq;
 using CES.Domain.Exception;
 using System;
 using Microsoft.AspNetCore.Http;
