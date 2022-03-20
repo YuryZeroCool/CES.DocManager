@@ -1,13 +1,11 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import loginSlice from "../../redux/actions/loginRedux"
+import { configureStore } from '@reduxjs/toolkit';
+// import { loginSlice } from '../actions/loginRedux';
+import { rootReducer } from './reducers/combineReducers';
 
-const rootReducer = combineReducers({loginSlice});
-export const store = configureStore({
-    reducer: {login: rootReducer}, 
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck:false}),
+const store = configureStore({
+  reducer: { login: rootReducer },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
 });
 
-export type RootState = ReturnType<typeof store.getState>;
-
 export type IAuthResponseType = typeof store.dispatch;
- 
+export default store;
