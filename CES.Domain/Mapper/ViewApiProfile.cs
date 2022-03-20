@@ -5,9 +5,11 @@ using CES.Domain.Models.Request.DriverMedicalCertificate;
 using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Response.Departments;
 using CES.Domain.Models.Response.Employees;
+using CES.Domain.Models.Response.Report;
 using CES.Domain.Security.User.Registration;
 using CES.Infra.Models;
 using CES.InfraSecurity.Models;
+using CES.XmlFormat.Models;
 
 namespace CES.Domain.Mapper
 {
@@ -15,6 +17,14 @@ namespace CES.Domain.Mapper
     {
         public ViewApiProfile()
         {
+            // ReportController
+
+            //FuelWorkAccountingCard => VehicleExpenseSheetResponse
+            CreateMap<FuelWorkAccountingCard,VehicleExpenseSheetResponse > ();
+                //.ForMember(dest=> dest., opt=> opt.MapFrom(src=>src[2]));
+             
+
+            //EmployeeController
             CreateMap<CreateEmployeeRequest, EmployeeEntity>()
                .ForMember(dest => dest.Id, opt => opt.Ignore())
                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
@@ -28,6 +38,7 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName));
 
+            //DriverMedicalCertificateController 
             CreateMap<CreateMedicalCertificateRequest, DriverMedicalCertificateEntity>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.SerialNumber, opt =>opt.MapFrom(src =>src.SerialNumber))

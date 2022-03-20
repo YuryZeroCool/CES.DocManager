@@ -1,4 +1,5 @@
 ﻿using CES.Domain.Models.Request.Report;
+using CES.Domain.Models.Response.Report;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -29,7 +30,7 @@ namespace CES.DocManger.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<List<string>>> VehicleExpenseSheet()
+        public async Task<IEnumerable<List<VehicleExpenseSheetResponse>>> VehicleExpenseSheet()
         {
                 var data =  await _mediator.Send(new VehicleExpenseSheetRequest { Path = _appEnvironment.WebRootPath });
            

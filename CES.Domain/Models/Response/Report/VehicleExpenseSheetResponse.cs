@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace CES.XmlFormat.Models
+namespace CES.Domain.Models.Response.Report
 {
-    public class FuelWorkAccountingCard
+    public class VehicleExpenseSheetResponse
     {
         public DateTime Date { get; set; }
 
@@ -10,7 +10,7 @@ namespace CES.XmlFormat.Models
 
         public string DriverFullName { get; set; }
 
-       // public int HoursWorked { get; set; }
+        //public int HoursWorked { get; set; }
 
         public int MileageStart { get; set; }
 

@@ -1,12 +1,8 @@
-﻿using CES.XmlFormat;
-using CES.XmlFormat.Models;
+﻿using CES.XmlFormat.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CES.XmlFormat.Tests
 {
