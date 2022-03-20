@@ -14,6 +14,7 @@ using System;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using System.Net;
+using CES.Domain.Security.User.Logout;
 
 namespace CES.DocManger.WebApi.Controllers
 {
@@ -113,10 +114,25 @@ namespace CES.DocManger.WebApi.Controllers
             }
         }
 
-        [HttpPost("/revoke - token")]
-        public async Task RevokeTokenAsync()
+        [Authorize(AuthenticationSchemes =
+        JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpPost("/logout")]
+        public async Task LogoutAsync([FromBody] string email)
         {
-        
+            try
+            {
+                var model = new LogoutRequest
+                {
+                    EmailAddress = email,
+                    AccessToken = HttpContext.Request.Headers["Authorization"].ToString()[7..]
+                };
+                await _mediator.Send(model);
+                HttpContext.Response.StatusCode = 200;
+            }
+            catch (RestException e)
+            {
+                HttpContext.Response.StatusCode = ((int)e.Code);
+            }
         }
 
         [HttpPost("/registration")]
@@ -135,9 +151,6 @@ namespace CES.DocManger.WebApi.Controllers
 
             return await _mediator.Send(new AddRoleRequest{ Name =query.Name});
         }
-
-
-
 
         private string ipAddress()
         {
