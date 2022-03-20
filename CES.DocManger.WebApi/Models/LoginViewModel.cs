@@ -6,6 +6,6 @@
 
         public string Email { get; set; }
 
-        public string Error { get; set; }
+        public string AccessToken { get; set; }
     }
 }

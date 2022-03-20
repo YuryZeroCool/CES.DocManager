@@ -51,7 +51,7 @@ namespace CES.Domain.Security.User.UpDateToken
                 var refresh = await _userMgr.GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken");
      
 
-                return new TokenPairResponse() { AccessToken = newToken, RefreshToken = refresh, Email = user.Email, UserName = user.UserName };
+                return new TokenPairResponse() { AccessToken = newToken, RefreshToken = refresh};
             } else
             {
                 throw new TokenException(HttpStatusCode.Unauthorized, "IsTokeninvalid");

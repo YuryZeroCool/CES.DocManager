@@ -41,10 +41,13 @@ namespace CES.DocManger.WebApi.Mapper
             CreateMap<GetDivisionNumberResponse, GetDivisionViewModel>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.DivisionNumber));
 
+
+            //Controller Account
             CreateMap<LoginResponse, LoginViewModel>()
              .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
-             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
-
+             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+             .ForMember(dest => dest.AccessToken, opt => opt.MapFrom(src =>src.AccessToken));
+            
 
             ////CreateMap<AddEmployeeViewModel, CreateEmployeeRequest>()
             ////   .ForMember(dest => dest )

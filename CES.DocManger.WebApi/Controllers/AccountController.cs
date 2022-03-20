@@ -32,95 +32,84 @@ namespace CES.DocManger.WebApi.Controllers
             _mapper = mapper;
         }
         [HttpPost("/login")]
-        public async Task<LoginViewModel> LoginAsync(LoginRequest query)
+        [Produces(typeof(LoginViewModel))]
+        public async Task<object> LoginAsync(LoginRequest query)
         {
             try
             {
-                var result=  await _mediator.Send(query);
-                HttpContext.Response.Cookies.Append("accessToken", result.AccessToken, new CookieOptions
-                {
-                    Expires = DateTimeOffset.Now.AddMinutes(5),
-                    HttpOnly = true,
-                    Secure = true,
-                    Domain= "localhost",
-                    Path = "/login"
-                }); 
+                var result =  await _mediator.Send(query);
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddDays(30),
                     HttpOnly = true,
                     Secure = true,
                     Domain = "localhost",
-                    Path = "/login"
-
+                    Path = "/updateTokenPair"
                 });
-
                 return _mapper.Map<LoginResponse,LoginViewModel>(result);
             }
                
             catch (RestException e)
             {
-                HttpContext.Response.Cookies.Delete("accessToken");
                 HttpContext.Response.Cookies.Delete("refreshToken");
                 HttpContext.Response.StatusCode = ((int)e.Code);
-                return new LoginViewModel 
-                { 
-                    Email =null,
-                    UserName = null,
-                    Error= "Неверный пароль или логин"
+                return new
+                {
+                    Error = "Неверный пароль или логин"
+                };
+            }
+            catch(Exception)
+            {
+                HttpContext.Response.StatusCode = 500;
+                return new
+                {
+                    Error = "Произошла ошибка на сервере, авторизоваться позже"
                 };
             }
         }
 
         [HttpPost("/updateTokenPair")]
-        public async Task<TokenPairResponse> UpdateTokenPairAsync(UpDateTokenRequest token)
+        [Produces(typeof(string))]
+        public async Task<object> UpdateTokenPairAsync(UpDateTokenRequest token)
         {
             try
             {
-              
-                token.RefreshToken = HttpContext.Request.Headers["Authorization"].ToString();
+                token.RefreshToken =HttpContext.Request.Cookies["refreshToken"];
 
-                if (token.RefreshToken == null)  throw new TokenException(HttpStatusCode.ServiceUnavailable, "Token null");
-                token.RefreshToken = token.RefreshToken.Substring(7);
+                if (token.RefreshToken == null)  throw new TokenException(HttpStatusCode.ServiceUnavailable, "Токен не передан");
 
                var result = await _mediator.Send(token);
 
-                HttpContext.Response.Cookies.Append("accessToken", result.AccessToken, new CookieOptions
-                {
-                    Expires = DateTimeOffset.Now.AddMinutes(5),
-                    HttpOnly = true
-                });
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddDays(30),
-                    HttpOnly = true
+                    HttpOnly = true,
+                    Secure = true,
+                    Domain = "localhost",
+                    Path = "/updateTokenPair"
                 });
-                return result;
+                return result.AccessToken;
             }
 
             catch (TokenException e)
             {
-                HttpContext.Response.Cookies.Delete("accessToken");
                 HttpContext.Response.Cookies.Delete("refreshToken");
 
                 HttpContext.Response.StatusCode = ((int)e.Code);
-                return new TokenPairResponse()
+                return new
                 {
-                    RefreshToken = e.Errors.ToString()
+                    Error = e.Errors.ToString()
                 };
             }
-
-            catch(System.ArgumentOutOfRangeException)
+            catch(Microsoft.Data.SqlClient.SqlException)
             {
-                HttpContext.Response.Cookies.Delete("accessToken");
                 HttpContext.Response.Cookies.Delete("refreshToken");
-
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-                return new TokenPairResponse()
+                HttpContext.Response.StatusCode = 500;
+                return new 
                 {
-                    RefreshToken =  "Header doesn`t have property Authorization"
+                    Error = "Sql server не доступен"
                 };
+
             }
         }
 
