@@ -1,42 +1,31 @@
-import axios from "axios";
+import React from 'react';
+// import axios from 'axios';
 
+// export default function VehicleExpenseSheet() {
+//   const handlSubmit = async (event): Promise<void> => {
+//     event.preventDefault();
+//     const formData: FormData | null = new FormData(event.target[0].form);
+//     console.log(formData);
+//     if (formData !== null) {
+//       try {
+//         const response = await axios.post('https://localhost:5001/api/Report', formData, {
+//           headers: {
+//             'Content-type': 'multipart/form-data',
+//           },
+//         });
+//         console.log('Success' + response.data);
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     }
+//   };
 
-
-
-export const VehicleExpenseSheet: React.FC = () => {
-
-    const handlSubmit = async (event:any) => {
-        event.preventDefault();
-        const formData = new FormData(event.target[0].form);
-        //formData.append("file", event.target[0].files[0]);
-        console.log(formData);
-
-        axios
-          .post("https://localhost:5001/api/Report", formData, {
-            headers: {
-              "Content-type": "multipart/form-data",
-              
-            },
-            
-          })
-          .then((res) => {
-            console.log(`Success` + res.data);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        }
-
-  return (
- 
-  <>
-     <form encType="multipart/form-data" onSubmit= {handlSubmit} >
-    <p>
-        <input type="file" name="file" multiple/>
-         <button type="submit"  >Отправить</button>
-    </p>
-   </form> 
-  </>
- 
-  )
-}
+//   return (
+//     <form encType="multipart/form-data" onSubmit={handlSubmit}>
+//       <p>
+//         <input type="file" name="file" multiple />
+//         <button type="submit">Отправить</button>
+//       </p>
+//     </form>
+//   );
+// }

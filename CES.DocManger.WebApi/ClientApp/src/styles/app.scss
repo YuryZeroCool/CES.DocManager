@@ -1,0 +1,32 @@
+#root {
+  position: relative;
+}
+
+body {
+  background-color: #f7f7f7;
+
+  p {
+    color: white;
+  }
+
+  a.active {
+    color: #007bff;
+    text-decoration: underline;
+  }
+}
+
+.wrapper {
+  max-width: 1200px;
+  height: 100%;
+  margin: 0 auto;
+}
+
+main {
+  height: 100%;
+  padding-top: 10vh;
+  box-sizing: border-box;
+  background-image: url('../assets/bg/bg-home.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

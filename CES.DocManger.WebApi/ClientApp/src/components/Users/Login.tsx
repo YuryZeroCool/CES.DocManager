@@ -1,52 +1,31 @@
-import { useForm } from "react-hook-form";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import "../../styles/login.scss";
-import { useDispatch, useSelector } from "react-redux";
-import { IUserRequest, login, User } from "../../redux/actions/loginRedux";
-import { useNavigate } from "react-router";
-import { IAuthResponseType } from "../../redux/store/configureStore";
-import { IAuthResponse } from "../../models/response/AuthResponse";
+import React from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import '../../styles/login.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
+import login from '../../redux/actions/loginRedux';
+import { UserState, IUserRequest, IAuthResponse } from '../../types/UserTypes';
+import { IAuthResponseType } from '../../redux/store/configureStore';
 
-type Inputs = {
-  email: string;
-  password: string;
-};
-
-export const Login: React.FC = () => {
+export default function Login() {
   const dispatch: IAuthResponseType = useDispatch();
-  const counter = useSelector<User,User>((state) => state);
-
-  //const state =  useSelector<User,User>(state=>state);
-  // const [email,setEmail] = useState<string>('');
-  // const [password,setPassword] = useState<string>('');
-  let navigotor = useNavigate();
+  const globalState = useSelector<UserState, UserState>((state) => state);
+  const navigotor = useNavigate();
 
   const {
     register,
-    formState: { errors },
     handleSubmit,
-  } = useForm<Inputs>({ mode: "onBlur" });
+    formState: { errors },
+  } = useForm<IUserRequest>({ mode: 'onBlur' });
 
-  // useEffect(()=>{
-  //   dispatch(login({email:" ",password:"ds"}));
-  // },[dispatch]);
-  // useEffect(() => {
-  //   dispath(<IUser>({ username: "d", password: "s" }));
-  // }, [dispath]);
-
-  const onSubmit = async (user: IUserRequest) => {
+  const onSubmit: SubmitHandler<IUserRequest> = async (user: IUserRequest): Promise<void> => {
     try {
-      let res = await dispatch(login(user));
-      if (res.type === "jwt/fulfilled") {
-        let data = res.payload as unknown as IAuthResponse;
-        navigotor("/");
-        console.log(data.userName);
-        console.log( counter);
-      }
-      if (res.type === "jwt/rejected") {
-        
-        console.log(res);
+      const response = await dispatch(login(user));
+      if (response.type === 'jwt/fulfilled') {
+        const data = response.payload as IAuthResponse;
+        navigotor('/');
       }
     } catch (error) {
       console.log(error);
@@ -57,28 +36,30 @@ export const Login: React.FC = () => {
     <section className="section-login">
       <div className="login-container">
         <h3>Добро пожаловать</h3>
-
+        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
         <Form className="login-form" onSubmit={handleSubmit(onSubmit)}>
-          <Form.Group controlId="formBasicEmail">
+          <Form.Group controlId="formBasicEmail" className="login-email">
             <Form.Control
-              type={"email"}
+              type="email"
               placeholder="Введите ваш email"
               className="input-email"
-              {...register("email", { required: true })}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...register('email', { required: true })}
             />
           </Form.Group>
-          <div style={{ height: 40 }}>{errors?.email && <p>Error!</p>}</div>
-          <Form.Group controlId="formBasicPassword">
+          <div style={{ height: 40 }}>{errors?.email && <p>This field is required!</p>}</div>
+          <Form.Group controlId="formBasicPassword" className="login-password">
             <Form.Control
               type="password"
               placeholder="Пароль"
               className="input-password"
-              {...register("password", { required: true })}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...register('password', { required: true })}
             />
           </Form.Group>
-
-          <Form.Group controlId="formBasicButtons">
-            <Button variant="primary" type={"submit"}>
+          <div style={{ height: 40 }}>{errors?.password && <p>This field is required!</p>}</div>
+          <Form.Group controlId="formBasicButtons" className="login-btn-container">
+            <Button variant="primary" type="submit">
               Войти
             </Button>
             <Button variant="primary" type="submit">
@@ -89,4 +70,4 @@ export const Login: React.FC = () => {
       </div>
     </section>
   );
-};
+}
