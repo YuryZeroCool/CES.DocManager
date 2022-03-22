@@ -9,6 +9,7 @@ namespace CES.XmlFormat
 {
     public class ReadExcel
     {
+        private int count = 0;
         private readonly IWorkbook _workbook;
 
         public List<List<FuelWorkAccountingCard>> _SheetsArr;
@@ -57,15 +58,92 @@ namespace CES.XmlFormat
 
         public IEnumerable<List<FuelWorkAccountingCard>> readExcel()
         {
+            var sum = 0;
             WrireAddresses();
+            
             List<FuelWorkAccountingCard> rowsArr = null;
+
             _SheetsArr = new List<List<FuelWorkAccountingCard>>();
 
-            for (int j = 0; j < _workbook.NumberOfSheets; j++)
+            for (int i = 0; i < _workbook.NumberOfSheets; i++)
             {
                 rowsArr = new List<FuelWorkAccountingCard>();
+                var rows = _workbook.GetSheetAt(i);
+                if (rows == null) continue;
 
-                if (_workbook.GetSheetAt(0) == null) continue;
+                for (int j = 0; j < rows.LastRowNum; j++)
+                {
+                    var row = rows.GetRow(j);
+                    var isRow = row.GetCell(0).Address.FormatAsString();
+
+                    if (isRow != null && isRow != "" && isRow[1] > '6')
+                    {
+                         var rowNew = new FuelWorkAccountingCard();
+                        sum++;
+                        for (var k = 0; k < row.LastCellNum; k++)
+                        {
+                            var cell = row.GetCell(k);
+                            var cellAdress = cell.Address.FormatAsString();
+
+                            if (cell != null && cell.ToString() != "" && cellAdress[0] == AddressDate[0] && cellAdress[1] > AddressDate[1])
+                            {
+                                rowNew.Date = DateTime.Parse(cell.ToString() + " 0:00:00");
+                                continue;
+                            }
+
+                            if ('6' < cellAdress[1] && AddressNumberList[0] == cellAdress[0])
+                            {
+                                rowNew.NumberList = int.Parse(cell.ToString());
+                                continue;
+                            }
+
+                            if ('6' < cellAdress[1] && AddressDriver[0] == cellAdress[0])
+                            {
+                                var nextAddress = (int.Parse(cellAdress[1].ToString()));
+                                var str = rows.GetRow(nextAddress).GetCell(6);
+                                if (rows.GetRow(nextAddress).GetCell(6).ToString() != "")
+                                {
+                                    rowNew.EngineHoursStart = double.Parse(rows.GetRow(nextAddress).GetCell(6).ToString());
+                                    rowNew.EngineHoursEnd = double.Parse(rows.GetRow(nextAddress).GetCell(7).ToString());
+                                }
+                                rowNew.DriverFullName = cell.ToString();
+                                continue;
+                            }
+
+                            if ('6' < cellAdress[1] && AddressMileageStart[0] == cellAdress[0])
+                            {
+                                rowNew.MileageStart = int.Parse(cell.ToString());
+                                continue;
+                            }
+
+
+                            if ('6' < cellAdress[1] && AddressMileageEnd[0] == cellAdress[0])
+                            {
+                                rowNew.EngineHoursEnd = double.Parse(cell.ToString());
+                                continue;
+                            }
+
+                            if ('6' < cellAdress[1] && AddressMileagePerDay[0] == cellAdress[0])
+                            {
+                                rowNew.MileagePerDay = int.Parse(cell.ToString());
+                                continue;
+                            }
+
+                            if ('6' < cellAdress[1] && AddressFuelStart[0] == cellAdress[0])
+                            {
+                                rowNew.FuelStart = int.Parse(cell.ToString());
+                                continue;
+                            }
+
+                            if ('6' < cellAdress[1] && AddressRefueling[0] == cellAdress[0])
+                            {
+                                rowNew.Refueling = double.Parse(cell.ToString());
+                                continue;
+                            }
+                        }
+                    }
+                }
+
 
                 foreach (IRow row in _workbook.GetSheetAt(0))
                 {
@@ -74,15 +152,7 @@ namespace CES.XmlFormat
                     {
                         break;
                     }
-                    for (var i = 0; i < row.LastCellNum; i++)
-                    {
-                        var cell = row.GetCell(i).ToString();
-
-                        if (cell != null && cell.ToString() != "")
-                        {
-                            rowNew.DriverFullName = "Кишкурно" + i.ToString();
-                        }
-                    }
+                    
                     rowsArr.Add(rowNew);
                 }
                 _SheetsArr.Add(rowsArr);
@@ -102,7 +172,8 @@ namespace CES.XmlFormat
 
             //     foreach (IRow row in _workbook.GetSheetAt(j))
             //     {
-            //         var work = new FuelWorkAccountingCard();
+            //         var 
+            //                   work = new FuelWorkAccountingCard();
             //         for (var i = 0; i < row.LastCellNum; i++)
             //         {
             //             var cell = row.GetCell(i);
@@ -115,60 +186,13 @@ namespace CES.XmlFormat
             //                 }
             //                 if (cell != null)
             //                 {
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressDate[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.Date = DateTime.Parse(cell.ToString() + " 0:00:00");
-            //                     //    continue;
-            //                     //}
-            //                     if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                         && AddressNumberList[0] == cell.Address.FormatAsString()[0])
-            //                     {
-            //                         work.NumberList = int.Parse(cell.ToString());
-            //                         continue;
-            //                     }
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressDriver[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    var nextAddress = (int.Parse(cell.Address.FormatAsString()[1].ToString()));
-            //                     //    if (_workbook.GetSheetAt(4).GetRow(nextAddress).GetCell(3).BooleanCellValue)
-            //                     //    {
-            //                     //        work.EngineHoursStart = double.Parse(_workbook.GetSheetAt(4).GetRow(nextAddress).GetCell(6).ToString());
-            //                     //        work.EngineHoursEnd = double.Parse(_workbook.GetSheetAt(4).GetRow(nextAddress).GetCell(7).ToString());
-            //                     //    }
-            //                     //    work.DriverFullName = cell.ToString();
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressMileageStart[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.MileageStart = int.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressMileageEnd[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.EngineHoursEnd = double.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressMileagePerDay[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.MileagePerDay = int.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressFuelStart[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.FuelStart = int.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressRefueling[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.Refueling = double.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
+                      
+            //                     
+            //                     
+            //                     
+            //                     
+            //                     
+            //                     
             //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
             //                     //    && AddressActualConsumption[0] == cell.Address.FormatAsString()[0])
             //                     //{
@@ -200,7 +224,7 @@ namespace CES.XmlFormat
             // }
         }
 
-        public void WrireAddresses()
+        public bool WrireAddresses()
         {
             ISheet sheet = null;
 
@@ -279,7 +303,7 @@ namespace CES.XmlFormat
 
                         if (cell.ToString() == "по нормам")
                         {
-                            AddressConsumptionAccordingToNorm = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
+                            AddressConsumptionAccordingToNorm = cell.Address.FormatAsString();
                         }
 
                         if (cell.ToString() == "на конец")
@@ -288,31 +312,26 @@ namespace CES.XmlFormat
                         }
                     }
                 }
+                if (AddressConsumptionAccordingToNorm is not null)
+                {
+                    if (CheackAddress())  return true;
+                }
             }
+           throw new Exception("Файл не того формата");
         }
-        private void CheackAddress()
-        {
 
+        private bool CheackAddress()
+        {
+            if (AddressDate is not null && AddressNumberList is not null && AddressDriver is not null && AddressMileageStart is not null
+                && AddressMileageEnd is not null && AddressMileagePerDay is not null && AddressFuelStart is not null
+                && AddressRefueling is not null && AddressActualConsumption is not null && AddressConsumptionAccordingToNorm is not null && AddressFuelEnd is not null)
+            {
+                return true;
+            }
+            else return false;
         }
     }
 }
-//        private bool IsValidModel()
-//        {
-//            if (AddressDate != "" && AddressNumberList != "" && AddressDriver != ""
-//                         && AddressMileageStart != ""
-//                        && AddressMileageEnd != "" && AddressMileagePerDay != ""
-//                        && AddressFuelStart != "" && AddressRefueling != "" && AddressActualConsumption != ""
-//                        && AddressConsumptionAccordingToNorm != "" && AddressFuelEnd != ""
-//                        && AddressDate != null && AddressNumberList != null && AddressDriver != null
-//                        && AddressMileageStart != null
-//                        && AddressMileageEnd != null && AddressMileagePerDay != null
-//                        && AddressFuelStart != null && AddressRefueling != null && AddressActualConsumption != null
-//                        && AddressConsumptionAccordingToNorm != null && AddressFuelEnd != null)
-//            {
-//                return true;
-//            }
-//            else return false;
-//        }
 
 //        public bool IsValidModelFuelWorkAccountingCard(FuelWorkAccountingCard work)
 //        {
