@@ -2,7 +2,6 @@
 using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
-
 //https://github.com/nissl-lab/npoi-examples
 
 namespace CES.XmlFormat
@@ -11,142 +10,36 @@ namespace CES.XmlFormat
     {
         private readonly IWorkbook _workbook;
 
-        public  List<List<FuelWorkAccountingCard>> _SheetsArr;
+        public List<List<FuelWorkAccountingCard>> _SheetsArr;
 
-        public string AddressDate
-        {
-            private set => AddressDate = " ";
-            get
-            {
-                return AddressDate;
-            }
-        }
+        private string AddressDate { get; set; }  //Дата
 
-        public string AddressNumberList
-        {
-            private set => AddressNumberList = "";
-            get
-            {
-                return AddressNumberList;
-            }
-        }
+        public string AddressNumberList { get; set; } //Номер путевого листа
 
-        public string AddressDriver
-        {
-            private set => AddressDriver = "";
-            get
-            {
-                return AddressDriver;
-            }
-        }
+        public string AddressDriver { get; set; } // Фамилия
 
-        public string AddressHoursWorked
-        {
-            private set => AddressHoursWorked = "";
-            get
-            {
-                return AddressHoursWorked;
-            }
-        }
+        public string AddressHoursWorked { get; set; } // Часы отработаные 
 
-        public string AddressMileageStart
-        {
-            private set => AddressMileageStart = "";
-            get
-            {
-                return AddressMileageStart;
-            }
-        }
+        public string AddressMileageStart { get; set; } // Показание спидометра  на начало 
 
-        public string AddressMileageEnd
-        {
-            private set => AddressMileageEnd = "";
-            get
-            {
-                return AddressMileageEnd;
-            }
-        }
+        public string AddressMileageEnd { get; set; } // Показание на конец дня
 
-        public string AddressMileagePerDay
-        {
-            private set => AddressMileagePerDay = "";
-            get
-            {
-                return AddressMileagePerDay;
-            }
-        }
+        public string AddressMileagePerDay { get; set; } //Пробег за день
 
-        public string AddressFuelStart {
-            private set => AddressFuelStart = "";
-            get
-            {
-                return AddressFuelStart;
-            }
-        }
+        public string AddressFuelStart { get; set; } // Топливо нам начало 
 
-        public string AddressRefueling
-        {
-            private set => AddressRefueling = "";
-            get
-            {
-                return AddressRefueling;
-            }
-        }
+        public string AddressRefueling { get; set; } // Заправка
 
-        public string AddressActualConsumption
-        {
-            private set => AddressActualConsumption = "";
-            get
-            {    
-            return AddressActualConsumption;
-            } 
-        }
+        public string AddressActualConsumption { get; set; } // Фактическое потребление топлива
 
-        public string AddressConsumptionAccordingToNorm
-        {
-            private set => AddressConsumptionAccordingToNorm = "";
-            get
-            {
-                return AddressConsumptionAccordingToNorm;
-            }
-        }
-        
-        public string AddressFuelEnd 
-        {
-            private set => AddressFuelEnd="";
-            get
-            {
-                return AddressFuelEnd;
-            }
-        }
-         
-        public string AddressDeviation
-        {
-            private set => AddressDeviation = " ";
-            get
-            {
-                return AddressDeviation;
-            }
-        }
-      
-        public string EngineHoursStart
-        {
-            private set => EngineHoursEnd = "";
-            get
-            {
-                return EngineHoursEnd;
-            }
-        }
-     
-        public string EngineHoursEnd
+        public string AddressConsumptionAccordingToNorm { get; set; } //Потребление топлива по норме 
 
-        {
-            private set => EngineHoursEnd = "";
-            get
-            {
-                return EngineHoursEnd;
-            }
-        }
+        public string AddressFuelEnd { get; set; } // Топливо наконец рабочегог дня 
+
+        public string EngineHoursStart { get; set; } //Старт часов работы двигателя
+
+        public string EngineHoursEnd { get; set; } // Окончание работы двигателя
+
 
         public ReadExcel() { }
 
@@ -158,250 +51,227 @@ namespace CES.XmlFormat
         public ReadExcel(string nameFile)
         {
             _workbook = new DocMangerXMLContext(nameFile).workbook;
-           _SheetsArr = new List<List<FuelWorkAccountingCard>>();
-        } 
+            _SheetsArr = new List<List<FuelWorkAccountingCard>>();
+        }
 
         public IEnumerable<List<FuelWorkAccountingCard>> readExcel()
         {
+            WrireAddresses();
+            
             List<FuelWorkAccountingCard> rowsArr = null;
+
             _SheetsArr = new List<List<FuelWorkAccountingCard>>();
 
-            for (int j = 0; j < _workbook.NumberOfSheets; j++)
+            for (int i = 0; i < _workbook.NumberOfSheets; i++)
             {
-                 rowsArr = new List<FuelWorkAccountingCard>();
+                var rows = _workbook.GetSheetAt(i);
+                if (rows == null || rows.LastRowNum == 0) continue;
 
-                if (_workbook.GetSheetAt(0) == null) continue;
+                rowsArr = new List<FuelWorkAccountingCard>();
 
-                foreach (IRow row in _workbook.GetSheetAt(0))
+                for (int j = 0; j < rows.LastRowNum; j++)
                 {
-                    var rowNew = new FuelWorkAccountingCard();
-                    if (row.GetCell(0).ToString() == "ИТОГО")
-                    {
-                        break;
-                    }
-                    for (var i = 0; i < row.LastCellNum; i++)
-                    {
-                        var cell = row.GetCell(i).ToString();
+                    var row = rows.GetRow(j);
+                    var isRow = row.GetCell(0).Address.FormatAsString();
+                    var cellA = row.GetCell(0).ToString();
 
-                        if (cell != null && cell.ToString() != "")
+                    var result = int.TryParse(cellA,out var number);
+
+                    if (cellA == "ИТОГО") break;
+
+                    if (isRow != null && cellA != "" && result)
+                    {
+                         var rowNew = new FuelWorkAccountingCard();
+
+                        for (var k = 0; k < row.LastCellNum; k++)
                         {
-                            rowNew.DriverFullName = "Кикурно" + i.ToString();
+                            var cell = row.GetCell(k);
+
+                            var cellAdress = cell.Address.FormatAsString();
+
+                            if ( cellAdress[0] == AddressDate[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.Date = DateTime.Parse(cell.ToString() + " 0:00:00");
+                                continue;
+                            }
+
+                            if (AddressNumberList[0] == cellAdress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.NumberList = int.Parse(cell.ToString());
+                                continue;
+                            }
+
+                            if ( AddressDriver[0] == cellAdress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                var res = int.TryParse(cellAdress.Substring(1), out var nextAddress);
+                                if (!res) continue;
+
+                                if (rows.GetRow(nextAddress).GetCell(6).ToString() != "")
+                                {
+                                    rowNew.EngineHoursStart = double.Parse(rows.GetRow(nextAddress).GetCell(6).ToString());
+                                    rowNew.EngineHoursEnd = double.Parse(rows.GetRow(nextAddress).GetCell(7).ToString());
+                                }
+                                rowNew.DriverFullName = cell.ToString();
+                                continue;
+                            }
+
+                            if ( AddressMileageStart[0] == cellAdress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.MileageStart = int.Parse(cell.ToString());
+                                continue;
+                            }
+
+                            if ( AddressMileageEnd[0] == cellAdress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.EngineHoursEnd = double.Parse(cell.ToString());
+                                continue;
+                            }
+
+                            if ( AddressMileagePerDay[0] == cellAdress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.MileagePerDay = int.Parse(cell.ToString());
+                                continue;
+                            }
+
+                            if ( AddressFuelStart[0] == cellAdress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.FuelStart = int.Parse(cell.ToString());
+                                continue;
+                            }
+
+                            if (AddressRefueling[0] == cellAdress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.Refueling = double.Parse(cell.ToString());
+                                continue;
+                            }
                         }
+                        rowsArr.Add(rowNew);
                     }
-                    rowsArr.Add(rowNew);
                 }
                 _SheetsArr.Add(rowsArr);
-                //var date = new List<FuelWorkAccountingCard>();
-                //date.Add(new FuelWorkAccountingCard() { DriverFullName = "вы" });
-                //_SheetsArr.Add(date);
-             
             }
+
             return _SheetsArr;
-
-            //// WrireAddresses();
-
-            // for (int j = 0; j < _workbook.NumberOfSheets; j++)
-            // {
-            //     if (_workbook.GetSheetAt(j) == null) continue;
-            //     SheetArr = new List<FuelWorkAccountingCard>();
-
-            //     foreach (IRow row in _workbook.GetSheetAt(j))
-            //     {
-            //         var work = new FuelWorkAccountingCard();
-            //         for (var i = 0; i < row.LastCellNum; i++)
-            //         {
-            //             var cell = row.GetCell(i);
-
-            //             if (cell.ToString() != null && cell.ToString() != "" && cell.Address.FormatAsString()[1] > '6')
-            //             {
-            //                 if (cell.ToString() == "ИТОГО")
-            //                 {
-            //                     return _SheetsArr;
-            //                 }
-            //                 if (cell != null)
-            //                 {
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressDate[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.Date = DateTime.Parse(cell.ToString() + " 0:00:00");
-            //                     //    continue;
-            //                     //}
-            //                     if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                         && AddressNumberList[0] == cell.Address.FormatAsString()[0])
-            //                     {
-            //                         work.NumberList = int.Parse(cell.ToString());
-            //                         continue;
-            //                     }
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressDriver[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    var nextAddress = (int.Parse(cell.Address.FormatAsString()[1].ToString()));
-            //                     //    if (_workbook.GetSheetAt(4).GetRow(nextAddress).GetCell(3).BooleanCellValue)
-            //                     //    {
-            //                     //        work.EngineHoursStart = double.Parse(_workbook.GetSheetAt(4).GetRow(nextAddress).GetCell(6).ToString());
-            //                     //        work.EngineHoursEnd = double.Parse(_workbook.GetSheetAt(4).GetRow(nextAddress).GetCell(7).ToString());
-            //                     //    }
-            //                     //    work.DriverFullName = cell.ToString();
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressMileageStart[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.MileageStart = int.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressMileageEnd[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.EngineHoursEnd = double.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressMileagePerDay[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.MileagePerDay = int.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressFuelStart[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.FuelStart = int.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressRefueling[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.Refueling = double.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressActualConsumption[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.ActualConsumption = int.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressConsumptionAccordingToNorm[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.ConsumptionAccordingToNorm = double.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
-            //                     //if (6 < int.Parse(cell.Address.FormatAsString()[1].ToString())
-            //                     //    && AddressFuelEnd[0] == cell.Address.FormatAsString()[0])
-            //                     //{
-            //                     //    work.FuelEnd = int.Parse(cell.ToString());
-            //                     //    continue;
-            //                     //}
-            //                     if (IsValidModelFuelWorkAccountingCard(work))
-            //                     {
-            //                         SheetArr.Add(work);
-            //                     }
-            //                 }
-            //             }
-            //             else continue;
-            //         }
-            //     }
-            //     _SheetsArr.Add(SheetArr);
-            // }
         }
 
-        //public void WrireAddresses()
-        //{
-        //    for (int i = 0; i < _workbook.NumberOfSheets; i++)
-        //    {
-        //        if (null == _workbook.GetSheetAt(i)) continue;
-
-        //        foreach (IRow row in _workbook.GetSheetAt(i))
-        //        {
-        //            for (var j = 0; j < row.LastCellNum; j++)
-        //            {
-        //                var cell = row.GetCell(j);
-        //                if (cell != null)
-        //                {
-        //                    if (cell.ToString() == "Дата")
-        //                    {
-        //                        AddressDate = cell.Address.FormatAsString();//ToString().Trim().Substring(0, 1);
-        //                    }
-        //                    if (cell.ToString() == "Номер")
-        //                    {
-        //                        AddressNumberList = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-        //                    }
-        //                    if (cell.ToString().StartsWith("Водитель 84700"))
-        //                    {
-        //                        AddressDriver = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-        //                    }
-        //                    if (cell.ToString() == "на начало" && AddressMileageStart == "")
-        //                    {
-        //                        AddressMileageStart = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-        //                    }
-        //                    if (cell.ToString() == "на конец" && AddressMileageEnd == "")
-        //                    {
-        //                        AddressMileageEnd = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-        //                    }
-        //                    if (cell.ToString() == "за день")
-        //                    {
-        //                        AddressMileagePerDay = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-        //                    }
-        //                    if (cell.ToString() == "на начало")
-        //                    {
-        //                        AddressFuelStart = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-        //                    }
-        //                    if (cell.ToString() == "Заправка")
-        //                    {
-        //                        AddressRefueling = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-        //                    }
-        //                    if (cell.ToString() == "по факту")
-        //                    {
-        //                        AddressActualConsumption = cell.Address.FormatAsString(); //.ToString().Trim().Substring(0, 1);
-        //                    }
-        //                    if (cell.ToString() == "по нормам")
-        //                    {
-        //                        AddressConsumptionAccordingToNorm = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-        //                    }
-        //                    if (cell.ToString() == "на конец")
-        //                    {
-        //                        AddressFuelEnd = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-        //                    }
-        //                }
-        //            }
-        //            if (IsValidModel()) break;
-        //        }
-        //    }
-        //}
-
-        private bool IsValidModel()
+        public bool WrireAddresses()
         {
-            if (AddressDate != "" && AddressNumberList != "" && AddressDriver != ""
-                        && AddressHoursWorked != "" && AddressMileageStart != ""
-                        && AddressMileageEnd != "" && AddressMileagePerDay != ""
-                        && AddressFuelStart != "" && AddressRefueling != "" && AddressActualConsumption != ""
-                        && AddressConsumptionAccordingToNorm != "" && AddressFuelEnd != ""
-                        && AddressDeviation != "")
+            ISheet sheet = null;
+
+            for (int i = 0; i < _workbook.NumberOfSheets; i++)
+            {
+                sheet = _workbook.GetSheetAt(i);
+                if (null == sheet)
+                {
+                   continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            for (int i = 0; i < sheet.LastRowNum; i++)
+            {
+                IRow row = sheet.GetRow(i);
+
+                for (int j = 0; j < row.LastCellNum; j++)
+                {
+                    ICell cell = row.GetCell(j);
+
+                    if (cell != null && cell.ToString() != "")
+                    {
+                        if (cell.ToString() == "Дата")
+                        {
+                            AddressDate = cell.Address.FormatAsString();//ToString().Trim().Substring(0, 1)
+                            continue;
+                        }
+
+                        if (cell.ToString() == "Номер")
+                        {
+                            AddressNumberList = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
+                            continue;
+                        }
+
+                        if (cell.ToString().StartsWith("Водитель 84700"))
+                        {
+                            AddressDriver = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
+                            continue;
+                        }
+
+                        if (cell.ToString() == "на начало" && AddressMileageStart == null)
+                        {
+                            AddressMileageStart = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
+                            continue;
+                        }
+
+                        if (cell.ToString() == "на конец" && AddressMileageEnd == null)
+                        {
+                            AddressMileageEnd = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
+                            continue;
+                        }
+
+                        if (cell.ToString() == "за день")
+                        {
+                            AddressMileagePerDay = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
+                        }
+
+                        if (cell.ToString() == "на начало")
+                        {
+                            AddressFuelStart = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
+                        }
+
+                        if (cell.ToString() == "Заправка")
+                        {
+                            AddressRefueling = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
+                        }
+
+                        if (cell.ToString() == "по факту")
+                        {
+                            AddressActualConsumption = cell.Address.FormatAsString(); //.ToString().Trim().Substring(0, 1);
+                        }
+
+                        if (cell.ToString() == "по нормам")
+                        {
+                            AddressConsumptionAccordingToNorm = cell.Address.FormatAsString();
+                        }
+
+                        if (cell.ToString() == "на конец")
+                        {
+                            AddressFuelEnd = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
+                        }
+                    }
+                }
+                if (AddressConsumptionAccordingToNorm is not null)
+                {
+                    if (CheackAddress())  return true;
+                }
+            }
+           throw new Exception("Файл не того формата");
+        }
+
+        private bool CheackAddress()
+        {
+            if (AddressDate is not null && AddressNumberList is not null && AddressDriver is not null && AddressMileageStart is not null
+                && AddressMileageEnd is not null && AddressMileagePerDay is not null && AddressFuelStart is not null
+                && AddressRefueling is not null && AddressActualConsumption is not null && AddressConsumptionAccordingToNorm is not null && AddressFuelEnd is not null)
             {
                 return true;
             }
             else return false;
         }
-
-        public bool IsValidModelFuelWorkAccountingCard(FuelWorkAccountingCard work)
-        {
-            if(
-               work.Date.ToLongDateString() != ""
-               && work.Date >= new DateTime(2018, 6, 1)
-                && work.DriverFullName != ""
-                && work.FuelEnd != 0
-                && work.MileageEnd != 0
-                && work.MileagePerDay != 0
-                && work.MileageStart != 0
-                && work.NumberList != 0
-                && work.ConsumptionAccordingToNorm >= 0)
-            {
-                return true;
-            }
-            return false;
-        }
-
     }
 }
+
+
+
 
 
