@@ -28,7 +28,7 @@ namespace CES.Domain.Handlers.Department
 
         public async  Task<IEnumerable<GetDivisionNumberResponse>> Handle(GetDivisionNumberRequest request, CancellationToken cancellationToken)
         {
-            IEnumerable <Division>  data= await _context.Divisions.ToListAsync();
+            IEnumerable <DivisionEntity>  data= await _context.Divisions.ToListAsync();
             return    _mapper.Map<IEnumerable<GetDivisionNumberResponse>>(data);
           
         }

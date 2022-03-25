@@ -19,7 +19,7 @@ namespace CES.Infra.Models
         public int DivisionNumberId { get; set; }
 
         [JsonIgnore]
-        public Division DivisionNumber { get; set; }
+        public DivisionEntity DivisionNumber { get; set; }
 
         public ICollection<DriverLicenseEntity> DriverLicense { get; set; }
        

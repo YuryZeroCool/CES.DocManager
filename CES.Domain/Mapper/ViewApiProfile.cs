@@ -57,7 +57,7 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
                 .ForMember(dest => dest.Employee, opt => opt.Ignore());
 
-            CreateMap<Division,GetDivisionNumberResponse>()
+            CreateMap<DivisionEntity,GetDivisionNumberResponse>()
                 .ForMember(dest => dest.DivisionNumber,opt=>opt.MapFrom(src=>src.Name));
             
             //Create User 

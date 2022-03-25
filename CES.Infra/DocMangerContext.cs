@@ -10,7 +10,10 @@ namespace CES.Infra
 
         public virtual DbSet<DriverLicenseEntity> DriverLicenses { get; set; }
 
-        public virtual DbSet<Division> Divisions { get; set; }
+        public virtual DbSet<DivisionEntity> Divisions { get; set; }
+
+        public virtual DbSet<VehicleGroupEntity> VehicleGroups { get; set; }
+
 
         public virtual DbSet<DriverMedicalCertificateEntity> DriverMedicalCertificate { get; set; }
         public DocMangerContext(DbContextOptions<DocMangerContext> options)

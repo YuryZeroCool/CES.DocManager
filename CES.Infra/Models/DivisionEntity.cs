@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace CES.Infra.Models
 {
-    public class Division
+    public class DivisionEntity
     {
         public int Id { get; set; }
 
@@ -12,7 +12,7 @@ namespace CES.Infra.Models
         [JsonIgnore]
         public ICollection<EmployeeEntity> EmployeeEntities { get; set; }
 
-        public Division()
+        public DivisionEntity()
         {
             EmployeeEntities = new List<EmployeeEntity>();      
         }
