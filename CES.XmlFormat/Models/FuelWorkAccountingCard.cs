@@ -10,7 +10,7 @@ namespace CES.XmlFormat.Models
 
         public string DriverFullName { get; set; }
 
-       // public int HoursWorked { get; set; }
+       public int HoursWorked { get; set; }
 
         public int MileageStart { get; set; }
 
@@ -28,8 +28,8 @@ namespace CES.XmlFormat.Models
 
         public double ConsumptionAccordingToNorm { get; set; }
 
-        public virtual double EngineHoursStart { get; set; }
+        public virtual double EngineHoursStart { get; set; } //Старт часов работы двигателя
 
-        public virtual double EngineHoursEnd { get; set; }
+        public virtual double EngineHoursEnd { get; set; } // Окончание работы двигателя
     }
 }

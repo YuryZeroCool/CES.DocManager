@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CES.DocManager.Tests\CES.DocManager.Tests.csproj" />
     <ProjectReference Include="..\CES.InfraSecurity\CES.InfraSecurity.csproj" />
     <ProjectReference Include="..\CES.Infra\CES.Infra.csproj" />
     <ProjectReference Include="..\CES.XmlFormat\CES.XmlFormat.csproj" />

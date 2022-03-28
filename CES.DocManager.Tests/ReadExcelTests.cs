@@ -89,8 +89,9 @@ namespace CES.XmlFormat.Tests
             row.CreateCell(14).SetCellValue("на конец"); //  на конец 
 
             mock.Setup(p => p.GetSheet("Лист 1")).Returns(sheet);
+          //  mock.Setup(p => p.GetSheet("Лист 1")).Returns(sheet);
             ReadExcel excel = new ReadExcel(mock.Object);
-          //  excel.WrireAddresses();
+            excel.WrireAddresses();
 
             Assert.AreEqual("D4", excel.AddressDriver);
         }
