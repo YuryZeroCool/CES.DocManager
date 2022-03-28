@@ -2,6 +2,7 @@
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -409,99 +410,205 @@ namespace CES.XmlFormat.Tests
             IWorkbook workbook = new XSSFWorkbook();
 
             var sheet = workbook.CreateSheet("Лист 7");
-
-            for (int i = 6; i < 46; i+=3) /* строки*/
+            IRow row = null;
+            var index = 0;
+            var refuelCount = 0;
+            for (int i = 6; i < 46; i += 3) /* строки*/
             {
-                var row = sheet.CreateRow(i);
+                 row = sheet.CreateRow(i);
 
                 for (int j = 0; j < 16; j++) /* колонки*/
                 {
                     var cell = row.CreateCell(j);
 
-                    if(cell != null)
+                    if(cell != null && index < 13)
                     {
                         if (cell.Address.FormatAsString()[0]=='B') // Дата
                         {
+                            cell.SetCellValue(Date[index]);
+                            
                             continue;
                         }
 
                         if ((cell.Address.FormatAsString()[0] == 'C')) //Номер
                         {
+                            cell.SetCellValue(NumberList[index]);
                             continue;
                         }
 
                         if ((cell.Address.FormatAsString()[0] == 'D')) // Водитель
                         {
+                            cell.SetCellValue(DriverFullName[index]);
                             continue;
                         }
 
                         if ((cell.Address.FormatAsString()[0] == 'E')) //Часы
                         {
+                            cell.SetCellValue(HoursWorked[index]);
                             continue;
                         }
                          
                         if ((cell.Address.FormatAsString()[0] == 'G')) //На начало пробег
                         {
+                            cell.SetCellValue(MileageStart[index]);
                             continue;
                         }
 
                         if ((cell.Address.FormatAsString()[0] == 'H')) // на конец пробег
                         {
+                            cell.SetCellValue(MileageEnd[index]);
                             continue;
                         }
 
                         if ((cell.Address.FormatAsString()[0] == 'I')) // за день пробег
                         {
+                            cell.SetCellValue(MileagePerDay[index]);
                             continue;
                         }
 
                         if ((cell.Address.FormatAsString()[0] == 'K')) // на на чало топлива 
                         {
+                            cell.SetCellValue(FuelStart[index]);
                             continue;
                         }
 
                         if ((cell.Address.FormatAsString()[0] == 'L')) // заправака
                         {
+                            if (i == 6) 
+                            {
+                                cell.SetCellValue(Refueling[refuelCount]);
+                                refuelCount++;
+                                continue;
+                            }
+                            if (i == 12) 
+                            { 
+                                cell.SetCellValue(Refueling[refuelCount]);
+                                refuelCount++;
+                                continue;
+                            }
+                            if (i == 15)
+                            { 
+                                cell.SetCellValue(Refueling[refuelCount]);
+                                refuelCount++;
+                                continue;
+                            }
+                            if (i == 21)
+                            { 
+                                cell.SetCellValue(Refueling[refuelCount]);
+                                refuelCount++;
+                                continue;
+                            }
+                            if (i == 27)
+                            { 
+                                cell.SetCellValue(Refueling[refuelCount]);
+                                refuelCount++;
+                                continue;
+                            }
+                            if (i == 30) 
+                            {
+                                cell.SetCellValue(Refueling[refuelCount]);
+                                refuelCount++;
+                                continue;
+                            }
+                            if (i == 36)
+                            { 
+                                cell.SetCellValue(Refueling[refuelCount]);
+                                refuelCount++;
+                                continue;
+                            }
+                            if (i == 42)
+                            { 
+                                cell.SetCellValue(Refueling[refuelCount]);
+                                refuelCount++;
+                                continue;
+                            }
                             continue;
                         }
 
                         if ((cell.Address.FormatAsString()[0] == 'M')) // расход по факту
                         {
+                            cell.SetCellValue(ActualConsumption[index]);
                             continue;
                         }
 
                         if ((cell.Address.FormatAsString()[0] == 'N')) // расход по нормам 
                         {
+                            cell.SetCellValue(ConsumptionAccordingToNorm[index]);
                             continue;
                         }
 
                         if ((cell.Address.FormatAsString()[0] == 'O')) // на конец топлива
                         {
+                            cell.SetCellValue(FuelEnd[index]);
                             continue;
                         }
                     }
-
                 }
+                index++;
+
+                row.CreateCell(0).SetCellValue("ИТОГО");
             }
 
-             Assert.AreEqual(0, 0); /*1 Дата*/
-            Assert.AreEqual(1268952, 0); /*2 Номер*/
-            Assert.AreEqual(0, 0); /*3 Водитель*/
+            row.CreateCell(1).SetCellValue("Дата"); //Дата B4                                                
+            row.CreateCell(2).SetCellValue("Номер"); // Номер  C4
+            row.CreateCell(3).SetCellValue("Водитель 84700"); // Водитель D4
 
-            Assert.AreEqual(216, 0); /*4 Часы*/
+            row.CreateCell(4).SetCellValue("часы"); // Часы отработаные   E5
 
-            Assert.AreEqual(432133, 0); /*5 на начало пробег*/
-            Assert.AreEqual(432644, 0); /*6 на конец пробег*/
-            Assert.AreEqual(511, 0); /*7 за день пробег*/
+            row.CreateCell(6).SetCellValue("на начало"); // Пробег  на начало G5
+            row.CreateCell(7).SetCellValue("на конец"); // Пробег на конец  H5
+            row.CreateCell(8).SetCellValue("за день"); //  За день I5
 
-            Assert.AreEqual(977, 0); /*8 на начало топливо*/
-            Assert.AreEqual(730, 0); /*9 заправка*/
-            // Assert.AreEqual(715, 0); /*10 по факту топливо*/
-            //Assert.AreEqual(716.3, 0); /*11 по нормам топлива*/
-            Assert.AreEqual(992, 0); /*12 на конец топливо*/
+            row.CreateCell(10).SetCellValue("на начало");// Топливо на начало  K5
+            row.CreateCell(11).SetCellValue("Заправка"); // Заправка   L5
+            row.CreateCell(12).SetCellValue("по факту"); // Расход по факту M6
+            row.CreateCell(13).SetCellValue("по нормам"); // Расход по нормам  N6
+            row.CreateCell(14).SetCellValue("на конец"); //  на конец    O5
+            var sheetGet = workbook.GetSheet("Лист 7");
 
-            Assert.AreEqual(18287, 0); /*13 моточасы на начало*/
-            Assert.AreEqual(18330, 0); /*14 моточасы на конец*/
+            var exel = new ReadExcel(workbook);
+
+            var resArr =   exel.readExcel();
+
+            Assert.AreEqual("B7", sheetGet.GetRow(6).GetCell(1).Address.FormatAsString());
+            Assert.AreEqual("C7", sheetGet.GetRow(6).GetCell(2).Address.FormatAsString());
+            Assert.AreEqual("D7", sheetGet.GetRow(6).GetCell(3).Address.FormatAsString());
+
+            Assert.AreEqual("E7", sheetGet.GetRow(6).GetCell(4).Address.FormatAsString());
+
+            Assert.AreEqual("G7", sheetGet.GetRow(6).GetCell(6).Address.FormatAsString());
+            Assert.AreEqual("H7", sheetGet.GetRow(6).GetCell(7).Address.FormatAsString()); 
+            Assert.AreEqual("I7", sheetGet.GetRow(6).GetCell(8).Address.FormatAsString());
+
+            Assert.AreEqual("K7", sheetGet.GetRow(6).GetCell(10).Address.FormatAsString());
+            Assert.AreEqual("L7", sheetGet.GetRow(6).GetCell(11).Address.FormatAsString());
+            Assert.AreEqual("M7", sheetGet.GetRow(6).GetCell(12).Address.FormatAsString());
+            Assert.AreEqual("N7", sheetGet.GetRow(6).GetCell(13).Address.FormatAsString());
+            Assert.AreEqual("O7", sheetGet.GetRow(6).GetCell(14).Address.FormatAsString());
+
+            Assert.AreEqual("A46", sheetGet.GetRow(45).GetCell(0).Address.FormatAsString());
+
+            Assert.AreEqual("ИТОГО", sheetGet.GetRow(45).GetCell(0).ToString());
+
+
+            Assert.AreEqual(resArr.ToList()[0][5].Date.ToShortDateString(), "04.02.2022"); /*1 Дата*/
+            //Assert.AreEqual(1268952, 0); /*2 Номер*/
+            //Assert.AreEqual(0, 0); /*3 Водитель*/
+
+            //Assert.AreEqual(216, 0); /*4 Часы*/
+
+            //Assert.AreEqual(432133, 0); /*5 на начало пробег*/
+            //Assert.AreEqual(432644, 0); /*6 на конец пробег*/
+            //Assert.AreEqual(511, 0); /*7 за день пробег*/
+
+            //Assert.AreEqual(977, 0); /*8 на начало топливо*/
+            //Assert.AreEqual(730, 0); /*9 заправка*/
+            //// Assert.AreEqual(715, 0); /*10 по факту топливо*/
+            ////Assert.AreEqual(716.3, 0); /*11 по нормам топлива*/
+            //Assert.AreEqual(992, 0); /*12 на конец топливо*/
+
+            //Assert.AreEqual(18287, 0); /*13 моточасы на начало*/
+            //Assert.AreEqual(18330, 0); /*14 моточасы на конец*/
         }
 
         [TestMethod()]
