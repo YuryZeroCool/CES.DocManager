@@ -128,8 +128,8 @@ namespace CES.XmlFormat
                                 if (cell.ToString() == "") continue;
                                 var res = int.TryParse(cellAdress.Substring(1), out var nextAddress);
                                 if (!res) continue;
-
-                                if(sheet.GetRow(nextAddress) != null) 
+                                var dr = sheet.GetRow(nextAddress);
+                                if (sheet.GetRow(nextAddress) != null) 
                                 {
                                     if (sheet.GetRow(nextAddress).GetCell(6) != null)
                                     {
