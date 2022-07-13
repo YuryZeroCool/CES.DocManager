@@ -19,7 +19,7 @@ using CES.Domain.Security.User.Logout;
 namespace CES.DocManger.WebApi.Controllers
 {
     [EnableCors("MyPolicy")]
-    [Route("api/[controller]")]
+    [Route("account/")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -27,12 +27,14 @@ namespace CES.DocManger.WebApi.Controllers
 
         private readonly IMapper _mapper;
 
+        private readonly int lifeTimeToken = 2;
+
         public AccountController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
             _mapper = mapper;
         }
-        [HttpPost("/login")]
+        [HttpPost("login")]
         [Produces(typeof(LoginViewModel))]
         public async Task<object> LoginAsync(LoginRequest query)
         {
@@ -41,11 +43,11 @@ namespace CES.DocManger.WebApi.Controllers
                 var result =  await _mediator.Send(query);
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                 {
-                    Expires = DateTimeOffset.Now.AddDays(30),
+                    Expires = DateTimeOffset.Now.AddDays(lifeTimeToken),
                     HttpOnly = true,
                     Secure = true,
                     Domain = "localhost",
-                    Path = "/updateTokenPair"
+                    Path = "/account/"
                 });
                 return _mapper.Map<LoginResponse,LoginViewModel>(result);
             }
@@ -69,25 +71,31 @@ namespace CES.DocManger.WebApi.Controllers
             }
         }
 
-        [HttpPost("/updateTokenPair")]
+        [Authorize(AuthenticationSchemes =
+        JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpPost("updateTokenPair")]
         [Produces(typeof(string))]
-        public async Task<object> UpdateTokenPairAsync(UpDateTokenRequest token)
+        public async Task<object> UpdateTokenPairAsync([FromBody] string email)
         {
             try
             {
-                token.RefreshToken =HttpContext.Request.Cookies["refreshToken"];
+                var token = HttpContext.Request.Cookies["refreshToken"];
 
-                if (token.RefreshToken == null)  throw new TokenException(HttpStatusCode.ServiceUnavailable, "Токен не передан");
+                if (token == null)  throw new TokenException(HttpStatusCode.ServiceUnavailable, "Токен не передан");
 
-               var result = await _mediator.Send(token);
+               var result = await _mediator.Send(new UpDateTokenRequest() 
+               {
+                   EmailAddress = email, 
+                   RefreshToken = token
+               });
 
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                 {
-                    Expires = DateTimeOffset.Now.AddDays(30),
+                    Expires = DateTimeOffset.Now.AddDays(lifeTimeToken),
                     HttpOnly = true,
                     Secure = true,
                     Domain = "localhost",
-                    Path = "/updateTokenPair"
+                    Path = "/account/"
                 });
                 return result.AccessToken;
             }
@@ -116,26 +124,34 @@ namespace CES.DocManger.WebApi.Controllers
 
         [Authorize(AuthenticationSchemes =
         JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        [HttpPost("/logout")]
+        [HttpPost("logout")]
         public async Task LogoutAsync([FromBody] string email)
         {
             try
             {
+                var token = HttpContext.Request.Cookies["refreshToken"];
+                if (token == null) throw new RestException(HttpStatusCode.Unauthorized);
+
                 var model = new LogoutRequest
                 {
                     EmailAddress = email,
-                    AccessToken = HttpContext.Request.Headers["Authorization"].ToString()[7..]
                 };
                 await _mediator.Send(model);
+                HttpContext.Response.Cookies.Delete("refreshToken", new CookieOptions
+                {
+                    Domain = "localhost",
+                    Path = "/account/"
+                });
                 HttpContext.Response.StatusCode = 200;
             }
             catch (RestException e)
             {
                 HttpContext.Response.StatusCode = ((int)e.Code);
+                HttpContext.Response.Cookies.Delete("refreshToken");
             }
         }
 
-        [HttpPost("/registration")]
+        [HttpPost("registration")]
         public async Task<string> RegistrationAsync(UserModelRequest query)
         {
             return await _mediator.Send(query);
@@ -145,7 +161,7 @@ namespace CES.DocManger.WebApi.Controllers
 
         [Authorize(AuthenticationSchemes =
             JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        [HttpPost("/role")]
+        [HttpPost("role")]
         public async Task<string> CreateRoleAsync([FromBody]RoleViewModel query)
         {
 

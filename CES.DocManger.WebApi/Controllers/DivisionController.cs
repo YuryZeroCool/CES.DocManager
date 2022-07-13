@@ -9,10 +9,8 @@ using CES.Domain.Models.Response.Departments;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-
 namespace CES.DocManger.WebApi.Controllers
 {
-
     [EnableCors("MyPolicy")]
     [ApiController]
     [Route("api/[controller]")]
@@ -28,12 +26,20 @@ namespace CES.DocManger.WebApi.Controllers
 
         }
 
-        [Authorize(AuthenticationSchemes =
-            JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("d")]
         public async Task<IEnumerable<GetDivisionNumberResponse>> GetAllDivisions()
         {
-            return await _mediator.Send(new GetDivisionNumberRequest());
+            try
+            {
+                return await _mediator.Send(new GetDivisionNumberRequest());
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+          
         }
     }
 }

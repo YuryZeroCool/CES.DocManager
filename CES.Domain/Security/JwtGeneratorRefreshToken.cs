@@ -19,7 +19,7 @@ namespace CES.Domain.Security
 
         public JwtGeneratorRefreshToken(IConfiguration config)
         {
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Refresh_Token:TOKEN_KEY_RefreshToken"]));
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey:TOKEN_KEY"]));
 
         }
         public async Task<string> CreateTokenAsync(UserEntity userEntity, IList<string> roles)
@@ -41,6 +41,7 @@ namespace CES.Domain.Security
                 Subject = new ClaimsIdentity(claims),
                 Issuer = AuthOptions.ISSUER,
                 Audience = AuthOptions.AUDIENCE,
+                NotBefore = now,
                 IssuedAt = now,
                 Expires = DateTime.Now.AddDays(30),
                 SigningCredentials = credentials,

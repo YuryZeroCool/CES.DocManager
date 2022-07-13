@@ -22,11 +22,23 @@ body {
 }
 
 main {
-  height: 100%;
   padding-top: 10vh;
   box-sizing: border-box;
   background-image: url('../assets/bg/bg-home.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.tables-container {
+  display: flex;
+}
+
+.driver-license-table {
+  width: 47% !important;
+  margin: 0 3%;
+}
+
+.error-message {
+  color: red;
 }

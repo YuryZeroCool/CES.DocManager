@@ -26,6 +26,7 @@ namespace CES.Domain.Handlers.Employees
                 from p in grouping.DefaultIfEmpty()
                 select new
                 {
+                    b.Id,
                     b.FirstName,
                     b.LastName,
                     p.SerialNumber
@@ -36,6 +37,7 @@ namespace CES.Domain.Handlers.Employees
 
                 data.Add(new GetEmployeeFullNameResponse()
                 {
+                    Id = item.Id,
                     FirstName = item.FirstName,
                     LastName = item.LastName
                 });

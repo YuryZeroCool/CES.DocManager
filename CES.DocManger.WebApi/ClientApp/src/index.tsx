@@ -3,25 +3,26 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './redux/store/configureStore';
-import App from './App';
-import DocumentsPage from './components/Documents/DocumentsPage';
-import DriversPage from './components/Drivers/DriversPage';
-import ReportPage from './components/Report/ReportPage';
-import TechniquePage from './components/Technique/TechniquePage';
-import Login from './components/Users/Login';
+import DocumentsPage from './components/documents/DocumentsPage';
+import DriversPage from './components/drivers/DriversPage';
+import ReportPage from './components/report/ReportPage';
+import TechniquePage from './components/technique/TechniquePage';
+import Login from './components/users/Login';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Layout from './components/Layout/Layout';
+import Layout from './components/layout/Layout';
+import App from './App';
+import RequireAuth from './hoc/RequireAuth';
 
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<App />} />
-          <Route path="report" element={<ReportPage />} />
-          <Route path="documents" element={<DocumentsPage />} />
-          <Route path="technique" element={<TechniquePage />} />
-          <Route path="drivers" element={<DriversPage />} />
+          <Route index element={<RequireAuth><App /></RequireAuth>} />
+          <Route path="report" element={<RequireAuth><ReportPage /></RequireAuth>} />
+          <Route path="documents" element={<RequireAuth><DocumentsPage /></RequireAuth>} />
+          <Route path="technique" element={<RequireAuth><TechniquePage /></RequireAuth>} />
+          <Route path="drivers" element={<RequireAuth><DriversPage /></RequireAuth>} />
           <Route path="login" element={<Login />} />
         </Route>
       </Routes>

@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace CES.Domain.Handlers.Employees
 {
-    public class AddEmployeeHandler : IRequestHandler<CreateEmployeeRequest>
+    public class CreateEmployeeHandler : IRequestHandler<CreateEmployeeRequest>
     {
         public readonly DocMangerContext _docMangerContex;
 
         public readonly IMapper _mapper;
 
-        public AddEmployeeHandler (DocMangerContext mangerContex, IMapper mapper)
+        public CreateEmployeeHandler (DocMangerContext mangerContex, IMapper mapper)
         {
             _docMangerContex = mangerContex;
             _mapper = mapper;

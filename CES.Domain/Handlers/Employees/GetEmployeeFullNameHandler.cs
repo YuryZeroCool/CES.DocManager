@@ -39,6 +39,7 @@ namespace CES.Domain.Handlers.Employees
                 if (emp == null) throw new System.Exception("Нет сотрудников");
                 return await Task.FromResult(emp.Select(x => new GetEmployeeFullNameResponse
                 {
+                    Id = x.Id,
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                 }));

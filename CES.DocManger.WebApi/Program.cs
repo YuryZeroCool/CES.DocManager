@@ -20,7 +20,12 @@ namespace CES.DocManger.WebApi
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    //webBuilder.ConfigureKestrel(serverOption =>
+                    //{
+                    //    serverOption.Listen(System.Net.IPAddress.Loopback, 500);
+
+                    //})
+                   webBuilder.UseStartup<Startup>();
                 });
         }
     }

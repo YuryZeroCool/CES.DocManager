@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CES.Domain.Security.User.Login
 {
-    public class LoginHadler : IRequestHandler<LoginRequest, LoginResponse>
+    public class LoginHandler : IRequestHandler<LoginRequest, LoginResponse>
     {
         private readonly IJwtGenerator _jwtGenerator;
 
@@ -19,7 +19,7 @@ namespace CES.Domain.Security.User.Login
 
         private readonly UserManager<UserEntity> _userMgr;
 
-        public LoginHadler(UserManager<UserEntity> userMgr, SignInManager<UserEntity> signInManager,
+        public LoginHandler(UserManager<UserEntity> userMgr, SignInManager<UserEntity> signInManager,
             JwtGeneratorAccessToken jwtGenerator, JwtGeneratorRefreshToken refreshToken)
         {
             _signInManager = signInManager;

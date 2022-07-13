@@ -1,7 +1,11 @@
 using CES.DocManger.WebApi.Security;
 using CES.Domain.Handlers.Employees;
+using CES.Domain.Security;
 using CES.Infra;
 using CES.InfraSecurity.Models;
+using MediatR;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -10,17 +14,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MediatR;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Linq;
 using System.Text;
-using CES.Domain.Interfaces;
-using CES.Domain.Security;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.CookiePolicy;
 
 namespace CES.DocManger.WebApi
 {
@@ -48,18 +45,26 @@ namespace CES.DocManger.WebApi
                 })
                 .AddJwtBearer(options =>                     //JwtBearerDefaults.AuthenticationScheme,
                 {
-
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
-                        ValidateLifetime = true,
-                        ValidateAudience = true,
-                        ValidateIssuerSigningKey = true,
-
                         ValidIssuer = AuthOptions.ISSUER,
+
+                        ValidateAudience = true,
                         ValidAudience = AuthOptions.AUDIENCE,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey:TOKEN_KEY_AccessToken"]))
+                        ValidateLifetime = true,
+                        LifetimeValidator = AuthOptions.CustomLifetimeValidator,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey:TOKEN_KEY"])),
+                        ValidateIssuerSigningKey = true
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            context.Token = context.Request.Cookies["refreshToken"];
+                            return System.Threading.Tasks.Task.CompletedTask;
+                        }
                     };
                 });
 
@@ -104,7 +109,6 @@ namespace CES.DocManger.WebApi
                 configuration.RootPath = "ClientApp/build";
             });
        
-  
             services.AddControllers();
         }
 
@@ -122,7 +126,6 @@ namespace CES.DocManger.WebApi
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
             app.UseRouting();
 
            app.UseCors();
@@ -132,7 +135,6 @@ namespace CES.DocManger.WebApi
         
             app.UseHttpsRedirection();
            
-
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {

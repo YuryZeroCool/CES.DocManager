@@ -1,18 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import '../../styles/login.scss';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
-import login from '../../redux/actions/loginRedux';
-import { UserState, IUserRequest, IAuthResponse } from '../../types/UserTypes';
+import { useDispatch } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router';
+import { IUserRequest } from '../../types/UserTypes';
 import { IAuthResponseType } from '../../redux/store/configureStore';
+import { setEmail, setToken, setUserName } from '../../redux/store/reducers/loginReducer';
+import login from '../../redux/actions/loginRedux';
+import '../../styles/login.scss';
+
+interface CustomizedState {
+  from: string;
+}
 
 export default function Login() {
   const dispatch: IAuthResponseType = useDispatch();
-  const globalState = useSelector<UserState, UserState>((state) => state);
-  const navigotor = useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { from } = location.state as CustomizedState;
+  const fromPage = '/' || from;
 
   const {
     register,
@@ -20,12 +27,24 @@ export default function Login() {
     formState: { errors },
   } = useForm<IUserRequest>({ mode: 'onBlur' });
 
+  useEffect(() => {
+    const userName = localStorage.getItem('userName');
+    const token = localStorage.getItem('accessToken');
+    const email = localStorage.getItem('email');
+    if (userName && token && email) {
+      dispatch(setUserName(userName));
+      dispatch(setToken(token));
+      dispatch(setEmail(email));
+      navigate(fromPage, { replace: true });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const onSubmit: SubmitHandler<IUserRequest> = async (user: IUserRequest): Promise<void> => {
     try {
       const response = await dispatch(login(user));
       if (response.type === 'jwt/fulfilled') {
-        const data = response.payload as IAuthResponse;
-        navigotor('/');
+        navigate(fromPage, { replace: true });
       }
     } catch (error) {
       console.log(error);

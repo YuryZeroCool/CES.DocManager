@@ -7,6 +7,7 @@ using CES.Domain.Models.Response.Departments;
 using CES.Domain.Models.Response.Employees;
 using CES.Domain.Models.Response.Report;
 using CES.Domain.Security.User.Registration;
+using CES.Domain.Security.User.UpDateToken;
 using CES.Infra.Models;
 using CES.InfraSecurity.Models;
 using CES.XmlFormat.Models;
@@ -35,6 +36,7 @@ namespace CES.Domain.Mapper
 
             // EmployeeEntity => GetEmployeeFullNameResponse
             CreateMap<EmployeeEntity, GetEmployeeFullNameResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName));
 
@@ -68,10 +70,6 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.EmailAddress));
-
-
-
-
 
 
             //CreateMap<EmployeeEntity,GetEmployeeFirstLastNameResponse>()

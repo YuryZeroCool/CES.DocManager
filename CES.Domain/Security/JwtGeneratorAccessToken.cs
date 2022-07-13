@@ -20,7 +20,7 @@ namespace CES.Domain.Security
 
         public JwtGeneratorAccessToken(IConfiguration config)
         {
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey:TOKEN_KEY_AccessToken"]));
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey:TOKEN_KEY"]));
 
         }
         public async Task<string> CreateTokenAsync(UserEntity userEntity, IList<string> roles)
@@ -32,24 +32,23 @@ namespace CES.Domain.Security
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Name,userEntity.DisplayName),
-              
             };
 
             claims.AddRange(roles.Select(item => new Claim(ClaimTypes.Role, item)));
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Issuer = AuthOptions.ISSUER,
-                Audience = AuthOptions.AUDIENCE,
-                IssuedAt = now,
-                Expires = DateTime.Now.AddMinutes(5),
-               SigningCredentials = credentials
-            };
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenDescriptor = new JwtSecurityToken
+            (
+               claims: claims,
+                issuer: AuthOptions.ISSUER,
+                audience:AuthOptions.AUDIENCE,
+                notBefore: now,
+                expires : now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+               signingCredentials: credentials
+            );
+            //var tokenHandler = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+            //var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return  await Task.FromResult(tokenHandler.WriteToken(token));
+            return  await Task.FromResult(new JwtSecurityTokenHandler().WriteToken(tokenDescriptor));
         }
 
         public bool ValidateToken(string tokenRefresh)

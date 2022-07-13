@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Response.Employees;
 using CES.Infra;
 using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CES.Domain.Handlers.Employees
 {
@@ -28,12 +27,12 @@ namespace CES.Domain.Handlers.Employees
             List<ExpiringDocumentEmployeeResponse> dates = new();
             if (request.nameDocument == "DriverLicense")
             {
-                
                 var date = _context.DriverLicenses.Join(_context.Employees,
                     p => p.EmployeeId,
                     c => c.Id,
                     (p, c) => new
                     {
+                        c.Id,
                         c.FirstName,
                         c.LastName,
                         c.BthDate,
@@ -44,11 +43,12 @@ namespace CES.Domain.Handlers.Employees
                 {
                     dates.Add((ExpiringDocumentEmployeeResponse) new ExpiringDocumentEmployeeResponse()
                     {
+                        Id = item.Id + DateTime.Now.Millisecond,
                         FirstName = item.FirstName,
                         LastName = item.LastName,
                         DivisionNumber = item.DivisionNumber,
                         BthDate = item.BthDate,
-                        IssueDate = item.ExpiryDate,
+                        ExpiryDate = item.ExpiryDate,
                     });
                 };
                
@@ -60,6 +60,7 @@ namespace CES.Domain.Handlers.Employees
                     c => c.Id,
                     (p, c) => new
                     {
+                        c.Id,
                         c.FirstName,
                         c.LastName,
                         c.BthDate,
@@ -70,11 +71,12 @@ namespace CES.Domain.Handlers.Employees
                 {
                     dates.Add(new ExpiringDocumentEmployeeResponse()
                     {
+                        Id = item.Id,
                         FirstName = item.FirstName,
                         LastName = item.LastName,
                         DivisionNumber = item.DivisionNumber,
                         BthDate = item.BthDate,
-                        IssueDate = item.ExpiryDate,
+                        ExpiryDate = item.ExpiryDate,
                     });
                 }
             }

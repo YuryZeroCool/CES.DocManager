@@ -8,12 +8,12 @@ const login = createAsyncThunk<IAuthResponse, IUserRequest>(
   async (user: IUserRequest, { rejectWithValue }) => {
     try {
       const response = await axios.post<IAuthResponse>(
-        'https://localhost:5001/login',
+        'https://localhost:5001/account/login',
         user,
         {
           method: 'post',
           headers: {
-            accept: 'text/plain',
+            accept: 'application/json',
             'Content-Type': 'application/json',
           },
           withCredentials: true,
@@ -34,11 +34,5 @@ const login = createAsyncThunk<IAuthResponse, IUserRequest>(
 //     return response;
 //   }
 // );
-
-export const logout = createAsyncThunk('jwt', async (user: IUserRequest) => {
-  const response = await $api.post<IAuthResponse[]>('logout');
-
-  return response.data;
-});
 
 export default login;

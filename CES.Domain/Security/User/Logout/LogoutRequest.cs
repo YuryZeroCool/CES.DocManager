@@ -6,6 +6,8 @@ namespace CES.Domain.Security.User.Logout
     {
         public string EmailAddress { get; set; }
 
-        public string AccessToken { get; set; }
+        //public string AccessToken { get; set; }
+
+       // public string RefreshToken { get; set; }
     }
 }

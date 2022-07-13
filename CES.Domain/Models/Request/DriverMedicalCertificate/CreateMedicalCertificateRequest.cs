@@ -1,10 +1,11 @@
 ﻿using System;
 using CES.Domain.Models.Response;
+using CES.Domain.Models.Response.Employees;
 using MediatR;
 
 namespace CES.Domain.Models.Request.DriverMedicalCertificate
 {
-    public class CreateMedicalCertificateRequest : BaseModelDocument, IRequest
+    public class CreateMedicalCertificateRequest : BaseModelDocument, IRequest<GetEmployeeFullNameResponse>
     {
         public string FirstName { get; set; }
 

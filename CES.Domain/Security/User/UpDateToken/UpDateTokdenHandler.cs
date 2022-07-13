@@ -30,16 +30,15 @@ namespace CES.Domain.Security.User.UpDateToken
             if (_refreshToken.ValidateToken(request.RefreshToken))
             {
                 var user = await _userMgr.FindByEmailAsync(request.EmailAddress);
+                if (user == null) throw new TokenException(HttpStatusCode.Unauthorized,"Error");
 
                 var token = await _userMgr.GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken");
 
                 if (token != request.RefreshToken) throw new TokenException(HttpStatusCode.ServiceUnavailable,"Error Server Token");
 
-                if (user == null) throw new RestException(HttpStatusCode.Unauthorized);
-
                 var userRole = await _userMgr.GetRolesAsync(user);
 
-                if (userRole == null) throw new RestException(HttpStatusCode.Unauthorized);
+                if (userRole == null) throw new TokenException(HttpStatusCode.Unauthorized);
 
                 var newToken = await _jwtGenerator.CreateTokenAsync(user, userRole);
                 var refreshToken = await _refreshToken.CreateTokenAsync(user, userRole);

@@ -6,7 +6,7 @@ namespace CES.Domain.Models.Response.Employees
     {
         public DateTime BthDate { get; set; }
 
-        public DateTime IssueDate { get; set; }
+        public DateTime ExpiryDate { get; set; }
 
         public string DivisionNumber { get; set; }
 

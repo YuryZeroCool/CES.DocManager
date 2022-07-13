@@ -1,22 +1,22 @@
-﻿using AutoMapper;
-using CES.DocManger.WebApi.Models;
-using CES.Domain.Models.Request.Employee;
-using CES.Domain.Models.Response.Employees;
-using MediatR;
-using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 using System.Collections.Generic;
-using System.IO.Pipelines;
-using System.Net;
 using System.Threading.Tasks;
+using CES.Domain.Models.Response.Employees;
+using System;
+using CES.Domain.Models.Request.Employee;
+using CES.DocManger.WebApi.Models;
+using System.Net;
 
 namespace CES.DocManger.WebApi.Controllers
 {
-    //[EnableCors("MyPolicy")]
-
-    [Route("api/[controller]")]
+    [EnableCors("MyPolicy")]
     [ApiController]
+    [Route("api/[controller]")]
     public class EmployeeController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -29,6 +29,8 @@ namespace CES.DocManger.WebApi.Controllers
             _mapper = mapper;
         }
 
+        [Authorize(AuthenticationSchemes =
+       JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet]
         [Produces(typeof(IEnumerable<GetEmployeeFullNameResponse>))]
         public async Task<Object> GetAllEmployees()
@@ -40,29 +42,33 @@ namespace CES.DocManger.WebApi.Controllers
             }
             catch (Microsoft.Data.SqlClient.SqlException)
             {
-                HttpContext.Response.StatusCode=(int)HttpStatusCode.NotExtended;
-               
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotExtended;
+
                 return null;
             }
             catch (Exception e)
             {
-      
+
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                
-                 return  new 
-                 {
-                     statusCode =  404,
-                     title = e.Message
-                 };
+
+                return new
+                {
+                    statusCode = 404,
+                    title = e.Message
+                };
             }
         }
 
+        [Authorize(AuthenticationSchemes =
+            JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("isPersonalNumber/{personalNumber}")]
         public async Task<bool> GetIsPersonalNumber(int personalNumber)
         {
-           return await _mediator.Send(new GetIsValidNumberNumberRequest { Id = personalNumber });
+            return await _mediator.Send(new GetIsValidNumberNumberRequest { Id = personalNumber });
         }
 
+        [Authorize(AuthenticationSchemes =
+       JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("firstName/{divisionNumber}")]
         public async Task<IEnumerable<GetEmployeeFullNameResponse>> GetShiftEmployees(string divisionNumber)
         {
@@ -78,33 +84,8 @@ namespace CES.DocManger.WebApi.Controllers
             }
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<EmployeeView> GetEmployee(int id)
-        //{
-        //    var date = await _context.Employees.Join(_context.Divisions,
-        //       p => p.DivisionNumberId,
-        //       c => c.Id,
-        //       (p, c) => new
-        //       {
-        //           p.Id,
-        //           p.FirstName,
-        //           p.LastName,
-        //           p.PersonnelNumber,
-        //           DivisionNumber = c.Name,
-        //           p.BthDate,
-        //       }).FirstOrDefaultAsync(p => p.Id == id);
-
-        //    return new EmployeeView
-        //    {
-        //        Id = date.Id,
-        //        LastName = date.LastName,
-        //        FirstName = date.FirstName,
-        //        PersonnelNumber = date.PersonnelNumber,
-        //        DivisionNumber = date.DivisionNumber,
-        //        BirthDate = date.BthDate
-        //    };
-        //}
-
+        [Authorize(AuthenticationSchemes =
+       JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("noDriverLicense")]
         public async Task<IEnumerable<GetEmployeeFullNameResponse>> GetListEmployeesNoDriverLicense()
         {
@@ -116,76 +97,88 @@ namespace CES.DocManger.WebApi.Controllers
             {
                 throw;
             }
-          
-        }
 
-        [HttpGet("expiringDriverLicense/{numberMonths}")]
-        public async Task<IEnumerable<ExpiringDocumentEmployeeResponse>>  GetExpiringDriverLicense(int numberMonth)
+        }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("expiringDriverLicense")]
+        public async Task<IEnumerable<ExpiringDocumentEmployeeResponse>> GetExpiringDriverLicense(int numberMonth)
         {
-            return await _mediator.Send(new GetExpiringDocumentEmployeeRequest() {numberMonth = numberMonth});
+            try
+            {
+                return await _mediator.Send(new GetExpiringDocumentEmployeeRequest() { numberMonth = numberMonth });
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
         }
 
-        [HttpGet("expiringDriverMedicalCertificate/{numberMonths}")]
-        public async  Task<IEnumerable<ExpiringDocumentEmployeeResponse>> GetExpiringDriverMedicalCertificate(int numberMonth)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("expiringDriverMedicalCertificate")]
+        public async Task<IEnumerable<ExpiringDocumentEmployeeResponse>> GetExpiringDriverMedicalCertificate(int numberMonth)
         {
-            return await _mediator.Send(new GetExpiringDocumentEmployeeRequest() 
-            { 
-                numberMonth = numberMonth,
-                nameDocument = "DriverMedicalCertificate"
-            });
+            try
+            {
+                return await _mediator.Send(new GetExpiringDocumentEmployeeRequest()
+                {
+                    numberMonth = numberMonth,
+                    nameDocument = "DriverMedicalCertificate"
+                });
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        [HttpGet("medicalCertificate/noDriverMedicalCertificate")]
-        public async Task <IEnumerable<GetEmployeeFullNameResponse>> GetNoMedicalCertificate()
+        [Authorize(AuthenticationSchemes =
+     JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("noDriverMedicalCertificate")]
+        public async Task<IEnumerable<GetEmployeeFullNameResponse>> GetNoMedicalCertificate()
         {
-            return await _mediator.Send(new GetNoMedicalCertificateRequest());
+            try
+            {
+                return await _mediator.Send(new GetNoMedicalCertificateRequest());
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
+        [Authorize(AuthenticationSchemes =
+         JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("AllInformationEmployee")]
-        public async Task<object> GetAllInformationEmployee([FromQuery()]GetEmployeeViewModel model )
+        public async Task<object> GetAllInformationEmployee([FromQuery()] GetEmployeeViewModel model)
         {
-            return await _mediator.Send(_mapper.Map<GetAllInformationEmployeeRequest>(model));
+            try
+            {
+                return await _mediator.Send(_mapper.Map<GetAllInformationEmployeeRequest>(model));
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        [HttpPost]
-        public async Task CreateEmployee([FromBody]CreateEmployeeViewModel model)
+        [Authorize(AuthenticationSchemes =
+        JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpPost("createEmployee")]
+        public async Task CreateEmployee([FromBody] CreateEmployeeViewModel model)
         {
-            await _mediator.Send(_mapper.Map<CreateEmployeeRequest>(model));
+            try
+            {
+                await _mediator.Send(_mapper.Map<CreateEmployeeRequest>(model));
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
-
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> Put(int id, [FromBody] EmployeeView model)
-        //{
-        //    var employee = await _context.Employees.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-        //    if (employee == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var newEmployee = _mapper.Map<EmployeeEntity>(model);
-        //    newEmployee.Id = id;
-        //    _context.Employees.Update(newEmployee);
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok();
-        //}
-
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteEmployee(int id)
-        //{
-
-
-        //    var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == id);
-        //    if (employee == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _context.Employees.Remove(employee);
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok();
-        //}
     }
 }

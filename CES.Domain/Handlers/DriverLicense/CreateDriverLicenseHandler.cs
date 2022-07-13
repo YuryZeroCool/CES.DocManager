@@ -10,13 +10,13 @@ using MediatR;
 
 namespace CES.Domain.Handlers.DriverLicense
 {
-    public class AddDriverLicenseHandler : IRequestHandler<CreateDriverLicenseRequest>
+    public class CreateDriverLicenseHandler : IRequestHandler<CreateDriverLicenseRequest>
     {
         private readonly DocMangerContext _context;
         private readonly IMapper _mapper;
 
 
-        public AddDriverLicenseHandler( DocMangerContext context, IMapper mapper)
+        public CreateDriverLicenseHandler( DocMangerContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
