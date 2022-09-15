@@ -4,8 +4,6 @@ using CES.Domain.Exception;
 using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Response.Employees;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -27,7 +25,7 @@ namespace CES.DocManager.WebApi.Controllers
             _mapper = mapper;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet]
         [Produces(typeof(IEnumerable<GetEmployeesByDivisionResponse>))]
         public async Task<object> GetAllEmployees()
@@ -56,7 +54,7 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        //Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("isPersonalNumber/{personalNumber}")]
         [Produces(typeof(bool))]
         public async Task<object> GetIsPersonalNumber(int personalNumber)
@@ -72,7 +70,7 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("getEmployeesByDivision/{divisionNumber}")]
         [Produces(typeof(IEnumerable<GetEmployeesByDivisionResponse>))]
         public async Task<object> GetEmployeesByDivision(string divisionNumber)
@@ -98,7 +96,7 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
         
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("noDriverLicense")]
         public async Task<IEnumerable<GetEmployeesByDivisionResponse>> GetListEmployeesNoDriverLicense()
         {
@@ -113,7 +111,7 @@ namespace CES.DocManager.WebApi.Controllers
 
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("expiringDriverLicense")]
         public async Task<IEnumerable<GetExpiringDocumentEmployeeResponse>> GetExpiringDriverLicense(int numberMonth)
         {
@@ -128,7 +126,7 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("expiringDriverMedicalCertificate")]
         public async Task<IEnumerable<GetExpiringDocumentEmployeeResponse>> GetExpiringDriverMedicalCertificate(int numberMonth)
         {
@@ -147,7 +145,7 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("noDriverMedicalCertificate")]
         public async Task<IEnumerable<GetEmployeesByDivisionResponse>> GetNoMedicalCertificate()
         {
@@ -162,7 +160,7 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("allInformationEmployee")]
         public async Task<object> GetAllInformationEmployee([FromQuery()] GetEmployeeViewModel model)
         {
@@ -187,7 +185,6 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

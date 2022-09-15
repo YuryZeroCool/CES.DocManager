@@ -3,11 +3,13 @@ using CES.Domain.Exception;
 using CES.Domain.Models.Request.Division;
 using CES.Domain.Models.Response.Division;
 using MediatR;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace CES.DocManager.WebApi.Controllers
 {
+    [EnableCors("MyPolicy")]
     [Route("division/")]
     [ApiController]
     public class DivisionController : ControllerBase

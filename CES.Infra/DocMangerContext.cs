@@ -37,6 +37,13 @@ namespace CES.Infra
 
         public virtual DbSet<UnitEntity> Units { get; set; }
 
+        public virtual  DbSet<NumberPlateCarEntity> NumberPlateOfCar { get; set; }
+
+
+        public virtual DbSet<FuelWorkCardEntity> FuelWorkCards { get; set; }
+
+        public virtual DbSet<WorkCardDivisionsEntity> WorkCardDivisions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfig());
@@ -50,6 +57,10 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new ProductGroupAccountConfig());
             modelBuilder.ApplyConfiguration(new UnitConfig());
             modelBuilder.ApplyConfiguration(new PartyConfig());
+            modelBuilder.ApplyConfiguration(new NumberPlateCarConfig());
+            modelBuilder.ApplyConfiguration(new FuelWorkCardConfig());
+            modelBuilder.ApplyConfiguration(new WorkCardDivisionConfig());
+
         }
-    }
+}
 }

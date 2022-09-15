@@ -9,6 +9,7 @@ namespace CES.Infra.Config
         public void Configure(EntityTypeBuilder<VehicleModelEntity> builder)
         {
             builder.Property(t => t.Name).HasColumnType("NCHAR(30)");
+            builder.HasMany(x => x.NumberPlateCar).WithOne(p => p.VehicleModel);
         }
     }
 }

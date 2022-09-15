@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20220910123521_AddFuelWorkCard")]
+    partial class AddFuelWorkCard
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,6 +162,9 @@ namespace CES.Infra.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("NumberPlateCarId");
+
+                    b.HasIndex("WorkDate")
+                        .IsUnique();
 
                     b.ToTable("FuelWorkCards");
                 });
@@ -321,28 +326,6 @@ namespace CES.Infra.Migrations
                     b.HasIndex("VehicleBrandId");
 
                     b.ToTable("VehicleModels");
-                });
-
-            modelBuilder.Entity("CES.Infra.Models.WorkCardDivisionsEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<byte[]>("Date")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("Division")
-                        .HasColumnType("NCHAR(30)");
-
-                    b.Property<DateTime>("PeriodReport")
-                        .HasColumnType("DATE");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WorkCardDivisions");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.DriverLicenseEntity", b =>

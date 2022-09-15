@@ -7,13 +7,15 @@ using CES.Domain.Security.Registration;
 using CES.Domain.Security.Roles;
 using CES.Domain.Security.UpDateToken;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CES.DocManager.WebApi.Controllers
 {
+    [EnableCors("MyPolicy")]
     [Route("account/")]
     [ApiController]
     public class AccountController : ControllerBase

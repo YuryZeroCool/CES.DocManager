@@ -1,4 +1,3 @@
-using System.Text;
 using CES.Domain.Handlers.Employees;
 using CES.Domain.Security;
 using CES.Infra;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -98,10 +98,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseRouting();
-app.UseHttpsRedirection();
+
+//app.UseHttpsRedirection();
 
 app.UseCors();
 app.UseEndpoints(endpoints =>

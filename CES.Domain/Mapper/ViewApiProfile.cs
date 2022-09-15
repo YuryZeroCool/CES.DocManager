@@ -12,6 +12,7 @@ using CES.Domain.Security.Registration;
 using CES.Infra.Models;
 using CES.InfraSecurity.Models;
 using CES.XmlFormat.Models;
+using System.Text.Json;
 
 namespace CES.Domain.Mapper
 {
@@ -82,7 +83,7 @@ namespace CES.Domain.Mapper
             CreateMap<CreateDivisionRequest, DivisionEntity>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.DivisionName));
 
-            //CreateMap<EmployeeEntity,GetEmployeeFirstLastNameResponse>()
+                      //CreateMap<EmployeeEntity,GetEmployeeFirstLastNameResponse>()
             //    .ForMember(dest=> dest.Id, opt=>opt.Ignore())
             //    .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src=>src.FirstName))
             //    .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))

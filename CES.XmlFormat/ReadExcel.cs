@@ -1,5 +1,4 @@
 ﻿using CES.XmlFormat.Models;
-using System.Collections.Generic;
 using NPOI.SS.UserModel;
 
 namespace CES.XmlFormat
@@ -39,23 +38,11 @@ namespace CES.XmlFormat
         public string EngineHoursEnd { get; set; } // Окончание работы двигателя
 
 
-        public ReadExcel() { }
 
-        public ReadExcel(IWorkbook work)
-        {
-            _workbook = work;
-        }
 
-        public ReadExcel(string nameFile)
-        {
-            _workbook = new DocMangerXMLContext(nameFile).workbook;
-            _SheetsArr = new List<List<FuelWorkAccountingCardEntity>>();
-        }
-
+        
         public IEnumerable<List<FuelWorkAccountingCardEntity>> readExcel()
         {
-            WrireAddresses();
-
             List<FuelWorkAccountingCardEntity> rowsArr = null;
 
             _SheetsArr = new List<List<FuelWorkAccountingCardEntity>>();
@@ -158,113 +145,6 @@ namespace CES.XmlFormat
             }
 
             return _SheetsArr;
-        }
-
-        public bool WrireAddresses()
-        {
-            ISheet sheet = null;
-
-            for (int i = 0; i < _workbook.NumberOfSheets; i++)
-            {
-                sheet = _workbook.GetSheetAt(i);
-                if (null == sheet)
-                {
-                    continue;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            for (int i = 0; i < sheet.LastRowNum; i++)
-            {
-                IRow row = sheet.GetRow(i);
-
-                for (int j = 0; j < row.LastCellNum; j++)
-                {
-                    ICell cell = row.GetCell(j);
-
-                    if (cell != null && cell.ToString() != "")
-                    {
-                        if (cell.ToString() == "Дата")
-                        {
-                            AddressDate = cell.Address.FormatAsString();//ToString().Trim().Substring(0, 1)
-                            continue;
-                        }
-
-                        if (cell.ToString() == "Номер")
-                        {
-                            AddressNumberList = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-                            continue;
-                        }
-
-                        if (cell.ToString().StartsWith("Водитель 84700"))
-                        {
-                            AddressDriver = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-                            continue;
-                        }
-
-                        if (cell.ToString() == "на начало" && AddressMileageStart == null)
-                        {
-                            AddressMileageStart = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-                            continue;
-                        }
-
-                        if (cell.ToString() == "на конец" && AddressMileageEnd == null)
-                        {
-                            AddressMileageEnd = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-                            continue;
-                        }
-
-                        if (cell.ToString() == "за день")
-                        {
-                            AddressMileagePerDay = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-                        }
-
-                        if (cell.ToString() == "на начало")
-                        {
-                            AddressFuelStart = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-                        }
-
-                        if (cell.ToString() == "Заправка")
-                        {
-                            AddressRefueling = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-                        }
-
-                        if (cell.ToString() == "по факту")
-                        {
-                            AddressActualConsumption = cell.Address.FormatAsString(); //.ToString().Trim().Substring(0, 1);
-                        }
-
-                        if (cell.ToString() == "по нормам")
-                        {
-                            AddressConsumptionAccordingToNorm = cell.Address.FormatAsString();
-                        }
-
-                        if (cell.ToString() == "на конец")
-                        {
-                            AddressFuelEnd = cell.Address.FormatAsString();//.ToString().Trim().Substring(0, 1);
-                        }
-                    }
-                }
-                if (AddressConsumptionAccordingToNorm is not null)
-                {
-                    if (CheackAddress()) return true;
-                }
-            }
-            throw new Exception("Файл не того формата");
-        }
-
-        private bool CheackAddress()
-        {
-            if (AddressDate is not null && AddressNumberList is not null && AddressDriver is not null && AddressMileageStart is not null
-                && AddressMileageEnd is not null && AddressMileagePerDay is not null && AddressFuelStart is not null
-                && AddressRefueling is not null && AddressActualConsumption is not null && AddressConsumptionAccordingToNorm is not null && AddressFuelEnd is not null)
-            {
-                return true;
-            }
-            else return false;
         }
     }
 }

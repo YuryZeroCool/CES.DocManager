@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20220910113144_AddNumberPlateGarageNumber")]
+    partial class AddNumberPlateGarageNumber
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,31 +141,6 @@ namespace CES.Infra.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.FuelWorkCardEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<byte[]>("Data")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<int?>("NumberPlateCarId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("WorkDate")
-                        .IsRequired()
-                        .HasColumnType("DATE");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NumberPlateCarId");
-
-                    b.ToTable("FuelWorkCards");
-                });
-
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.PartyEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -282,7 +259,7 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("VehicleModelId");
 
-                    b.ToTable("NumberPlateOfCar");
+                    b.ToTable("NumberPlateCarEntity");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.VehicleBrandEntity", b =>
@@ -323,28 +300,6 @@ namespace CES.Infra.Migrations
                     b.ToTable("VehicleModels");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.WorkCardDivisionsEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<byte[]>("Date")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("Division")
-                        .HasColumnType("NCHAR(30)");
-
-                    b.Property<DateTime>("PeriodReport")
-                        .HasColumnType("DATE");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WorkCardDivisions");
-                });
-
             modelBuilder.Entity("CES.Infra.Models.DriverLicenseEntity", b =>
                 {
                     b.HasOne("CES.Infra.Models.EmployeeEntity", "Employee")
@@ -376,15 +331,6 @@ namespace CES.Infra.Migrations
                         .IsRequired();
 
                     b.Navigation("DivisionNumber");
-                });
-
-            modelBuilder.Entity("CES.Infra.Models.FuelWorkCardEntity", b =>
-                {
-                    b.HasOne("CES.Infra.Models.NumberPlateCarEntity", "NumberPlateCar")
-                        .WithMany("FuelWorkCards")
-                        .HasForeignKey("NumberPlateCarId");
-
-                    b.Navigation("NumberPlateCar");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.PartyEntity", b =>
@@ -460,11 +406,6 @@ namespace CES.Infra.Migrations
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.UnitEntity", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("CES.Infra.Models.NumberPlateCarEntity", b =>
-                {
-                    b.Navigation("FuelWorkCards");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.VehicleBrandEntity", b =>

@@ -1,6 +1,6 @@
-﻿namespace CES.XmlFormat.Models
+﻿namespace CES.Domain.Models
 {
-    public class FuelWorkAccountingCardEntity
+    public class FuelWorkCardModel
     {
         public DateTime Date { get; set; } //Дата
 
@@ -22,7 +22,7 @@
 
         public double Refueling { get; set; } // Заправка
 
-        public int ActualConsumption { get; set; } // Фактическое потребление топлива
+        public double ActualConsumption { get; set; } // Фактическое потребление топлива
 
         public double ConsumptionAccordingToNorm { get; set; } //Потребление топлива по норме 
 

@@ -70,7 +70,7 @@ namespace CES.Domain.Handlers.MaterialReport
                         }
                         else
                         {
-                            if (IsCurrentAccount)
+                            if (IsCurrentAccount) // Добовляем партию
                             {
                                 if (sheet.GetRow(k).GetCell(2) == null) continue;
                                 var currentProduct = await _ctx.Products.FirstOrDefaultAsync(x => x.Name == nameProduct, cancellationToken);

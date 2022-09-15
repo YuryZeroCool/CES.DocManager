@@ -1,13 +1,15 @@
-﻿using System.Net;
-using CES.DocManager.WebApi.Models;
-using CES.Domain.Exception;
+﻿using CES.Domain.Exception;
 using CES.Domain.Models.Request.Vehicle;
 using CES.Domain.Models.Response.Vehicle;
 using MediatR;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace CES.DocManager.WebApi.Controllers
 {
+    [EnableCors("MyPolicy")]
+
     [Route("vehicle/")]
     [ApiController]
     public class VehicleController : ControllerBase

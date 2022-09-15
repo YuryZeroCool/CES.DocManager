@@ -24,7 +24,7 @@ namespace CES.Domain.Handlers.Report
 
             DirectoryInfo dirInfo = new(request.Path + "/download");
             var dirPath = request.Path + "/download/" + dirInfo.GetFiles()[0].Name;
-            _readExcel = new ReadExcel(dirPath);
+           // _readExcel = new ReadExcel(dirPath);
             //var data =  _mapper.Map<List<List<FuelWorkAccountingCard>>, List<List<VehicleExpenseSheetResponse>>>
             //(_readExcel.readExcel().ToList());
             foreach (var sheet in _readExcel.readExcel())
