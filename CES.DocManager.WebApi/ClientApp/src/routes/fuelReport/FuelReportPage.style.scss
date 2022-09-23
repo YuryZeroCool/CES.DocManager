@@ -1,0 +1,85 @@
+@import '../../styles/variables.scss';
+
+.calendar-form-title {
+  margin-bottom: 10px;
+}
+
+.calendar-form {
+  width: 100%;
+  display: flex;
+  margin-bottom: 20px;
+  padding: 0 20px;
+
+  .css-q8hpuo-MuiFormControl-root {
+    width: 220px !important;
+    margin-right: 30px;
+  }
+
+  .css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root {
+    background-color: $color-white !important;
+  }
+
+  .css-hfutr2-MuiSvgIcon-root-MuiSelect-icon  {
+    color: $color-link-active !important;
+  }
+
+  .css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    color: $color-link-active !important;
+  }
+
+  .rmdp-shadow {
+    margin-right: 30px;
+  }
+
+  .saved-data {
+    width: 350px;
+
+    p {
+      color: $color-black;
+    }
+   
+  }
+}
+
+.calendar-form-button-block {
+  padding: 0 20px;
+
+  .css-1rwt2y5-MuiButtonBase-root-MuiButton-root {
+    height: 50px !important;
+    width: 120px !important;
+    color: $color-black !important;
+    background-color: $color-white !important;
+
+    &:hover {
+      background-color: $background-color-white !important;
+    }
+  }
+
+  .css-1rwt2y5-MuiButtonBase-root-MuiButton-root.Mui-disabled {
+    border: 1px solid rgb(20 5 5 / 35%) !important;
+    background-color: rgb(122, 120, 120) !important;
+  }
+}
+
+.error-message-container {
+  height: 20px;
+  margin-bottom: 15px;
+}
+
+.error-message {
+  color: $color-red;
+  padding-left: 20px;
+  text-align: center;
+  margin: 0;
+}
+
+.saved-data-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.icon-delete {
+  &:hover {
+    cursor: pointer;
+  }
+}

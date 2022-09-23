@@ -1,0 +1,20 @@
+@import '../../styles/variables.scss';
+
+.report-page-section {
+  min-height: 90vh;
+  background-color: $background-color-light-gray;
+  padding-top: 40px;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+}
+
+.MuiFormLabel-root-MuiInputLabel-root {
+  color: white;
+}
+
+.MuiSelect-iconOutlined {
+  color: white;
+}
