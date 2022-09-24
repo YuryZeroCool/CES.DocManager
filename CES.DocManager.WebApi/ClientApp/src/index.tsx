@@ -1,19 +1,36 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import store from './redux/store/configureStore';
+import Layout from './components/Layout/Layout.component';
+import HomePage from './routes/home/HomePage.container';
+import MaterialReportPage from './routes/materialReport/MaterialReportPage.container';
+import FuelReportPage from './routes/fuelReport/FuelReportPage.container';
+import DocumentsPage from './routes/documents/DocumentsPage.container';
+import TechniquePage from './routes/technique/TechniquePage.container';
+import DriversPage from './routes/drivers/DriversPage.container';
+import LoginPage from './routes/login/LoginPage.container';
+import RequireAuth from './hoc/RequireAuth';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles/index.scss';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const root = createRoot(document.getElementById('root') as Element);
+
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <Provider store={store}>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<RequireAuth><HomePage /></RequireAuth>} />
+          <Route path="report/materialReport" element={<RequireAuth><MaterialReportPage /></RequireAuth>} />
+          <Route path="report/fuelReport" element={<RequireAuth><FuelReportPage /></RequireAuth>} />
+          <Route path="documents" element={<RequireAuth><DocumentsPage /></RequireAuth>} />
+          <Route path="technique" element={<RequireAuth><TechniquePage /></RequireAuth>} />
+          <Route path="drivers" element={<RequireAuth><DriversPage /></RequireAuth>} />
+          <Route path="login" element={<LoginPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  </Provider>,
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

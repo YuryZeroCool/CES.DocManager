@@ -1,0 +1,28 @@
+.expiry-driver-license {
+    h3 {
+        text-align: center;
+        color: #db2536;
+        margin-bottom: 1.5rem;
+    }
+
+    
+
+    tr:nth-child(odd):not(1) {
+        background-color: #fff;
+    }
+
+    tr:nth-child(even) {
+        background-color: #D9D9D9;
+    }
+
+    thead {
+        tr {
+            background-color: #495057;
+            color: white;
+        } 
+    }
+
+    tr > td:nth-child(1) {
+        font-weight: 600;
+    }
+}

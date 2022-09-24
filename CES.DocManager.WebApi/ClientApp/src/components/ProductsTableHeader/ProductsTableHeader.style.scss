@@ -1,0 +1,38 @@
+@import '../../styles/variables.scss';
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+  background-color: white;
+  padding: 0 10px;
+  border-radius: 4px;
+}
+  
+.table-header-wrapper {
+  display: flex;
+
+  .css-jedpe8-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select {
+    border: 1px solid rgba(0, 0, 0, 0.23);
+    border-radius: 4px;
+
+    &:hover {
+      cursor: pointer;
+      border-color: $color-black;
+    }
+  }
+
+  .css-1d3z3hw-MuiOutlinedInput-notchedOutline:not(.css-1u3bzj6-MuiFormControl-root-MuiTextField-root .css-1d3z3hw-MuiOutlinedInput-notchedOutline) {
+    display: none !important;
+  }
+
+  .css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root.Mui-focused .css-jedpe8-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select {
+    border-color: #1976d2;
+    border-width: 2px;
+  }
+
+  .css-1u3bzj6-MuiFormControl-root-MuiTextField-root {
+    width: 100%;
+  }
+}
