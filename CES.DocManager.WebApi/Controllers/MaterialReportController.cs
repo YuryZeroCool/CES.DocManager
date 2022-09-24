@@ -20,9 +20,9 @@ namespace CES.DocManager.WebApi.Controllers
         }
 
         [HttpGet("getTotalMaterials")]
-        public async Task<List<GetTotalMaterialsResponse>> GetTotalMaterialsAsync(string AccountName)
+        public async Task<List<GetTotalMaterialsResponse>> GetTotalMaterialsAsync(string accountName)
         {
-            return await _mediator.Send(new GetTotalMaterialsRequest() { Account = "По счету 10.5"}); 
+            return await _mediator.Send(new GetTotalMaterialsRequest() { Account = accountName}); 
         }
 
         [HttpPost("materialReport")]
