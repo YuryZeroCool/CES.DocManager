@@ -42,9 +42,9 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddDays(lifeTimeToken),
-                    HttpOnly = true,
-                    Secure = true,
-                    Domain = "localhost",
+                    //HttpOnly = true,
+                    //Secure = true,
+                    Domain = "https://localhost:3000",
                     Path = "/account/"
                 });
                 return _mapper.Map<LoginResponse, LoginViewModel>(result);
@@ -90,9 +90,9 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddDays(lifeTimeToken),
-                    HttpOnly = true,
-                    Secure = true,
-                    Domain = "localhost",
+                    //HttpOnly = true,
+                    //Secure = true,
+                    Domain = "ces-docmanager.site",
                     Path = "/account/"
                 });
                 return result.AccessToken;
@@ -136,7 +136,7 @@ namespace CES.DocManager.WebApi.Controllers
                 await _mediator.Send(model);
                 HttpContext.Response.Cookies.Delete("refreshToken", new CookieOptions
                 {
-                    Domain = "localhost",
+                    Domain = "ces-docmanager.site",
                     Path = "/account/"
                 });
                 HttpContext.Response.StatusCode = 200;

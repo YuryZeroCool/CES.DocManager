@@ -5,8 +5,8 @@ namespace CES.Domain.Models.Request.Report
 {
     public class CreateCardWorkDivisionDateRequest : IRequest<CreateCardWorkDivisionDateResponse>
     {
-        public string? DivisionName { get; set; }
+        public string? Division { get; set; }
 
-        public ICollection<string>? WorkDivisionDates { get; set; }
+        public ICollection<string>? Dates { get; set; }
     }
 }

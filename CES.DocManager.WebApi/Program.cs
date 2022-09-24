@@ -15,7 +15,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-
 builder.Services.AddTransient<JwtGeneratorAccessToken>();
 builder.Services.AddTransient<JwtGeneratorRefreshToken>();
 
@@ -84,6 +83,7 @@ builder.Services.AddMediatR(typeof(GetIsPersonalNumberHandler));
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<CookieAuthenticationOptions>(x => x.ExpireTimeSpan = TimeSpan.FromDays(2)); 
 builder.Services.AddControllers();
+builder.Services.AddSpaStaticFiles(opt => opt.RootPath = "ClientApp");
 
 var app = builder.Build();
 
@@ -108,6 +108,11 @@ app.UseCors();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");
+});
+app.Map("/*", routes =>
+{
+    app.UseSpa(
+        spa => spa.Options.SourcePath = "ClientApp");
 });
 //app.MapControllers();
 app.Run();

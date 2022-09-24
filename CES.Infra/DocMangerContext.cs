@@ -1,6 +1,8 @@
 ﻿using CES.Infra.Config;
+using CES.Infra.Config.Fuel;
 using CES.Infra.Config.MaterialReport;
 using CES.Infra.Models;
+using CES.Infra.Models.Fuel;
 using CES.Infra.Models.MaterialReport;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,6 +46,10 @@ namespace CES.Infra
 
         public virtual DbSet<WorkCardDivisionsEntity> WorkCardDivisions { get; set; }
 
+        public virtual DbSet<FuelEntity> Fuels { get; set; }
+        
+        public virtual DbSet<PriceEntity> Prices { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfig());
@@ -60,7 +66,8 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new NumberPlateCarConfig());
             modelBuilder.ApplyConfiguration(new FuelWorkCardConfig());
             modelBuilder.ApplyConfiguration(new WorkCardDivisionConfig());
-
+            modelBuilder.ApplyConfiguration(new FuelConfig());
+            modelBuilder.ApplyConfiguration(new PriceConfig());
         }
 }
 }

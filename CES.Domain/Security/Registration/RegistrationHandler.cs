@@ -36,8 +36,8 @@ namespace CES.Domain.Security.Registration
 
             var user = await _userMgr.CreateAsync(_mapper.Map<UserModelRequest, UserEntity>(request), request.Password);
 
-            UserEntity resUser = null;
-            IList<string> rolUser = null;
+            UserEntity? resUser = null;
+            IList<string>? rolUser = null;
 
             if (user.Succeeded)
             {

@@ -7,13 +7,13 @@ using NPOI.SS.UserModel;
 
 namespace CES.Domain.Handlers.MaterialReport
 {
-    public class AddMaterialHandler : IRequestHandler<AddMaterialReportRequest>
+    public class AddMaterialsHandler : IRequestHandler<AddMaterialReportRequest>
     {
         private readonly DocMangerContext _ctx;
 
         private string nameProduct;
 
-        public AddMaterialHandler(DocMangerContext ctx)
+        public AddMaterialsHandler(DocMangerContext ctx)
         {
             _ctx = ctx;
         }
@@ -27,7 +27,7 @@ namespace CES.Domain.Handlers.MaterialReport
             {
                 wk = WorkbookFactory.Create(fs);
             }
-            CheckAccountExist(wk);
+            await CheckAccountExist(wk);
             for (int i = 0; i < wk.NumberOfSheets; i++) // По страницам
             {
                 var sheet = wk.GetSheetAt(i);

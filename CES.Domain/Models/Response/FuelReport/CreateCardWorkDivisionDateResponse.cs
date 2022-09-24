@@ -4,8 +4,8 @@
     {
         public int Id { get; set; }
 
-        public string? DivisionName { get; set; }
+        public string? Division { get; set; }
 
-        public ICollection<string>? WorkDivisionDates { get; set; }
+        public ICollection<string>? Dates { get; set; }
     }
 }

@@ -11,8 +11,8 @@ namespace CES.Domain.Handlers.Report
 {
     public class AddFuelWorkCardHandler : IRequestHandler<FuelWorkCardRequest, int>
     {
-        private Stream fs;
-        private IWorkbook wk;
+        private  Stream fs;
+        private  IWorkbook wk;
 
         private readonly DocMangerContext _ctx;
 
@@ -23,6 +23,8 @@ namespace CES.Domain.Handlers.Report
 
         public async Task<int> Handle(FuelWorkCardRequest request, CancellationToken cancellationToken)
         {
+            if (request.FuelWorkCardFile == null) throw new System.Exception("Error");
+
             using (fs = request.FuelWorkCardFile.OpenReadStream())
             {
                 wk = WorkbookFactory.Create(fs);
@@ -32,13 +34,18 @@ namespace CES.Domain.Handlers.Report
             {
                 var rows = wk.GetSheetAt(i);
                 if (rows == null || rows.LastRowNum == 0) continue;
-               var carId =  await _ctx.NumberPlateOfCar.FirstOrDefaultAsync(p=>rows.GetRow(1).GetCell(0).ToString().Contains(p.Number.Trim()));
-               
-               List<FuelWorkCardModel> rowsArr = new List<FuelWorkCardModel>();
-               var card = new FuelWorkCardEntity();
 
-               card.NumberPlateCar = carId;
-               card.WorkDate = GetDate(rows.GetRow(6).GetCell(1).ToString());
+                var row = rows.GetRow(1).GetCell(0).ToString() ?? throw new System.Exception("Error");
+
+                var carId = await GetNumberPlateOfCar().FirstOrDefaultAsync(p =>
+                row.Contains(p.Number.Trim()), cancellationToken);
+
+                List<FuelWorkCardModel> rowsArr = new();
+                var card = new FuelWorkCardEntity
+                {
+                    NumberPlateCar = carId,
+                    WorkDate = GetDate(rows.GetRow(6).GetCell(1).ToString())
+                };
 
                 for (int j = 6; j < rows.LastRowNum; j++)
                 {
@@ -47,21 +54,22 @@ namespace CES.Domain.Handlers.Report
                     {
                         if (rows.GetRow(j).GetCell(2) != null && rows.GetRow(j).GetCell(2).ToString() != "")
                         {
-                            var cardRow = new FuelWorkCardModel()
-                            {
-                                Date = GetDate(rows.GetRow(j).GetCell(1).ToString())
-                            };
+                            var cardRow = new FuelWorkCardModel();
+
+                            if (rows.GetRow(j).GetCell(1).ToString() != null) cardRow.Date = GetDate(rows.GetRow(j).GetCell(1).ToString());
+
                             if (rows.GetRow(j).GetCell(2).ToString() != "")
                             {
-                                cardRow.NumberList = int.Parse(rows.GetRow(j).GetCell(2).ToString());
+                                var res = int.TryParse( rows.GetRow(j).GetCell(2).ToString(), out var number);
+                                if (res) cardRow.NumberList = number;
                             } // Номер путевого листа
-                            if (rows.GetRow(j).GetCell(3).ToString() != "")
+                            if (rows?.GetRow(j).GetCell(3).ToString() != "")
                             {
-                                cardRow.DriverFullName = rows.GetRow(j).GetCell(3).ToString().Split(",")[0];
+                                cardRow.DriverFullName = rows?.GetRow(j)?.GetCell(3)?.ToString()?.Split(",")[0];
                             } // Водитель
-                            if (rows.GetRow(j).GetCell(4).ToString() != "")
+                            if (rows?.GetRow(j).GetCell(4).ToString() != "")
                             {
-                                cardRow.HoursWorked = int.Parse(rows.GetRow(j).GetCell(4).ToString());
+                                cardRow.HoursWorked = int.Parse(rows?.GetRow(j)?.GetCell(4).ToString());
                             } // Отработано часов 
                             if (rows.GetRow(j).GetCell(6).ToString() != "")
                             {
@@ -96,7 +104,7 @@ namespace CES.Domain.Handlers.Report
                             {
                                 cardRow.Refueling = Double.Parse(rows.GetRow(j).GetCell(11).ToString());
                             } //Заправка
-                            if (rows.GetRow(j + 1).GetCell(6).ToString() !="")
+                            if (rows.GetRow(j + 1).GetCell(6).ToString() != "")
                             {
                                 cardRow.EngineHoursStart = double.Parse(rows.GetRow(j + 1).GetCell(6).ToString());
                                 cardRow.EngineHoursEnd = double.Parse(rows.GetRow(j + 1).GetCell(7).ToString());
@@ -109,16 +117,22 @@ namespace CES.Domain.Handlers.Report
 
                 if (!_ctx.FuelWorkCards.Any(p => p.WorkDate == card.WorkDate && p.NumberPlateCar == card.NumberPlateCar))
                 {
-                    await _ctx.FuelWorkCards.AddAsync(card);
-                    await _ctx.SaveChangesAsync();
+                    await _ctx.FuelWorkCards.AddAsync(card, cancellationToken);
+                    await _ctx.SaveChangesAsync(cancellationToken);
                 }
             }
-            
+
             return 200;
 
+            DbSet<NumberPlateCarEntity> GetNumberPlateOfCar()
+            {
+                return _ctx.NumberPlateOfCar;
+            }
         }
         private DateTime GetDate(string date)
         {
+            if (string.IsNullOrEmpty(date)) throw new System.Exception("Error");
+
             var strDate = date.Split(".").Reverse();
             var newDate = String.Join('-', strDate);
 

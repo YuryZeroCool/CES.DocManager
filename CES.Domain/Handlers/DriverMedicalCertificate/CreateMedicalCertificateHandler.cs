@@ -18,12 +18,22 @@ namespace CES.Domain.Handlers.DriverMedicalCertificate
         }
         public async Task<GetEmployeesByDivisionResponse> Handle(CreateMedicalCertificateRequest request, CancellationToken cancellationToken)
         {
-            request.EmployeeId = _context.Employees
-                .FirstOrDefault(x => x.FirstName == request.FirstName.Trim() && x.LastName == request.LastName.Trim()).Id;
+                request.FirstName?.Trim();
+                request.LastName?.Trim();
+                var res = _context.Employees 
+           .FirstOrDefault(x => x.FirstName == request.FirstName && x.LastName == request.LastName);
+            
+            if(res is not null) request.EmployeeId = res.Id;
+
             var medicalCertificate = _mapper.Map<CreateMedicalCertificateRequest, DriverMedicalCertificateEntity>(request);
-            var medical = await _context.DriverMedicalCertificate.AddAsync(medicalCertificate);
-            await _context.SaveChangesAsync();
-            return await Task.FromResult(_mapper.Map<EmployeeEntity, GetEmployeesByDivisionResponse>(medical.Entity.Employee));
+            var medical = await _context.DriverMedicalCertificate.AddAsync(medicalCertificate, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            if (medical.Entity.Employee is not null)
+            {
+                return await Task.FromResult(_mapper.Map<EmployeeEntity, GetEmployeesByDivisionResponse>(medical.Entity.Employee));
+            }
+            throw new System.Exception("Error");
         }
     }
 }

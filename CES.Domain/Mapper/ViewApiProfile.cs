@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CES.Domain.Models;
 using CES.Domain.Models.Request.Division;
 using CES.Domain.Models.Request.DriverLicense;
 using CES.Domain.Models.Request.DriverMedicalCertificate;
@@ -10,9 +11,9 @@ using CES.Domain.Models.Response.Report;
 using CES.Domain.Models.Response.Vehicle;
 using CES.Domain.Security.Registration;
 using CES.Infra.Models;
+using CES.Infra.Models.MaterialReport;
 using CES.InfraSecurity.Models;
 using CES.XmlFormat.Models;
-using System.Text.Json;
 
 namespace CES.Domain.Mapper
 {
@@ -20,12 +21,8 @@ namespace CES.Domain.Mapper
     {
         public ViewApiProfile()
         {
-            // ReportController
-
             //FuelWorkAccountingCard => VehicleExpenseSheetResponse
             CreateMap<FuelWorkAccountingCardEntity, GetVehicleExpenseSheetResponse>();
-            //.ForMember(dest=> dest., opt=> opt.MapFrom(src=>src[2]));
-
 
             //EmployeeController
             CreateMap<CreateEmployeeRequest, EmployeeEntity>()
@@ -42,7 +39,7 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName));
 
-            //DriverMedicalCertificateController 
+            //DriverMedicalCertificateController => DriverMedicalCertificateEntity
             CreateMap<CreateMedicalCertificateRequest, DriverMedicalCertificateEntity>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.SerialNumber, opt => opt.MapFrom(src => src.SerialNumber))
@@ -61,10 +58,11 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
                 .ForMember(dest => dest.Employee, opt => opt.Ignore());
 
+            // DivisionEntity => GetDivisionNumbersResponse
             CreateMap<DivisionEntity, GetDivisionNumbersResponse>()
                 .ForMember(dest => dest.Division, opt => opt.MapFrom(src => src.Name));
 
-            //Create User 
+            //Create User => UserEntity
             CreateMap<UserModelRequest, UserEntity>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.EmailAddress))
@@ -73,21 +71,26 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.EmailAddress));
 
+            //CreateVehicleBrandRequest => VehicleBrandEntity
             CreateMap<CreateVehicleBrandRequest, VehicleBrandEntity>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Brand));
 
+            //VehicleBrandEntity => VehicleBrandResponse
             CreateMap<VehicleBrandEntity, VehicleBrandResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Name));
 
+            //CreateMap<CreateDivisionRequest => DivisionEntity
             CreateMap<CreateDivisionRequest, DivisionEntity>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.DivisionName));
 
-                      //CreateMap<EmployeeEntity,GetEmployeeFirstLastNameResponse>()
-            //    .ForMember(dest=> dest.Id, opt=>opt.Ignore())
-            //    .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src=>src.FirstName))
-            //    .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
-            //    .ForMember(dest => dest.PersonnelNumber, opt => opt.MapFrom(src => src.PersonnelNumber))
-        } //    .ForMember(dest => dest.BthDate, opt => opt.MapFrom(src => src.BthDate));
+            // PartyEntity => PartyModel
+            CreateMap<PartyEntity, PartyModel>()
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count))
+                .ForMember(dest => dest.PartyName, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.PartyId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.PartyDate, opt => opt.MapFrom(src => src.PartyDate));
+        }
     }
 }

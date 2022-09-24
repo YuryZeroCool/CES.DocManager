@@ -32,4 +32,8 @@
     <ProjectReference Include="..\CES.Domain\CES.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Docs\" />
+  </ItemGroup>
+
 </Project>
