@@ -1,12 +1,12 @@
+import React, { useEffect, useState } from 'react';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { AxiosError } from 'axios';
-import React, { useEffect, useState } from 'react';
 import { DateObject } from 'react-multi-date-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import getDivisions from '../../redux/actions/getAllDivisions';
-import createDivisionWorkSchedule from '../../redux/actions/report/createDivisionWorkSchedule';
-import deleteDivisionWorkSchedule from '../../redux/actions/report/deleteDivisionWorkSchedule';
-import getAllDivisionWorkSchedules from '../../redux/actions/report/getAllDivisionWorkSchedules';
+import createDivisionWorkSchedule from '../../redux/actions/report/fuelReport/createDivisionWorkSchedule';
+import deleteDivisionWorkSchedule from '../../redux/actions/report/fuelReport/deleteDivisionWorkSchedule';
+import getAllDivisionWorkSchedules from '../../redux/actions/report/fuelReport/getAllDivisionWorkSchedules';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import {
@@ -61,7 +61,7 @@ function FuelReportPageContainer() {
     const year = date.getFullYear();
     const month = getMonth(date);
     const day = getDay(date);
-    return `${year}-0${9}-${day}`;
+    return `${year}-${month}-${day}`;
   };
 
   useEffect(() => {

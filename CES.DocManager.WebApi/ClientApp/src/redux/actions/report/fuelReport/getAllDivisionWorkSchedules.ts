@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import $api from '../../../http/loginHttp';
-import { IAllDivisionWorkSchedulesResponse } from '../../../types/ReportTypes';
-import { FetchTodosError } from '../../../types/type';
+import $api from '../../../../http/loginHttp';
+import { IAllDivisionWorkSchedulesResponse } from '../../../../types/ReportTypes';
+import { FetchTodosError } from '../../../../types/type';
 
 const getAllDivisionWorkSchedules = createAsyncThunk<IAllDivisionWorkSchedulesResponse,
 string, { rejectValue: FetchTodosError }>(

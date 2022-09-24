@@ -1,10 +1,10 @@
 export interface Division {
-  id: number,
-  division: string,
+  id: number;
+  division: string;
 }
 
 export interface IDivisionWorkSchedule {
-  id: number,
+  id: number;
 }
 
 export interface IDivisionWorkScheduleRequest {
@@ -13,7 +13,7 @@ export interface IDivisionWorkScheduleRequest {
 }
 
 export interface ICreateDivisionWorkScheduleResponse extends IDivisionWorkScheduleRequest {
-  id: number
+  id: number;
 }
 
 export type IAllDivisionWorkSchedulesResponse = ICreateDivisionWorkScheduleResponse[];
@@ -21,5 +21,26 @@ export type IAllDivisionWorkSchedulesResponse = ICreateDivisionWorkScheduleRespo
 export interface DivisionWorkScheduleResponse {
   delete?: IDivisionWorkSchedule;
   create?: ICreateDivisionWorkScheduleResponse;
-  getAll?: IAllDivisionWorkSchedulesResponse,
+  getAll?: IAllDivisionWorkSchedulesResponse;
+}
+
+export interface Party {
+  partyId: number;
+  partyName: string;
+  partyDate: string;
+  price: number;
+  count: number;
+}
+
+export interface Product {
+  id: number;
+  name: string;
+  party: Party[];
+  unit: string;
+}
+
+export type AllMaterialsResponse = Product[];
+
+export interface IMaterialsResponse {
+  getAll?: AllMaterialsResponse;
 }

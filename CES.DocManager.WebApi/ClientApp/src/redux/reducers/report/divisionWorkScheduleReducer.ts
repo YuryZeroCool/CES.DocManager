@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { DivisionWorkScheduleResponse } from '../../../types/ReportTypes';
-import createDivisionWorkSchedule from '../../actions/report/createDivisionWorkSchedule';
-import deleteDivisionWorkSchedule from '../../actions/report/deleteDivisionWorkSchedule';
-import getAllDivisionWorkSchedules from '../../actions/report/getAllDivisionWorkSchedules';
+import createDivisionWorkSchedule from '../../actions/report/fuelReport/createDivisionWorkSchedule';
+import deleteDivisionWorkSchedule from '../../actions/report/fuelReport/deleteDivisionWorkSchedule';
+import getAllDivisionWorkSchedules from '../../actions/report/fuelReport/getAllDivisionWorkSchedules';
 
 const initial: DivisionWorkScheduleResponse = {
   delete: {

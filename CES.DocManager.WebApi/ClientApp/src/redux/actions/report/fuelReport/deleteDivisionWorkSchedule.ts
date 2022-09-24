@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import $api from '../../../http/loginHttp';
-import { FetchTodosError } from '../../../types/type';
+import $api from '../../../../http/loginHttp';
+import { FetchTodosError } from '../../../../types/type';
 
 const deleteDivisionWorkSchedule = createAsyncThunk<
 number, number, { rejectValue: FetchTodosError }>(
