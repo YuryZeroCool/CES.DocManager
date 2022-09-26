@@ -1,4 +1,5 @@
 import React from 'react';
+import AccountGroupCheckboxes from '../../components/AccountGroupCheckboxes/AccountGroupCheckboxes.container';
 import ProductsTableHeader from '../../components/ProductsTableHeader/ProductsTableHeader.container';
 import ProductsTable from '../../components/ProductTable/ProductsTable.container';
 import './MaterialReportPage.style.scss';
@@ -8,6 +9,7 @@ export default function MaterialReportPageComponent() {
     <section className="report-page-section">
       <h2>Материальный отчет</h2>
       <ProductsTableHeader />
+      <AccountGroupCheckboxes />
       <ProductsTable />
     </section>
   );

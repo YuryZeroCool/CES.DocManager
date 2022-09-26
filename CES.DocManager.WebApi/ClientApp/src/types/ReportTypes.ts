@@ -39,8 +39,25 @@ export interface Product {
   unit: string;
 }
 
+export interface GroupAccount {
+  id: number;
+  name: string;
+}
+
 export type AllMaterialsResponse = Product[];
 
+export type AllGroupAccountsResponse = GroupAccount[];
+
+export type CurrentGroupAccountResponse = string;
+
 export interface IMaterialsResponse {
-  getAll?: AllMaterialsResponse;
+  getAllMaterials?: AllMaterialsResponse;
+  getAllGroupAccounts?: AllGroupAccountsResponse;
+  currentGroupAccount?: CurrentGroupAccountResponse;
+  status: string;
+}
+
+export interface AccountsGroupState {
+  name: string;
+  checked: boolean;
 }
