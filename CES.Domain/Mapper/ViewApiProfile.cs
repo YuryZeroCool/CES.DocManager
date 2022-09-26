@@ -7,6 +7,7 @@ using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Request.Vehicle;
 using CES.Domain.Models.Response.Division;
 using CES.Domain.Models.Response.Employees;
+using CES.Domain.Models.Response.MaterialReport;
 using CES.Domain.Models.Response.Report;
 using CES.Domain.Models.Response.Vehicle;
 using CES.Domain.Security.Registration;
@@ -91,6 +92,10 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.PartyName, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.PartyId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.PartyDate, opt => opt.MapFrom(src => src.PartyDate));
+
+            CreateMap<ProductGroupAccountEntity, GetAllProductsGroupAccountResponse>()
+                  .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AccountName));
         }
     }
 }

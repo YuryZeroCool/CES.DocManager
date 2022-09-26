@@ -83,7 +83,7 @@ builder.Services.AddMediatR(typeof(GetIsPersonalNumberHandler));
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<CookieAuthenticationOptions>(x => x.ExpireTimeSpan = TimeSpan.FromDays(2)); 
 builder.Services.AddControllers();
-builder.Services.AddSpaStaticFiles(opt => opt.RootPath = "ClientApp");
+//builder.Services.AddSpaStaticFiles(opt => opt.RootPath = "ClientApp/build");
 
 var app = builder.Build();
 
@@ -101,7 +101,6 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
 //app.UseHttpsRedirection();
 
 app.UseCors();
@@ -109,10 +108,6 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");
 });
-app.Map("/*", routes =>
-{
-    app.UseSpa(
-        spa => spa.Options.SourcePath = "ClientApp");
-});
-//app.MapControllers();
+app.MapFallbackToFile("index.html");
+
 app.Run();

@@ -5,6 +5,6 @@ namespace CES.Domain.Models.Request.MaterialReport
 {
     public class GetTotalMaterialsRequest : IRequest<List<GetTotalMaterialsResponse>> 
     {
-        public string? Account { get; set; }  
+        public string? Accounts { get; set; }  
     }
 }

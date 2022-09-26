@@ -1,17 +1,13 @@
-﻿using CES.Domain.Models.Request.MaterialReport;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using CES.Domain.Models;
+using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Response.MaterialReport;
 using CES.Infra;
-using Microsoft.EntityFrameworkCore;
-using AutoMapper;
-using CES.Domain.Models;
 using CES.Infra.Models.MaterialReport;
-using System.Collections.ObjectModel;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using NPOI.SS.Formula.Functions;
+using System.Linq;
 
 namespace CES.Domain.Handlers.MaterialReport
 {
@@ -29,19 +25,27 @@ namespace CES.Domain.Handlers.MaterialReport
 
         public async Task<List<GetTotalMaterialsResponse>> Handle(GetTotalMaterialsRequest request, CancellationToken cancellationToken)
         {
-            var accountProductId = await _ctx.ProductsGroupAccount.FirstOrDefaultAsync(p => p.AccountName.Trim() == request.Account.Trim());
-           return  await  _ctx.Products.Where(p => p.ProductGroupAccountId == accountProductId.Id)
-                .Join(
-                _ctx.Units,
-                p=> p.UnitId,
-                c=>c.Id,
-                (p,c)=> new GetTotalMaterialsResponse()
-                {
-                    Id= p.Id,
-                    Party= p.Parties.Select(p=>_mapper.Map<PartyEntity, PartyModel>(p)),
-                    Name= p.Name,
-                    Unit = c.Name
-                }).ToListAsync();
+            var arrAccounts = request.Accounts.Split(", ").ToList();
+            var data =  new List<GetTotalMaterialsResponse>();
+
+
+            foreach (var item in arrAccounts)
+            {
+                var products=  from p in _ctx.ProductsGroupAccount
+                                where p.AccountName == item
+                                from pr in _ctx.Products
+                                where  pr.ProductGroupAccountId == p.Id
+                                join unit in _ctx.Units on pr.UnitId equals unit.Id
+                    select new GetTotalMaterialsResponse()
+                    {
+                        Name = pr.Name,
+                        Unit = unit.Name,
+                        Id = pr.Id,
+                        Party = pr.Parties.Select(s => _mapper.Map<PartyEntity, PartyModel>(s)),
+                    };
+                data = data.Union(products).ToList();
+            }
+            return data;
         }
     }
 }

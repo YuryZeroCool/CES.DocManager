@@ -2,8 +2,8 @@
 using CES.Domain.Models.Response.MaterialReport;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace CES.DocManager.WebApi.Controllers
 {
@@ -20,9 +20,35 @@ namespace CES.DocManager.WebApi.Controllers
         }
 
         [HttpGet("getTotalMaterials")]
-        public async Task<List<GetTotalMaterialsResponse>> GetTotalMaterialsAsync(string accountName)
+        [Produces(typeof(List<GetTotalMaterialsResponse>))]
+        public async Task<object> GetTotalMaterialsAsync(string accountsName)
         {
-            return await _mediator.Send(new GetTotalMaterialsRequest() { Account = accountName}); 
+            try
+            {
+                return await _mediator.Send(new GetTotalMaterialsRequest() { Accounts = accountsName });
+
+            }
+            catch (Exception)
+            {
+
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new object();
+            }
+        }
+
+        [HttpGet("allProductsGroupAccount")]
+        [Produces(typeof(List<GetAllProductsGroupAccountResponse>))]
+        public async Task<object> GetAllProductsGroupAccountAsync()
+        {
+            try
+            {
+                return await _mediator.Send(new GetAllProductsGroupAccountRequest());
+            }
+            catch (Exception)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new object();
+            }
         }
 
         [HttpPost("materialReport")]
