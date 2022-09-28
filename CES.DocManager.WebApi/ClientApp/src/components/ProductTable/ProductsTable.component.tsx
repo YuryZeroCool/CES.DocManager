@@ -72,7 +72,7 @@ export default function ProductsTable(props: Props) {
                 </StyledTableCell>
                 <StyledTableCell align="left">{material.unit}</StyledTableCell>
                 <StyledTableCell align="left">{material.party[0].partyName}</StyledTableCell>
-                <StyledTableCell align="left">{material.party[0].partyDate}</StyledTableCell>
+                <StyledTableCell align="left">{material.party[0].partyDate.replace(/T/gi, ' ')}</StyledTableCell>
                 <StyledTableCell align="left">{material.party[0].price}</StyledTableCell>
                 <StyledTableCell align="left">{material.party[0].count}</StyledTableCell>
               </StyledTableRow>

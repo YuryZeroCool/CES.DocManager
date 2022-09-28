@@ -26,6 +26,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
             <Select
               value={type}
               onChange={handleChange}
+              className="table-header-select"
             >
               <MenuItem value="Свободные">Свободные</MenuItem>
               <MenuItem value="Прикрепленные">Прикрепленные</MenuItem>
@@ -34,11 +35,11 @@ export default function ProductsTableHeaderComponent(props: Props) {
         </Box>
       </div>
       <div className="table-header-wrapper">
-        <IconButton aria-label="delete">
+        <IconButton aria-label="delete" className="icon-search">
           <SearchIcon />
         </IconButton>
         <Box sx={{ minWidth: 300 }}>
-          <TextField id="outlined-basic" label="Search" variant="outlined" size="small" />
+          <TextField id="outlined-basic" label="Search" variant="outlined" size="small" className="table-header-search" />
         </Box>
       </div>
     </div>

@@ -18,11 +18,11 @@ export default function HeaderComponent(props: Props) {
   const { user, report, handleChange } = props;
 
   return (
-    <header>
+    <header className="header">
       <div className="wrapper">
         <div className="header-container">
           <div className="logo-container" />
-          <nav>
+          <nav className="nav">
             <NavLink to="/">Главная</NavLink>
             <Box sx={{ minWidth: 120 }}>
               <FormControl fullWidth>
@@ -32,13 +32,14 @@ export default function HeaderComponent(props: Props) {
                   value={report}
                   label="Отчёты"
                   onChange={handleChange}
+                  className="report-type-select"
                 >
                   <MenuItem disabled value="">Отчёты</MenuItem>
-                  <MenuItem value="Материальный отчет">
-                    <NavLink to="/report/materialReport">Материальный отчет</NavLink>
+                  <MenuItem className="MenuItem" value="materialReport">
+                    Материальный отчет
                   </MenuItem>
-                  <MenuItem value="Топливный отчет">
-                    <NavLink to="/report/fuelReport">Топливный отчет</NavLink>
+                  <MenuItem className="MenuItem" value="fuelReport">
+                    Топливный отчет
                   </MenuItem>
                 </Select>
               </FormControl>
