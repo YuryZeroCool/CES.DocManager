@@ -15,7 +15,7 @@ string, { rejectValue: FetchTodosError }>(
       return response.data;
     } catch (err) {
       return rejectWithValue({
-        message: 'По этому счету нет материалов',
+        message: 'Неверные данные',
       });
     }
   },

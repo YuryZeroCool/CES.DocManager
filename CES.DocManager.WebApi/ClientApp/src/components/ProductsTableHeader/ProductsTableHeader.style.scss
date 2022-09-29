@@ -20,7 +20,7 @@
 
   &:hover {
     cursor: pointer;
-    border-color: #1976d2 !important;
+    border-color: $border-color-hover !important;
   }
 
   .MuiOutlinedInput-notchedOutline {
@@ -36,12 +36,12 @@
   width: 100% !important;
 
   &:hover .MuiOutlinedInput-notchedOutline {
-    border-color: #1976d2 !important;
+    border-color: $border-color-hover !important;
   }
 }
 
 .icon-search {
   &:hover {
-    color: #1976d2;
+    color: $border-color-hover;
   }
 }

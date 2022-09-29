@@ -37,10 +37,6 @@
 }
 
 .report-type-select {
-  .MenuItem {
-    color: $color-black !important;
-  }
-
   .MuiOutlinedInput-notchedOutline {
     border: none !important;
   }
@@ -73,7 +69,7 @@
     margin-left: 10px;
 
     &:hover {
-      fill: #007bff;
+      fill: $color-link-active;
     }
   }
 

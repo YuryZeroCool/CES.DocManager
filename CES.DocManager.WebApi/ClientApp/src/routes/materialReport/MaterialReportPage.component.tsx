@@ -4,13 +4,23 @@ import ProductsTableHeader from '../../components/ProductsTableHeader/ProductsTa
 import ProductsTable from '../../components/ProductTable/ProductsTable.container';
 import './MaterialReportPage.style.scss';
 
-export default function MaterialReportPageComponent() {
+interface Props {
+  productsTableError: string;
+  setProductsTableError: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function MaterialReportPageComponent(props: Props) {
+  const { productsTableError, setProductsTableError } = props;
+
   return (
     <section className="report-page-section">
       <h2>Материальный отчет</h2>
       <ProductsTableHeader />
-      <AccountGroupCheckboxes />
-      <ProductsTable />
+      <AccountGroupCheckboxes setProductsTableError={setProductsTableError} />
+      <ProductsTable
+        productsTableError={productsTableError}
+        setProductsTableError={setProductsTableError}
+      />
     </section>
   );
 }

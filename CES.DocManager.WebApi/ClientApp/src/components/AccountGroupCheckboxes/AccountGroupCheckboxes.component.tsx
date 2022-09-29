@@ -15,6 +15,7 @@ interface Props {
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleClick: () => void;
   accountsGroupError: string;
+  isDisabled: boolean;
 }
 
 export default function AccountGroupCheckboxesComponent(props: Props) {
@@ -24,6 +25,7 @@ export default function AccountGroupCheckboxesComponent(props: Props) {
     handleChange,
     handleClick,
     accountsGroupError,
+    isDisabled,
   } = props;
 
   const renderError = () => (
@@ -59,6 +61,7 @@ export default function AccountGroupCheckboxesComponent(props: Props) {
           sx={{ m: 1, width: 120 }}
           variant="contained"
           size="small"
+          disabled={isDisabled}
           onClick={handleClick}
         >
           Выбрать

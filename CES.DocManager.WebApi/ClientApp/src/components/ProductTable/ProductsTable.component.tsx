@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { AllMaterialsResponse, CurrentGroupAccountResponse, Product } from '../../types/ReportTypes';
+import { AllMaterialsResponse, Product } from '../../types/ReportTypes';
 import './ProductTable.style.scss';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -32,7 +32,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 interface Props {
   materials: AllMaterialsResponse | undefined;
-  currentGroupAccount: CurrentGroupAccountResponse | undefined;
   status: string;
   productsTableError: string;
 }
@@ -40,15 +39,18 @@ interface Props {
 export default function ProductsTable(props: Props) {
   const {
     materials,
-    currentGroupAccount,
     status,
     productsTableError,
   } = props;
 
-  const renderError = () => (
-    materials?.length === 0 && status === 'fulfilled' && currentGroupAccount !== '' && (
+  const renderError = () => {
+    if (productsTableError !== '') {
+      return (<p className="error-message">{productsTableError}</p>);
+    }
+    return materials?.length === 0 && status === 'fulfilled' && (
       <p className="error-message">По этому счету нет материалов</p>
-    ));
+    );
+  };
 
   const renderTable = () => (
     productsTableError === '' && materials && materials?.length > 0 && (

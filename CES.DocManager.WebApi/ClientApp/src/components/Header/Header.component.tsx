@@ -36,10 +36,10 @@ export default function HeaderComponent(props: Props) {
                 >
                   <MenuItem disabled value="">Отчёты</MenuItem>
                   <MenuItem className="MenuItem" value="materialReport">
-                    Материальный отчет
+                    <NavLink to="/report/materialReport">Материальный отчет</NavLink>
                   </MenuItem>
                   <MenuItem className="MenuItem" value="fuelReport">
-                    Топливный отчет
+                    <NavLink to="/report/fuelReport">Топливный отчет</NavLink>
                   </MenuItem>
                 </Select>
               </FormControl>

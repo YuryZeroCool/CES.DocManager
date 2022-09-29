@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import MaterialReportPageComponent from './MaterialReportPage.component';
 
 function MaterialReportPageContainer() {
+  const [productsTableError, setProductsTableError] = useState<string>('');
+
   return (
-    <MaterialReportPageComponent />
+    <MaterialReportPageComponent
+      productsTableError={productsTableError}
+      setProductsTableError={setProductsTableError}
+    />
   );
 }
 

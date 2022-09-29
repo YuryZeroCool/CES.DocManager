@@ -1,12 +1,12 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CurrentGroupAccountResponse, IMaterialsResponse } from '../../../types/ReportTypes';
+import { createSlice } from '@reduxjs/toolkit';
+import { IMaterialsResponse } from '../../../types/ReportTypes';
 import getAllGroupAccounts from '../../actions/report/materialReport/getAllGroupAccounts';
 import getAllMaterials from '../../actions/report/materialReport/getAllMaterials';
 
 const initial: IMaterialsResponse = {
   getAllMaterials: [],
   getAllGroupAccounts: [],
-  currentGroupAccount: '',
+  currentGroupAccount: [],
   status: '',
 };
 
@@ -14,14 +14,34 @@ const materialsReducer = createSlice({
   name: 'materials',
   initialState: initial,
   reducers: {
-    changeCurrentGroupAccount: (state, action: PayloadAction<CurrentGroupAccountResponse>) => {
+    addToCurrentGroupAccount: (state, action) => {
       let stateCopy: IMaterialsResponse = state;
-      stateCopy = { ...stateCopy, currentGroupAccount: action.payload };
+      if (stateCopy.currentGroupAccount) {
+        stateCopy = {
+          ...stateCopy,
+          currentGroupAccount: [...stateCopy.currentGroupAccount, action.payload],
+        };
+      }
+      return stateCopy;
+    },
+    deleteFromCurrentGroupAccount: (state, action) => {
+      let stateCopy: IMaterialsResponse = state;
+      if (stateCopy.currentGroupAccount) {
+        stateCopy = {
+          ...stateCopy,
+          currentGroupAccount: stateCopy.currentGroupAccount.filter((el) => el !== action.payload),
+        };
+      }
       return stateCopy;
     },
     resetAllMaterials: (state) => {
       let stateCopy: IMaterialsResponse = state;
       stateCopy = { ...stateCopy, getAllMaterials: [] };
+      return stateCopy;
+    },
+    changeStatus: (state) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = { ...stateCopy, status: '' };
       return stateCopy;
     },
   },
@@ -51,5 +71,10 @@ const materialsReducer = createSlice({
   },
 });
 
-export const { changeCurrentGroupAccount, resetAllMaterials } = materialsReducer.actions;
+export const {
+  addToCurrentGroupAccount,
+  resetAllMaterials,
+  deleteFromCurrentGroupAccount,
+  changeStatus,
+} = materialsReducer.actions;
 export default materialsReducer.reducer;

@@ -48,7 +48,7 @@ export type AllMaterialsResponse = Product[];
 
 export type AllGroupAccountsResponse = GroupAccount[];
 
-export type CurrentGroupAccountResponse = string;
+export type CurrentGroupAccountResponse = string[];
 
 export interface IMaterialsResponse {
   getAllMaterials?: AllMaterialsResponse;
