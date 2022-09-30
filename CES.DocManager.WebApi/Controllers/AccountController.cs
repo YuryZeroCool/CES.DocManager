@@ -42,9 +42,9 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddDays(lifeTimeToken),
-                    //HttpOnly = true,
-                    //Secure = true,
-                    Domain = "https://localhost:3000",
+                    HttpOnly = true,
+                    Secure = true,
+                    Domain = "ces-docmanager.site",
                     Path = "/account/"
                 });
                 return _mapper.Map<LoginResponse, LoginViewModel>(result);
@@ -90,8 +90,8 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddDays(lifeTimeToken),
-                    //HttpOnly = true,
-                    //Secure = true,
+                    HttpOnly = true,
+                    Secure = true,
                     Domain = "ces-docmanager.site",
                     Path = "/account/"
                 });

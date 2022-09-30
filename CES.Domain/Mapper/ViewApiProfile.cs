@@ -77,7 +77,7 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Brand));
 
             //VehicleBrandEntity => VehicleBrandResponse
-            CreateMap<VehicleBrandEntity, VehicleBrandResponse>()
+            CreateMap<VehicleBrandEntity, GetVehicleBrandResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Name));
 
@@ -96,6 +96,15 @@ namespace CES.Domain.Mapper
             CreateMap<ProductGroupAccountEntity, GetAllProductsGroupAccountResponse>()
                   .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.AccountName));
+
+
+            CreateMap<VehicleBrandEntity, GetAllBrandsResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.NameBrand, opt => opt.MapFrom(src => src.Name));
+
+            CreateMap<NumberPlateCarEntity, GetAllNumbersPlateResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Number, opt => opt.MapFrom(src => src.Number));
         }
     }
 }

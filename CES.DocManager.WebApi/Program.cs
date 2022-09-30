@@ -53,6 +53,8 @@ builder.Services.AddAuthentication(auth =>
     });
 
 string baseUrl = "https://localhost:3000";
+string basehttp = "http://localhost:3000";
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyPolicy",
@@ -60,8 +62,12 @@ builder.Services.AddCors(options =>
         {
             builder.WithOrigins(baseUrl)
                 .WithMethods("PUT", "POST", "DELETE", "GET").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+            builder.WithOrigins(basehttp)
+               .WithMethods("PUT", "POST", "DELETE", "GET").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
         });
 });
+
+
 builder.Services.AddDbContext<DocMangerContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CONNECTION_STRING")));
 

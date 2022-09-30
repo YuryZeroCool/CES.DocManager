@@ -23,7 +23,7 @@ namespace CES.Domain.Handlers.Division
         {
             IEnumerable<DivisionEntity> data = await _context.Divisions.ToListAsync();
             if (data == null) throw new System.Exception();
-            return _mapper.Map<IEnumerable<GetDivisionNumbersResponse>>(data);
+            return await Task.FromResult(_mapper.Map<IEnumerable<GetDivisionNumbersResponse>>(data));
         }
     }
 }
