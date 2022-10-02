@@ -26,8 +26,8 @@ namespace CES.Domain.Handlers.MaterialReport
         public async Task<List<GetTotalMaterialsResponse>> Handle(GetTotalMaterialsRequest request, CancellationToken cancellationToken)
         {
             var arrAccounts = request.Accounts.Split(", ").ToList();
-            var data =  new List<GetTotalMaterialsResponse>();
-
+            if (arrAccounts == null) throw new System.Exception("Error");
+            var totalMaterials = new List<GetTotalMaterialsResponse>();
 
             foreach (var item in arrAccounts)
             {
@@ -43,9 +43,9 @@ namespace CES.Domain.Handlers.MaterialReport
                         Id = pr.Id,
                         Party = pr.Parties.Select(s => _mapper.Map<PartyEntity, PartyModel>(s)),
                     };
-                data = data.Union(products).ToList();
+                totalMaterials = totalMaterials.Union(products).ToList();
             }
-            return data;
+            return totalMaterials;
         }
     }
 }

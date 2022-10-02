@@ -1,5 +1,7 @@
 ﻿using CES.Domain.Exception;
+using CES.Domain.Models.Request.Report;
 using CES.Domain.Models.Request.Vehicle;
+using CES.Domain.Models.Response.Report;
 using CES.Domain.Models.Response.Vehicle;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
@@ -9,7 +11,6 @@ using System.Net;
 namespace CES.DocManager.WebApi.Controllers
 {
     [EnableCors("MyPolicy")]
-
     [Route("vehicle/")]
     [ApiController]
     public class VehicleController : ControllerBase
@@ -21,8 +22,43 @@ namespace CES.DocManager.WebApi.Controllers
             _mediator = mediator;
         }
 
+      [HttpGet("getAllBrands")]
+      [Produces(typeof(IEnumerator<GetAllBrandsResponse>))]
+        public async Task<object> GetAllBrandsAsync()
+        {
+            try
+            {
+                return await _mediator.Send(new GetAllBransRequest());
+            }
+            catch (Exception)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new object();
+            }
+        }
+
+
+        [HttpGet("getNumbersPlateOfCar")]
+        [Produces(typeof(IEnumerator<GetAllNumbersPlateResponse>))]
+        public async Task<object> GetNumbersPlateOfCarAsync(string brand)
+        {
+            try
+            {
+                return await _mediator.Send(new GetAllNumbersPalteRequest() 
+                { 
+                    Brand = brand
+                });
+            }
+            catch (Exception)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new object();
+            }
+        }
+
+
         [HttpPost("vehicleCreateBrand")]
-        [Produces(typeof(VehicleBrandResponse))]
+        [Produces(typeof(GetVehicleBrandResponse))]
         public async Task<object> CreateVehicleBrand([FromBody] string brand)
         {
             try
@@ -51,7 +87,7 @@ namespace CES.DocManager.WebApi.Controllers
         }
 
         [HttpPost("vehicleCreateModel")]
-        [Produces(typeof(VehicleBrandResponse))]
+        [Produces(typeof(GetVehicleBrandResponse))]
         public async Task<object> CreateVehicleModel([FromBody] string brand)
         {
             try

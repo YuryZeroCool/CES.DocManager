@@ -9,7 +9,7 @@ using MediatR;
 
 namespace CES.Domain.Handlers.Vehicle
 {
-    public class CreateVehicleBrandHandler : IRequestHandler<CreateVehicleBrandRequest, VehicleBrandResponse>
+    public class CreateVehicleBrandHandler : IRequestHandler<CreateVehicleBrandRequest, GetVehicleBrandResponse>
     {
         private readonly DocMangerContext _docMangerContext;
         private readonly IMapper _mapper;
@@ -19,7 +19,7 @@ namespace CES.Domain.Handlers.Vehicle
             _docMangerContext = ctx;
             _mapper = mapper;
         }
-        public async Task<VehicleBrandResponse> Handle(CreateVehicleBrandRequest request, CancellationToken cancellationToken)
+        public async Task<GetVehicleBrandResponse> Handle(CreateVehicleBrandRequest request, CancellationToken cancellationToken)
         {
             if (request.Brand == "") throw  new RestException(HttpStatusCode.BadRequest, "Переданы некорректные даные");
             if (_docMangerContext.VehicleBrands.Any(p => p.Name == request.Brand))
@@ -28,7 +28,7 @@ namespace CES.Domain.Handlers.Vehicle
             await _docMangerContext.SaveChangesAsync();
 
             var brand = _docMangerContext.VehicleBrands.FirstOrDefault(p => p.Name == request.Brand);
-            return  await Task.FromResult(_mapper.Map<VehicleBrandEntity, VehicleBrandResponse>(brand));
+            return  await Task.FromResult(_mapper.Map<VehicleBrandEntity, GetVehicleBrandResponse>(brand));
         }
     }
 }

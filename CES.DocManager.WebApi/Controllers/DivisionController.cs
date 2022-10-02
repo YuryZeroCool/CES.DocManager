@@ -3,6 +3,8 @@ using CES.Domain.Exception;
 using CES.Domain.Models.Request.Division;
 using CES.Domain.Models.Response.Division;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -24,6 +26,8 @@ namespace CES.DocManager.WebApi.Controllers
 
         }
 
+        [Authorize(AuthenticationSchemes =
+           JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("divisions")]
         [Produces(typeof(IEnumerable<GetDivisionNumbersResponse>))]
         public async Task<object> GetAllDivisions()
