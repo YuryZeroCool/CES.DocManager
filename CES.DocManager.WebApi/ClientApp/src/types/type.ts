@@ -7,3 +7,8 @@ export type ShowWindow = {
 export type FetchTodosError = {
   message: string;
 };
+
+export interface IModal {
+  isMaterialReportDialogOpen: boolean;
+  isMaterialReportModalOpen: boolean;
+}

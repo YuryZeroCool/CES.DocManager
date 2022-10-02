@@ -52,9 +52,12 @@ export type CurrentGroupAccountResponse = string[];
 
 export interface IMaterialsResponse {
   getAllMaterials?: AllMaterialsResponse;
+  deleteMaterialId: number;
   getAllGroupAccounts?: AllGroupAccountsResponse;
   currentGroupAccount?: CurrentGroupAccountResponse;
   status: string;
+  rowActiveId: number;
+  accordionHeight: number;
 }
 
 export interface AccountsGroupState {

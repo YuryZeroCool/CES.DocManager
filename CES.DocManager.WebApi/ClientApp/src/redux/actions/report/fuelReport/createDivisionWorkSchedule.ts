@@ -11,7 +11,8 @@ IDivisionWorkScheduleRequest, { rejectValue: FetchTodosError }>(
       if (process.env.REACT_APP_DIVISION_WORK_SCHEDULE === undefined) {
         throw Error('Упс, что-то пошло не так...');
       }
-      const response = await $api.post<ICreateDivisionWorkScheduleResponse>(`${process.env.REACT_APP_DIVISION_WORK_SCHEDULE}`, data);
+      const response = await $api.post<
+      ICreateDivisionWorkScheduleResponse>(process.env.REACT_APP_DIVISION_WORK_SCHEDULE, data);
       return response.data;
     } catch (err) {
       return rejectWithValue({

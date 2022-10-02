@@ -6,6 +6,7 @@ import getAllMaterials from '../../redux/actions/report/materialReport/getAllMat
 import { RootState } from '../../redux/reducers/combineReducers';
 import {
   addToCurrentGroupAccount,
+  changeAccordionHeight,
   changeStatus,
   deleteFromCurrentGroupAccount,
   resetAllMaterials,
@@ -14,8 +15,8 @@ import { IAuthResponseType } from '../../redux/store/configureStore';
 import {
   AccountsGroupState,
   AllGroupAccountsResponse,
-  CurrentGroupAccountResponse,
   GroupAccount,
+  IMaterialsResponse,
 } from '../../types/ReportTypes';
 import AccountGroupCheckboxesComponent from './AccountGroupCheckboxes.component';
 
@@ -27,8 +28,8 @@ function AccountCheckboxesContainer({ setProductsTableError }: Props) {
   const groupAccounts = useSelector<RootState,
   AllGroupAccountsResponse | undefined>((state) => state.materials.getAllGroupAccounts);
 
-  const currentGroupAccount = useSelector<RootState,
-  CurrentGroupAccountResponse | undefined>((state) => state.materials.currentGroupAccount);
+  const { currentGroupAccount } = useSelector<RootState,
+  IMaterialsResponse>((state) => state.materials);
 
   const [accountsGroup, setAccountGroup] = useState<AccountsGroupState[]>([]);
 
@@ -36,7 +37,18 @@ function AccountCheckboxesContainer({ setProductsTableError }: Props) {
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
+  const [expanded, setExpanded] = React.useState<boolean>(true);
+
   const dispatch: IAuthResponseType = useDispatch();
+
+  const divElRef = React.createRef<HTMLDivElement>();
+
+  useEffect(() => {
+    if (divElRef.current) {
+      dispatch(changeAccordionHeight(divElRef.current.clientHeight));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expanded]);
 
   useEffect(() => {
     groupAccounts?.forEach((el: GroupAccount) => {
@@ -96,12 +108,17 @@ function AccountCheckboxesContainer({ setProductsTableError }: Props) {
       try {
         dispatch(resetAllMaterials());
         await dispatch(getAllMaterials(currentGroupAccount.join(', ')));
+        setExpanded(false);
       } catch (error) {
         if (error instanceof Error || error instanceof AxiosError) {
           setProductsTableError(error.message);
         }
       }
     }
+  };
+
+  const handleAccordionChange = () => {
+    setExpanded(!expanded);
   };
 
   return (
@@ -113,6 +130,9 @@ function AccountCheckboxesContainer({ setProductsTableError }: Props) {
       handleClick={handleClick}
       accountsGroupError={accountsGroupError}
       isDisabled={isDisabled}
+      expanded={expanded}
+      handleAccordionChange={handleAccordionChange}
+      divElRef={divElRef}
     />
   );
 }

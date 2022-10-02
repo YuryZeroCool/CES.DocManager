@@ -7,14 +7,14 @@ import './MaterialReportPage.style.scss';
 interface Props {
   productsTableError: string;
   setProductsTableError: React.Dispatch<React.SetStateAction<string>>;
+  handleClick: () => void;
 }
 
 export default function MaterialReportPageComponent(props: Props) {
-  const { productsTableError, setProductsTableError } = props;
+  const { productsTableError, setProductsTableError, handleClick } = props;
 
   return (
-    <section className="report-page-section">
-      <h2>Материальный отчет</h2>
+    <section className="report-page-section" onClick={handleClick} aria-hidden="true">
       <ProductsTableHeader />
       <AccountGroupCheckboxes setProductsTableError={setProductsTableError} />
       <ProductsTable

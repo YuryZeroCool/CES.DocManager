@@ -1,11 +1,12 @@
 import { AxiosError } from 'axios';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { resetAllMaterials } from '../../redux/reducers/report/materialsReducer';
+import { toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
+import { changeRowActiveId, resetAllMaterials } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
-import { AllMaterialsResponse, CurrentGroupAccountResponse } from '../../types/ReportTypes';
+import { AllMaterialsResponse, IMaterialsResponse } from '../../types/ReportTypes';
 import ProductsTableComponent from './ProductsTable.component';
 
 interface Props {
@@ -16,13 +17,19 @@ interface Props {
 function ProductsTableContainer(props: Props) {
   const { productsTableError, setProductsTableError } = props;
 
+  const [offSetX, setOffSetX] = useState<number>(0);
+
+  const [offSetY, setOffSetY] = useState<number>(0);
+
   const materials = useSelector<RootState,
   AllMaterialsResponse | undefined>((state) => state.materials.getAllMaterials);
 
-  const currentGroupAccount = useSelector<RootState,
-  CurrentGroupAccountResponse | undefined>((state) => state.materials.currentGroupAccount);
-
-  const status = useSelector<RootState, string>((state) => state.materials.status);
+  const {
+    currentGroupAccount,
+    rowActiveId,
+    status,
+    accordionHeight,
+  } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
 
@@ -44,11 +51,29 @@ function ProductsTableContainer(props: Props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleContextMenu = (
+    event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+    id: number,
+  ) => {
+    event.preventDefault();
+    if (event.button === 2) {
+      dispatch(changeRowActiveId(id));
+      dispatch(toggleMaterialReportDialog(true));
+      setOffSetX(event.clientX);
+      setOffSetY(window.pageYOffset + event.clientY);
+    }
+  };
+
   return (
     <ProductsTableComponent
       materials={materials}
       status={status}
       productsTableError={productsTableError}
+      handleContextMenu={handleContextMenu}
+      rowActiveId={rowActiveId}
+      offSetX={offSetX}
+      offSetY={offSetY}
+      accordionHeight={accordionHeight}
     />
   );
 }

@@ -1,20 +1,24 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IMaterialsResponse } from '../../../types/ReportTypes';
+import deleteMaterial from '../../actions/report/materialReport/deleteMaterial';
 import getAllGroupAccounts from '../../actions/report/materialReport/getAllGroupAccounts';
 import getAllMaterials from '../../actions/report/materialReport/getAllMaterials';
 
 const initial: IMaterialsResponse = {
   getAllMaterials: [],
+  deleteMaterialId: 0,
   getAllGroupAccounts: [],
   currentGroupAccount: [],
   status: '',
+  rowActiveId: 0,
+  accordionHeight: 0,
 };
 
 const materialsReducer = createSlice({
   name: 'materials',
   initialState: initial,
   reducers: {
-    addToCurrentGroupAccount: (state, action) => {
+    addToCurrentGroupAccount: (state, action: PayloadAction<string>) => {
       let stateCopy: IMaterialsResponse = state;
       if (stateCopy.currentGroupAccount) {
         stateCopy = {
@@ -24,7 +28,7 @@ const materialsReducer = createSlice({
       }
       return stateCopy;
     },
-    deleteFromCurrentGroupAccount: (state, action) => {
+    deleteFromCurrentGroupAccount: (state, action: PayloadAction<string>) => {
       let stateCopy: IMaterialsResponse = state;
       if (stateCopy.currentGroupAccount) {
         stateCopy = {
@@ -42,6 +46,16 @@ const materialsReducer = createSlice({
     changeStatus: (state) => {
       let stateCopy: IMaterialsResponse = state;
       stateCopy = { ...stateCopy, status: '' };
+      return stateCopy;
+    },
+    changeRowActiveId: (state, action: PayloadAction<number>) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = { ...stateCopy, rowActiveId: action.payload };
+      return stateCopy;
+    },
+    changeAccordionHeight: (state, action: PayloadAction<number>) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = { ...stateCopy, accordionHeight: action.payload };
       return stateCopy;
     },
   },
@@ -68,6 +82,15 @@ const materialsReducer = createSlice({
     builder.addCase(getAllGroupAccounts.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
+
+    builder.addCase(deleteMaterial.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, deleteMaterialId: action.payload };
+      return stateCopy;
+    });
+    builder.addCase(deleteMaterial.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
   },
 });
 
@@ -76,5 +99,7 @@ export const {
   resetAllMaterials,
   deleteFromCurrentGroupAccount,
   changeStatus,
+  changeRowActiveId,
+  changeAccordionHeight,
 } = materialsReducer.actions;
 export default materialsReducer.reducer;

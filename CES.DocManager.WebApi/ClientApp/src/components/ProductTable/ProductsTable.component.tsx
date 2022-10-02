@@ -7,8 +7,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import MaterialReportDialog from '../MaterialReportDialog/MaterialReportDialog.container';
 import { AllMaterialsResponse, Product } from '../../types/ReportTypes';
 import './ProductTable.style.scss';
+
+const HEADER_WIDTH = '10vh';
+const TABLE_HEADER_WIDTH = '9vh';
+const MARGIN = '3vh';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -21,6 +26,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  position: 'relative',
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
@@ -28,12 +34,23 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:last-child td, &:last-child th': {
     border: 0,
   },
+  '&.active': {
+    backgroundColor: '#007bff',
+  },
 }));
 
 interface Props {
   materials: AllMaterialsResponse | undefined;
   status: string;
   productsTableError: string;
+  handleContextMenu: (
+    event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+    id: number,
+  ) => void;
+  rowActiveId: number;
+  offSetX: number;
+  offSetY: number;
+  accordionHeight: number;
 }
 
 export default function ProductsTable(props: Props) {
@@ -41,6 +58,11 @@ export default function ProductsTable(props: Props) {
     materials,
     status,
     productsTableError,
+    handleContextMenu,
+    rowActiveId,
+    offSetX,
+    offSetY,
+    accordionHeight,
   } = props;
 
   const renderError = () => {
@@ -54,34 +76,41 @@ export default function ProductsTable(props: Props) {
 
   const renderTable = () => (
     productsTableError === '' && materials && materials?.length > 0 && (
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Материал</StyledTableCell>
-              <StyledTableCell align="left">Ед. изм.</StyledTableCell>
-              <StyledTableCell align="left">Партия</StyledTableCell>
-              <StyledTableCell align="left">Дата</StyledTableCell>
-              <StyledTableCell align="left">Цена</StyledTableCell>
-              <StyledTableCell align="left">Кол-во</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {materials.map((material: Product) => (
-              <StyledTableRow key={material.id}>
-                <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">
-                  {material.name}
-                </StyledTableCell>
-                <StyledTableCell align="left">{material.unit}</StyledTableCell>
-                <StyledTableCell align="left">{material.party[0].partyName}</StyledTableCell>
-                <StyledTableCell align="left">{material.party[0].partyDate.replace(/T/gi, ' ')}</StyledTableCell>
-                <StyledTableCell align="left">{material.party[0].price}</StyledTableCell>
-                <StyledTableCell align="left">{material.party[0].count}</StyledTableCell>
-              </StyledTableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+        <TableContainer sx={{ maxHeight: `calc(100vh - ${HEADER_WIDTH} - ${TABLE_HEADER_WIDTH} - ${MARGIN} - ${accordionHeight}px)` }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Материал</StyledTableCell>
+                <StyledTableCell align="left">Ед. изм.</StyledTableCell>
+                <StyledTableCell align="left">Партия</StyledTableCell>
+                <StyledTableCell align="left">Дата</StyledTableCell>
+                <StyledTableCell align="left">Цена</StyledTableCell>
+                <StyledTableCell align="left">Кол-во</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {materials.map((material: Product) => (
+                <StyledTableRow
+                  className={rowActiveId === material.id ? 'active' : ''}
+                  key={material.id}
+                  onContextMenu={(event) => handleContextMenu(event, material.id)}
+                >
+                  <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">
+                    {material.name}
+                  </StyledTableCell>
+                  <StyledTableCell align="left">{material.unit}</StyledTableCell>
+                  <StyledTableCell align="left">{material.party[0].partyName}</StyledTableCell>
+                  <StyledTableCell align="left">{material.party[0].partyDate.replace(/T/gi, ' ')}</StyledTableCell>
+                  <StyledTableCell align="left">{material.party[0].price}</StyledTableCell>
+                  <StyledTableCell align="left">{material.party[0].count}</StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <MaterialReportDialog offSetX={offSetX} offSetY={offSetY} />
+        </TableContainer>
+      </Paper>
     )
   );
 
