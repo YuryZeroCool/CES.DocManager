@@ -58,7 +58,7 @@ export default function AccountGroupCheckboxesComponent(props: Props) {
     <MuiAccordion disableGutters elevation={0} square {...elProps} />
   ))(({ theme }) => ({
     border: `1px solid ${theme.palette.divider}`,
-    '&.MuiTypography-root': {
+    '.MuiTypography-root': {
       color: '#000',
     },
     '&:not(:last-child)': {
