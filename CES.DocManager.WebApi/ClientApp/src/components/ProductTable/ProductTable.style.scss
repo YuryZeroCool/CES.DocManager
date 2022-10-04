@@ -6,3 +6,10 @@
 .MuiPaper-root-MuiTableContainer-root {
   position: relative;
 }
+
+.materials-table {
+  .MuiTableCell-root.MuiTableCell-head {
+    z-index: 10;
+  }
+
+}

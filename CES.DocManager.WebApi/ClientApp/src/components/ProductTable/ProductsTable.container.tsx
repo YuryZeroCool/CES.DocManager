@@ -14,12 +14,15 @@ interface Props {
   setProductsTableError: React.Dispatch<React.SetStateAction<string>>;
 }
 
+const DIALOG_HEIGHT = 150;
+const DIALOG_WIDTH = 200;
+
 function ProductsTableContainer(props: Props) {
   const { productsTableError, setProductsTableError } = props;
 
   const [offSetX, setOffSetX] = useState<number>(0);
 
-  const [offSetY, setOffSetY] = useState<number>(0);
+  const [offSetTop, setOffSetTop] = useState<number>(0);
 
   const materials = useSelector<RootState,
   AllMaterialsResponse | undefined>((state) => state.materials.getAllMaterials);
@@ -56,11 +59,26 @@ function ProductsTableContainer(props: Props) {
     id: number,
   ) => {
     event.preventDefault();
-    if (event.button === 2) {
+    if (event.button === 2 && event.currentTarget.offsetParent) {
       dispatch(changeRowActiveId(id));
       dispatch(toggleMaterialReportDialog(true));
       setOffSetX(event.clientX);
-      setOffSetY(window.pageYOffset + event.clientY);
+
+      const tableHeight = event.currentTarget.offsetParent.clientHeight;
+      const tableWidth = event.currentTarget.offsetParent.clientWidth;
+      const tableTop = event.currentTarget.offsetParent.getBoundingClientRect().top;
+
+      if (event.clientY - tableTop + DIALOG_HEIGHT < tableHeight) {
+        setOffSetTop(event.currentTarget.offsetTop + (
+          event.clientY - event.currentTarget.getBoundingClientRect().top));
+      }
+      if (event.clientY - tableTop + DIALOG_HEIGHT > tableHeight) {
+        setOffSetTop(event.currentTarget.offsetTop + (
+          event.clientY - event.currentTarget.getBoundingClientRect().top) - DIALOG_HEIGHT);
+      }
+      if (event.clientX + DIALOG_WIDTH > tableWidth) {
+        setOffSetX(event.clientX - DIALOG_WIDTH);
+      }
     }
   };
 
@@ -72,7 +90,7 @@ function ProductsTableContainer(props: Props) {
       handleContextMenu={handleContextMenu}
       rowActiveId={rowActiveId}
       offSetX={offSetX}
-      offSetY={offSetY}
+      offSetTop={offSetTop}
       accordionHeight={accordionHeight}
     />
   );

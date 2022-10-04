@@ -49,7 +49,7 @@ interface Props {
   ) => void;
   rowActiveId: number;
   offSetX: number;
-  offSetY: number;
+  offSetTop: number;
   accordionHeight: number;
 }
 
@@ -61,7 +61,7 @@ export default function ProductsTable(props: Props) {
     handleContextMenu,
     rowActiveId,
     offSetX,
-    offSetY,
+    offSetTop,
     accordionHeight,
   } = props;
 
@@ -77,8 +77,10 @@ export default function ProductsTable(props: Props) {
   const renderTable = () => (
     productsTableError === '' && materials && materials?.length > 0 && (
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: `calc(100vh - ${HEADER_WIDTH} - ${TABLE_HEADER_WIDTH} - ${MARGIN} - ${accordionHeight}px)` }}>
-          <Table stickyHeader aria-label="sticky table">
+        <TableContainer
+          sx={{ position: 'relative', maxHeight: `calc(100vh - ${HEADER_WIDTH} - ${TABLE_HEADER_WIDTH} - ${MARGIN} - ${accordionHeight}px)` }}
+        >
+          <Table stickyHeader aria-label="sticky table" className="materials-table">
             <TableHead>
               <TableRow>
                 <StyledTableCell>Материал</StyledTableCell>
@@ -108,7 +110,10 @@ export default function ProductsTable(props: Props) {
               ))}
             </TableBody>
           </Table>
-          <MaterialReportDialog offSetX={offSetX} offSetY={offSetY} />
+          <MaterialReportDialog
+            offSetX={offSetX}
+            offSetTop={offSetTop}
+          />
         </TableContainer>
       </Paper>
     )

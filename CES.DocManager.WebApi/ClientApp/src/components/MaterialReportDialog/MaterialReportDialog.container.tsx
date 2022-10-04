@@ -12,10 +12,10 @@ import MaterialReportDialogComponent from './MaterialReportDialog.component';
 
 interface Props {
   offSetX: number;
-  offSetY: number;
+  offSetTop: number;
 }
 
-function MaterialReportDialogContainer({ offSetX, offSetY }: Props) {
+function MaterialReportDialogContainer({ offSetX, offSetTop }: Props) {
   const [selectedValue, setSelectedValue] = useState('');
 
   const { isMaterialReportDialogOpen } = useSelector<RootState,
@@ -50,7 +50,7 @@ function MaterialReportDialogContainer({ offSetX, offSetY }: Props) {
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       handleClose={handleClose}
       offSetX={offSetX}
-      offSetY={offSetY}
+      offSetTop={offSetTop}
     />
   );
 }

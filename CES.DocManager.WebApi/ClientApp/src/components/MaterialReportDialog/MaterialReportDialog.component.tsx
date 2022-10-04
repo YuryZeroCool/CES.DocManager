@@ -13,7 +13,7 @@ export interface ReportDialogProps {
   selectedValue: string;
   handleClose: (value: string) => void;
   offSetX: number;
-  offSetY: number;
+  offSetTop: number;
 }
 
 export default function MaterialReportDialogComponent(props: ReportDialogProps) {
@@ -22,13 +22,13 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
     handleClose,
     selectedValue,
     offSetX,
-    offSetY,
+    offSetTop,
   } = props;
 
   return (
     <>
       {isMaterialReportDialogOpen && (
-        <div className="dialog" style={{ top: offSetY, left: offSetX }}>
+        <div className="dialog" style={{ top: offSetTop, left: offSetX }}>
           <List sx={{ pt: 0 }}>
             <ListItem button onClick={() => handleClose('Прикрепить авто')}>
               <ListItemIcon>
