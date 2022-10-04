@@ -92,22 +92,22 @@ export default function ProductsTable(props: Props) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {materials.map((material: Product) => (
+              {materials.map((material: Product) => material.party.map((el) => (
                 <StyledTableRow
-                  className={rowActiveId === material.id ? 'active' : ''}
-                  key={material.id}
-                  onContextMenu={(event) => handleContextMenu(event, material.id)}
+                  className={rowActiveId === el.partyId ? 'active' : ''}
+                  key={el.partyId}
+                  onContextMenu={(event) => handleContextMenu(event, el.partyId)}
                 >
                   <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">
                     {material.name}
                   </StyledTableCell>
                   <StyledTableCell align="left">{material.unit}</StyledTableCell>
-                  <StyledTableCell align="left">{material.party[0].partyName}</StyledTableCell>
-                  <StyledTableCell align="left">{material.party[0].partyDate.replace(/T/gi, ' ')}</StyledTableCell>
-                  <StyledTableCell align="left">{material.party[0].price}</StyledTableCell>
-                  <StyledTableCell align="left">{material.party[0].count}</StyledTableCell>
+                  <StyledTableCell align="left">{el.partyName}</StyledTableCell>
+                  <StyledTableCell align="left">{el.partyDate.replace(/T/gi, ' ')}</StyledTableCell>
+                  <StyledTableCell align="left">{el.price}</StyledTableCell>
+                  <StyledTableCell align="left">{el.count}</StyledTableCell>
                 </StyledTableRow>
-              ))}
+              )))}
             </TableBody>
           </Table>
           <MaterialReportDialog
