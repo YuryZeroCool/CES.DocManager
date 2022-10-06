@@ -74,6 +74,7 @@ export interface IMaterialAttachedResponse {
 
 export interface IMaterialsResponse {
   getAllMaterials?: AllMaterialsResponse;
+  allAttachedMaterials: IMaterialAttachedResponse[];
   deleteMaterialId: number;
   getAllGroupAccounts?: AllGroupAccountsResponse;
   currentGroupAccount?: CurrentGroupAccountResponse;
@@ -82,6 +83,7 @@ export interface IMaterialsResponse {
   accordionHeight: number;
   attachedMaterial: MaterialAttached;
   createdAttachedMaterial: IMaterialAttachedResponse;
+  materialsTableType: string;
 }
 
 export interface AccountsGroupState {

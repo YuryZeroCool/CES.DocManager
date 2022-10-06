@@ -51,6 +51,9 @@ function AccountCheckboxesContainer({ setProductsTableError }: Props) {
   }, [expanded]);
 
   useEffect(() => {
+    if (divElRef.current) {
+      dispatch(changeAccordionHeight(divElRef.current.clientHeight));
+    }
     groupAccounts?.forEach((el: GroupAccount) => {
       if (currentGroupAccount) {
         const elem: AccountsGroupState = {

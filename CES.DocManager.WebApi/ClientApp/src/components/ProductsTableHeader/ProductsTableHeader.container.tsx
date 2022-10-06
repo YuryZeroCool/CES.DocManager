@@ -1,16 +1,25 @@
 import { SelectChangeEvent } from '@mui/material/Select';
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/reducers/combineReducers';
+import { changeMaterialsTableType } from '../../redux/reducers/report/materialsReducer';
+import { IAuthResponseType } from '../../redux/store/configureStore';
+import { IMaterialsResponse } from '../../types/ReportTypes';
 import ProductsTableHeaderComponent from './ProductsTableHeader.component';
 
 function ProductsTableHeaderContainer() {
-  const [type, setType] = useState('Свободные');
+  const {
+    materialsTableType,
+  } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
+
+  const dispatch: IAuthResponseType = useDispatch();
 
   const handleChange = (event: SelectChangeEvent) => {
-    setType(event.target.value);
+    dispatch(changeMaterialsTableType(event.target.value));
   };
 
   return (
-    <ProductsTableHeaderComponent type={type} handleChange={handleChange} />
+    <ProductsTableHeaderComponent type={materialsTableType} handleChange={handleChange} />
   );
 }
 

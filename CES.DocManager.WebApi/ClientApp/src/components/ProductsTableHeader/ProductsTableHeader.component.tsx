@@ -20,7 +20,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
   return (
     <div className="table-header">
       <div className="table-header-wrapper">
-        <Button sx={{ m: 1, minWidth: 120 }} variant="contained" size="small">Добавить</Button>
+        {type === 'Свободные' && <Button sx={{ m: 1, minWidth: 120 }} variant="contained" size="small">Добавить</Button>}
         <Box sx={{ m: 1, minWidth: 140 }}>
           <FormControl fullWidth size="small">
             <Select

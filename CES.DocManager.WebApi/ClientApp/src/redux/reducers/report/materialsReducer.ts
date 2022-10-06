@@ -2,11 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IMaterialAttachedResponse, IMaterialsResponse, MaterialAttached } from '../../../types/ReportTypes';
 import createAttachedMaterial from '../../actions/report/materialReport/createAttachedMaterial';
 import deleteMaterial from '../../actions/report/materialReport/deleteMaterial';
+import getAllAttachedMaterials from '../../actions/report/materialReport/getAllAttachedMaterials';
 import getAllGroupAccounts from '../../actions/report/materialReport/getAllGroupAccounts';
 import getAllMaterials from '../../actions/report/materialReport/getAllMaterials';
 
 const initial: IMaterialsResponse = {
   getAllMaterials: [],
+  allAttachedMaterials: [],
   deleteMaterialId: 0,
   getAllGroupAccounts: [],
   currentGroupAccount: [],
@@ -33,6 +35,7 @@ const initial: IMaterialsResponse = {
     numberPlateCar: '',
     accountName: '',
   },
+  materialsTableType: 'Свободные',
 };
 
 const materialsReducer = createSlice({
@@ -97,6 +100,11 @@ const materialsReducer = createSlice({
       stateCopy = { ...stateCopy, getAllMaterials: [] };
       return stateCopy;
     },
+    resetAllAttachedMaterials: (state) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = { ...stateCopy, allAttachedMaterials: [] };
+      return stateCopy;
+    },
     changeStatus: (state) => {
       let stateCopy: IMaterialsResponse = state;
       stateCopy = { ...stateCopy, status: '' };
@@ -128,6 +136,14 @@ const materialsReducer = createSlice({
       };
       return stateCopy;
     },
+    changeMaterialsTableType: (state, action: PayloadAction<string>) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        materialsTableType: action.payload,
+      };
+      return stateCopy;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getAllMaterials.pending, (state) => {
@@ -141,6 +157,20 @@ const materialsReducer = createSlice({
       return stateCopy;
     });
     builder.addCase(getAllMaterials.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(getAllAttachedMaterials.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, status: 'pending' };
+      return stateCopy;
+    });
+    builder.addCase(getAllAttachedMaterials.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, allAttachedMaterials: [...action.payload], status: 'fulfilled' };
+      return stateCopy;
+    });
+    builder.addCase(getAllAttachedMaterials.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
 
@@ -177,11 +207,13 @@ export const {
   editAllMaterials,
   addToCurrentGroupAccount,
   resetAllMaterials,
+  resetAllAttachedMaterials,
   deleteFromCurrentGroupAccount,
   changeStatus,
   changeRowActiveId,
   changeAccordionHeight,
   changeAttachedMaterial,
   resetAttachedMaterial,
+  changeMaterialsTableType,
 } = materialsReducer.actions;
 export default materialsReducer.reducer;

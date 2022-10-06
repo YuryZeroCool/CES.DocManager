@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import getAllAttachedMaterials from '../../redux/actions/report/materialReport/getAllAttachedMaterials';
 import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
@@ -8,6 +9,7 @@ import {
   changeAttachedMaterial,
   changeRowActiveId,
   editAllMaterials,
+  resetAllAttachedMaterials,
   resetAllMaterials,
 } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
@@ -33,6 +35,11 @@ function ProductsTableContainer(props: Props) {
   const materials = useSelector<RootState,
   AllMaterialsResponse | undefined>((state) => state.materials.getAllMaterials);
 
+  const {
+    allAttachedMaterials,
+    materialsTableType,
+  } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
+
   const { isMaterialReportDialogOpen } = useSelector<RootState,
   IModal>((state) => state.modals);
 
@@ -46,23 +53,31 @@ function ProductsTableContainer(props: Props) {
 
   const dispatch: IAuthResponseType = useDispatch();
 
-  useEffect(() => {
-    async function getMaterials(): Promise<void> {
-      if (currentGroupAccount && currentGroupAccount.length !== 0) {
-        try {
+  async function getMaterials(): Promise<void> {
+    try {
+      if (materialsTableType === 'Свободные') {
+        if (currentGroupAccount && currentGroupAccount.length !== 0) {
           dispatch(resetAllMaterials());
           await dispatch(getAllMaterials(currentGroupAccount.join(', ')));
-        } catch (error) {
-          if (error instanceof Error || error instanceof AxiosError) {
-            setProductsTableError(error.message);
-          }
         }
       }
+      if (materialsTableType === 'Прикрепленные') {
+        dispatch(resetAllAttachedMaterials());
+        await dispatch(getAllAttachedMaterials(''));
+      }
+    } catch (error) {
+      if (error instanceof Error || error instanceof AxiosError) {
+        setProductsTableError(error.message);
+      }
     }
+  }
+
+  useEffect(() => {
+    setProductsTableError('');
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     getMaterials();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [materialsTableType]);
 
   useEffect(() => {
     dispatch(editAllMaterials(createdAttachedMaterial));
@@ -71,12 +86,18 @@ function ProductsTableContainer(props: Props) {
 
   const handleContextMenu = (
     event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
-    el: Party,
+    id?: number,
+    el?: Party,
   ) => {
     event.preventDefault();
     if (event.button === 2 && event.currentTarget.offsetParent) {
-      dispatch(changeAttachedMaterial({ party: el.partyName, count: el.count }));
-      dispatch(changeRowActiveId(el.partyId));
+      if (materialsTableType === 'Свободные' && el) {
+        dispatch(changeAttachedMaterial({ party: el.partyName, count: el.count }));
+        dispatch(changeRowActiveId(el.partyId));
+      }
+      if (materialsTableType === 'Прикрепленные' && id) {
+        dispatch(changeRowActiveId(id));
+      }
       dispatch(toggleMaterialReportDialog(true));
       setOffSetX(event.clientX);
 
@@ -101,6 +122,7 @@ function ProductsTableContainer(props: Props) {
   return (
     <ProductsTableComponent
       materials={materials}
+      allAttachedMaterials={allAttachedMaterials}
       status={status}
       productsTableError={productsTableError}
       handleContextMenu={handleContextMenu}
@@ -109,6 +131,7 @@ function ProductsTableContainer(props: Props) {
       offSetTop={offSetTop}
       accordionHeight={accordionHeight}
       isMaterialReportDialogOpen={isMaterialReportDialogOpen}
+      materialsTableType={materialsTableType}
     />
   );
 }

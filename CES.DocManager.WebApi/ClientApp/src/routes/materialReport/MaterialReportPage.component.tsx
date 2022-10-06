@@ -10,6 +10,7 @@ interface Props {
   setProductsTableError: React.Dispatch<React.SetStateAction<string>>;
   handleClick: () => void;
   isCarAttachmentModalOpen: boolean;
+  materialsTableType: string;
 }
 
 export default function MaterialReportPageComponent(props: Props) {
@@ -18,12 +19,13 @@ export default function MaterialReportPageComponent(props: Props) {
     setProductsTableError,
     handleClick,
     isCarAttachmentModalOpen,
+    materialsTableType,
   } = props;
 
   return (
     <section className="report-page-section" onClick={handleClick} aria-hidden="true">
       <ProductsTableHeader />
-      <AccountGroupCheckboxes setProductsTableError={setProductsTableError} />
+      {materialsTableType === 'Свободные' && <AccountGroupCheckboxes setProductsTableError={setProductsTableError} />}
       <ProductsTable
         productsTableError={productsTableError}
         setProductsTableError={setProductsTableError}
