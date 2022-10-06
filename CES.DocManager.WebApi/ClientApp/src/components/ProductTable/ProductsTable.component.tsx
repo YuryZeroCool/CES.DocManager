@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import MaterialReportDialog from '../MaterialReportDialog/MaterialReportDialog.container';
-import { AllMaterialsResponse, Product } from '../../types/ReportTypes';
+import { AllMaterialsResponse, Party, Product } from '../../types/ReportTypes';
 import './ProductTable.style.scss';
 
 const HEADER_WIDTH = '10vh';
@@ -45,12 +45,13 @@ interface Props {
   productsTableError: string;
   handleContextMenu: (
     event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
-    id: number,
+    el: Party,
   ) => void;
   rowActiveId: number;
   offSetX: number;
   offSetTop: number;
   accordionHeight: number;
+  isMaterialReportDialogOpen: boolean;
 }
 
 export default function ProductsTable(props: Props) {
@@ -63,6 +64,7 @@ export default function ProductsTable(props: Props) {
     offSetX,
     offSetTop,
     accordionHeight,
+    isMaterialReportDialogOpen,
   } = props;
 
   const renderError = () => {
@@ -96,7 +98,7 @@ export default function ProductsTable(props: Props) {
                 <StyledTableRow
                   className={rowActiveId === el.partyId ? 'active' : ''}
                   key={el.partyId}
-                  onContextMenu={(event) => handleContextMenu(event, el.partyId)}
+                  onContextMenu={(event) => handleContextMenu(event, el)}
                 >
                   <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">
                     {material.name}
@@ -110,10 +112,12 @@ export default function ProductsTable(props: Props) {
               )))}
             </TableBody>
           </Table>
-          <MaterialReportDialog
-            offSetX={offSetX}
-            offSetTop={offSetTop}
-          />
+          {isMaterialReportDialogOpen && (
+            <MaterialReportDialog
+              offSetX={offSetX}
+              offSetTop={offSetTop}
+            />
+          )}
         </TableContainer>
       </Paper>
     )

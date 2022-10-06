@@ -10,5 +10,5 @@ export type FetchTodosError = {
 
 export interface IModal {
   isMaterialReportDialogOpen: boolean;
-  isMaterialReportModalOpen: boolean;
+  isCarAttachmentModalOpen: boolean;
 }

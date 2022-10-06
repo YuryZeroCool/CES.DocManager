@@ -8,6 +8,7 @@ import divisionWorkScheduleReducer from './report/divisionWorkScheduleReducer';
 import driverLicenseReducer from './driverLicense/driverLicenseReducer';
 import materialsReducer from './report/materialsReducer';
 import modalsReducer from './modals/modalsReducer';
+import vehicleReducer from './vehicle/vehicleReducer';
 
 export const rootReducer = combineReducers({
   login: loginReducer,
@@ -19,6 +20,7 @@ export const rootReducer = combineReducers({
   divisionWorkSchedule: divisionWorkScheduleReducer,
   materials: materialsReducer,
   modals: modalsReducer,
+  vehicle: vehicleReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

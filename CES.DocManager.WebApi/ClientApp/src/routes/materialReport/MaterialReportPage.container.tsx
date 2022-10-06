@@ -9,7 +9,7 @@ import MaterialReportPageComponent from './MaterialReportPage.component';
 function MaterialReportPageContainer() {
   const [productsTableError, setProductsTableError] = useState<string>('');
 
-  const { isMaterialReportDialogOpen } = useSelector<RootState,
+  const { isMaterialReportDialogOpen, isCarAttachmentModalOpen } = useSelector<RootState,
   IModal>((state) => state.modals);
 
   const dispatch = useDispatch();
@@ -26,6 +26,7 @@ function MaterialReportPageContainer() {
       productsTableError={productsTableError}
       setProductsTableError={setProductsTableError}
       handleClick={handleClick}
+      isCarAttachmentModalOpen={isCarAttachmentModalOpen}
     />
   );
 }

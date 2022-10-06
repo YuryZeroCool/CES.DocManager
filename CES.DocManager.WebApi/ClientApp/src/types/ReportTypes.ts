@@ -50,6 +50,28 @@ export type AllGroupAccountsResponse = GroupAccount[];
 
 export type CurrentGroupAccountResponse = string[];
 
+export interface MaterialAttached {
+  party?: string;
+  count?: number;
+  numberPlateOfCar?: string;
+  brand?: string;
+}
+
+export interface IMaterialAttachedResponse {
+  id: number;
+  nameMaterial: string;
+  nameParty: string;
+  partyDate: string;
+  unit: string;
+  price: number;
+  count: number;
+  dateCreated: string;
+  vehicleBrand: string;
+  vehicleModel: string;
+  numberPlateCar: string;
+  accountName: string;
+}
+
 export interface IMaterialsResponse {
   getAllMaterials?: AllMaterialsResponse;
   deleteMaterialId: number;
@@ -58,6 +80,8 @@ export interface IMaterialsResponse {
   status: string;
   rowActiveId: number;
   accordionHeight: number;
+  attachedMaterial: MaterialAttached;
+  createdAttachedMaterial: IMaterialAttachedResponse;
 }
 
 export interface AccountsGroupState {

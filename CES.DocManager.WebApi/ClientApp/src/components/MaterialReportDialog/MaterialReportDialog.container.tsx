@@ -1,13 +1,13 @@
 import { AxiosError } from 'axios';
-import React, { useState } from 'react';
+import React, { SyntheticEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import deleteMaterial from '../../redux/actions/report/materialReport/deleteMaterial';
 import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
+import { toggleCarAttachmentModal, toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
+import { changeAttachedMaterial } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { IMaterialsResponse } from '../../types/ReportTypes';
-import { IModal } from '../../types/type';
 import MaterialReportDialogComponent from './MaterialReportDialog.component';
 
 interface Props {
@@ -16,11 +16,6 @@ interface Props {
 }
 
 function MaterialReportDialogContainer({ offSetX, offSetTop }: Props) {
-  const [selectedValue, setSelectedValue] = useState('');
-
-  const { isMaterialReportDialogOpen } = useSelector<RootState,
-  IModal>((state) => state.modals);
-
   const {
     rowActiveId,
     currentGroupAccount,
@@ -28,25 +23,26 @@ function MaterialReportDialogContainer({ offSetX, offSetTop }: Props) {
 
   const dispatch: IAuthResponseType = useDispatch();
 
-  const handleClose = async (value: string) => {
-    if (value === 'Удалить' && currentGroupAccount) {
-      try {
+  const handleClose = async (event: SyntheticEvent, value: string) => {
+    event?.stopPropagation();
+    try {
+      if (value === 'Удалить' && currentGroupAccount) {
         await dispatch(deleteMaterial(rowActiveId));
         await dispatch(getAllMaterials(currentGroupAccount.join(', ')));
-      } catch (error) {
-        if (error instanceof Error || error instanceof AxiosError) {
-          console.log(error.message);
-        }
+      }
+      if (value === 'Прикрепить авто') {
+        dispatch(toggleCarAttachmentModal(true));
+      }
+    } catch (error) {
+      if (error instanceof Error || error instanceof AxiosError) {
+        console.log(error.message);
       }
     }
     dispatch(toggleMaterialReportDialog(false));
-    setSelectedValue(value);
   };
 
   return (
     <MaterialReportDialogComponent
-      isMaterialReportDialogOpen={isMaterialReportDialogOpen}
-      selectedValue={selectedValue}
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       handleClose={handleClose}
       offSetX={offSetX}

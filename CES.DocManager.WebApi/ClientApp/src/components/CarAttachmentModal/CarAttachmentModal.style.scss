@@ -1,0 +1,29 @@
+.modal-select-container,
+.modal-button-container {
+  display: flex;
+}
+
+.modal-select-container {
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.modal-button-container {
+  justify-content: flex-end;
+}
+
+.modal-button {
+  margin-left: 10px !important;
+}
+
+.material-number {
+  width: 50px;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  border-radius: 4px;
+  padding: 4px;
+  box-sizing: border-box;
+
+  &:hover {
+    border-color: rgba(0, 0, 0, 0.87);
+  }
+}

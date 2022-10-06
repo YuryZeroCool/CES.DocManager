@@ -3,7 +3,7 @@ import { IModal } from '../../../types/type';
 
 const initial: IModal = {
   isMaterialReportDialogOpen: false,
-  isMaterialReportModalOpen: false,
+  isCarAttachmentModalOpen: false,
 };
 
 const modalsReducer = createSlice({
@@ -15,11 +15,17 @@ const modalsReducer = createSlice({
       stateCopy = { ...stateCopy, isMaterialReportDialogOpen: action.payload };
       return stateCopy;
     },
+    toggleCarAttachmentModal: (state, action: PayloadAction<boolean>) => {
+      let stateCopy: IModal = state;
+      stateCopy = { ...stateCopy, isCarAttachmentModalOpen: action.payload };
+      return stateCopy;
+    },
   },
-  extraReducers: (builder) => {},
+  extraReducers: () => {},
 });
 
 export const {
   toggleMaterialReportDialog,
+  toggleCarAttachmentModal,
 } = modalsReducer.actions;
 export default modalsReducer.reducer;
