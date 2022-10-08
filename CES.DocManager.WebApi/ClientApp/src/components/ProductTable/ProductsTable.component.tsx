@@ -91,12 +91,13 @@ export default function ProductsTable(props: Props) {
 
   const renderAttachedMaterialsRows = () => (
     allAttachedMaterials && allAttachedMaterials.length > 0 && allAttachedMaterials.map(
-      (material: IMaterialAttachedResponse) => (
+      (material: IMaterialAttachedResponse, index: number) => (
         <StyledTableRow
           className={rowActiveId === material.id ? 'active' : ''}
           key={material.id}
           onContextMenu={(event) => handleContextMenu(event, material.id)}
         >
+          <StyledTableCell align="center">{index + 1}</StyledTableCell>
           <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">
             {material.nameMaterial}
           </StyledTableCell>
@@ -118,12 +119,13 @@ export default function ProductsTable(props: Props) {
 
   const renderMaterialsRows = () => (
     materials && materials?.length > 0 && materials.map(
-      (material: Product) => material.party.map((el) => (
+      (material: Product, index: number) => material.party.map((el) => (
         <StyledTableRow
           className={rowActiveId === el.partyId ? 'active' : ''}
           key={el.partyId}
           onContextMenu={(event) => handleContextMenu(event, undefined, el)}
         >
+          <StyledTableCell align="center">{index + 1}</StyledTableCell>
           <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">
             {material.name}
           </StyledTableCell>
@@ -141,7 +143,7 @@ export default function ProductsTable(props: Props) {
     productsTableError === '' && ((materialsTableType === 'Свободные' && materials && materials?.length > 0)
     || (materialsTableType === 'Прикрепленные' && allAttachedMaterials && allAttachedMaterials.length > 0))
     && (
-      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <Paper sx={{ width: '100%', overflow: 'unset' }}>
         <TableContainer
           sx={{
             position: 'relative',
@@ -151,6 +153,7 @@ export default function ProductsTable(props: Props) {
           <Table stickyHeader aria-label="sticky table" className="materials-table">
             <TableHead>
               <TableRow>
+                <StyledTableCell align="center">№</StyledTableCell>
                 <StyledTableCell>Материал</StyledTableCell>
                 <StyledTableCell align="left">Ед. изм.</StyledTableCell>
                 <StyledTableCell align="left">Партия</StyledTableCell>
@@ -177,9 +180,9 @@ export default function ProductsTable(props: Props) {
   );
 
   return (
-    <>
+    <div className="material-table">
       {renderError()}
       {renderTable()}
-    </>
+    </div>
   );
 }

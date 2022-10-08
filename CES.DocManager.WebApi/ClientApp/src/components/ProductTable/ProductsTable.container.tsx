@@ -22,7 +22,6 @@ interface Props {
   setProductsTableError: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const DIALOG_HEIGHT = 150;
 const DIALOG_WIDTH = 200;
 
 function ProductsTableContainer(props: Props) {
@@ -35,15 +34,12 @@ function ProductsTableContainer(props: Props) {
   const materials = useSelector<RootState,
   AllMaterialsResponse | undefined>((state) => state.materials.getAllMaterials);
 
-  const {
-    allAttachedMaterials,
-    materialsTableType,
-  } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
-
   const { isMaterialReportDialogOpen } = useSelector<RootState,
   IModal>((state) => state.modals);
 
   const {
+    allAttachedMaterials,
+    materialsTableType,
     currentGroupAccount,
     rowActiveId,
     status,
@@ -52,6 +48,8 @@ function ProductsTableContainer(props: Props) {
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
+
+  const DIALOG_HEIGHT = materialsTableType === 'Свободные' ? 150 : 100;
 
   async function getMaterials(): Promise<void> {
     try {

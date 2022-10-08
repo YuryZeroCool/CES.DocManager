@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IMaterialAttachedResponse, IMaterialsResponse, MaterialAttached } from '../../../types/ReportTypes';
 import createAttachedMaterial from '../../actions/report/materialReport/createAttachedMaterial';
+import deleteAttachedMaterial from '../../actions/report/materialReport/deleteAttachedMaterial';
 import deleteMaterial from '../../actions/report/materialReport/deleteMaterial';
 import getAllAttachedMaterials from '../../actions/report/materialReport/getAllAttachedMaterials';
 import getAllGroupAccounts from '../../actions/report/materialReport/getAllGroupAccounts';
@@ -9,7 +10,7 @@ import getAllMaterials from '../../actions/report/materialReport/getAllMaterials
 const initial: IMaterialsResponse = {
   getAllMaterials: [],
   allAttachedMaterials: [],
-  deleteMaterialId: 0,
+  deletedMaterialId: 0,
   getAllGroupAccounts: [],
   currentGroupAccount: [],
   status: '',
@@ -36,6 +37,7 @@ const initial: IMaterialsResponse = {
     accountName: '',
   },
   materialsTableType: 'Свободные',
+  deletedAttachedMaterialId: 0,
 };
 
 const materialsReducer = createSlice({
@@ -75,6 +77,11 @@ const materialsReducer = createSlice({
       }
       return stateCopy;
     },
+    resetAllMaterials: (state) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = { ...stateCopy, getAllMaterials: [] };
+      return stateCopy;
+    },
     addToCurrentGroupAccount: (state, action: PayloadAction<string>) => {
       let stateCopy: IMaterialsResponse = state;
       if (stateCopy.currentGroupAccount) {
@@ -93,11 +100,6 @@ const materialsReducer = createSlice({
           currentGroupAccount: stateCopy.currentGroupAccount.filter((el) => el !== action.payload),
         };
       }
-      return stateCopy;
-    },
-    resetAllMaterials: (state) => {
-      let stateCopy: IMaterialsResponse = state;
-      stateCopy = { ...stateCopy, getAllMaterials: [] };
       return stateCopy;
     },
     resetAllAttachedMaterials: (state) => {
@@ -133,6 +135,16 @@ const materialsReducer = createSlice({
       stateCopy = {
         ...stateCopy,
         attachedMaterial: { ...initial.attachedMaterial },
+      };
+      return stateCopy;
+    },
+    deleteFromAttachedMaterials: (state, action: PayloadAction<number>) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        allAttachedMaterials: stateCopy.allAttachedMaterials.filter(
+          (el) => el.id !== action.payload,
+        ),
       };
       return stateCopy;
     },
@@ -185,7 +197,7 @@ const materialsReducer = createSlice({
 
     builder.addCase(deleteMaterial.fulfilled, (state, action) => {
       let stateCopy = state;
-      stateCopy = { ...stateCopy, deleteMaterialId: action.payload };
+      stateCopy = { ...stateCopy, deletedMaterialId: action.payload };
       return stateCopy;
     });
     builder.addCase(deleteMaterial.rejected, (state, action) => {
@@ -198,6 +210,15 @@ const materialsReducer = createSlice({
       return stateCopy;
     });
     builder.addCase(createAttachedMaterial.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(deleteAttachedMaterial.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, deletedAttachedMaterialId: action.payload };
+      return stateCopy;
+    });
+    builder.addCase(deleteAttachedMaterial.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
   },
@@ -214,6 +235,7 @@ export const {
   changeAccordionHeight,
   changeAttachedMaterial,
   resetAttachedMaterial,
+  deleteFromAttachedMaterials,
   changeMaterialsTableType,
 } = materialsReducer.actions;
 export default materialsReducer.reducer;

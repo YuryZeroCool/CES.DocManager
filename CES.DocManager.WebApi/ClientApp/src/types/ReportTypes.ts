@@ -75,7 +75,7 @@ export interface IMaterialAttachedResponse {
 export interface IMaterialsResponse {
   getAllMaterials?: AllMaterialsResponse;
   allAttachedMaterials: IMaterialAttachedResponse[];
-  deleteMaterialId: number;
+  deletedMaterialId: number;
   getAllGroupAccounts?: AllGroupAccountsResponse;
   currentGroupAccount?: CurrentGroupAccountResponse;
   status: string;
@@ -84,6 +84,7 @@ export interface IMaterialsResponse {
   attachedMaterial: MaterialAttached;
   createdAttachedMaterial: IMaterialAttachedResponse;
   materialsTableType: string;
+  deletedAttachedMaterialId: number;
 }
 
 export interface AccountsGroupState {
