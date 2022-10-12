@@ -72,7 +72,7 @@ export default function AddDriverDocumentsModalComponent(props: Props) {
       control={control}
       defaultValue=""
       rules={{
-        required: 'Required field',
+        required: 'Обязательное поле для заполнения',
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FormControl fullWidth size="medium">
@@ -103,10 +103,10 @@ export default function AddDriverDocumentsModalComponent(props: Props) {
       control={control}
       defaultValue=""
       rules={{
-        required: 'Required field',
+        required: 'Обязательное поле для заполнения',
         minLength: {
           value: 3,
-          message: 'Minimum 3 characters',
+          message: 'Минимальное количество символов 3',
         },
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
@@ -132,10 +132,10 @@ export default function AddDriverDocumentsModalComponent(props: Props) {
       control={control}
       defaultValue=""
       rules={{
-        required: 'Required field',
+        required: 'Обязательное поле для заполнения',
         minLength: {
           value: 3,
-          message: 'Minimum 3 characters',
+          message: 'Минимальное количество символов 3',
         },
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
@@ -161,7 +161,7 @@ export default function AddDriverDocumentsModalComponent(props: Props) {
       control={control}
       defaultValue={null}
       rules={{
-        required: 'Обязательно для заполнение',
+        required: 'Обязательное поле для заполнения',
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
@@ -201,7 +201,7 @@ export default function AddDriverDocumentsModalComponent(props: Props) {
       control={control}
       defaultValue={null}
       rules={{
-        required: 'Обязательно для заполнение',
+        required: 'Обязательное поле для заполнения',
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
