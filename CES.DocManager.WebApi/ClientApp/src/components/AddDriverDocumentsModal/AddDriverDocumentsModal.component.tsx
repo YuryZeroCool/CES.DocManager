@@ -6,6 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -28,7 +29,7 @@ const style = {
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
+  padding: '20px 32px',
 };
 
 interface Props {
@@ -57,6 +58,13 @@ export default function AddDriverDocumentsModalComponent(props: Props) {
     handleClose,
     onSubmit,
   } = props;
+
+  const renderTitle = () => (
+    <Typography id="modal-modal-title" variant="h6" component="h2" className="modal-title">
+      {isAddMedicalCertificateModalOpen && 'Добавить медицинскую справку'}
+      {isAddDriverLicenseModalOpen && 'Добавить водительское удостоверение'}
+    </Typography>
+  );
 
   const renderDriverFullNamesSelect = () => (
     <Controller
@@ -236,6 +244,7 @@ export default function AddDriverDocumentsModalComponent(props: Props) {
       <Box sx={style}>
         {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
         <form onSubmit={handleSubmit(onSubmit)}>
+          {renderTitle()}
           {renderDriverFullNamesSelect()}
           {renderSerialNumber()}
           {renderIssueDate()}

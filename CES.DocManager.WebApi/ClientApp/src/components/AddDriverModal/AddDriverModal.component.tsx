@@ -8,6 +8,7 @@ import {
   Modal,
   Select,
   TextField,
+  Typography,
 } from '@mui/material';
 import {
   Control,
@@ -43,7 +44,7 @@ const style = {
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
+  padding: '20px 32px',
 };
 
 export default function AddDriverModalComponent(props: AddDriverModalProps) {
@@ -57,6 +58,12 @@ export default function AddDriverModalComponent(props: AddDriverModalProps) {
     divisions,
     formState,
   } = props;
+
+  const renderTitle = () => (
+    <Typography id="modal-modal-title" variant="h6" component="h2" className="modal-title">
+      Добавить водителя
+    </Typography>
+  );
 
   const renderLastName = () => (
     <Controller
@@ -164,8 +171,8 @@ export default function AddDriverModalComponent(props: AddDriverModalProps) {
       rules={{
         required: 'Required field',
         minLength: {
-          value: 3,
-          message: 'Minimum 3 characters',
+          value: 1,
+          message: 'Minimum 1 character',
         },
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
@@ -223,6 +230,7 @@ export default function AddDriverModalComponent(props: AddDriverModalProps) {
       <Box sx={style}>
         {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
         <form onSubmit={handleSubmit(onSubmit)}>
+          {renderTitle()}
           {renderDivisionsSelect()}
           {renderLastName()}
           {renderFirstName()}
