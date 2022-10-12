@@ -5,10 +5,10 @@ import {
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import React from 'react';
-import { IExpiringDocuments } from '../../types/HomeTypes';
+import { IExpiringDocumentsResponse } from '../../types/DocumentType';
 
 interface Props {
-  row: IExpiringDocuments;
+  row: IExpiringDocumentsResponse;
 }
 
 export default function Row(props: Props) {

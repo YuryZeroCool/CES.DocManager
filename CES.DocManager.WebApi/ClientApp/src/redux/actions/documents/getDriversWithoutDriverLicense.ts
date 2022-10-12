@@ -3,15 +3,15 @@ import $api from '../../../http/loginHttp';
 import { IDriverWithoutDocuments } from '../../../types/DocumentType';
 import { FetchTodosError } from '../../../types/type';
 
-const getDriversWithoutMedicalCertificate = createAsyncThunk<IDriverWithoutDocuments[],
+const getDriversWithoutDriverLicense = createAsyncThunk<IDriverWithoutDocuments[],
 string, { rejectValue: FetchTodosError }>(
-  'getDriversWithoutMedicalCertificate',
+  'getDriversWithoutDriverLicense',
   async (d:string, { rejectWithValue }) => {
     try {
-      if (process.env.REACT_APP_NO_DRIVER_MEDICAL_CERTIFICATE === undefined) {
+      if (process.env.REACT_APP_NO_DRIVER_LICENSE === undefined) {
         throw Error('Error Server');
       }
-      const response = await $api.get<IDriverWithoutDocuments[]>(`${process.env.REACT_APP_NO_DRIVER_MEDICAL_CERTIFICATE}`);
+      const response = await $api.get<IDriverWithoutDocuments[]>(`${process.env.REACT_APP_NO_DRIVER_LICENSE}`);
       return response.data;
     } catch (err) {
       return rejectWithValue({
@@ -21,4 +21,4 @@ string, { rejectValue: FetchTodosError }>(
   },
 );
 
-export default getDriversWithoutMedicalCertificate;
+export default getDriversWithoutDriverLicense;

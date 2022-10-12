@@ -2,17 +2,17 @@ import * as React from 'react';
 import {
   Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography,
 } from '@mui/material';
-import { IExpiringDocuments } from '../../types/HomeTypes';
 import Row from './Row';
+import { IExpiringDocumentsResponse } from '../../types/DocumentType';
 
-function SortArray(x: IExpiringDocuments, y: IExpiringDocuments) {
+function SortArray(x: IExpiringDocumentsResponse, y: IExpiringDocumentsResponse) {
   if (x.divisionNumber < y.divisionNumber) { return -1; }
   if (x.divisionNumber > y.divisionNumber) { return 1; }
   return 0;
 }
 
 interface Props {
-  data: IExpiringDocuments[];
+  data: IExpiringDocumentsResponse[];
   name: string;
 }
 

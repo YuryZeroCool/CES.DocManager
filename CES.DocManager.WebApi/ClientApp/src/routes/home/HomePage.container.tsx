@@ -3,19 +3,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import getExpiringDriverLicense from '../../redux/actions/home/getExpiringDriverLicense';
 import getExpiringMedicalCertificate from '../../redux/actions/home/getExpiringMedicalCertificate';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { clearDriverLicenseState } from '../../redux/reducers/driverLicense/driverLicenseReducer';
-import { clearMedicalCertificatesState } from '../../redux/reducers/medicalCertificates/medicalCertificatesReducer';
 import { clearUserState } from '../../redux/reducers/loginReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
-import { IExpiringDocuments } from '../../types/HomeTypes';
 import HomePageComponent from './HomePage.component';
+import { clearExpiringMedicalCertificate } from '../../redux/reducers/documents/medicalCertificates/medicalCertificatesReducer';
+import { clearExpiringDriverLicensesState } from '../../redux/reducers/documents/driverLicense/driverLicenseReducer';
+import { IDriverLicenses, IMedicalCertificates } from '../../types/DocumentType';
 
 function HomePageContainer() {
   const dispatch: IAuthResponseType = useDispatch();
-  const driverLicenseState = useSelector<RootState, IExpiringDocuments[]>(
+  const { expiringDriverLicenses } = useSelector<RootState, IDriverLicenses>(
     (state) => state.driverLicense,
   );
-  const medicalCertificatesState = useSelector<RootState, IExpiringDocuments[]>(
+  const { expiringMedicalCertificate } = useSelector<RootState, IMedicalCertificates>(
     (state) => state.medicalCertificates,
   );
 
@@ -33,15 +33,15 @@ function HomePageContainer() {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     getDocument();
     return () => {
-      dispatch(clearDriverLicenseState());
-      dispatch(clearMedicalCertificatesState());
+      dispatch(clearExpiringDriverLicensesState());
+      dispatch(clearExpiringMedicalCertificate());
     };
   }, [dispatch]);
 
   return (
     <HomePageComponent
-      driverLicense={driverLicenseState}
-      medicalCertificates={medicalCertificatesState}
+      driverLicense={expiringDriverLicenses}
+      medicalCertificates={expiringMedicalCertificate}
     />
   );
 }

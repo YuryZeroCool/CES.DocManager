@@ -1,22 +1,28 @@
-export interface IMedicalCertificate {
+export interface IDriverDocumentsForm {
   fullName: string,
   serialNumber: string,
   issueDate: Date | null,
   expiryDate: Date | null,
+  category?: string | undefined,
 }
 
-export interface INoDriverMedicalCertificate {
+export interface IDriverWithoutDocuments {
   id: number,
   firstName: string,
   lastName: string,
 }
 
-export interface IMedicalCertificateRequest {
+export interface IDriverDocumentsRequest {
   firstName: string,
   lastName: string,
   serialNumber: string,
   issueDate: Date | null,
   expiryDate: Date | null,
+  category?: string | undefined,
+}
+
+export interface IDriverDocumentsResponse extends IDriverDocumentsRequest {
+  id: number;
 }
 
 export type FullName = {
@@ -24,7 +30,23 @@ export type FullName = {
   driversFullName: string,
 };
 
-export type Medical = {
-  currentValue: string;
-  fullName: FullName[];
-};
+export interface IExpiringDocumentsResponse {
+  id: number;
+  bthDate: string;
+  expiryDate: string;
+  divisionNumber: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface IMedicalCertificates {
+  expiringMedicalCertificate: IExpiringDocumentsResponse[];
+  createdMedicalCertificate: IDriverDocumentsResponse;
+  driversWithoutMedicalCertificates: FullName[];
+}
+
+export interface IDriverLicenses {
+  expiringDriverLicenses: IExpiringDocumentsResponse[];
+  createdDriverLicense: IDriverDocumentsResponse;
+  driversWithoutDriverLicense: FullName[];
+}

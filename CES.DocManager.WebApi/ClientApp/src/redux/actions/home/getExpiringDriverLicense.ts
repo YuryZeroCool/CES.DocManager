@@ -1,9 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import $api from '../../../http/loginHttp';
-import { IExpiringDocuments } from '../../../types/HomeTypes';
+import { IExpiringDocumentsResponse } from '../../../types/DocumentType';
 import { FetchTodosError } from '../../../types/type';
 
-const getExpiringDriverLicense = createAsyncThunk<IExpiringDocuments[],
+const getExpiringDriverLicense = createAsyncThunk<IExpiringDocumentsResponse[],
 number, { rejectValue: FetchTodosError }>(
   'exringDriverLicense',
   async (month: number, { rejectWithValue }) => {
@@ -11,7 +11,7 @@ number, { rejectValue: FetchTodosError }>(
       if (process.env.REACT_APP_EXPIRING_DRIVER_LICENSE === undefined) {
         throw Error('Error Server');
       }
-      const response = await $api.get<IExpiringDocuments[]>(`${process.env.REACT_APP_EXPIRING_DRIVER_LICENSE}?numberMonth=${month}`);
+      const response = await $api.get<IExpiringDocumentsResponse[]>(`${process.env.REACT_APP_EXPIRING_DRIVER_LICENSE}?numberMonth=${month}`);
       return response.data;
     } catch (err) {
       return rejectWithValue({

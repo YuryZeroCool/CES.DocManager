@@ -1,11 +1,11 @@
 import * as React from 'react';
 import ExpiringDocumentsTable from '../../components/home/ExpiringDocumentsTable';
-import { IExpiringDocuments } from '../../types/HomeTypes';
+import { IExpiringDocumentsResponse } from '../../types/DocumentType';
 import './HomePage.style.scss';
 
 interface Props {
-  driverLicense: IExpiringDocuments[];
-  medicalCertificates: IExpiringDocuments[];
+  driverLicense: IExpiringDocumentsResponse[];
+  medicalCertificates: IExpiringDocumentsResponse[];
 }
 
 export default function HomePageComponent(props: Props) {
