@@ -14,6 +14,7 @@ export interface ReportDialogProps {
   handleClose: (event: SyntheticEvent, value: string) => void;
   offSetX: number;
   offSetTop: number;
+  isDialogHightBigger: boolean;
 }
 
 export default function MaterialReportDialogComponent(props: ReportDialogProps) {
@@ -22,10 +23,21 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
     handleClose,
     offSetX,
     offSetTop,
+    isDialogHightBigger,
   } = props;
 
   return (
-    <div className="dialog" style={{ top: offSetTop, left: offSetX, height: materialsTableType === 'Свободные' ? '150px' : '100px' }}>
+    <div
+      className="dialog"
+      style={
+      {
+        top: offSetTop,
+        left: offSetX,
+        height: materialsTableType === 'Свободные' ? '150px' : '100px',
+        zIndex: isDialogHightBigger ? 15 : 5,
+      }
+      }
+    >
       <List sx={{ pt: 0 }}>
         {materialsTableType === 'Свободные' && (
           <>

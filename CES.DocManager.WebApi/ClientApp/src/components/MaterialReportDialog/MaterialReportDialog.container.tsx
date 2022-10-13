@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import React, { SyntheticEvent } from 'react';
+import React, { SyntheticEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import deleteAttachedMaterial from '../../redux/actions/report/materialReport/deleteAttachedMaterial';
 import deleteMaterial from '../../redux/actions/report/materialReport/deleteMaterial';
@@ -14,9 +14,10 @@ import MaterialReportDialogComponent from './MaterialReportDialog.component';
 interface Props {
   offSetX: number;
   offSetTop: number;
+  isDialogHightBigger: boolean;
 }
 
-function MaterialReportDialogContainer({ offSetX, offSetTop }: Props) {
+function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger }: Props) {
   const {
     rowActiveId,
     materialsTableType,
@@ -24,6 +25,8 @@ function MaterialReportDialogContainer({ offSetX, offSetTop }: Props) {
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
+
+  const [dialogError, setDialogError] = useState<string>('');
 
   const handleClose = async (event: SyntheticEvent, value: string) => {
     event?.stopPropagation();
@@ -41,7 +44,7 @@ function MaterialReportDialogContainer({ offSetX, offSetTop }: Props) {
       }
     } catch (error) {
       if (error instanceof Error || error instanceof AxiosError) {
-        console.log(error.message);
+        setDialogError(error.message);
       }
     }
     dispatch(toggleMaterialReportDialog(false));
@@ -54,6 +57,7 @@ function MaterialReportDialogContainer({ offSetX, offSetTop }: Props) {
       handleClose={handleClose}
       offSetX={offSetX}
       offSetTop={offSetTop}
+      isDialogHightBigger={isDialogHightBigger}
     />
   );
 }

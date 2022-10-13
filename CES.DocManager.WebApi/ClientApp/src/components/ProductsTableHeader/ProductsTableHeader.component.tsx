@@ -33,6 +33,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
             </Select>
           </FormControl>
         </Box>
+        {type === 'Прикрепленные' && <Button sx={{ m: 1, minWidth: 120 }} variant="contained" size="small">Добавить ремонт</Button>}
       </div>
       <div className="table-header-wrapper">
         <IconButton aria-label="delete" className="icon-search">

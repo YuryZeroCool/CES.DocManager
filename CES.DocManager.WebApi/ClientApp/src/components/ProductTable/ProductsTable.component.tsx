@@ -60,7 +60,21 @@ interface Props {
   accordionHeight: number;
   isMaterialReportDialogOpen: boolean;
   materialsTableType: string;
+  isDialogHightBigger: boolean;
+  divElRef: React.RefObject<HTMLDivElement>;
 }
+
+type ProductsTableProps = {
+  children: React.ReactNode;
+};
+
+const ProductsTableWrapper = React.forwardRef<HTMLDivElement, ProductsTableProps>(
+  (props, ref) => (
+    <div ref={ref}>
+      {props.children}
+    </div>
+  ),
+);
 
 export default function ProductsTable(props: Props) {
   const {
@@ -75,6 +89,8 @@ export default function ProductsTable(props: Props) {
     accordionHeight,
     isMaterialReportDialogOpen,
     materialsTableType,
+    isDialogHightBigger,
+    divElRef,
   } = props;
 
   const renderError = () => {
@@ -143,39 +159,44 @@ export default function ProductsTable(props: Props) {
     productsTableError === '' && ((materialsTableType === 'Свободные' && materials && materials?.length > 0)
     || (materialsTableType === 'Прикрепленные' && allAttachedMaterials && allAttachedMaterials.length > 0))
     && (
-      <Paper sx={{ width: '100%', overflow: 'unset' }}>
-        <TableContainer
-          sx={{
-            position: 'relative',
-            maxHeight: `calc(100vh - ${HEADER_WIDTH} - ${TABLE_HEADER_WIDTH} - ${MARGIN} - ${materialsTableType === 'Свободные' ? accordionHeight : 0}px)`,
-          }}
-        >
-          <Table stickyHeader aria-label="sticky table" className="materials-table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell align="center">№</StyledTableCell>
-                <StyledTableCell>Материал</StyledTableCell>
-                <StyledTableCell align="left">Ед. изм.</StyledTableCell>
-                <StyledTableCell align="left">Партия</StyledTableCell>
-                <StyledTableCell align="left">Дата</StyledTableCell>
-                <StyledTableCell align="left">Цена</StyledTableCell>
-                <StyledTableCell align="left">Кол-во</StyledTableCell>
-                {materialsTableType === 'Прикрепленные' && <StyledTableCell align="left">Авто</StyledTableCell>}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {materialsTableType === 'Свободные' && renderMaterialsRows()}
-              {materialsTableType === 'Прикрепленные' && renderAttachedMaterialsRows()}
-            </TableBody>
-          </Table>
-          {isMaterialReportDialogOpen && (
-            <MaterialReportDialog
-              offSetX={offSetX}
-              offSetTop={offSetTop}
-            />
-          )}
-        </TableContainer>
-      </Paper>
+      <ProductsTableWrapper>
+        <Paper sx={{ width: '100%' }}>
+          <TableContainer
+            ref={divElRef}
+            sx={{
+              position: 'relative',
+              overflow: isDialogHightBigger ? 'visible' : 'auto',
+              maxHeight: `calc(100vh - ${HEADER_WIDTH} - ${TABLE_HEADER_WIDTH} - ${MARGIN} - ${materialsTableType === 'Свободные' ? accordionHeight : 0}px)`,
+            }}
+          >
+            <Table stickyHeader aria-label="sticky table" className="materials-table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell align="center">№</StyledTableCell>
+                  <StyledTableCell>Материал</StyledTableCell>
+                  <StyledTableCell align="left">Ед. изм.</StyledTableCell>
+                  <StyledTableCell align="left">Партия</StyledTableCell>
+                  <StyledTableCell align="left">Дата</StyledTableCell>
+                  <StyledTableCell align="left">Цена</StyledTableCell>
+                  <StyledTableCell align="left">Кол-во</StyledTableCell>
+                  {materialsTableType === 'Прикрепленные' && <StyledTableCell align="left">Авто</StyledTableCell>}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {materialsTableType === 'Свободные' && renderMaterialsRows()}
+                {materialsTableType === 'Прикрепленные' && renderAttachedMaterialsRows()}
+              </TableBody>
+            </Table>
+            {isMaterialReportDialogOpen && (
+              <MaterialReportDialog
+                offSetX={offSetX}
+                offSetTop={offSetTop}
+                isDialogHightBigger={isDialogHightBigger}
+              />
+            )}
+          </TableContainer>
+        </Paper>
+      </ProductsTableWrapper>
     )
   );
 

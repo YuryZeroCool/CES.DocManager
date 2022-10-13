@@ -31,6 +31,12 @@ function ProductsTableContainer(props: Props) {
 
   const [offSetTop, setOffSetTop] = useState<number>(0);
 
+  const [tableHeight, setTableHeight] = useState<number>(0);
+
+  const [tableWidth, setTableWidth] = useState<number>(0);
+
+  const [isDialogHightBigger, setIsDialogHightBigger] = useState<boolean>(false);
+
   const materials = useSelector<RootState,
   AllMaterialsResponse | undefined>((state) => state.materials.getAllMaterials);
 
@@ -51,6 +57,10 @@ function ProductsTableContainer(props: Props) {
 
   const DIALOG_HEIGHT = materialsTableType === 'Свободные' ? 150 : 100;
 
+  const TABLE_HEAD_HEIGHT = 57;
+
+  const divElRef = React.createRef<HTMLDivElement>();
+
   async function getMaterials(): Promise<void> {
     try {
       if (materialsTableType === 'Свободные') {
@@ -69,6 +79,21 @@ function ProductsTableContainer(props: Props) {
       }
     }
   }
+
+  useEffect(() => {
+    if (divElRef.current) {
+      setTableHeight(divElRef.current.getBoundingClientRect().height);
+      setTableWidth(divElRef.current.getBoundingClientRect().width);
+    }
+  }, [divElRef]);
+
+  useEffect(() => {
+    if (DIALOG_HEIGHT > tableHeight - TABLE_HEAD_HEIGHT) {
+      setIsDialogHightBigger(true);
+    } else {
+      setIsDialogHightBigger(false);
+    }
+  }, [DIALOG_HEIGHT, tableHeight]);
 
   useEffect(() => {
     setProductsTableError('');
@@ -99,8 +124,6 @@ function ProductsTableContainer(props: Props) {
       dispatch(toggleMaterialReportDialog(true));
       setOffSetX(event.clientX);
 
-      const tableHeight = event.currentTarget.offsetParent.clientHeight;
-      const tableWidth = event.currentTarget.offsetParent.clientWidth;
       const tableTop = event.currentTarget.offsetParent.getBoundingClientRect().top;
 
       if (event.clientY - tableTop + DIALOG_HEIGHT < tableHeight) {
@@ -130,6 +153,8 @@ function ProductsTableContainer(props: Props) {
       accordionHeight={accordionHeight}
       isMaterialReportDialogOpen={isMaterialReportDialogOpen}
       materialsTableType={materialsTableType}
+      isDialogHightBigger={isDialogHightBigger}
+      divElRef={divElRef}
     />
   );
 }
