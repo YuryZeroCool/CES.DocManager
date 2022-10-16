@@ -12,10 +12,11 @@ import './ProductsTableHeader.style.scss';
 interface Props {
   type: string;
   handleChange: (event: SelectChangeEvent) => void;
+  handleClick: () => void;
 }
 
 export default function ProductsTableHeaderComponent(props: Props) {
-  const { type, handleChange } = props;
+  const { type, handleChange, handleClick } = props;
 
   return (
     <div className="table-header">
@@ -33,7 +34,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
             </Select>
           </FormControl>
         </Box>
-        {type === 'Прикрепленные' && <Button sx={{ m: 1, minWidth: 120 }} variant="contained" size="small">Добавить ремонт</Button>}
+        {type === 'Прикрепленные' && <Button sx={{ m: 1, minWidth: 120 }} variant="contained" size="small" onClick={handleClick}>Добавить ремонт</Button>}
       </div>
       <div className="table-header-wrapper">
         <IconButton aria-label="delete" className="icon-search">

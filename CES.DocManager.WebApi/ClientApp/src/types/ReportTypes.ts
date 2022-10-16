@@ -72,6 +72,10 @@ export interface IMaterialAttachedResponse {
   accountName: string;
 }
 
+export interface ITableAttachedMaterials extends IMaterialAttachedResponse {
+  currentCount: number;
+}
+
 export interface IMaterialsResponse {
   getAllMaterials?: AllMaterialsResponse;
   allAttachedMaterials: IMaterialAttachedResponse[];
@@ -85,9 +89,29 @@ export interface IMaterialsResponse {
   createdAttachedMaterial: IMaterialAttachedResponse;
   materialsTableType: string;
   deletedAttachedMaterialId: number;
+  allMechanics: AllMechanicsResponse[];
+  decommissionedMaterial: IDecommissionedMaterialRequest;
 }
 
 export interface AccountsGroupState {
   name: string;
   checked: boolean;
+}
+
+export interface IMaterialsWriteOffForm {
+  currentDate: Date | null;
+  mechanic: string;
+  car: string;
+  materialsByCar: string[];
+}
+
+export interface AllMechanicsResponse {
+  id: number;
+  fio: string;
+}
+
+export interface IDecommissionedMaterialRequest {
+  carMechanic: string;
+  currentDate: Date | null;
+  materials: IMaterialAttachedResponse[];
 }

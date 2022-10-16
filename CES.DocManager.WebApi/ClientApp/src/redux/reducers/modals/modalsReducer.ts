@@ -7,6 +7,7 @@ const initial: IModal = {
   isAddDriverModalOpen: false,
   isAddMedicalCertificateModalOpen: false,
   isAddDriverLicenseModalOpen: false,
+  isAddMaterialsWriteOffModalOpen: false,
 };
 
 const modalsReducer = createSlice({
@@ -38,6 +39,11 @@ const modalsReducer = createSlice({
       stateCopy = { ...stateCopy, isAddDriverLicenseModalOpen: action.payload };
       return stateCopy;
     },
+    toggleAddMaterialsWriteOffModal: (state, action: PayloadAction<boolean>) => {
+      let stateCopy: IModal = state;
+      stateCopy = { ...stateCopy, isAddMaterialsWriteOffModalOpen: action.payload };
+      return stateCopy;
+    },
   },
   extraReducers: () => {},
 });
@@ -48,5 +54,6 @@ export const {
   toggleAddDriverModal,
   toggleAddMedicalCertificateModal,
   toggleAddDriverLicenseModal,
+  toggleAddMaterialsWriteOffModal,
 } = modalsReducer.actions;
 export default modalsReducer.reducer;

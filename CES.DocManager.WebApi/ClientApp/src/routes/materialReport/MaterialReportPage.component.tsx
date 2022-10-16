@@ -3,6 +3,7 @@ import AccountGroupCheckboxes from '../../components/AccountGroupCheckboxes/Acco
 import ProductsTableHeader from '../../components/ProductsTableHeader/ProductsTableHeader.container';
 import ProductsTable from '../../components/ProductTable/ProductsTable.container';
 import CarAttachmentModal from '../../components/CarAttachmentModal/CarAttachmentModal.container';
+import AddMaterialsWriteOffModal from '../../components/AddMaterialsWriteOffModal/AddMaterialsWriteOffModal.container';
 import './MaterialReportPage.style.scss';
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
   setProductsTableError: React.Dispatch<React.SetStateAction<string>>;
   handleClick: () => void;
   isCarAttachmentModalOpen: boolean;
+  isAddMaterialsWriteOffModalOpen: boolean;
   materialsTableType: string;
 }
 
@@ -19,6 +21,7 @@ export default function MaterialReportPageComponent(props: Props) {
     setProductsTableError,
     handleClick,
     isCarAttachmentModalOpen,
+    isAddMaterialsWriteOffModalOpen,
     materialsTableType,
   } = props;
 
@@ -31,6 +34,7 @@ export default function MaterialReportPageComponent(props: Props) {
         setProductsTableError={setProductsTableError}
       />
       {isCarAttachmentModalOpen && <CarAttachmentModal />}
+      {isAddMaterialsWriteOffModalOpen && <AddMaterialsWriteOffModal />}
     </section>
   );
 }

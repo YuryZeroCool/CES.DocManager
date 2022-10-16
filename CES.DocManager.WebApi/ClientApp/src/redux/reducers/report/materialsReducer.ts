@@ -1,11 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IMaterialAttachedResponse, IMaterialsResponse, MaterialAttached } from '../../../types/ReportTypes';
+import addDecommissionedMaterial from '../../actions/report/materialReport/addDecommissionedMaterials';
 import createAttachedMaterial from '../../actions/report/materialReport/createAttachedMaterial';
 import deleteAttachedMaterial from '../../actions/report/materialReport/deleteAttachedMaterial';
 import deleteMaterial from '../../actions/report/materialReport/deleteMaterial';
 import getAllAttachedMaterials from '../../actions/report/materialReport/getAllAttachedMaterials';
 import getAllGroupAccounts from '../../actions/report/materialReport/getAllGroupAccounts';
 import getAllMaterials from '../../actions/report/materialReport/getAllMaterials';
+import getAllMechanics from '../../actions/report/materialReport/getAllMechanics';
 
 const initial: IMaterialsResponse = {
   getAllMaterials: [],
@@ -38,6 +40,12 @@ const initial: IMaterialsResponse = {
   },
   materialsTableType: 'Свободные',
   deletedAttachedMaterialId: 0,
+  allMechanics: [],
+  decommissionedMaterial: {
+    carMechanic: '',
+    currentDate: null,
+    materials: [],
+  },
 };
 
 const materialsReducer = createSlice({
@@ -219,6 +227,24 @@ const materialsReducer = createSlice({
       return stateCopy;
     });
     builder.addCase(deleteAttachedMaterial.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(getAllMechanics.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, allMechanics: [...action.payload] };
+      return stateCopy;
+    });
+    builder.addCase(getAllMechanics.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(addDecommissionedMaterial.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, decommissionedMaterial: { ...action.payload } };
+      return stateCopy;
+    });
+    builder.addCase(addDecommissionedMaterial.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
   },
