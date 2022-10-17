@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '@mui/material/Button';
 import AccountGroupCheckboxes from '../../components/AccountGroupCheckboxes/AccountGroupCheckboxes.container';
 import ProductsTableHeader from '../../components/ProductsTableHeader/ProductsTableHeader.container';
 import ProductsTable from '../../components/ProductTable/ProductsTable.container';
@@ -13,6 +14,9 @@ interface Props {
   isCarAttachmentModalOpen: boolean;
   isAddMaterialsWriteOffModalOpen: boolean;
   materialsTableType: string;
+  pageType: string;
+  handleHistoryBtnClick: () => void;
+  handleMaterialsBtnClick: () => void;
 }
 
 export default function MaterialReportPageComponent(props: Props) {
@@ -23,12 +27,19 @@ export default function MaterialReportPageComponent(props: Props) {
     isCarAttachmentModalOpen,
     isAddMaterialsWriteOffModalOpen,
     materialsTableType,
+    pageType,
+    handleHistoryBtnClick,
+    handleMaterialsBtnClick,
   } = props;
 
   return (
     <section className="report-page-section" onClick={handleClick} aria-hidden="true">
+      <div className="report-page-navigation">
+        <Button sx={{ margin: '0 8px', minWidth: 120, height: '30px' }} variant="contained" size="small" onClick={handleMaterialsBtnClick}>Материалы</Button>
+        <Button sx={{ margin: '0 8px', minWidth: 120, height: '30px' }} variant="contained" size="small" onClick={handleHistoryBtnClick}>История ремонтов</Button>
+      </div>
       <ProductsTableHeader />
-      {materialsTableType === 'Свободные' && <AccountGroupCheckboxes setProductsTableError={setProductsTableError} />}
+      {pageType === 'Материалы' && materialsTableType === 'Свободные' && <AccountGroupCheckboxes setProductsTableError={setProductsTableError} />}
       <ProductsTable
         productsTableError={productsTableError}
         setProductsTableError={setProductsTableError}

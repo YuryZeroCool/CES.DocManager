@@ -22,6 +22,7 @@ function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger
     rowActiveId,
     materialsTableType,
     currentGroupAccount,
+    pageType,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
@@ -31,13 +32,28 @@ function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger
   const handleClose = async (event: SyntheticEvent, value: string) => {
     event?.stopPropagation();
     try {
-      if (value === 'Удалить' && currentGroupAccount && materialsTableType === 'Свободные') {
+      if (value === 'Списать' && materialsTableType === 'Свободные' && pageType === 'Материалы') {
+        console.log('write-off the material');
+      }
+      if (value === 'Удалить' && currentGroupAccount && materialsTableType === 'Свободные' && pageType === 'Материалы') {
         await dispatch(deleteMaterial(rowActiveId));
         await dispatch(getAllMaterials(currentGroupAccount.join(', ')));
       }
-      if (value === 'Удалить' && materialsTableType === 'Прикрепленные') {
+      if (value === 'Удалить' && materialsTableType === 'Прикрепленные' && pageType === 'Материалы') {
         await dispatch(deleteAttachedMaterial(rowActiveId));
         dispatch(deleteFromAttachedMaterials(rowActiveId));
+      }
+      if (value === 'Удалить' && pageType === 'История ремонтов') {
+        console.log('delete from history of repairs');
+      }
+      if (value === 'Скачать' && pageType === 'История ремонтов') {
+        console.log('download history of repairs');
+      }
+      if (value === 'Редактировать' && pageType === 'История ремонтов') {
+        console.log('edit history of repairs');
+      }
+      if (value === 'Редактировать' && materialsTableType === 'Прикрепленные' && pageType === 'Материалы') {
+        console.log('edit attached material');
       }
       if (value === 'Прикрепить авто') {
         dispatch(toggleCarAttachmentModal(true));
@@ -58,6 +74,7 @@ function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger
       offSetX={offSetX}
       offSetTop={offSetTop}
       isDialogHightBigger={isDialogHightBigger}
+      pageType={pageType}
     />
   );
 }

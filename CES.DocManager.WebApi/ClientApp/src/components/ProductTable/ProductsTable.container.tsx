@@ -13,7 +13,12 @@ import {
   resetAllMaterials,
 } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
-import { AllMaterialsResponse, IMaterialsResponse, Party } from '../../types/ReportTypes';
+import {
+  AllMaterialsResponse,
+  IAllDecommissionedMaterials,
+  IMaterialsResponse,
+  Party,
+} from '../../types/ReportTypes';
 import { IModal } from '../../types/type';
 import ProductsTableComponent from './ProductsTable.component';
 
@@ -51,6 +56,8 @@ function ProductsTableContainer(props: Props) {
     status,
     accordionHeight,
     createdAttachedMaterial,
+    allDecommissionedMaterials,
+    pageType,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
@@ -111,16 +118,21 @@ function ProductsTableContainer(props: Props) {
     event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
     id?: number,
     el?: Party,
+    material?: IAllDecommissionedMaterials,
   ) => {
     event.preventDefault();
     if (event.button === 2 && event.currentTarget.offsetParent) {
-      if (materialsTableType === 'Свободные' && el) {
+      if (pageType === 'Материалы' && materialsTableType === 'Свободные' && el) {
         dispatch(changeAttachedMaterial({ party: el.partyName, count: el.count }));
         dispatch(changeRowActiveId(el.partyId));
       }
-      if (materialsTableType === 'Прикрепленные' && id) {
+      if (pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && id) {
         dispatch(changeRowActiveId(id));
       }
+      if (pageType === 'История ремонтов' && material) {
+        dispatch(changeRowActiveId(material.id));
+      }
+
       dispatch(toggleMaterialReportDialog(true));
       setOffSetX(event.clientX);
 
@@ -144,6 +156,8 @@ function ProductsTableContainer(props: Props) {
     <ProductsTableComponent
       materials={materials}
       allAttachedMaterials={allAttachedMaterials}
+      allDecommissionedMaterials={allDecommissionedMaterials}
+      pageType={pageType}
       status={status}
       productsTableError={productsTableError}
       handleContextMenu={handleContextMenu}

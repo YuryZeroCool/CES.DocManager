@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import MaterialReportDialog from '../MaterialReportDialog/MaterialReportDialog.container';
 import {
   AllMaterialsResponse,
+  IAllDecommissionedMaterials,
   IMaterialAttachedResponse,
   Party,
   Product,
@@ -17,6 +18,7 @@ import {
 import './ProductTable.style.scss';
 
 const HEADER_WIDTH = '10vh';
+const REPORT_PAGE_NAVIGATION = '40px';
 const TABLE_HEADER_WIDTH = '9vh';
 const MARGIN = '3vh';
 
@@ -48,11 +50,13 @@ interface Props {
   materials: AllMaterialsResponse | undefined;
   allAttachedMaterials: IMaterialAttachedResponse[];
   status: string;
+  pageType: string;
   productsTableError: string;
   handleContextMenu: (
     event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
     id?: number | undefined,
     el?: Party | undefined,
+    material?: IAllDecommissionedMaterials | undefined,
   ) => void;
   rowActiveId: number;
   offSetX: number;
@@ -62,6 +66,7 @@ interface Props {
   materialsTableType: string;
   isDialogHightBigger: boolean;
   divElRef: React.RefObject<HTMLDivElement>;
+  allDecommissionedMaterials: IAllDecommissionedMaterials[];
 }
 
 type ProductsTableProps = {
@@ -80,6 +85,8 @@ export default function ProductsTable(props: Props) {
   const {
     materials,
     allAttachedMaterials,
+    allDecommissionedMaterials,
+    pageType,
     status,
     productsTableError,
     handleContextMenu,
@@ -97,13 +104,38 @@ export default function ProductsTable(props: Props) {
     if (productsTableError !== '') {
       return (<p className="error-message">{productsTableError}</p>);
     }
-    if (materialsTableType === 'Прикрепленные' && allAttachedMaterials?.length === 0 && status === 'fulfilled') {
+    if (pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && allAttachedMaterials?.length === 0 && status === 'fulfilled') {
       return (<p className="error-message">Нет закрепленных материалов</p>);
     }
-    return materialsTableType === 'Свободные' && materials?.length === 0 && status === 'fulfilled' && (
+    if (pageType === 'История ремонтов' && allDecommissionedMaterials?.length === 0) {
+      return (<p className="error-message">Нет закрепленных материалов</p>);
+    }
+    return pageType === 'Материалы' && materialsTableType === 'Свободные' && materials?.length === 0 && status === 'fulfilled' && (
       <p className="error-message">По этому счету нет материалов</p>
     );
   };
+
+  const renderHeaderByMaterialsPage = () => (
+    <TableRow>
+      <StyledTableCell align="center">№</StyledTableCell>
+      <StyledTableCell>Материал</StyledTableCell>
+      <StyledTableCell align="left">Ед. изм.</StyledTableCell>
+      <StyledTableCell align="left">Партия</StyledTableCell>
+      <StyledTableCell align="left">Дата</StyledTableCell>
+      <StyledTableCell align="left">Цена</StyledTableCell>
+      <StyledTableCell align="left">Кол-во</StyledTableCell>
+      {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && <StyledTableCell align="left">Авто</StyledTableCell>}
+    </TableRow>
+  );
+
+  const renderHeaderByHistoryPage = () => (
+    <TableRow>
+      <StyledTableCell align="center">№</StyledTableCell>
+      <StyledTableCell align="left">Слесарь</StyledTableCell>
+      <StyledTableCell align="left">Дата ремонта</StyledTableCell>
+      <StyledTableCell align="left">Машина</StyledTableCell>
+    </TableRow>
+  );
 
   const renderAttachedMaterialsRows = () => (
     allAttachedMaterials && allAttachedMaterials.length > 0 && allAttachedMaterials.map(
@@ -155,9 +187,31 @@ export default function ProductsTable(props: Props) {
     )
   );
 
+  const renderDecommissionedMaterialsRows = () => (
+    allDecommissionedMaterials
+    && allDecommissionedMaterials.length > 0
+    && allDecommissionedMaterials.map(
+      (el: IAllDecommissionedMaterials, index: number) => (
+        <StyledTableRow
+          className={rowActiveId === el.id ? 'active' : ''}
+          key={el.id}
+          onContextMenu={(event) => handleContextMenu(event, undefined, undefined, el)}
+        >
+          <StyledTableCell align="center">{index + 1}</StyledTableCell>
+          <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">
+            {el.carMechanic}
+          </StyledTableCell>
+          <StyledTableCell align="left">{el.currentDate?.toString().replace(/T/gi, ' ')}</StyledTableCell>
+          <StyledTableCell align="left">{`${el.materials[0].vehicleBrand} (${el.materials[0].numberPlateCar})`}</StyledTableCell>
+        </StyledTableRow>
+      ),
+    )
+  );
+
   const renderTable = () => (
-    productsTableError === '' && ((materialsTableType === 'Свободные' && materials && materials?.length > 0)
-    || (materialsTableType === 'Прикрепленные' && allAttachedMaterials && allAttachedMaterials.length > 0))
+    productsTableError === '' && ((pageType === 'Материалы' && materialsTableType === 'Свободные' && materials && materials?.length > 0)
+    || (pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && allAttachedMaterials && allAttachedMaterials.length > 0)
+    || (pageType === 'История ремонтов' && allDecommissionedMaterials && allDecommissionedMaterials.length > 0))
     && (
       <ProductsTableWrapper>
         <Paper sx={{ width: '100%' }}>
@@ -166,25 +220,18 @@ export default function ProductsTable(props: Props) {
             sx={{
               position: 'relative',
               overflow: isDialogHightBigger ? 'visible' : 'auto',
-              maxHeight: `calc(100vh - ${HEADER_WIDTH} - ${TABLE_HEADER_WIDTH} - ${MARGIN} - ${materialsTableType === 'Свободные' ? accordionHeight : 0}px)`,
+              maxHeight: `calc(100vh - ${HEADER_WIDTH} - ${REPORT_PAGE_NAVIGATION} - ${TABLE_HEADER_WIDTH} - ${MARGIN} - ${materialsTableType === 'Свободные' ? accordionHeight : 0}px)`,
             }}
           >
             <Table stickyHeader aria-label="sticky table" className="materials-table">
               <TableHead>
-                <TableRow>
-                  <StyledTableCell align="center">№</StyledTableCell>
-                  <StyledTableCell>Материал</StyledTableCell>
-                  <StyledTableCell align="left">Ед. изм.</StyledTableCell>
-                  <StyledTableCell align="left">Партия</StyledTableCell>
-                  <StyledTableCell align="left">Дата</StyledTableCell>
-                  <StyledTableCell align="left">Цена</StyledTableCell>
-                  <StyledTableCell align="left">Кол-во</StyledTableCell>
-                  {materialsTableType === 'Прикрепленные' && <StyledTableCell align="left">Авто</StyledTableCell>}
-                </TableRow>
+                {pageType === 'Материалы' && renderHeaderByMaterialsPage()}
+                {pageType === 'История ремонтов' && renderHeaderByHistoryPage()}
               </TableHead>
               <TableBody>
-                {materialsTableType === 'Свободные' && renderMaterialsRows()}
-                {materialsTableType === 'Прикрепленные' && renderAttachedMaterialsRows()}
+                {pageType === 'Материалы' && materialsTableType === 'Свободные' && renderMaterialsRows()}
+                {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && renderAttachedMaterialsRows()}
+                {pageType === 'История ремонтов' && renderDecommissionedMaterialsRows()}
               </TableBody>
             </Table>
             {isMaterialReportDialogOpen && (

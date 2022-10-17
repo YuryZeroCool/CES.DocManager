@@ -5,6 +5,7 @@ import createAttachedMaterial from '../../actions/report/materialReport/createAt
 import deleteAttachedMaterial from '../../actions/report/materialReport/deleteAttachedMaterial';
 import deleteMaterial from '../../actions/report/materialReport/deleteMaterial';
 import getAllAttachedMaterials from '../../actions/report/materialReport/getAllAttachedMaterials';
+import getAllDecommissionedMaterials from '../../actions/report/materialReport/getAllDecommissionedMaterials';
 import getAllGroupAccounts from '../../actions/report/materialReport/getAllGroupAccounts';
 import getAllMaterials from '../../actions/report/materialReport/getAllMaterials';
 import getAllMechanics from '../../actions/report/materialReport/getAllMechanics';
@@ -38,6 +39,7 @@ const initial: IMaterialsResponse = {
     numberPlateCar: '',
     accountName: '',
   },
+  pageType: 'Материалы',
   materialsTableType: 'Свободные',
   deletedAttachedMaterialId: 0,
   allMechanics: [],
@@ -46,6 +48,7 @@ const initial: IMaterialsResponse = {
     currentDate: null,
     materials: [],
   },
+  allDecommissionedMaterials: [],
 };
 
 const materialsReducer = createSlice({
@@ -164,6 +167,14 @@ const materialsReducer = createSlice({
       };
       return stateCopy;
     },
+    changePageType: (state, action: PayloadAction<string>) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        pageType: action.payload,
+      };
+      return stateCopy;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getAllMaterials.pending, (state) => {
@@ -247,6 +258,15 @@ const materialsReducer = createSlice({
     builder.addCase(addDecommissionedMaterial.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
+
+    builder.addCase(getAllDecommissionedMaterials.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, allDecommissionedMaterials: [...action.payload] };
+      return stateCopy;
+    });
+    builder.addCase(getAllDecommissionedMaterials.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
   },
 });
 
@@ -263,5 +283,6 @@ export const {
   resetAttachedMaterial,
   deleteFromAttachedMaterials,
   changeMaterialsTableType,
+  changePageType,
 } = materialsReducer.actions;
 export default materialsReducer.reducer;

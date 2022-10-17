@@ -7,6 +7,7 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import './MaterialReportDialog.style.scss';
 
 export interface ReportDialogProps {
@@ -15,6 +16,7 @@ export interface ReportDialogProps {
   offSetX: number;
   offSetTop: number;
   isDialogHightBigger: boolean;
+  pageType: string;
 }
 
 export default function MaterialReportDialogComponent(props: ReportDialogProps) {
@@ -24,6 +26,7 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
     offSetX,
     offSetTop,
     isDialogHightBigger,
+    pageType,
   } = props;
 
   return (
@@ -33,13 +36,13 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
       {
         top: offSetTop,
         left: offSetX,
-        height: materialsTableType === 'Свободные' ? '150px' : '100px',
+        height: pageType === 'История ремонтов' || (pageType === 'Материалы' && materialsTableType === 'Свободные') ? '150px' : '100px',
         zIndex: isDialogHightBigger ? 15 : 5,
       }
       }
     >
       <List sx={{ pt: 0 }}>
-        {materialsTableType === 'Свободные' && (
+        {pageType === 'Материалы' && materialsTableType === 'Свободные' && (
           <>
             <ListItem button onClick={(event) => handleClose(event, 'Прикрепить авто')}>
               <ListItemIcon>
@@ -55,13 +58,21 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
             </ListItem>
           </>
         )}
+        {pageType === 'История ремонтов' && (
+          <ListItem button onClick={(event) => handleClose(event, 'Скачать')}>
+            <ListItemIcon>
+              <FileDownloadIcon />
+            </ListItemIcon>
+            <ListItemText primary="Скачать" />
+          </ListItem>
+        )}
         <ListItem button onClick={(event) => handleClose(event, 'Удалить')}>
           <ListItemIcon>
             <DeleteIcon />
           </ListItemIcon>
           <ListItemText primary="Удалить" />
         </ListItem>
-        {materialsTableType === 'Прикрепленные' && (
+        {(pageType === 'История ремонтов' || (pageType === 'Материалы' && materialsTableType === 'Прикрепленные')) && (
           <ListItem button onClick={(event) => handleClose(event, 'Редактировать')}>
             <ListItemIcon>
               <EditIcon />

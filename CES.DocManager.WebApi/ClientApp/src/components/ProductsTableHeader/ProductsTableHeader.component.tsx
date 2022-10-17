@@ -16,7 +16,11 @@ interface Props {
 }
 
 export default function ProductsTableHeaderComponent(props: Props) {
-  const { type, handleChange, handleClick } = props;
+  const {
+    type,
+    handleChange,
+    handleClick,
+  } = props;
 
   return (
     <div className="table-header">

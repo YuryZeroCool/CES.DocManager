@@ -87,10 +87,12 @@ export interface IMaterialsResponse {
   accordionHeight: number;
   attachedMaterial: MaterialAttached;
   createdAttachedMaterial: IMaterialAttachedResponse;
+  pageType: string;
   materialsTableType: string;
   deletedAttachedMaterialId: number;
   allMechanics: AllMechanicsResponse[];
   decommissionedMaterial: IDecommissionedMaterialRequest;
+  allDecommissionedMaterials: IAllDecommissionedMaterials[];
 }
 
 export interface AccountsGroupState {
@@ -114,4 +116,8 @@ export interface IDecommissionedMaterialRequest {
   carMechanic: string;
   currentDate: Date | null;
   materials: IMaterialAttachedResponse[];
+}
+
+export interface IAllDecommissionedMaterials extends IDecommissionedMaterialRequest {
+  id: number;
 }
