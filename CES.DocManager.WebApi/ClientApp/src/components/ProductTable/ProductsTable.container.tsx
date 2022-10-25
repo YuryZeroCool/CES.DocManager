@@ -40,6 +40,8 @@ function ProductsTableContainer(props: Props) {
 
   const [tableWidth, setTableWidth] = useState<number>(0);
 
+  const [tableIndexArr, setTableIndexArr] = useState<number[]>([]);
+
   const [isDialogHightBigger, setIsDialogHightBigger] = useState<boolean>(false);
 
   const materials = useSelector<RootState,
@@ -87,6 +89,23 @@ function ProductsTableContainer(props: Props) {
     }
   }
 
+  const createTableIndexes = () => {
+    const numbersArr = [];
+    if (materials) {
+      for (let i = 0; i < materials.length; i += 1) {
+        numbersArr.push(i + 1);
+      }
+      setTableIndexArr(numbersArr);
+    }
+  };
+
+  useEffect(() => {
+    if (materials?.length !== 0) {
+      createTableIndexes();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [materials?.length]);
+
   useEffect(() => {
     if (divElRef.current) {
       setTableHeight(divElRef.current.getBoundingClientRect().height);
@@ -110,7 +129,9 @@ function ProductsTableContainer(props: Props) {
   }, [materialsTableType]);
 
   useEffect(() => {
-    dispatch(editAllMaterials(createdAttachedMaterial));
+    if (createdAttachedMaterial.nameMaterial !== '') {
+      dispatch(editAllMaterials(createdAttachedMaterial));
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdAttachedMaterial]);
 
@@ -160,7 +181,6 @@ function ProductsTableContainer(props: Props) {
       pageType={pageType}
       status={status}
       productsTableError={productsTableError}
-      handleContextMenu={handleContextMenu}
       rowActiveId={rowActiveId}
       offSetX={offSetX}
       offSetTop={offSetTop}
@@ -169,6 +189,8 @@ function ProductsTableContainer(props: Props) {
       materialsTableType={materialsTableType}
       isDialogHightBigger={isDialogHightBigger}
       divElRef={divElRef}
+      tableIndexArr={tableIndexArr}
+      handleContextMenu={handleContextMenu}
     />
   );
 }

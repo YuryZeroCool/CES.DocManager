@@ -36,11 +36,11 @@ interface Props {
   isAddMedicalCertificateModalOpen: boolean;
   isAddDriverLicenseModalOpen: boolean;
   control: Control<IDriverDocumentsForm, IDriverDocumentsForm>;
-  handleSubmit: UseFormHandleSubmit<IDriverDocumentsForm>;
-  reset: UseFormReset<IDriverDocumentsForm>;
   formState: FormState<IDriverDocumentsForm>;
   driversWithoutMedicalCertificates: FullName[];
   driversWithoutDriverLicense: FullName[];
+  handleSubmit: UseFormHandleSubmit<IDriverDocumentsForm>;
+  reset: UseFormReset<IDriverDocumentsForm>;
   handleClose: () => void;
   onSubmit: (data: IDriverDocumentsForm) => void;
 }
@@ -50,11 +50,11 @@ export default function AddDriverDocumentsModalComponent(props: Props) {
     isAddMedicalCertificateModalOpen,
     isAddDriverLicenseModalOpen,
     control,
-    handleSubmit,
-    reset,
     formState,
     driversWithoutMedicalCertificates,
     driversWithoutDriverLicense,
+    handleSubmit,
+    reset,
     handleClose,
     onSubmit,
   } = props;

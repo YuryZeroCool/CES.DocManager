@@ -19,13 +19,13 @@ import './AccountGroupCheckboxes.style.scss';
 interface Props {
   groupAccounts: AllGroupAccountsResponse | undefined;
   accountsGroup: AccountsGroupState[];
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleClick: () => void;
   accountsGroupError: string;
   isDisabled: boolean;
   expanded: boolean;
-  handleAccordionChange: () => void;
   divElRef: React.RefObject<HTMLDivElement>;
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleClick: () => void;
+  handleAccordionChange: () => void;
 }
 
 type AccordionWrapperProps = {
@@ -44,13 +44,13 @@ export default function AccountGroupCheckboxesComponent(props: Props) {
   const {
     accountsGroup,
     groupAccounts,
-    handleChange,
-    handleClick,
     accountsGroupError,
     isDisabled,
     expanded,
-    handleAccordionChange,
     divElRef,
+    handleChange,
+    handleClick,
+    handleAccordionChange,
   } = props;
 
   const Accordion = styled((elProps: AccordionProps) => (

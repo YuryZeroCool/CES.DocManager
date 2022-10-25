@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import {
   Box,
   Button,
@@ -26,13 +26,14 @@ import { ICreateDriverForm } from '../../types/DriversType';
 
 interface AddDriverModalProps {
   isAddDriverModalOpen: boolean;
+  divisions: Division[];
+  control: Control<ICreateDriverForm, ICreateDriverForm>;
+  formState: FormState<ICreateDriverForm>;
   handleClose: () => void;
   onSubmit: (data: ICreateDriverForm) => void;
   handleSubmit: UseFormHandleSubmit<ICreateDriverForm>;
-  control: Control<ICreateDriverForm, ICreateDriverForm>;
   reset: UseFormReset<ICreateDriverForm>;
-  divisions: Division[];
-  formState: FormState<ICreateDriverForm>;
+  handleBlur: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => Promise<void>;
 }
 
 const style = {
@@ -50,13 +51,14 @@ const style = {
 export default function AddDriverModalComponent(props: AddDriverModalProps) {
   const {
     isAddDriverModalOpen,
+    divisions,
+    formState,
+    control,
     handleClose,
     onSubmit,
     handleSubmit,
-    control,
     reset,
-    divisions,
-    formState,
+    handleBlur,
   } = props;
 
   const renderTitle = () => (
@@ -188,6 +190,10 @@ export default function AddDriverModalComponent(props: AddDriverModalProps) {
           fullWidth
           variant="outlined"
           onChange={onChange}
+          onBlur={(event) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            handleBlur(event);
+          }}
           value={value}
           error={!!error?.message}
           helperText={error?.message}

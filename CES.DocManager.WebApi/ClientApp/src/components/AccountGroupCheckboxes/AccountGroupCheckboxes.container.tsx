@@ -128,14 +128,14 @@ function AccountCheckboxesContainer({ setProductsTableError }: Props) {
     <AccountGroupCheckboxesComponent
       groupAccounts={groupAccounts}
       accountsGroup={accountsGroup}
-      handleChange={handleChange}
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      handleClick={handleClick}
       accountsGroupError={accountsGroupError}
       isDisabled={isDisabled}
       expanded={expanded}
-      handleAccordionChange={handleAccordionChange}
       divElRef={divElRef}
+      handleChange={handleChange}
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      handleClick={handleClick}
+      handleAccordionChange={handleAccordionChange}
     />
   );
 }

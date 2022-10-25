@@ -231,15 +231,15 @@ function AddMaterialsWriteOffModalContainer() {
   return (
     <AddMaterialsWriteOffModalComponent
       isAddMaterialsWriteOffModalOpen={isAddMaterialsWriteOffModalOpen}
+      formState={formState}
+      allMechanics={allMechanics}
+      attachedMaterialsByCar={attachedMaterialsByCar}
+      tableAttachedMaterialsArray={tableAttachedMaterialsArray}
       handleClose={handleClose}
       handleChange={handleChange}
       changeCurrentDate={changeCurrentDate}
       changeMaterialsByCar={changeMaterialsByCar}
-      formState={formState}
-      allMechanics={allMechanics}
       attachedCars={getAllAttachedCars()}
-      attachedMaterialsByCar={attachedMaterialsByCar}
-      tableAttachedMaterialsArray={tableAttachedMaterialsArray}
       handleNumberChange={handleNumberChange}
       handleSubmit={handleSubmit}
     />

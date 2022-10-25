@@ -46,7 +46,7 @@ const driverLicenseReducer = createSlice({
       throw Error(action.payload?.message);
     });
 
-    // create Medical Certificate
+    // create driver License
     builder.addCase(createDriverLicense.fulfilled, (state, action) => {
       let stateCopy = state;
       stateCopy = { ...stateCopy, createdDriverLicense: { ...action.payload } };

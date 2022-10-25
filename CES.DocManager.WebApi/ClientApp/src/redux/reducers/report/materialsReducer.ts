@@ -4,13 +4,17 @@ import addDecommissionedMaterial from '../../actions/report/materialReport/addDe
 import createAttachedMaterial from '../../actions/report/materialReport/createAttachedMaterial';
 import deleteAttachedMaterial from '../../actions/report/materialReport/deleteAttachedMaterial';
 import deleteMaterial from '../../actions/report/materialReport/deleteMaterial';
+import downloadActOfWriteoffOfSpareParts from '../../actions/report/materialReport/downloadActOfWriteoffOfSpareParts';
 import getAllAttachedMaterials from '../../actions/report/materialReport/getAllAttachedMaterials';
 import getAllDecommissionedMaterials from '../../actions/report/materialReport/getAllDecommissionedMaterials';
 import getAllGroupAccounts from '../../actions/report/materialReport/getAllGroupAccounts';
 import getAllMaterials from '../../actions/report/materialReport/getAllMaterials';
 import getAllMechanics from '../../actions/report/materialReport/getAllMechanics';
+import getDefectiveSheet from '../../actions/report/materialReport/getDefectiveSheet';
+import uploadNewMaterials from '../../actions/report/materialReport/uploadNewMaterials';
 
 const initial: IMaterialsResponse = {
+  uploadMaterialsMessage: '',
   getAllMaterials: [],
   allAttachedMaterials: [],
   deletedMaterialId: 0,
@@ -49,6 +53,8 @@ const initial: IMaterialsResponse = {
     materials: [],
   },
   allDecommissionedMaterials: [],
+  defectiveSheet: '',
+  actOfWriteoffOfSpareParts: null,
 };
 
 const materialsReducer = createSlice({
@@ -57,7 +63,6 @@ const materialsReducer = createSlice({
   reducers: {
     editAllMaterials: (state, action: PayloadAction<IMaterialAttachedResponse>) => {
       const stateCopy: IMaterialsResponse = state;
-      if (action.payload.nameMaterial === '') return stateCopy;
       if (stateCopy.getAllMaterials) {
         const currentElemId = stateCopy.getAllMaterials?.findIndex(
           (el) => el.name === action.payload.nameMaterial,
@@ -82,6 +87,9 @@ const materialsReducer = createSlice({
             stateCopy.getAllMaterials[currentElemId].party.length,
             ...parties,
           );
+          if (stateCopy.getAllMaterials[currentElemId].party.length === 0) {
+            stateCopy.getAllMaterials.splice(currentElemId, 1);
+          }
         } else {
           stateCopy.getAllMaterials[currentElemId].party[currentPartyId].count = finalCount;
         }
@@ -149,6 +157,14 @@ const materialsReducer = createSlice({
       };
       return stateCopy;
     },
+    resetCreatedAttachedMaterial: (state) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        createdAttachedMaterial: { ...initial.createdAttachedMaterial },
+      };
+      return stateCopy;
+    },
     deleteFromAttachedMaterials: (state, action: PayloadAction<number>) => {
       let stateCopy: IMaterialsResponse = state;
       stateCopy = {
@@ -175,8 +191,25 @@ const materialsReducer = createSlice({
       };
       return stateCopy;
     },
+    resetDefectiveSheet: (state) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        defectiveSheet: initial.defectiveSheet,
+      };
+      return stateCopy;
+    },
   },
   extraReducers: (builder) => {
+    builder.addCase(uploadNewMaterials.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, uploadMaterialsMessage: action.payload };
+      return stateCopy;
+    });
+    builder.addCase(uploadNewMaterials.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
     builder.addCase(getAllMaterials.pending, (state) => {
       let stateCopy = state;
       stateCopy = { ...stateCopy, status: 'pending' };
@@ -259,12 +292,39 @@ const materialsReducer = createSlice({
       throw Error(action.payload?.message);
     });
 
+    builder.addCase(getAllDecommissionedMaterials.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, status: 'pending' };
+      return stateCopy;
+    });
     builder.addCase(getAllDecommissionedMaterials.fulfilled, (state, action) => {
       let stateCopy = state;
-      stateCopy = { ...stateCopy, allDecommissionedMaterials: [...action.payload] };
+      stateCopy = { ...stateCopy, allDecommissionedMaterials: [...action.payload], status: 'fulfilled' };
       return stateCopy;
     });
     builder.addCase(getAllDecommissionedMaterials.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(getDefectiveSheet.fulfilled, (state, action) => {
+      let stateCopy = state;
+      if (action.payload !== null) {
+        stateCopy = { ...stateCopy, defectiveSheet: action.payload };
+      }
+      return stateCopy;
+    });
+    builder.addCase(getDefectiveSheet.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(downloadActOfWriteoffOfSpareParts.fulfilled, (state, action) => {
+      let stateCopy = state;
+      if (action.payload !== null) {
+        stateCopy = { ...stateCopy, actOfWriteoffOfSpareParts: action.payload };
+      }
+      return stateCopy;
+    });
+    builder.addCase(downloadActOfWriteoffOfSpareParts.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
   },
@@ -281,8 +341,10 @@ export const {
   changeAccordionHeight,
   changeAttachedMaterial,
   resetAttachedMaterial,
+  resetCreatedAttachedMaterial,
   deleteFromAttachedMaterials,
   changeMaterialsTableType,
   changePageType,
+  resetDefectiveSheet,
 } = materialsReducer.actions;
 export default materialsReducer.reducer;

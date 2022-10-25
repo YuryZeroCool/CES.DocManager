@@ -52,12 +52,6 @@ interface Props {
   status: string;
   pageType: string;
   productsTableError: string;
-  handleContextMenu: (
-    event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
-    id?: number | undefined,
-    el?: Party | undefined,
-    material?: IAllDecommissionedMaterials | undefined,
-  ) => void;
   rowActiveId: number;
   offSetX: number;
   offSetTop: number;
@@ -67,6 +61,13 @@ interface Props {
   isDialogHightBigger: boolean;
   divElRef: React.RefObject<HTMLDivElement>;
   allDecommissionedMaterials: IAllDecommissionedMaterials[];
+  tableIndexArr: number[];
+  handleContextMenu: (
+    event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+    id?: number | undefined,
+    el?: Party | undefined,
+    material?: IAllDecommissionedMaterials | undefined,
+  ) => void;
 }
 
 type ProductsTableProps = {
@@ -89,7 +90,6 @@ export default function ProductsTable(props: Props) {
     pageType,
     status,
     productsTableError,
-    handleContextMenu,
     rowActiveId,
     offSetX,
     offSetTop,
@@ -98,6 +98,8 @@ export default function ProductsTable(props: Props) {
     materialsTableType,
     isDialogHightBigger,
     divElRef,
+    tableIndexArr,
+    handleContextMenu,
   } = props;
 
   const renderError = () => {
@@ -107,7 +109,7 @@ export default function ProductsTable(props: Props) {
     if (pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && allAttachedMaterials?.length === 0 && status === 'fulfilled') {
       return (<p className="error-message">Нет закрепленных материалов</p>);
     }
-    if (pageType === 'История ремонтов' && allDecommissionedMaterials?.length === 0) {
+    if (pageType === 'История ремонтов' && allDecommissionedMaterials?.length === 0 && status === 'fulfilled') {
       return (<p className="error-message">Нет закрепленных материалов</p>);
     }
     return pageType === 'Материалы' && materialsTableType === 'Свободные' && materials?.length === 0 && status === 'fulfilled' && (
@@ -173,7 +175,7 @@ export default function ProductsTable(props: Props) {
           key={el.partyId}
           onContextMenu={(event) => handleContextMenu(event, undefined, el)}
         >
-          <StyledTableCell align="center">{index + 1}</StyledTableCell>
+          <StyledTableCell align="center">{tableIndexArr ? tableIndexArr[index] : '0'}</StyledTableCell>
           <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">
             {material.name}
           </StyledTableCell>
@@ -201,7 +203,7 @@ export default function ProductsTable(props: Props) {
           <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">
             {el.carMechanic}
           </StyledTableCell>
-          <StyledTableCell align="left">{el.currentDate?.toString().replace(/T/gi, ' ')}</StyledTableCell>
+          <StyledTableCell align="left">{el.currentDate?.toString().replace(/T/gi, ' ').split(' ')[0]}</StyledTableCell>
           <StyledTableCell align="left">{`${el.materials[0].vehicleBrand} (${el.materials[0].numberPlateCar})`}</StyledTableCell>
         </StyledTableRow>
       ),
@@ -220,7 +222,9 @@ export default function ProductsTable(props: Props) {
             sx={{
               position: 'relative',
               overflow: isDialogHightBigger ? 'visible' : 'auto',
-              maxHeight: `calc(100vh - ${HEADER_WIDTH} - ${REPORT_PAGE_NAVIGATION} - ${TABLE_HEADER_WIDTH} - ${MARGIN} - ${materialsTableType === 'Свободные' ? accordionHeight : 0}px)`,
+              maxHeight:
+                `calc(100vh - ${HEADER_WIDTH} - ${REPORT_PAGE_NAVIGATION} - ${TABLE_HEADER_WIDTH} - ${MARGIN} - ${
+                  pageType === 'Материалы' && materialsTableType === 'Свободные' ? accordionHeight : 0}px)`,
             }}
           >
             <Table stickyHeader aria-label="sticky table" className="materials-table">

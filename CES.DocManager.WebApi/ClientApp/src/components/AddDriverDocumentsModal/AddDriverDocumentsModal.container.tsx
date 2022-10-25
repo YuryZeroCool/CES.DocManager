@@ -118,11 +118,11 @@ function AddDriverDocumentsModalContainer() {
       isAddMedicalCertificateModalOpen={isAddMedicalCertificateModalOpen}
       isAddDriverLicenseModalOpen={isAddDriverLicenseModalOpen}
       control={control}
-      handleSubmit={handleSubmit}
-      reset={reset}
       formState={formState}
       driversWithoutMedicalCertificates={driversWithoutMedicalCertificates}
       driversWithoutDriverLicense={driversWithoutDriverLicense}
+      handleSubmit={handleSubmit}
+      reset={reset}
       handleClose={handleClose}
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       onSubmit={onSubmit}

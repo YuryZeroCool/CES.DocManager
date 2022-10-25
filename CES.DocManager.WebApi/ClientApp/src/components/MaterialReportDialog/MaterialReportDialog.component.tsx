@@ -7,26 +7,26 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import PrintIcon from '@mui/icons-material/Print';
 import './MaterialReportDialog.style.scss';
 
 export interface ReportDialogProps {
   materialsTableType: string;
-  handleClose: (event: SyntheticEvent, value: string) => void;
   offSetX: number;
   offSetTop: number;
   isDialogHightBigger: boolean;
   pageType: string;
+  handleClose: (event: SyntheticEvent, value: string) => void;
 }
 
 export default function MaterialReportDialogComponent(props: ReportDialogProps) {
   const {
     materialsTableType,
-    handleClose,
     offSetX,
     offSetTop,
     isDialogHightBigger,
     pageType,
+    handleClose,
   } = props;
 
   return (
@@ -36,7 +36,7 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
       {
         top: offSetTop,
         left: offSetX,
-        height: pageType === 'История ремонтов' || (pageType === 'Материалы' && materialsTableType === 'Свободные') ? '150px' : '100px',
+        height: pageType === 'Материалы' && materialsTableType === 'Свободные' ? '150px' : '100px',
         zIndex: isDialogHightBigger ? 15 : 5,
       }
       }
@@ -59,11 +59,11 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
           </>
         )}
         {pageType === 'История ремонтов' && (
-          <ListItem button onClick={(event) => handleClose(event, 'Скачать')}>
+          <ListItem button onClick={(event) => handleClose(event, 'Распечатать')}>
             <ListItemIcon>
-              <FileDownloadIcon />
+              <PrintIcon />
             </ListItemIcon>
-            <ListItemText primary="Скачать" />
+            <ListItemText primary="Распечатать" />
           </ListItem>
         )}
         <ListItem button onClick={(event) => handleClose(event, 'Удалить')}>
@@ -72,7 +72,7 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
           </ListItemIcon>
           <ListItemText primary="Удалить" />
         </ListItem>
-        {(pageType === 'История ремонтов' || (pageType === 'Материалы' && materialsTableType === 'Прикрепленные')) && (
+        {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && (
           <ListItem button onClick={(event) => handleClose(event, 'Редактировать')}>
             <ListItemIcon>
               <EditIcon />

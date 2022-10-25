@@ -7,7 +7,7 @@ import getAllBrands from '../../redux/actions/vehicle/getAllBrands';
 import getNumbersPlateOfCar from '../../redux/actions/vehicle/getNumbersPlateOfCar';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleCarAttachmentModal } from '../../redux/reducers/modals/modalsReducer';
-import { changeAttachedMaterial, resetAttachedMaterial } from '../../redux/reducers/report/materialsReducer';
+import { changeAttachedMaterial, resetAttachedMaterial, resetCreatedAttachedMaterial } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { MaterialAttached } from '../../types/ReportTypes';
 import { IModal } from '../../types/type';
@@ -69,6 +69,7 @@ function CarAttachmentModalContainer() {
         if (attachedMaterial.brand !== '' && attachedMaterial.numberPlateOfCar !== '') {
           await dispatch(createAttachedMaterial(attachedMaterial));
           dispatch(resetAttachedMaterial());
+          dispatch(resetCreatedAttachedMaterial());
           dispatch(toggleCarAttachmentModal(false));
         }
       } catch (error) {
@@ -108,9 +109,6 @@ function CarAttachmentModalContainer() {
 
   return (
     <CarAttachmentModalComponent
-      handleClose={handleClose}
-      handleChange={handleChange}
-      handleSubmit={handleSubmit}
       brand={brand}
       numbersPlateOfCarState={numbersPlateOfCarState}
       attachedMaterialNumber={attachedMaterialNumber}
@@ -118,6 +116,9 @@ function CarAttachmentModalContainer() {
       isCarAttachmentModalOpen={isCarAttachmentModalOpen}
       allBrands={allBrands}
       numbersPlateOfCar={numbersPlateOfCar}
+      handleClose={handleClose}
+      handleChange={handleChange}
+      handleSubmit={handleSubmit}
     />
   );
 }

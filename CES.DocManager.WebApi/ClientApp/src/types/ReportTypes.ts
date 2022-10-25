@@ -77,6 +77,7 @@ export interface ITableAttachedMaterials extends IMaterialAttachedResponse {
 }
 
 export interface IMaterialsResponse {
+  uploadMaterialsMessage: string;
   getAllMaterials?: AllMaterialsResponse;
   allAttachedMaterials: IMaterialAttachedResponse[];
   deletedMaterialId: number;
@@ -93,6 +94,8 @@ export interface IMaterialsResponse {
   allMechanics: AllMechanicsResponse[];
   decommissionedMaterial: IDecommissionedMaterialRequest;
   allDecommissionedMaterials: IAllDecommissionedMaterials[];
+  defectiveSheet: string;
+  actOfWriteoffOfSpareParts: ArrayBuffer | null;
 }
 
 export interface AccountsGroupState {
@@ -121,3 +124,8 @@ export interface IDecommissionedMaterialRequest {
 export interface IAllDecommissionedMaterials extends IDecommissionedMaterialRequest {
   id: number;
 }
+
+export type ReportErrors = {
+  reportNameError: boolean;
+  periodError: boolean;
+};

@@ -25,9 +25,6 @@ const style = {
 };
 
 interface Props {
-  handleClose: () => void;
-  handleChange: (event: SelectChangeEvent) => void;
-  handleSubmit: () => void;
   isCarAttachmentModalOpen: boolean;
   allBrands: IAllBrandsResponse | undefined;
   brand: string;
@@ -35,13 +32,13 @@ interface Props {
   attachedMaterialNumber: number;
   numbersPlateOfCar: INumbersPlateOfCarResponse | undefined;
   maxNumber: number | undefined;
+  handleClose: () => void;
+  handleChange: (event: SelectChangeEvent) => void;
+  handleSubmit: () => void;
 }
 
 export default function CarAttachmentModalComponent(props: Props) {
   const {
-    handleClose,
-    handleChange,
-    handleSubmit,
     isCarAttachmentModalOpen,
     allBrands,
     brand,
@@ -49,6 +46,9 @@ export default function CarAttachmentModalComponent(props: Props) {
     attachedMaterialNumber,
     numbersPlateOfCar,
     maxNumber,
+    handleClose,
+    handleChange,
+    handleSubmit,
   } = props;
 
   return (

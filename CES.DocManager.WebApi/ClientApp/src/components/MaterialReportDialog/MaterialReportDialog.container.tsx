@@ -1,12 +1,14 @@
 import { AxiosError } from 'axios';
-import React, { SyntheticEvent, useState } from 'react';
+import React, { SyntheticEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import printJS from 'print-js';
 import deleteAttachedMaterial from '../../redux/actions/report/materialReport/deleteAttachedMaterial';
 import deleteMaterial from '../../redux/actions/report/materialReport/deleteMaterial';
 import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
+import getDefectiveSheet from '../../redux/actions/report/materialReport/getDefectiveSheet';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleCarAttachmentModal, toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
-import { deleteFromAttachedMaterials } from '../../redux/reducers/report/materialsReducer';
+import { deleteFromAttachedMaterials, resetDefectiveSheet } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { IMaterialsResponse } from '../../types/ReportTypes';
 import MaterialReportDialogComponent from './MaterialReportDialog.component';
@@ -23,11 +25,20 @@ function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger
     materialsTableType,
     currentGroupAccount,
     pageType,
+    defectiveSheet,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
 
   const [dialogError, setDialogError] = useState<string>('');
+
+  useEffect(() => {
+    if (defectiveSheet !== '') {
+      printJS({ printable: defectiveSheet, type: 'pdf', base64: true });
+      dispatch(resetDefectiveSheet());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defectiveSheet]);
 
   const handleClose = async (event: SyntheticEvent, value: string) => {
     event?.stopPropagation();
@@ -46,11 +57,8 @@ function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger
       if (value === 'Удалить' && pageType === 'История ремонтов') {
         console.log('delete from history of repairs');
       }
-      if (value === 'Скачать' && pageType === 'История ремонтов') {
-        console.log('download history of repairs');
-      }
-      if (value === 'Редактировать' && pageType === 'История ремонтов') {
-        console.log('edit history of repairs');
+      if (value === 'Распечатать' && pageType === 'История ремонтов') {
+        await dispatch(getDefectiveSheet(rowActiveId));
       }
       if (value === 'Редактировать' && materialsTableType === 'Прикрепленные' && pageType === 'Материалы') {
         console.log('edit attached material');
@@ -69,12 +77,12 @@ function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger
   return (
     <MaterialReportDialogComponent
       materialsTableType={materialsTableType}
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      handleClose={handleClose}
       offSetX={offSetX}
       offSetTop={offSetTop}
       isDialogHightBigger={isDialogHightBigger}
       pageType={pageType}
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      handleClose={handleClose}
     />
   );
 }

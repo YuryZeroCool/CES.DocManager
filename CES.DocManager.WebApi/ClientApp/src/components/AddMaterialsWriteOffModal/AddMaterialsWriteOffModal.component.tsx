@@ -63,15 +63,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 interface Props {
   isAddMaterialsWriteOffModalOpen: boolean;
-  handleClose: () => void;
-  handleChange: (event: SelectChangeEvent) => void;
-  changeMaterialsByCar: (event: SelectChangeEvent<string[]>) => void;
-  changeCurrentDate: (value: Date | null) => void;
   formState: IMaterialsWriteOffForm;
   allMechanics: AllMechanicsResponse[];
   attachedCars: string[];
   attachedMaterialsByCar: IMaterialAttachedResponse[];
   tableAttachedMaterialsArray: ITableAttachedMaterials[];
+  handleClose: () => void;
+  handleChange: (event: SelectChangeEvent) => void;
+  changeMaterialsByCar: (event: SelectChangeEvent<string[]>) => void;
+  changeCurrentDate: (value: Date | null) => void;
   handleNumberChange: (event: ChangeEvent<HTMLInputElement>, id: number) => void;
   handleSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
 }
@@ -79,12 +79,6 @@ interface Props {
 export default function AddMaterialsWriteOffModalComponent(props: Props) {
   const {
     isAddMaterialsWriteOffModalOpen,
-    handleClose,
-    handleChange,
-    changeMaterialsByCar,
-    changeCurrentDate,
-    handleNumberChange,
-    handleSubmit,
     formState: {
       currentDate,
       car,
@@ -95,6 +89,12 @@ export default function AddMaterialsWriteOffModalComponent(props: Props) {
     attachedCars,
     attachedMaterialsByCar,
     tableAttachedMaterialsArray,
+    handleClose,
+    handleChange,
+    changeMaterialsByCar,
+    changeCurrentDate,
+    handleNumberChange,
+    handleSubmit,
   } = props;
 
   const renderTitle = () => (
