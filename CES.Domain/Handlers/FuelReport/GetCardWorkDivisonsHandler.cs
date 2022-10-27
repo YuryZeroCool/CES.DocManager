@@ -1,12 +1,15 @@
-﻿using CES.Domain.Models.Request.Report;
+﻿using CES.Domain.Models;
+using CES.Domain.Models.Request.Report;
 using CES.Domain.Models.Response.Report;
 using CES.Domain.Services;
 using CES.Infra;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace CES.Domain.Handlers.Report
 {
-    public class GetCardWorkDivisonsHandler : IRequestHandler<GetCardWorkDivisionsRequest, List<GetCardWorkDivisionsResponse>>
+    public class GetCardWorkDivisonsHandler : IRequestHandler<GetCardWorkDivisionsRequest, GetCardWorkDivisionsResponse>
     {
         private readonly DocMangerContext _ctx;
 
@@ -16,142 +19,113 @@ namespace CES.Domain.Handlers.Report
             _ctx = ctx;
             _date = new Date();
         }
-        public async Task<List<GetCardWorkDivisionsResponse>> Handle(GetCardWorkDivisionsRequest request, CancellationToken cancellationToken)
+        public async Task<GetCardWorkDivisionsResponse> Handle(GetCardWorkDivisionsRequest request, CancellationToken cancellationToken)
         {
-            //var MileagePerMonth1 = 0;
-            //double fuelPerMonth1 = 0;
 
-            //var MileagePerMonth2 = 0;
-            //double fuelPerMonth2 = 0;
+            var cardWorkDivision = new GetCardWorkDivisionsResponse();
 
-            //var MileagePerMonth3 = 0;
-            //double fuelPerMonth3 = 0;
+            var period = _date.SplitDate(request.ReportPeriod!);
 
-            //var MileagePerMonth4 = 0;
-            //double fuelPerMonth4 = 0;
+           var  workCardDivisions = await _ctx.WorkCardDivisions.Where(p => p.PeriodReport == period).ToListAsync(cancellationToken);
 
-           var period = _ctx.WorkCardDivisions.FirstOrDefault(p => p.PeriodReport == _date.SplitDate(request.ReportPeriod));
-            //var MileagePerMonth1 = new Model();
+            if (workCardDivisions == null) throw new System.Exception("Error");
 
+            var car = await _ctx.NumberPlateOfCar
+                .Where(p => p.GarageNumber == request.GarageNumber)
+                .Include(p => p.FuelWorkCards.Where(x=>x.WorkDate == period)).ToListAsync(cancellationToken);
 
-            //var MileagePerMonth2 = new Model();
+            var arr = JsonSerializer.Deserialize<List<FuelWorkCardModel>>(car[0].FuelWorkCards.ToList()[0].Data);
 
-
-            //var MileagePerMonth3 = new Model();
+            if (arr == null) throw new System.Exception("Error");
 
 
-            //var MileagePerMonth4 
-           
-
-            List<string> datesDivision1 = new List<string>()
+            foreach (var item in workCardDivisions)
             {
-                new DateTime(2022,8,2).ToString(),
-                new DateTime(2022,8,6).ToString(),
-                new DateTime(2022,8,10).ToString(),
-                new DateTime(2022,8,14).ToString(),
-                new DateTime(2022,8,18).ToString(),
-                new DateTime(2022,8,22).ToString(),
-                new DateTime(2022,8,26).ToString(),
-                new DateTime(2022,8,30).ToString(),
-            };
-            List<string> datesDivision2 = new List<string>()
-            {
-                new DateTime(2022,8,1).ToString(),
-                new DateTime(2022,8,5).ToString(),
-                new DateTime(2022,8,9).ToString(),
-                new DateTime(2022,8,13).ToString(),
-                new DateTime(2022,8,17).ToString(),
-                new DateTime(2022,8,21).ToString(),
-                new DateTime(2022,8,25).ToString(),
-                new DateTime(2022,8,29).ToString(),
-            };
-            List<string> datesDivision3 = new List<string>()
-            {
-                 new DateTime(2022,8,4).ToString(),
-                new DateTime(2022,8,8).ToString(),
-                new DateTime(2022,8,12).ToString(),
-                new DateTime(2022,8,16).ToString(),
-                new DateTime(2022,8,20).ToString(),
-                new DateTime(2022,8,24).ToString(),
-                new DateTime(2022,8,28).ToString(),
-            };
-            List<string> datesDivision4 = new List<string>()
-            {
-                 new DateTime(2022,8,3).ToString(),
-                new DateTime(2022,8,7).ToString(),
-                new DateTime(2022,8,11).ToString(),
-                new DateTime(2022,8,15).ToString(),
-                new DateTime(2022,8,19).ToString(),
-                new DateTime(2022,8,23).ToString(),
-                new DateTime(2022,8,27).ToString(),
-                new DateTime(2022,8,31).ToString(),
-            };
+                if( item.Division == "Смена №1")
+                {
+                   var dates = JsonSerializer.Deserialize<List<DateTime>>(item.Date);
 
-           // var date = new DateTime(2022, 8, 1).ToString("u").Substring(0, 10);
-            //var data = _ctx.NumberPlateOfCar.Where(p => p.GarageNumber == request.GarageNumber)
-            //    .Include(p => p.FuelWorkCards
-            //    .Where(x =>
-            //    x.WorkDate.ToString()
-            //    .Contains(date))).ToList()[0];
+                    if (dates == null) throw new System.Exception("Error");
+                    foreach (var date in dates)
+                    {
+                       var res = arr.Where(x => x.Date == date);
+                        if (res.Any() && res != null)
+                        {
+                            foreach (var card in res)
+                            {
+                                cardWorkDivision.MileagePerMonthDivision1 += card.MileagePerDay;
+                                cardWorkDivision.FuelPerMonthDivision1 += card.ActualConsumption;
+                                cardWorkDivision.SumMileage += card!.MileagePerDay;
+                                cardWorkDivision.SumFuel += card.ActualConsumption;
+                            } 
+                        }
+                    }
+                }
+                if (item.Division == "Смена №2")
+                {
+                    var dates = JsonSerializer.Deserialize<List<DateTime>>(item.Date);
+                    if (dates == null) throw new System.Exception("Error");
 
-          //  var arr = JsonSerializer.Deserialize<List<FuelWorkCardModel>>(data.FuelWorkCards.ToList()[0].Data);
+                    foreach (var date in dates)
+                    {
+                        var res = arr.Where(x => x.Date == date);
 
-    //        foreach (var item in datesDivision1)
-    //        {
-    //            var res = arr.FirstOrDefault(x => x.Date.ToString().Contains(item));
-    //            if (res != null)
-    //            {
-    //                //MileagePerMonth1.MileagePerMonth += res.MileagePerDay;
-    //                //MileagePerMonth1.fuelPerMonth += res.ActualConsumption;
+                        if (res.Any() && res != null)
+                        {
+                            foreach(var card in res)
+                            {
+                                cardWorkDivision.MileagePerMonthDivision2 += card.MileagePerDay;
+                                cardWorkDivision.FuelPerMonthDivision2 += card.ActualConsumption;
+                                cardWorkDivision.SumMileage += card!.MileagePerDay;
+                                cardWorkDivision.SumFuel += card.ActualConsumption;
+                            }
+                        }
+                    }
+                }
+                if (item.Division == "Смена №3")
+                {
+                    var dates = JsonSerializer.Deserialize<List<DateTime>>(item.Date);
 
-    //}
-    //        }
-    //        foreach (var item in datesDivision2)
-    //        {
-    //            var res = arr.FirstOrDefault(x => x.Date.ToString().Contains(item));
-    //            if (res != null)
-    //            {
-    //                //MileagePerMonth2.MileagePerMonth += res.MileagePerDay;
-    //                //MileagePerMonth2.fuelPerMonth += res.ActualConsumption;
-    //            }
+                    if (dates == null) throw new System.Exception("Error");
 
-    //        }
-    //        foreach (var item in datesDivision3)
-    //        {
-    //            var res = arr.FirstOrDefault(x => x.Date.ToString().Contains(item));
-    //            if (res != null)
-    //            {
-    //                //MileagePerMonth3.MileagePerMonth += res.MileagePerDay;
-    //                //MileagePerMonth3.fuelPerMonth += res.ActualConsumption;
+                    foreach (var date in dates)
+                    {
+                        var res = arr.Where(x => x.Date == date);
+                        if (res.Any() && res != null)
+                        {
+                            foreach (var card in res)
+                            {
+                                cardWorkDivision.MileagePerMonthDivision3 += card.MileagePerDay;
+                                cardWorkDivision.FuelPerMonthDivision3 += card.ActualConsumption;
+                                cardWorkDivision.SumMileage += card!.MileagePerDay;
+                                cardWorkDivision.SumFuel += card.ActualConsumption;
+                            }
+                        }
+                    }
+                }
+               if (item.Division == "Смена №4")
+               {
+                    var dates = JsonSerializer.Deserialize<List<DateTime>>(item.Date);
+                    if (dates == null) throw new System.Exception("Error");
 
-    //            }
-    //        }
-    //        foreach (var item in datesDivision4)
-    //        {
-    //            var res = arr.FirstOrDefault(x => x.Date.ToString().Contains(item));
-    //            if (res != null)
-    //            {
-    //                //MileagePerMonth4.MileagePerMonth += res.MileagePerDay;
-    //                //MileagePerMonth4.fuelPerMonth += res.ActualConsumption;
-    //            }
-    //        }
-    //        //var d = new List<List<object>>() {
-    //        //       new List<int>() { MileagePerMonth1, MileagePerMonth2 ,MileagePerMonth3 ,MileagePerMonth4 },
-    //        //         new List<double>() { fuelPerMonth1,fuelPerMonth2, fuelPerMonth3 ,fuelPerMonth4 },
-    //        // };
+                    foreach (var date in dates)
+                    {
+                        var res = arr.Where(x => x.Date == date);
 
-    //        // MileagePerMonth1.SumMileage = 
-    //        //    MileagePerMonth1.MileagePerMonth+
-    //        //    MileagePerMonth2.MileagePerMonth+
-    //        //    MileagePerMonth3.MileagePerMonth+
-    //        //    MileagePerMonth4.MileagePerMonth;
-
-    //        //MileagePerMonth1.SumFuel =
-    //        //    MileagePerMonth1.fuelPerMonth +
-    //        //    MileagePerMonth2.fuelPerMonth +
-    //        //    MileagePerMonth3.fuelPerMonth +
-    //        //    MileagePerMonth4.fuelPerMonth;
-        return null;
+                        if (res.Any() && res != null)
+                        {
+                            foreach (var card in res)
+                            {
+                                cardWorkDivision.MileagePerMonthDivision4 += card.MileagePerDay;
+                                cardWorkDivision.FuelPerMonthDivision4 += card.ActualConsumption;
+                                cardWorkDivision.SumMileage += card!.MileagePerDay;
+                                cardWorkDivision.SumFuel += card.ActualConsumption;
+                            }
+                        }
+                    }
+                }
+            }
+            return await Task.FromResult(cardWorkDivision);
         }
     }
 }

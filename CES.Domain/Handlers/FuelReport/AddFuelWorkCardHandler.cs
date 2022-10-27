@@ -37,10 +37,11 @@ namespace CES.Domain.Handlers.Report
 
                 var row = rows.GetRow(1).GetCell(0).ToString() ?? throw new System.Exception("Error");
 
-                var carId = await GetNumberPlateOfCar().FirstOrDefaultAsync(p =>
-                row.Contains(p.Number.Trim()), cancellationToken);
+                var carId = await _ctx.NumberPlateOfCar.FirstOrDefaultAsync(p =>
+                row.Contains(p.Number!.Trim()), cancellationToken);
 
                 List<FuelWorkCardModel> rowsArr = new();
+
                 var card = new FuelWorkCardEntity
                 {
                     NumberPlateCar = carId,
@@ -55,12 +56,12 @@ namespace CES.Domain.Handlers.Report
                         if (rows.GetRow(j).GetCell(2) != null && rows.GetRow(j).GetCell(2).ToString() != "")
                         {
                             var cardRow = new FuelWorkCardModel();
-
+                            bool res = false;
                             if (rows.GetRow(j).GetCell(1).ToString() != null) cardRow.Date = GetDate(rows.GetRow(j).GetCell(1).ToString());
 
                             if (rows.GetRow(j).GetCell(2).ToString() != "")
                             {
-                                var res = int.TryParse( rows.GetRow(j).GetCell(2).ToString(), out var number);
+                                res = int.TryParse( rows.GetRow(j).GetCell(2).ToString(), out var number);
                                 if (res) cardRow.NumberList = number;
                             } // Номер путевого листа
                             if (rows?.GetRow(j).GetCell(3).ToString() != "")
@@ -69,45 +70,57 @@ namespace CES.Domain.Handlers.Report
                             } // Водитель
                             if (rows?.GetRow(j).GetCell(4).ToString() != "")
                             {
-                                cardRow.HoursWorked = int.Parse(rows?.GetRow(j)?.GetCell(4).ToString());
+                                res = int.TryParse(rows?.GetRow(j)?.GetCell(4).ToString(),out var HoursWorked);
+                                if(res) cardRow.HoursWorked = HoursWorked;
                             } // Отработано часов 
                             if (rows.GetRow(j).GetCell(6).ToString() != "")
                             {
-                                cardRow.MileageStart = int.Parse(rows.GetRow(j).GetCell(6).ToString());
+                                res = int.TryParse(rows.GetRow(j).GetCell(6).ToString(),out var MileageStart);
+                                if (res) cardRow.MileageStart = MileageStart;
                             } // Начальный спедометр
                             if (rows.GetRow(j).GetCell(7).ToString() != "")
                             {
-                                cardRow.MileageEnd = int.Parse(rows.GetRow(j).GetCell(7).ToString());
+                                res = int.TryParse(rows.GetRow(j).GetCell(7).ToString(), out var MileageEnd);
+                                if (res) cardRow.MileageEnd = MileageEnd;
                             } // Конечный спедометр
                             if (rows.GetRow(j).GetCell(8).ToString() != "")
                             {
-                                cardRow.MileagePerDay = int.Parse(rows.GetRow(j).GetCell(8).ToString());
+                                res = int.TryParse(rows.GetRow(j).GetCell(8).ToString(),out var MileagePerDay);
+                                if (res) cardRow.MileagePerDay = MileagePerDay;
                             } // Пробег за день
                             if (rows.GetRow(j).GetCell(10).ToString() != "")
                             {
-                                cardRow.FuelStart = int.Parse(rows.GetRow(j).GetCell(10).ToString());
+                                res = int.TryParse(rows.GetRow(j).GetCell(10).ToString(),out var FuelStart);
+                                if(res) cardRow.FuelStart = FuelStart;
                             } // Топливо на начала
                             if (rows.GetRow(j).GetCell(14).ToString() != "")
                             {
-                                cardRow.FuelEnd = int.Parse(rows.GetRow(j).GetCell(14).ToString());
+                                res = int.TryParse(rows.GetRow(j).GetCell(14).ToString(), out var FuelEnd);
+                                if(res) cardRow.FuelEnd = FuelEnd;
                             } // Топливо на конец дня
                             if (rows.GetRow(j).GetCell(12).ToString() != "")
                             {
-                                cardRow.ActualConsumption = double.Parse(rows.GetRow(j).GetCell(12).ToString());
+                               res = double.TryParse(rows.GetRow(j).GetCell(12).ToString(),out double ActualConsumption);
+                                if (res) cardRow.ActualConsumption = ActualConsumption;
+
                             } // Расход по факту
                             if (rows.GetRow(j).GetCell(13).ToString() != "")
                             {
-                                cardRow.ConsumptionAccordingToNorm =
-                                    Double.Parse(rows.GetRow(j).GetCell(13).ToString());
+                                res = double.TryParse(rows.GetRow(j).GetCell(13).ToString(), out var ConsumptionAccordingToNorm);
+                                if(res) cardRow.ConsumptionAccordingToNorm = ConsumptionAccordingToNorm;
                             } // Расход по нормам
                             if (rows.GetRow(j).GetCell(11) != null && rows.GetRow(j).GetCell(11).ToString() != "")
                             {
-                                cardRow.Refueling = Double.Parse(rows.GetRow(j).GetCell(11).ToString());
+                                res = double.TryParse(rows.GetRow(j).GetCell(11).ToString(),out var Refueling);
+                                if (res) cardRow.Refueling = Refueling;
                             } //Заправка
                             if (rows.GetRow(j + 1).GetCell(6).ToString() != "")
                             {
-                                cardRow.EngineHoursStart = double.Parse(rows.GetRow(j + 1).GetCell(6).ToString());
-                                cardRow.EngineHoursEnd = double.Parse(rows.GetRow(j + 1).GetCell(7).ToString());
+                                res = double.TryParse(rows.GetRow(j + 1).GetCell(6).ToString(),out var EngineHoursStart);
+                                if (res) cardRow.EngineHoursStart = EngineHoursStart;
+
+                                res = double.TryParse(rows.GetRow(j + 1).GetCell(7).ToString(),out var EngineHoursEnd);
+                                if (res) cardRow.EngineHoursEnd = EngineHoursEnd;
                             }
                             rowsArr.Add(cardRow);
                         }
@@ -121,13 +134,7 @@ namespace CES.Domain.Handlers.Report
                     await _ctx.SaveChangesAsync(cancellationToken);
                 }
             }
-
             return 200;
-
-            DbSet<NumberPlateCarEntity> GetNumberPlateOfCar()
-            {
-                return _ctx.NumberPlateOfCar;
-            }
         }
         private DateTime GetDate(string date)
         {

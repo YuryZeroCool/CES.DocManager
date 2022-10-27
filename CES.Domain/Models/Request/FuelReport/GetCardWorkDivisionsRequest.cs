@@ -4,7 +4,7 @@ using MediatR;
 
 namespace CES.Domain.Models.Request.Report
 {
-    public class GetCardWorkDivisionsRequest : IRequest<List<GetCardWorkDivisionsResponse>>
+    public class GetCardWorkDivisionsRequest : IRequest<GetCardWorkDivisionsResponse>
     {
         public int GarageNumber { get; set; }
 

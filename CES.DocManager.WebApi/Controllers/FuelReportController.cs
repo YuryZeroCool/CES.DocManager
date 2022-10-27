@@ -42,14 +42,24 @@ namespace CES.DocManager.WebApi.Controllers
         }
 
         [HttpGet("getCardWorkDivisions")]
-        public async Task<List<GetCardWorkDivisionsResponse>> GetCardWorkDivisonsAsync(int carGarage, string reportPeriod)
+        [Produces(typeof(List<GetCardWorkDivisionsResponse>))]
+
+        public async Task<object> GetCardWorkDivisonsAsync(int carGarage, string reportPeriod)
         {
-            
-            return await _mediator.Send(new GetCardWorkDivisionsRequest()
-             {
-                GarageNumber = carGarage,
-                ReportPeriod = reportPeriod,
-             });
+            try
+            {
+                return await _mediator.Send(new GetCardWorkDivisionsRequest()
+                {
+                    GarageNumber = carGarage,
+                    ReportPeriod = reportPeriod,
+                });
+            }
+            catch (Exception)
+            {
+
+                return new object();
+            }
+           
         }
 
         [HttpPost("divisionWorkSchedule")]
