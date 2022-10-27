@@ -27,8 +27,8 @@ namespace CES.DocManager.WebApi.Controllers
             _mapper = mapper;
         }
 
-        [Authorize(AuthenticationSchemes =
-            JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        //[Authorize(AuthenticationSchemes =
+        //    JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("isPersonalSerialNumber/{SerialNumber}")]
         [Produces(typeof(bool))]
         public async Task<object> GetIsPersonalNumber(string SerialNumber)
@@ -46,9 +46,9 @@ namespace CES.DocManager.WebApi.Controllers
 
         //[Authorize(AuthenticationSchemes =
         //    JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        [HttpPost]
+        [HttpPost("createDriverLicense")]
         [Produces(typeof(GetDriverLicenseResponse))]
-        public async Task<object> Post([FromBody] CreateDriverLicenseViewModel model)
+        public async Task<object> CreateDriverLicenseAsync(CreateDriverLicenseViewModel model)
         {
             try
             {

@@ -3,7 +3,7 @@ using CES.Domain.Exception;
 using CES.Domain.Models.Request.DriverLicense;
 using CES.Domain.Models.Response.DriverLicense;
 using CES.Infra;
-using CES.Infra.Models;
+using CES.Infra.Models.Drivers;
 using MediatR;
 using System.Net;
 
