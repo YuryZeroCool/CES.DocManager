@@ -8,6 +8,8 @@ namespace CES.Infra.Models
 
         public string? Name { get; set; }
 
+        public int VehicleBrandId { get; set; }
+
         [JsonIgnore]
         public VehicleBrandEntity? VehicleBrand { get; set; }
 

@@ -17,7 +17,7 @@ namespace CES.Infra.Config
                .HasColumnType("DATE");
 
             builder.Property(t => t.Division)
-                .HasColumnType("NCHAR(30)");
+                   .HasMaxLength(100);
         }
     }
 }
