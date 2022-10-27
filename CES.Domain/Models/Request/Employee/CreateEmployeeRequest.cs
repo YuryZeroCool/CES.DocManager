@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿using CES.Domain.Models.Response.Employees;
+using MediatR;
 
 namespace CES.Domain.Models.Request.Employee
 {
-    public class CreateEmployeeRequest : IRequest
+    public class CreateEmployeeRequest : IRequest<CreateEmployeeResponse>
     {
         public string? FirstName { get; set; }
 

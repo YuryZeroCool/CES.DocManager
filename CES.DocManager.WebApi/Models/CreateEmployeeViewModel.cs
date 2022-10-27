@@ -8,8 +8,8 @@
 
         public DateTime DateBirth { get; set; }
 
-        public string? Division { get; set; }
+        public string? DivisionNumber { get; set; }
 
-        public int PersonNumber { get; set; }
+        public int PersonnelNumber { get; set; }
     }
 }

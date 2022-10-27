@@ -177,11 +177,11 @@ namespace CES.DocManager.WebApi.Controllers
 
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost("createEmployee")]
-        public async Task CreateEmployee([FromBody] CreateEmployeeViewModel model)
+        public async Task<CreateEmployeeResponse> CreateEmployee(CreateEmployeeViewModel model)
         {
             try
             {
-                await _mediator.Send(_mapper.Map<CreateEmployeeRequest>(model));
+               return await _mediator.Send(_mapper.Map<CreateEmployeeRequest>(model));
             }
             catch (Exception)
             {
