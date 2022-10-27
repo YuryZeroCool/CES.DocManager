@@ -25,11 +25,11 @@ namespace CES.DocManager.WebApi.Controllers
             _mediator = mediator;
         }
 
-        [Authorize(AuthenticationSchemes =
-            JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        [HttpPost]
+        //[Authorize(AuthenticationSchemes =
+        //    JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpPost("createMedicalCertificate")]
         [Produces(typeof(GetEmployeesByDivisionResponse))]
-        public async Task<object> CreateMedicalCertificate([FromBody] CreateMedicalCertificateViewModel model)
+        public async Task<object> CreateMedicalCertificate(CreateMedicalCertificateViewModel model)
         {
             try
             {

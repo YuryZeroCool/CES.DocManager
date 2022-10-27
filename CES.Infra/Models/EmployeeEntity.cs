@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using CES.Infra.Models.Drivers;
 
 namespace CES.Infra.Models
 {

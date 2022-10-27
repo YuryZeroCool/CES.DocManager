@@ -3,10 +3,12 @@ using CES.Domain.Models.Request.DriverMedicalCertificate;
 using CES.Domain.Models.Response.Employees;
 using CES.Infra;
 using CES.Infra.Models;
+using CES.Infra.Models.Drivers;
+using MediatR;
 
 namespace CES.Domain.Handlers.DriverMedicalCertificate
 {
-    public class CreateMedicalCertificateHandler
+    public class CreateMedicalCertificateHandler: IRequestHandler<CreateMedicalCertificateRequest, GetEmployeesByDivisionResponse>
     {
         private readonly DocMangerContext _context;
         private readonly IMapper _mapper;
@@ -18,11 +20,13 @@ namespace CES.Domain.Handlers.DriverMedicalCertificate
         }
         public async Task<GetEmployeesByDivisionResponse> Handle(CreateMedicalCertificateRequest request, CancellationToken cancellationToken)
         {
-                request.FirstName?.Trim();
-                request.LastName?.Trim();
+               request.FirstName = request.FirstName?.Trim();
+               request.LastName = request.LastName?.Trim();
                 var res = _context.Employees 
            .FirstOrDefault(x => x.FirstName == request.FirstName && x.LastName == request.LastName);
-            
+
+            if (res == null) throw new System.Exception("Error");
+
             if(res is not null) request.EmployeeId = res.Id;
 
             var medicalCertificate = _mapper.Map<CreateMedicalCertificateRequest, DriverMedicalCertificateEntity>(request);
