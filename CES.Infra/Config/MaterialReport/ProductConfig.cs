@@ -15,8 +15,7 @@ namespace CES.Infra.Config.MaterialReport
                 .HasMaxLength(200);
 
             builder.HasMany(x => x.Parties)
-                .WithOne(p => p.Product)
-                .HasForeignKey(k=>k.ProductId);
+                .WithOne(p => p.Product);
         }
     }
 }

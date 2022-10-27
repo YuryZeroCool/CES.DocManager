@@ -12,7 +12,7 @@ namespace CES.Infra.Config.MaterialReport
 
             builder.Property(t => t.AccountName)
                 .IsRequired()
-                .HasColumnType("NCHAR(30)");
+                .HasMaxLength(100);
 
             builder.HasMany(x => x.Products)
                 .WithOne(p => p.Account)

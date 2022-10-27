@@ -31,7 +31,7 @@ namespace CES.Domain.Handlers.MaterialReport
             {
                 if(item != null)
                 {
-                   item.AccountName = item.AccountName?.Trim();
+                   item.AccountName = item.AccountName;
                   date.Add(_mapper.Map<GetAllProductsGroupAccountResponse>(item));
                 }
             }

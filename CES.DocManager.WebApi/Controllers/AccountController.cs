@@ -39,6 +39,9 @@ namespace CES.DocManager.WebApi.Controllers
             try
             {
                 var result = await _mediator.Send(query);
+
+                if (result.RefreshToken == null) throw new Exception("Error");
+
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddDays(lifeTimeToken),
@@ -87,14 +90,18 @@ namespace CES.DocManager.WebApi.Controllers
                     RefreshToken = token
                 });
 
+                if (result.AccessToken == null) throw new SystemException("Error");
+
+                if (result.RefreshToken == null) throw new SystemException("Error");
+
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
-                {
-                    Expires = DateTimeOffset.Now.AddDays(lifeTimeToken),
-                    HttpOnly = true,
-                    Secure = true,
-                    Domain = "ces-docmanager.site",
-                    Path = "/account/"
-                });
+                    {
+                        Expires = DateTimeOffset.Now.AddDays(lifeTimeToken),
+                        HttpOnly = true,
+                        Secure = true,
+                        Domain = "ces-docmanager.site",
+                        Path = "/account/"
+                    });
                 return result.AccessToken;
             }
 
@@ -164,12 +171,12 @@ namespace CES.DocManager.WebApi.Controllers
             return await _mediator.Send(new AddRoleRequest { Name = query.Name });
         }
 
-        private string ipAddress()
-        {
-            if (Request.Headers.ContainsKey("X-Forwarded-For"))
-                return Request.Headers["X-Forwarded-For"];
-            else
-                return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-        }
+        //private string ipAddress()
+        //{
+        //    if (Request.Headers.ContainsKey("X-Forwarded-For"))
+        //        return Request.Headers["X-Forwarded-For"];
+        //    else
+        //        return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+        //}
     }
 }
