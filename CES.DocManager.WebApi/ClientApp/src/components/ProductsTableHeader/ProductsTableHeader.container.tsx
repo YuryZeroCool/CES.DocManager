@@ -5,7 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import uploadNewMaterials from '../../redux/actions/report/materialReport/uploadNewMaterials';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleAddMaterialsWriteOffModal } from '../../redux/reducers/modals/modalsReducer';
-import { changeMaterialsTableType } from '../../redux/reducers/report/materialsReducer';
+import {
+  changeAttachedMaterialsSearchValue,
+  changeDecommissionedMaterialsSearchValue,
+  changeMaterialsSearchValue,
+  changeMaterialsTableType,
+} from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { IMaterialsResponse } from '../../types/ReportTypes';
 import ProductsTableHeaderComponent from './ProductsTableHeader.component';
@@ -14,6 +19,7 @@ function ProductsTableHeaderContainer() {
   const {
     materialsTableType,
     pageType,
+    searchValue,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const [fileName, setFileName] = useState<string>('');
@@ -46,16 +52,30 @@ function ProductsTableHeaderContainer() {
     }
   };
 
+  const handleSearchValueChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (pageType === 'Материалы' && materialsTableType === 'Свободные') {
+      dispatch(changeMaterialsSearchValue(event.target.value.toLocaleLowerCase()));
+    }
+    if (pageType === 'Материалы' && materialsTableType === 'Прикрепленные') {
+      dispatch(changeAttachedMaterialsSearchValue(event.target.value.toLocaleLowerCase()));
+    }
+    if (pageType === 'История ремонтов') {
+      dispatch(changeDecommissionedMaterialsSearchValue(event.target.value.toLocaleLowerCase()));
+    }
+  };
+
   return (
     <ProductsTableHeaderComponent
       materialsTableType={materialsTableType}
       pageType={pageType}
       fileName={fileName}
+      searchValue={searchValue}
       handleChange={handleChange}
       handleClick={handleClick}
       handleInputFileChange={handleInputFileChange}
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       handleSubmit={handleSubmit}
+      handleSearchValueChange={handleSearchValueChange}
     />
   );
 }

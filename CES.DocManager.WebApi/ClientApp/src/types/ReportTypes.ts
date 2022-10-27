@@ -76,9 +76,15 @@ export interface ITableAttachedMaterials extends IMaterialAttachedResponse {
   currentCount: number;
 }
 
+export interface ISearch {
+  materialsSearchValue: string;
+  attachedMaterialsSearchValue: string;
+  decommissionedMaterialsSearchValue: string;
+}
+
 export interface IMaterialsResponse {
   uploadMaterialsMessage: string;
-  getAllMaterials?: AllMaterialsResponse;
+  getAllMaterials: AllMaterialsResponse;
   allAttachedMaterials: IMaterialAttachedResponse[];
   deletedMaterialId: number;
   getAllGroupAccounts?: AllGroupAccountsResponse;
@@ -96,6 +102,7 @@ export interface IMaterialsResponse {
   allDecommissionedMaterials: IAllDecommissionedMaterials[];
   defectiveSheet: string;
   actOfWriteoffOfSpareParts: ArrayBuffer | null;
+  searchValue: ISearch;
 }
 
 export interface AccountsGroupState {

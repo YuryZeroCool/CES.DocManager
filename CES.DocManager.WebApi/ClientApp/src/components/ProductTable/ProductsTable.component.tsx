@@ -12,6 +12,7 @@ import {
   AllMaterialsResponse,
   IAllDecommissionedMaterials,
   IMaterialAttachedResponse,
+  ISearch,
   Party,
   Product,
 } from '../../types/ReportTypes';
@@ -47,7 +48,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 interface Props {
-  materials: AllMaterialsResponse | undefined;
+  materials: AllMaterialsResponse;
   allAttachedMaterials: IMaterialAttachedResponse[];
   status: string;
   pageType: string;
@@ -62,6 +63,7 @@ interface Props {
   divElRef: React.RefObject<HTMLDivElement>;
   allDecommissionedMaterials: IAllDecommissionedMaterials[];
   tableIndexArr: number[];
+  searchValue: ISearch;
   handleContextMenu: (
     event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
     id?: number | undefined,
@@ -99,6 +101,7 @@ export default function ProductsTable(props: Props) {
     isDialogHightBigger,
     divElRef,
     tableIndexArr,
+    searchValue,
     handleContextMenu,
   } = props;
 
@@ -106,15 +109,44 @@ export default function ProductsTable(props: Props) {
     if (productsTableError !== '') {
       return (<p className="error-message">{productsTableError}</p>);
     }
-    if (pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && allAttachedMaterials?.length === 0 && status === 'fulfilled') {
-      return (<p className="error-message">Нет закрепленных материалов</p>);
+
+    if (pageType === 'Материалы') {
+      if (materialsTableType === 'Прикрепленные' && allAttachedMaterials?.length === 0 && status === 'fulfilled') {
+        return (<p className="error-message">Нет закрепленных материалов</p>);
+      }
+      if (materialsTableType === 'Прикрепленные'
+        && allAttachedMaterials?.length === 0
+        && status === 'fulfilled'
+        && searchValue.attachedMaterialsSearchValue !== '') {
+        return (<p className="error-message">Совпадений не найдено</p>);
+      }
+      if (materialsTableType === 'Свободные'
+        && materials.length === 0
+        && status === 'fulfilled'
+        && searchValue.materialsSearchValue !== '') {
+        return (<p className="error-message">Совпадений не найдено</p>);
+      }
     }
-    if (pageType === 'История ремонтов' && allDecommissionedMaterials?.length === 0 && status === 'fulfilled') {
-      return (<p className="error-message">Нет закрепленных материалов</p>);
+
+    if (pageType === 'История ремонтов') {
+      if (allDecommissionedMaterials?.length === 0 && status === 'fulfilled') {
+        return (<p className="error-message">История ремонтов пуста</p>);
+      }
+      if (allDecommissionedMaterials?.length === 0
+        && status === 'fulfilled'
+        && searchValue.decommissionedMaterialsSearchValue !== '') {
+        return (<p className="error-message">Совпадений не найдено</p>);
+      }
     }
-    return pageType === 'Материалы' && materialsTableType === 'Свободные' && materials?.length === 0 && status === 'fulfilled' && (
-      <p className="error-message">По этому счету нет материалов</p>
-    );
+
+    return pageType === 'Материалы'
+      && materialsTableType === 'Свободные'
+      && materials.length === 0
+      && status === 'fulfilled'
+      && searchValue.materialsSearchValue === ''
+      && (
+        <p className="error-message">По этому счету нет материалов</p>
+      );
   };
 
   const renderHeaderByMaterialsPage = () => (
@@ -147,7 +179,7 @@ export default function ProductsTable(props: Props) {
           key={material.id}
           onContextMenu={(event) => handleContextMenu(event, material.id)}
         >
-          <StyledTableCell align="center">{index + 1}</StyledTableCell>
+          <StyledTableCell align="center">{tableIndexArr[index]}</StyledTableCell>
           <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">
             {material.nameMaterial}
           </StyledTableCell>

@@ -9,15 +9,18 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import UploadIcon from '@mui/icons-material/Upload';
 import './ProductsTableHeader.style.scss';
+import { ISearch } from '../../types/ReportTypes';
 
 interface Props {
   materialsTableType: string;
   pageType: string;
   fileName: string;
+  searchValue: ISearch;
   handleChange: (event: SelectChangeEvent) => void;
   handleClick: () => void;
   handleInputFileChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  handleSearchValueChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
 export default function ProductsTableHeaderComponent(props: Props) {
@@ -25,10 +28,12 @@ export default function ProductsTableHeaderComponent(props: Props) {
     materialsTableType,
     pageType,
     fileName,
+    searchValue,
     handleChange,
     handleClick,
     handleInputFileChange,
     handleSubmit,
+    handleSearchValueChange,
   } = props;
 
   const renderUploadFileForm = () => (
@@ -46,6 +51,42 @@ export default function ProductsTableHeaderComponent(props: Props) {
         )}
       </form>
     )
+  );
+
+  const renderSearchMaterials = () => (
+    <TextField
+      id="outlined-basic"
+      label="Search"
+      variant="outlined"
+      size="small"
+      value={searchValue.materialsSearchValue}
+      className="table-header-search"
+      onChange={handleSearchValueChange}
+    />
+  );
+
+  const renderSearchAttachedMaterials = () => (
+    <TextField
+      id="outlined-basic"
+      label="Search"
+      variant="outlined"
+      size="small"
+      value={searchValue.attachedMaterialsSearchValue}
+      className="table-header-search"
+      onChange={handleSearchValueChange}
+    />
+  );
+
+  const renderSearchDecommissionedMaterials = () => (
+    <TextField
+      id="outlined-basic"
+      label="Search"
+      variant="outlined"
+      size="small"
+      value={searchValue.decommissionedMaterialsSearchValue}
+      className="table-header-search"
+      onChange={handleSearchValueChange}
+    />
   );
 
   return (
@@ -70,11 +111,13 @@ export default function ProductsTableHeaderComponent(props: Props) {
         && <Button sx={{ m: 1, minWidth: 120 }} variant="contained" size="small" onClick={handleClick}>Добавить ремонт</Button>}
       </div>
       <div className="table-header-wrapper">
-        <IconButton aria-label="delete" className="icon-search">
+        <IconButton aria-label="search" className="icon-search">
           <SearchIcon />
         </IconButton>
         <Box sx={{ minWidth: 300 }}>
-          <TextField id="outlined-basic" label="Search" variant="outlined" size="small" className="table-header-search" />
+          {pageType === 'Материалы' && materialsTableType === 'Свободные' && renderSearchMaterials()}
+          {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && renderSearchAttachedMaterials()}
+          {pageType === 'История ремонтов' && renderSearchDecommissionedMaterials()}
         </Box>
       </div>
     </div>

@@ -55,6 +55,11 @@ const initial: IMaterialsResponse = {
   allDecommissionedMaterials: [],
   defectiveSheet: '',
   actOfWriteoffOfSpareParts: null,
+  searchValue: {
+    materialsSearchValue: '',
+    attachedMaterialsSearchValue: '',
+    decommissionedMaterialsSearchValue: '',
+  },
 };
 
 const materialsReducer = createSlice({
@@ -196,6 +201,33 @@ const materialsReducer = createSlice({
       stateCopy = {
         ...stateCopy,
         defectiveSheet: initial.defectiveSheet,
+      };
+      return stateCopy;
+    },
+    changeMaterialsSearchValue: (state, action: PayloadAction<string>) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        searchValue: { ...stateCopy.searchValue, materialsSearchValue: action.payload },
+      };
+      return stateCopy;
+    },
+    changeAttachedMaterialsSearchValue: (state, action: PayloadAction<string>) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        searchValue: { ...stateCopy.searchValue, attachedMaterialsSearchValue: action.payload },
+      };
+      return stateCopy;
+    },
+    changeDecommissionedMaterialsSearchValue: (state, action: PayloadAction<string>) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        searchValue: {
+          ...stateCopy.searchValue,
+          decommissionedMaterialsSearchValue: action.payload,
+        },
       };
       return stateCopy;
     },
@@ -346,5 +378,8 @@ export const {
   changeMaterialsTableType,
   changePageType,
   resetDefectiveSheet,
+  changeMaterialsSearchValue,
+  changeAttachedMaterialsSearchValue,
+  changeDecommissionedMaterialsSearchValue,
 } = materialsReducer.actions;
 export default materialsReducer.reducer;

@@ -16,6 +16,7 @@ import { IAuthResponseType } from '../../redux/store/configureStore';
 import {
   AllMaterialsResponse,
   IAllDecommissionedMaterials,
+  IMaterialAttachedResponse,
   IMaterialsResponse,
   Party,
 } from '../../types/ReportTypes';
@@ -44,8 +45,20 @@ function ProductsTableContainer(props: Props) {
 
   const [isDialogHightBigger, setIsDialogHightBigger] = useState<boolean>(false);
 
+  const [filteredMaterials, setFilteredMaterials] = useState<AllMaterialsResponse>([]);
+
+  const [
+    filteredAttachedMaterials,
+    setFilteredAttachedMaterials,
+  ] = useState<IMaterialAttachedResponse[]>([]);
+
+  const [
+    filteredDecommissionedMaterials,
+    setFilteredDecommissionedMaterials,
+  ] = useState<IAllDecommissionedMaterials[]>([]);
+
   const materials = useSelector<RootState,
-  AllMaterialsResponse | undefined>((state) => state.materials.getAllMaterials);
+  AllMaterialsResponse>((state) => state.materials.getAllMaterials);
 
   const { isMaterialReportDialogOpen } = useSelector<RootState,
   IModal>((state) => state.modals);
@@ -60,6 +73,7 @@ function ProductsTableContainer(props: Props) {
     createdAttachedMaterial,
     allDecommissionedMaterials,
     pageType,
+    searchValue,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
@@ -89,22 +103,47 @@ function ProductsTableContainer(props: Props) {
     }
   }
 
-  const createTableIndexes = () => {
+  const createTableIndexes = (data: AllMaterialsResponse | IMaterialAttachedResponse[]) => {
     const numbersArr = [];
-    if (materials) {
-      for (let i = 0; i < materials.length; i += 1) {
-        numbersArr.push(i + 1);
-      }
-      setTableIndexArr(numbersArr);
+    for (let i = 0; i < data.length; i += 1) {
+      numbersArr.push(i + 1);
     }
+    setTableIndexArr(numbersArr);
+  };
+
+  const filterMaterials = (): AllMaterialsResponse => {
+    const arr = materials.filter((el) => el.name.toLowerCase().includes(
+      searchValue.materialsSearchValue,
+    )
+      || el.party.filter((elem) => (
+        elem.partyName.includes(searchValue.materialsSearchValue))).length !== 0);
+    return arr;
+  };
+
+  const filterAttachedMaterials = (): IMaterialAttachedResponse[] => {
+    const arr = allAttachedMaterials.filter(
+      (el) => el.nameMaterial.toLowerCase().includes(searchValue.attachedMaterialsSearchValue)
+      || el.nameParty.includes(searchValue.attachedMaterialsSearchValue)
+      || `${el.vehicleBrand}(${el.numberPlateCar})`.toLowerCase().includes(searchValue.attachedMaterialsSearchValue),
+    );
+    return arr;
   };
 
   useEffect(() => {
-    if (materials?.length !== 0) {
-      createTableIndexes();
+    if (materials.length !== 0) {
+      createTableIndexes(materials);
+      setFilteredMaterials(filterMaterials());
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [materials?.length]);
+  }, [materials.length]);
+
+  useEffect(() => {
+    if (allAttachedMaterials.length !== 0) {
+      createTableIndexes(allAttachedMaterials);
+      setFilteredAttachedMaterials(filterAttachedMaterials());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allAttachedMaterials.length]);
 
   useEffect(() => {
     if (divElRef.current) {
@@ -120,6 +159,29 @@ function ProductsTableContainer(props: Props) {
       setIsDialogHightBigger(false);
     }
   }, [DIALOG_HEIGHT, tableHeight]);
+
+  useEffect(() => {
+    setFilteredMaterials(filterMaterials());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue.materialsSearchValue]);
+
+  useEffect(() => {
+    setFilteredAttachedMaterials(filterAttachedMaterials());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue.attachedMaterialsSearchValue]);
+
+  useEffect(() => {
+    setFilteredDecommissionedMaterials(
+      allDecommissionedMaterials.filter(
+        (el) => el.carMechanic.toLowerCase().includes(
+          searchValue.decommissionedMaterialsSearchValue,
+        )
+        || el.currentDate?.toString().includes(searchValue.decommissionedMaterialsSearchValue)
+        || `${el.materials[0].vehicleBrand}(${el.materials[0].numberPlateCar})`.toLowerCase().includes(searchValue.decommissionedMaterialsSearchValue),
+      ),
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue.decommissionedMaterialsSearchValue]);
 
   useEffect(() => {
     setProductsTableError('');
@@ -175,9 +237,9 @@ function ProductsTableContainer(props: Props) {
 
   return (
     <ProductsTableComponent
-      materials={materials}
-      allAttachedMaterials={allAttachedMaterials}
-      allDecommissionedMaterials={allDecommissionedMaterials}
+      materials={searchValue.materialsSearchValue === '' ? materials : filteredMaterials}
+      allAttachedMaterials={searchValue.attachedMaterialsSearchValue === '' ? allAttachedMaterials : filteredAttachedMaterials}
+      allDecommissionedMaterials={searchValue.decommissionedMaterialsSearchValue === '' ? allDecommissionedMaterials : filteredDecommissionedMaterials}
       pageType={pageType}
       status={status}
       productsTableError={productsTableError}
@@ -190,6 +252,7 @@ function ProductsTableContainer(props: Props) {
       isDialogHightBigger={isDialogHightBigger}
       divElRef={divElRef}
       tableIndexArr={tableIndexArr}
+      searchValue={searchValue}
       handleContextMenu={handleContextMenu}
     />
   );
