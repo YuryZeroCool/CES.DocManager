@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using CES.Infra.Models.MaterialReport;
+using System.Text.Json.Serialization;
 
 namespace CES.Infra.Models
 {
@@ -14,5 +15,13 @@ namespace CES.Infra.Models
         public VehicleModelEntity? VehicleModel { get; set; }
 
         public ICollection<FuelWorkCardEntity> FuelWorkCards { get; set; }
+
+        [JsonIgnore]
+        public ICollection<DecommissionedMaterialEntity>? DecommissionedMaterials { get; set; }
+
+        public NumberPlateCarEntity()
+        {
+            DecommissionedMaterials = new List<DecommissionedMaterialEntity>();
+        }
     }
 }

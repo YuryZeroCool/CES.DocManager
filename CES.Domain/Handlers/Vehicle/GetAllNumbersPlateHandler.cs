@@ -34,7 +34,8 @@ namespace CES.Domain.Handlers.Vehicle
             foreach (var item in models)
             {
                 IEnumerable<GetAllNumbersPlateResponse> second = _ctx.NumberPlateOfCar.Where(p=>p.VehicleModel == item).
-                                       Select(p => _mapper.Map<GetAllNumbersPlateResponse>(p));
+                                       Select(p =>  _mapper.Map<GetAllNumbersPlateResponse>(p));
+
                 date = date.Union(second).ToList();   
             }
                 return await Task.FromResult(date);

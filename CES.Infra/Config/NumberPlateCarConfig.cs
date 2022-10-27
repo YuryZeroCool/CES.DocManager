@@ -11,7 +11,8 @@ namespace CES.Infra.Config
             builder.HasMany(x => x.FuelWorkCards).WithOne(p => p.NumberPlateCar);
 
             builder.Property(t => t.Number)
-                .HasColumnType("NCHAR(30)");
+                .HasMaxLength(100);
+            builder.HasMany(x => x.DecommissionedMaterials).WithOne(p=>p.NumberPlateOfCar);
         }
     }
 }
