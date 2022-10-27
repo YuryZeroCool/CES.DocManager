@@ -3,8 +3,10 @@ using CES.DocManager.WebApi.Models;
 using CES.Domain.Models.Request.DriverLicense;
 using CES.Domain.Models.Request.DriverMedicalCertificate;
 using CES.Domain.Models.Request.Employee;
+using CES.Domain.Models.Response.CarMechanic;
 using CES.Domain.Models.Response.Division;
 using CES.Domain.Security.Login;
+using CES.Infra.Models;
 
 namespace CES.DocManager.WebApi.Mapper
 {
@@ -20,8 +22,8 @@ namespace CES.DocManager.WebApi.Mapper
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
                 .ForMember(dest => dest.DateBirth, opt => opt.MapFrom(src => src.DateBirth))
-                .ForMember(dest => dest.DivisionNumber, opt => opt.MapFrom(src => src.Division))
-                .ForMember(dest => dest.PersonnelNumber, opt => opt.MapFrom(src => src.PersonNumber));
+                .ForMember(dest => dest.DivisionNumber, opt => opt.MapFrom(src => src.DivisionNumber))
+                .ForMember(dest => dest.PersonnelNumber, opt => opt.MapFrom(src => src.PersonnelNumber));
 
             CreateMap<CreateMedicalCertificateViewModel, CreateMedicalCertificateRequest>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
@@ -46,6 +48,10 @@ namespace CES.DocManager.WebApi.Mapper
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.AccessToken, opt => opt.MapFrom(src => src.AccessToken));
+
+            CreateMap<CarMechanicEntity, GetAllCarMechanicResponse>()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+               .ForMember(dest => dest.FIO, opt => opt.MapFrom(src => src.FIO));
         }
     }
 

@@ -22,6 +22,27 @@ namespace CES.Infra.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("CES.Infra.Models.CarMechanicEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("FIO")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CarMechanics");
+                });
+
             modelBuilder.Entity("CES.Infra.Models.DivisionEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -39,7 +60,7 @@ namespace CES.Infra.Migrations
                     b.ToTable("Divisions");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.DriverLicenseEntity", b =>
+            modelBuilder.Entity("CES.Infra.Models.Drivers.DriverLicenseEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -48,7 +69,8 @@ namespace CES.Infra.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Category")
-                        .HasColumnType("NCHAR(30)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
@@ -73,7 +95,7 @@ namespace CES.Infra.Migrations
                     b.ToTable("DriverLicenses");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.DriverMedicalCertificateEntity", b =>
+            modelBuilder.Entity("CES.Infra.Models.Drivers.DriverMedicalCertificateEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -92,7 +114,8 @@ namespace CES.Infra.Migrations
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
-                        .HasColumnType("NCHAR(15)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -208,6 +231,84 @@ namespace CES.Infra.Migrations
                     b.ToTable("FuelWorkCards");
                 });
 
+            modelBuilder.Entity("CES.Infra.Models.MaterialReport.DecommissionedMaterialEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CarMechanicId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CurrentDate")
+                        .HasColumnType("DATE");
+
+                    b.Property<byte[]>("Materials")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("NumberPlateOfCarId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarMechanicId");
+
+                    b.HasIndex("NumberPlateOfCarId");
+
+                    b.ToTable("DecommissionedMaterials");
+                });
+
+            modelBuilder.Entity("CES.Infra.Models.MaterialReport.EnshrinedMaterialEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AccountName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Count")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("smalldatetime");
+
+                    b.Property<string>("NameMaterial")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("NameParty")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NumberPlateCar")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PartyDate")
+                        .HasColumnType("smalldatetime");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VehicleBrand")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VehicleModel")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EnshrinedMaterial");
+                });
+
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.PartyEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -280,7 +381,8 @@ namespace CES.Infra.Migrations
 
                     b.Property<string>("AccountName")
                         .IsRequired()
-                        .HasColumnType("NCHAR(30)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -317,7 +419,8 @@ namespace CES.Infra.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Number")
-                        .HasColumnType("NCHAR(30)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("VehicleModelId")
                         .HasColumnType("int");
@@ -355,9 +458,10 @@ namespace CES.Infra.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Name")
-                        .HasColumnType("NCHAR(30)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("VehicleBrandId")
+                    b.Property<int>("VehicleBrandId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -379,7 +483,8 @@ namespace CES.Infra.Migrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Division")
-                        .HasColumnType("NCHAR(30)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("PeriodReport")
                         .HasColumnType("DATE");
@@ -389,7 +494,7 @@ namespace CES.Infra.Migrations
                     b.ToTable("WorkCardDivisions");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.DriverLicenseEntity", b =>
+            modelBuilder.Entity("CES.Infra.Models.Drivers.DriverLicenseEntity", b =>
                 {
                     b.HasOne("CES.Infra.Models.EmployeeEntity", "Employee")
                         .WithMany("DriverLicense")
@@ -400,7 +505,7 @@ namespace CES.Infra.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.DriverMedicalCertificateEntity", b =>
+            modelBuilder.Entity("CES.Infra.Models.Drivers.DriverMedicalCertificateEntity", b =>
                 {
                     b.HasOne("CES.Infra.Models.EmployeeEntity", "Employee")
                         .WithMany("MedicalCertificates")
@@ -438,6 +543,25 @@ namespace CES.Infra.Migrations
                         .HasForeignKey("NumberPlateCarId");
 
                     b.Navigation("NumberPlateCar");
+                });
+
+            modelBuilder.Entity("CES.Infra.Models.MaterialReport.DecommissionedMaterialEntity", b =>
+                {
+                    b.HasOne("CES.Infra.Models.CarMechanicEntity", "CarMechanic")
+                        .WithMany("DecommissionedMaterials")
+                        .HasForeignKey("CarMechanicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CES.Infra.Models.NumberPlateCarEntity", "NumberPlateOfCar")
+                        .WithMany("DecommissionedMaterials")
+                        .HasForeignKey("NumberPlateOfCarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CarMechanic");
+
+                    b.Navigation("NumberPlateOfCar");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.PartyEntity", b =>
@@ -483,9 +607,16 @@ namespace CES.Infra.Migrations
                 {
                     b.HasOne("CES.Infra.Models.VehicleBrandEntity", "VehicleBrand")
                         .WithMany("VehiclesModels")
-                        .HasForeignKey("VehicleBrandId");
+                        .HasForeignKey("VehicleBrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("VehicleBrand");
+                });
+
+            modelBuilder.Entity("CES.Infra.Models.CarMechanicEntity", b =>
+                {
+                    b.Navigation("DecommissionedMaterials");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.DivisionEntity", b =>
@@ -522,6 +653,8 @@ namespace CES.Infra.Migrations
 
             modelBuilder.Entity("CES.Infra.Models.NumberPlateCarEntity", b =>
                 {
+                    b.Navigation("DecommissionedMaterials");
+
                     b.Navigation("FuelWorkCards");
                 });
 

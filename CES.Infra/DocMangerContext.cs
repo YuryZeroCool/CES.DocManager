@@ -2,6 +2,7 @@
 using CES.Infra.Config.Fuel;
 using CES.Infra.Config.MaterialReport;
 using CES.Infra.Models;
+using CES.Infra.Models.Drivers;
 using CES.Infra.Models.Fuel;
 using CES.Infra.Models.MaterialReport;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ namespace CES.Infra
     public class DocMangerContext : DbContext
     {
         //dotnet ef migrations add InitialCreate --context BlogContext --output-dir Migrations/SqlServerMigrations
-        //Add-Migration  MaterialReport  -context DocMangerContext
+        //Add-Migration  DecommissionedMaterialTablePeriodToCurrentDate  -context DocMangerContext
         //  update-database -Context DocMangerContext
 
         public DocMangerContext(DbContextOptions<DocMangerContext> options)
@@ -50,6 +51,13 @@ namespace CES.Infra
         
         public virtual DbSet<PriceEntity> Prices { get; set; }
 
+        public virtual DbSet <EnshrinedMaterialEntity> EnshrinedMaterial { get; set; }
+
+        public virtual DbSet<DecommissionedMaterialEntity> DecommissionedMaterials { get; set; }
+
+        public virtual DbSet<CarMechanicEntity> CarMechanics { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfig());
@@ -68,6 +76,9 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new WorkCardDivisionConfig());
             modelBuilder.ApplyConfiguration(new FuelConfig());
             modelBuilder.ApplyConfiguration(new PriceConfig());
+            modelBuilder.ApplyConfiguration(new EnshrinedMaterialConfig());
+            modelBuilder.ApplyConfiguration(new DecommissionedMaterialConfig());
+            modelBuilder.ApplyConfiguration(new CarMechanicConfig());
         }
-}
+    }
 }
