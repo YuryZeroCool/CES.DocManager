@@ -25,27 +25,34 @@ namespace CES.Domain.Handlers.MaterialReport
 
         public async Task<List<GetTotalMaterialsResponse>> Handle(GetTotalMaterialsRequest request, CancellationToken cancellationToken)
         {
-            var arrAccounts = request.Accounts.Split(", ").ToList();
-            if (arrAccounts == null) throw new System.Exception("Error");
-            var totalMaterials = new List<GetTotalMaterialsResponse>();
-
-            foreach (var item in arrAccounts)
+            if(request.Accounts != null)
             {
-                var products=  from p in _ctx.ProductsGroupAccount
-                                where p.AccountName == item
-                                from pr in _ctx.Products
-                                where  pr.ProductGroupAccountId == p.Id
-                                join unit in _ctx.Units on pr.UnitId equals unit.Id
-                    select new GetTotalMaterialsResponse()
-                    {
-                        Name = pr.Name,
-                        Unit = unit.Name,
-                        Id = pr.Id,
-                        Party = pr.Parties.Select(s => _mapper.Map<PartyEntity, PartyModel>(s)),
-                    };
-                totalMaterials = totalMaterials.Union(products).ToList();
+                var arrAccounts = request.Accounts.Split(", ").ToList();
+                if (arrAccounts == null) throw new System.Exception("Error");
+                var totalMaterials = new List<GetTotalMaterialsResponse>();
+
+                foreach (var item in arrAccounts)
+                {
+                    var products = from p in _ctx.ProductsGroupAccount
+                                   where p.AccountName == item
+                                   from pr in _ctx.Products
+                                   where pr.ProductGroupAccountId == p.Id
+                                   orderby pr.Name ascending
+                                   join unit in _ctx.Units on pr.UnitId equals unit.Id
+                                   select new GetTotalMaterialsResponse()
+                                   {
+                                       Name = pr.Name,
+                                       Unit = unit.Name,
+                                       Id = pr.Id,
+                                       Party = pr.Parties!.Select(s => _mapper.Map<PartyEntity, PartyModel>(s)),
+                                   };
+                    totalMaterials = totalMaterials.Union(products).ToList();
+                }
+
+
+                return await Task.FromResult(totalMaterials);
             }
-            return totalMaterials;
+            throw new SystemException("Error");
         }
     }
 }

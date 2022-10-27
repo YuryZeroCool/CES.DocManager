@@ -7,23 +7,28 @@ using NPOI.SS.UserModel;
 
 namespace CES.Domain.Handlers.MaterialReport
 {
-    public class AddMaterialsHandler : IRequestHandler<AddMaterialReportRequest>
+    public class AddMaterialsHandler : IRequestHandler<AddMaterialReportRequest, Unit>
     {
         private readonly DocMangerContext _ctx;
 
-        private string nameProduct;
+        private string? NameProduct;
+
+        private bool IsCurrentAccount = false;
+
+        private Stream? fs;
+
+        private IWorkbook? wk;
 
         public AddMaterialsHandler(DocMangerContext ctx)
         {
             _ctx = ctx;
         }
-        private  bool IsCurrentAccount = false;
-        private Stream fs;
-        private IWorkbook wk;
+      
         public async Task<Unit> Handle(AddMaterialReportRequest request, CancellationToken cancellationToken)
         {
+       
             int currentRow = 0;
-            using (fs = request.File.OpenReadStream())
+            using (fs = request.File!.OpenReadStream())
             {
                 wk = WorkbookFactory.Create(fs);
             }
@@ -34,7 +39,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 var productGroup = _ctx.ProductsGroupAccount.ToList();
                 foreach (var account in productGroup) //прохожу по счетам 
                 {
-                    account.AccountName = account.AccountName.Trim();
+                    account.AccountName = account.AccountName!.Trim();
                     for (int k = currentRow; k < sheet.LastRowNum; k++) // опеределяю количество строк документе 
                     {
                         var cell = sheet.GetRow(k).GetCell(0);
@@ -46,9 +51,8 @@ namespace CES.Domain.Handlers.MaterialReport
                                 IsCurrentAccount = true;
                                 continue;
                             }
-
                             if (cell.ToString() != account.AccountName && IsCurrentAccount &&
-                                !cell.ToString().Equals(""))
+                                !cell.ToString()!.Equals(""))
                             {
                                 IsCurrentAccount = false;
                                 currentRow = k;
@@ -59,13 +63,26 @@ namespace CES.Domain.Handlers.MaterialReport
                             {
                                 var sheetUnit = sheet.GetRow(k).GetCell(6);
                                 var unit = await _ctx.Units.FirstOrDefaultAsync(p =>
-                                    p.Name.Trim() == sheetUnit.ToString());
-                                 nameProduct = sheet.GetRow(k).GetCell(1).ToString();
+                                    p.Name!.Trim() == sheetUnit.ToString(), cancellationToken);
+                                 NameProduct = sheet.GetRow(k).GetCell(1).ToString()!;
 
-                                 if (!_ctx.Products.Any(p => p.Name == nameProduct))
+                                var products = await  _ctx.Products.Where(x => x.Name == NameProduct)
+                                     .Include(p => p.Account).ToListAsync();
+
+                                 if (products.Count == 0)
                                  {
-                                     await CheckProductExist(unit, account);
+                                    await CheckProductExist(unit, account);
                                  }
+                                else
+                                {
+                                    foreach (var item in products)
+                                    {
+                                        if (item.ProductGroupAccountId != account.Id)
+                                        {
+                                            await CheckProductExist(unit, account); //  DELETE FROM Products WHERE ID = 252
+                                        }   
+                                    }
+                                }
                             }
                         }
                         else
@@ -73,34 +90,35 @@ namespace CES.Domain.Handlers.MaterialReport
                             if (IsCurrentAccount) // Добовляем партию
                             {
                                 if (sheet.GetRow(k).GetCell(2) == null) continue;
-                                var currentProduct = await _ctx.Products.FirstOrDefaultAsync(x => x.Name == nameProduct, cancellationToken);
 
-                                var partyArr = sheet.GetRow(k).GetCell(2).ToString().Split(" от ");
+                                var currentProduct = await _ctx.Products.FirstOrDefaultAsync(x => x.Name == NameProduct, cancellationToken);
+
+                                var partyArr = sheet.GetRow(k).GetCell(2).ToString()!.Split(" от ");
 
                                 if (!_ctx.Parties.Any(p => p.Name == partyArr[0].Substring(7)))
                                 {
                                     await _ctx.Parties.AddAsync(new PartyEntity()
                                     {
-                                        Name = partyArr[0].Substring(7),
+                                        Name = partyArr[0][7..],
                                         DateCreated = DateTime.Now,
-                                        Count = Double.Parse(sheet.GetRow(k).GetCell(13).ToString()),
+                                        Count = Double.Parse(sheet.GetRow(k).GetCell(13).ToString()!),
                                         PartyDate = GetDate(partyArr[1]),
-                                        Price = decimal.Parse(sheet.GetRow(k).GetCell(5).ToString()),
+                                        Price = decimal.Parse(sheet.GetRow(k).GetCell(5).ToString()!),
                                         Product = currentProduct
-                                    });
-                                    await _ctx.SaveChangesAsync();
+                                    },cancellationToken);
+                                    await _ctx.SaveChangesAsync(cancellationToken);
                                 }
                                 else
                                 {
                                     var party = await _ctx.Parties.FirstOrDefaultAsync(p =>
-                                        p.Name == partyArr[0].Substring(7));
-                                   var countMaterial =  Double.Parse(sheet.GetRow(k).GetCell(13).ToString());
+                                        p.Name == partyArr[0].Substring(7),cancellationToken);
+                                   var countMaterial =  Double.Parse(sheet.GetRow(k).GetCell(13).ToString()!);
 
-                                    if (party.Count != countMaterial)
+                                    if (party!.Count != countMaterial)
                                     {
                                         party.Count = countMaterial;
                                         _ctx.Parties.Update(party);
-                                       await _ctx.SaveChangesAsync();
+                                       await _ctx.SaveChangesAsync(cancellationToken);
                                     }
                                 }
                             }
@@ -118,7 +136,7 @@ namespace CES.Domain.Handlers.MaterialReport
             {
                 var cell = sheet.GetRow(i).GetCell(0);
                 if (cell == null) continue;
-                if (!cell.ToString().Equals("") && cell.ToString().StartsWith("По счету"))
+                if (!cell.ToString()!.Equals("") && cell.ToString()!.StartsWith("По счету"))
                 {
                     if (!_ctx.ProductsGroupAccount.Any(p => p.AccountName == cell.ToString()))
                     {
@@ -136,14 +154,14 @@ namespace CES.Domain.Handlers.MaterialReport
         {
             await _ctx.Products.AddAsync(new ProductEntity()
             {
-                Name = nameProduct,
+                Name = NameProduct,
                 Account = account,
                 Unit = unit
             });
             await _ctx.SaveChangesAsync();
         }
 
-        private DateTime GetDate(string date)
+        private static DateTime GetDate(string date)
         { 
             var dateArr = date.Split(" ");
 
