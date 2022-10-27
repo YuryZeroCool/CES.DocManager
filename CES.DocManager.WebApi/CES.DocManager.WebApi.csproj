@@ -57,10 +57,32 @@
   </Target>
     
   <ItemGroup>
-    <Folder Include="wwwroot\Docs\" />
     <Folder Include="wwwroot\download\" />
     <Folder Include="wwwroot\js\" />
     <Folder Include="wwwroot\07\" />
   </ItemGroup>
+    
+  <ItemGroup>
+    <None Include="Controllers\AccountController.cs" />
+    <None Include="Controllers\DivisionController.cs" />
+    <None Include="Controllers\DriverLicensesController.cs" />
+    <None Include="Controllers\DriverMedicalCertificateController.cs" />
+    <None Include="Controllers\EmployeeController.cs" />
+    <None Include="Controllers\FuelReportController.cs" />
+    <None Include="Controllers\MaterialReportController.cs" />
+    <None Include="Controllers\VehicleController.cs" />
+    <None Include="wwwroot\Docs\Ведомость расхода по машинам.xls" />
+  </ItemGroup>
+    
+  <ItemGroup>
+    <Reference Include="Spire.Pdf">
+      <HintPath>..\..\..\12.7\Bin\netstandard2.0\Spire.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.XLS">
+      <HintPath>..\..\..\12.7\Bin\netstandard2.0\Spire.XLS.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+    
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
   
 </Project>

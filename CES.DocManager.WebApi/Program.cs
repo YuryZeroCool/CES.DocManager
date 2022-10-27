@@ -103,8 +103,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseStaticFiles();
 app.UseRouting();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 //app.UseHttpsRedirection();

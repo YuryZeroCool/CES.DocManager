@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -11,12 +11,24 @@
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="NPOI" Version="2.5.6" />
+    <PackageReference Include="SkiaSharp" Version="2.88.3" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CES.InfraSecurity\CES.InfraSecurity.csproj" />
     <ProjectReference Include="..\CES.Infra\CES.Infra.csproj" />
     <ProjectReference Include="..\CES.XmlFormat\CES.XmlFormat.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Spire.Pdf">
+      <HintPath>..\..\..\12.7\Bin\netstandard2.0\Spire.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.XLS">
+      <HintPath>..\..\..\12.7\Bin\netstandard2.0\Spire.XLS.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
