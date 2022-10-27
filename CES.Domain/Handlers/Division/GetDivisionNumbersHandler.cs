@@ -11,6 +11,7 @@ namespace CES.Domain.Handlers.Division
     public class GetDivisionNumbersHandler : IRequestHandler<GetDivisionNumbersRequest, IEnumerable<GetDivisionNumbersResponse>>
     {
         private readonly DocMangerContext _context;
+
         private readonly IMapper _mapper;
 
         public GetDivisionNumbersHandler(DocMangerContext context, IMapper mappper)

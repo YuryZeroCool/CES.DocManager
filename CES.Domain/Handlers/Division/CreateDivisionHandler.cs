@@ -9,12 +9,12 @@ using System.Net;
 
 namespace CES.Domain.Handlers.Division
 {
-    public class CreateDivision : IRequestHandler<CreateDivisionRequest, GetDivisionNumbersResponse>
+    public class CreateDivisionHandler : IRequestHandler<CreateDivisionRequest, GetDivisionNumbersResponse>
     {
         private readonly DocMangerContext _docMangerContext;
         private readonly IMapper _mapper;
 
-        public CreateDivision(IMapper mapper, DocMangerContext ctx )
+        public CreateDivisionHandler(IMapper mapper, DocMangerContext ctx )
         {
             _mapper = mapper;
             _docMangerContext = ctx;
