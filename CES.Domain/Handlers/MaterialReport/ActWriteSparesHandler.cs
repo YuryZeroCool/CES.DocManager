@@ -87,6 +87,11 @@ namespace CES.Domain.Handlers.MaterialReport
             sheet.Range[$"K{startRow + materials.Count}"].Value = $"{totalCount}";
             sheet.Range[$"O{startRow + materials.Count}:R{startRow + materials.Count}"].Value = $"{totalSum}";
 
+            sheet.Range["K7"].Style.HorizontalAlignment = HorizontalAlignType.Center;
+            sheet.Range["K7"].Style.VerticalAlignment = VerticalAlignType.Center;
+            sheet.Range["K7"].Style.Font.IsBold = true;
+            sheet.Range["K7"].Text = request.Month < 10 ? $"0{request.Month}/{request.Year}" : $"{request.Month}/{request.Year}";
+
             workbook.SaveToFile(request.Path + "/Docs/sparesOut.xls", ExcelVersion.Version97to2003);
 
             return await File.ReadAllBytesAsync(request.Path + "/Docs/sparesOut.xls", cancellationToken); 
