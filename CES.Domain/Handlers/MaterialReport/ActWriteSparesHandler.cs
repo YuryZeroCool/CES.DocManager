@@ -1,14 +1,16 @@
 ﻿using CES.Domain.Models.Request.MaterialReport;
 using CES.Infra;
+using CES.Infra.Models.MaterialReport;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using NPOI.SS.UserModel;
+using NPOI.Util;
 using Spire.Xls;
 using System.Text.Json;
 
 namespace CES.Domain.Handlers.MaterialReport
 {
-    public class ActWriteSparesHandler : IRequestHandler<ActWriteSparesRequest,object>
+    public class ActWriteSparesHandler : IRequestHandler<ActWriteSparesRequest, byte[]>
     {
         private readonly DocMangerContext _ctx;
 
@@ -18,72 +20,116 @@ namespace CES.Domain.Handlers.MaterialReport
         {
             _ctx = ctx;
         }
-        public async Task<object> Handle(ActWriteSparesRequest request, CancellationToken cancellationToken)
+        public async Task<byte[]> Handle(ActWriteSparesRequest request, CancellationToken cancellationToken)
         {
-            var startRow = 32;
+            var startRow = 31;
+            decimal totalSum = 0;
+            double totalCount = 0;
 
-           var decommissionedMaterials = await _ctx.DecommissionedMaterials.Where(x => x.CurrentDate.Month == request.Date ).ToListAsync(cancellationToken);
+            List<AddDecomissioneMaterial>? materials = null;
 
-            if (decommissionedMaterials == null) throw new SystemException("Error");
+            var decommissionedMaterials = await _ctx.DecommissionedMaterials.Where(x => x.CurrentDate.Month == request.Month &&
+            x.CurrentDate.Year == request.Year).ToListAsync(cancellationToken);
 
-            foreach (var material in decommissionedMaterials)
-            {
-                var materials = JsonSerializer.Deserialize<List<AddDecomissioneMaterial>>(material.Materials);
-            }
+           
+            materials = JoinMaterials(decommissionedMaterials);
 
             Workbook workbook = new Workbook();
-        
             workbook.LoadFromFile(request.Path + "/Docs/spares.xls");
             Worksheet sheet = workbook.Worksheets[0];
-             sheet.InsertRow(32, decommissionedMaterials.Count);
-            //sheet.Copy(sheet.Rows[30], sheet.Rows[31], true, true, true);
-            //sheet.Copy(sheet.Rows[30], sheet.Rows[32], true, true, true);
-            //sheet.Copy(sheet.Rows[30], sheet.Rows[33], true, true, true);
-            //sheet.Copy(sheet.Rows[30], sheet.Rows[34], true, true, true);
-            for (int i = 0; i < decommissionedMaterials.Count; i++)
+
+            sheet.InsertRow(startRow, materials.Count);
+
+            for (int j = 0; j < materials.Count; j++)
             {
-               
-               // sheet.Copy(sheet.Rows[31], sheet.Rows[++startRow], true, true, true);
-               // sheet.SetRowHeight(startRow += 1, 40);
+                totalCount += materials[j].Count;
+                totalSum += materials[j].Price * (decimal)materials[j].Count; 
+
+                sheet.SetRowHeight(startRow + j, 50);
+
+                sheet.Range[$"A{startRow + j}:B{startRow + j}"].Merge();
+                sheet.Range[$"C{startRow + j}:F{startRow + j}"].Merge();
+                sheet.Range[$"H{startRow + j}:J{startRow + j}"].Merge();
+                sheet.Range[$"L{startRow + j}:N{startRow + j}"].Merge();
+                sheet.Range[$"O{startRow + j}:R{startRow + j}"].Merge();
+                sheet.Range[$"S{startRow + j}:T{startRow + j}"].Merge();
+
+                sheet.Range[$"A{startRow + j}:T{startRow + j}"].Style.Font.FontName = "Times New Roman";
+                sheet.Range[$"A{startRow + j}:T{startRow + j}"].Style.Font.IsBold = true;
+                sheet.Range[$"C{startRow + j}:T{startRow + j}"].Style.ShrinkToFit = true;
+                sheet.Range[$"A{startRow + j}:T{startRow + j}"].Style.HorizontalAlignment = HorizontalAlignType.Center;
+                sheet.Range[$"A{startRow + j}:T{startRow + j}"].Style.VerticalAlignment = VerticalAlignType.Center;
+                sheet.Range[$"A{startRow + j}:T{startRow + j}"].BorderInside(LineStyleType.Thin);
+                sheet.Range[$"A{startRow + j}:T{startRow + j}"].BorderAround(LineStyleType.Thin);
+
+                sheet.Range[$"A{startRow + j}:B{startRow + j}"].Style.Font.Size = 10;
+                sheet.Range[$"G{startRow + j}"].Style.Font.Size = 10;
+                sheet.Range[$"H{startRow + j}:J{startRow + j}"].Style.Font.Size = 10;
+                sheet.Range[$"K{startRow + j}"].Style.Font.Size = 10;
+                sheet.Range[$"L{startRow + j}:N{startRow + j}"].Style.Font.Size = 10;
+                sheet.Range[$"O{startRow + j}:R{startRow + j}"].Style.Font.Size = 10;
+                sheet.Range[$"L{startRow + j}:N{startRow + j}"].NumberFormat = "0.00";
+                sheet.Range[$"O{startRow + j}:R{startRow + j}"].NumberFormat = "0.00";
+
+                sheet.Range[$"A{startRow + j}:B{startRow + j}"].Value = $"{1 + j}";
+                sheet.Range[$"C{startRow + j}:F{startRow + j}"].Value = $"{materials[j].NameMaterial}";
+                sheet.Range[$"G{startRow + j}"].Value = $"{materials[j].Unit}";
+                sheet.Range[$"H{startRow + j}:J{startRow + j}"].Value = $"{materials[j].NameParty}";
+                sheet.Range[$"K{startRow + j}"].Value = $"{materials[j].Count}";
+                sheet.Range[$"L{startRow + j}:N{startRow + j}"].Value = $"{materials[j].Price}";
+                sheet.Range[$"O{startRow + j}:R{startRow + j}"].Value = $"{materials[j].Price * (decimal)materials[j].Count}";
+                sheet.Range[$"S{startRow + j}:T{startRow + j}"].Value = $"Использована для ремонта автомобиля\n{materials[j].VehicleBrand} гос.№ {materials[j].NumberPlateCar}";
             }
 
-            //sheet.SetRowHeight(31, 40);
-            //CellRange cell = sheet.Range["C31:S31"];
-            //CellStyle style = cell.Style;
-            //style.ShrinkToFit =true;
+            sheet.Range[$"K{startRow + materials.Count}"].Style.Font.IsBold = true;
+            sheet.Range[$"O{startRow + materials.Count}:R{startRow + materials.Count}"].Style.Font.IsBold = true;
 
-            //sheet.SetRowHeight(33, 50);
-            //sheet.SetRowHeight(34, 50);
+            sheet.Range[$"K{startRow + materials.Count}"].Value = $"{totalCount}";
+            sheet.Range[$"O{startRow + materials.Count}:R{startRow + materials.Count}"].Value = $"{totalSum}";
 
-            // sheet.SetRowHeight(32, 25);
-            //var sheet = _wk.GetSheet("Worksheet");
-            // var oldRow = sheet.GetRow(30).Copy();
-            // var oldStyle = oldRow.RowStyle;
-
-            // var count = sheet.LastRowNum;
-
-            //sheet.ShiftRows(31, 32,3,true,true);
-            // //var d = sheet.GetMergedRegion(1).;
-
-            //var row = sheet.CreateRow(32);
-            //var cell = row.CreateCell(0);
-            //cell.SetCellValue("some string");
-            //sheet.AddMergedRegion(new CellRangeAddress(32, 32, 0, 5));
-
-            //sheet.CopyRow(30, 30);
-
-            //sheet.CopyRow(31, 32);
-            //sheet.CopyRow(32, 33);
-
-            //sheet.CopyRow(33, 34);
-
-            //fs = File.OpenWrite(request.Path + "/Docs/sparesOut.xls");
             workbook.SaveToFile(request.Path + "/Docs/sparesOut.xls", ExcelVersion.Version97to2003);
-            //_wk.Write(fs);
-            //_wk.Close();
 
-            //fs.Close();
-            return decommissionedMaterials; 
+            return await File.ReadAllBytesAsync(request.Path + "/Docs/sparesOut.xls", cancellationToken); 
+        }
+
+        private List<AddDecomissioneMaterial> JoinMaterials(List<DecommissionedMaterialEntity>? decommissionedMaterials)
+        {
+            if (decommissionedMaterials == null) throw new SystemException("Error");
+
+            List<AddDecomissioneMaterial>? MaterialsList = new List<AddDecomissioneMaterial>();
+
+            foreach (var item in decommissionedMaterials)
+            {
+               var  materials = JsonSerializer.Deserialize<List<AddDecomissioneMaterial>>(item.Materials);
+
+                if (materials == null) throw new System.Exception("Error");
+
+                foreach (var material in materials)
+                {
+                     var res = MaterialsList.FirstOrDefault(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty);
+
+                    if (!MaterialsList.Any(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty))
+                    {
+                        MaterialsList.Add(material);
+                    }
+                    else
+                    {
+                        var index =  MaterialsList.FindIndex(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty);
+                        MaterialsList[index].Count += material.Count;
+                        if (!MaterialsList[index].VehicleBrand!.Contains(material.VehicleBrand!))
+                        {
+                            MaterialsList[index].VehicleBrand += $" {material.VehicleBrand}";
+                        }
+
+                        if (!MaterialsList[index].NumberPlateCar!.Contains(material.NumberPlateCar!))
+                        {
+                            MaterialsList[index].NumberPlateCar += $" {material.NumberPlateCar}";
+                        }
+                    }
+                }
+            }
+            
+            return MaterialsList;
         }
     }
 }

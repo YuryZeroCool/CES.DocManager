@@ -248,16 +248,16 @@ namespace CES.DocManager.WebApi.Controllers
 
 
         [HttpGet("actWriteSpares")]
-        [Produces(typeof(List<GetAllDecommissionedMaterialsResponse>))]
-        public async Task<object> ActWriteSparesAsync(int period)
+        [Produces(typeof(byte[]))]
+        public async Task<object> ActWriteSparesAsync(int month,int year)
         {
             try
             {
                return await _mediator.Send(new ActWriteSparesRequest()
-               { 
-                    Date = period,
-
-                    Path = _appEnvironment.WebRootPath
+               {
+                   Month = month,
+                   Year = year,
+                   Path = _appEnvironment.WebRootPath
                
                });
                 //return null;

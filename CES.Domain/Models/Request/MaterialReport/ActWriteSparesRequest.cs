@@ -2,11 +2,12 @@
 
 namespace CES.Domain.Models.Request.MaterialReport
 {
-    public class ActWriteSparesRequest : IRequest<object>
+    public class ActWriteSparesRequest : IRequest<byte[]>
     {
-        public int Date { get; set; }
+        public int Month { get; set; }
+
+        public int Year { get; set; }
 
         public string? Path { get; set; } 
-
     }
 }
