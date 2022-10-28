@@ -9,7 +9,7 @@ import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
 import { changePageType, changeRowActiveId } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
-import { IMaterialsResponse, ReportErrors } from '../../types/ReportTypes';
+import { IMaterialsResponse, IPeriod, ReportErrors } from '../../types/ReportTypes';
 import { IModal } from '../../types/type';
 import MaterialReportPageComponent from './MaterialReportPage.component';
 
@@ -62,9 +62,20 @@ function MaterialReportPageContainer() {
     }
   }, [period]);
 
+  const base64ToArrayBuffer = (base64: string) => {
+    const binaryString = window.atob(base64);
+    const binaryLen = binaryString.length;
+    const bytes = new Uint8Array(binaryLen);
+    for (let i = 0; i < binaryLen; i += 1) {
+      const ascii = binaryString.charCodeAt(i);
+      bytes[i] = ascii;
+    }
+    return bytes;
+  };
+
   useEffect(() => {
-    if (actOfWriteoffOfSpareParts !== null) {
-      const blob = new Blob([actOfWriteoffOfSpareParts]);
+    if (actOfWriteoffOfSpareParts !== '') {
+      const blob = new Blob([base64ToArrayBuffer(actOfWriteoffOfSpareParts)]);
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
       const fileName = file;
@@ -100,11 +111,6 @@ function MaterialReportPageContainer() {
     dispatch(changePageType('Отчеты'));
   };
 
-  const getMonth = (): number => {
-    const monthNumber = dayjs(period).month() + 1;
-    return monthNumber;
-  };
-
   const handleDownload = async () => {
     if (reportName === '') {
       setErrorMessage((prevErrorMessage) => ({ ...prevErrorMessage, reportNameError: true }));
@@ -114,7 +120,11 @@ function MaterialReportPageContainer() {
     }
     try {
       if (reportName === 'Акт списания запчастей') {
-        await dispatch(downloadActOfWriteoffOfSpareParts(getMonth()));
+        const reportPeriod: IPeriod = {
+          month: dayjs(period).month() + 1,
+          year: dayjs(period).year(),
+        };
+        await dispatch(downloadActOfWriteoffOfSpareParts(reportPeriod));
       }
       if (reportName === 'Акт списания материалов') {
         console.log('Акт списания материалов');
