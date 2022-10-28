@@ -54,7 +54,7 @@ const initial: IMaterialsResponse = {
   },
   allDecommissionedMaterials: [],
   defectiveSheet: '',
-  actOfWriteoffOfSpareParts: null,
+  actOfWriteoffOfSpareParts: '',
   searchValue: {
     materialsSearchValue: '',
     attachedMaterialsSearchValue: '',

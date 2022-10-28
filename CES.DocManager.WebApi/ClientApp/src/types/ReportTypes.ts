@@ -101,7 +101,7 @@ export interface IMaterialsResponse {
   decommissionedMaterial: IDecommissionedMaterialRequest;
   allDecommissionedMaterials: IAllDecommissionedMaterials[];
   defectiveSheet: string;
-  actOfWriteoffOfSpareParts: ArrayBuffer | null;
+  actOfWriteoffOfSpareParts: string;
   searchValue: ISearch;
 }
 
@@ -135,4 +135,9 @@ export interface IAllDecommissionedMaterials extends IDecommissionedMaterialRequ
 export type ReportErrors = {
   reportNameError: boolean;
   periodError: boolean;
+};
+
+export type IPeriod = {
+  month: number;
+  year: number;
 };
