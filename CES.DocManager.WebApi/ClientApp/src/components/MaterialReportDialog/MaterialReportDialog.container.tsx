@@ -7,11 +7,11 @@ import deleteMaterial from '../../redux/actions/report/materialReport/deleteMate
 import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
 import getDefectiveSheet from '../../redux/actions/report/materialReport/getDefectiveSheet';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { toggleCarAttachmentModal, toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
 import { deleteFromAttachedMaterials, resetDefectiveSheet } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { IMaterialsResponse } from '../../types/ReportTypes';
 import MaterialReportDialogComponent from './MaterialReportDialog.component';
+import { toggleCarAttachmentModal, toggleDetailedInformationModal, toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
 
 interface Props {
   offSetX: number;
@@ -65,6 +65,9 @@ function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger
       }
       if (value === 'Прикрепить авто') {
         dispatch(toggleCarAttachmentModal(true));
+      }
+      if (value === 'Подробнее') {
+        dispatch(toggleDetailedInformationModal(true));
       }
     } catch (error) {
       if (error instanceof Error || error instanceof AxiosError) {
