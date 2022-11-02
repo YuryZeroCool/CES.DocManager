@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 using File = System.IO.File;
 
 namespace CES.DocManager.WebApi.Controllers
@@ -41,8 +42,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-       // [Authorize(AuthenticationSchemes =
-       //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("allProductsGroupAccount")]
         [Produces(typeof(List<GetAllProductsGroupAccountResponse>))]
         public async Task<object> GetAllProductsGroupAccountAsync()
@@ -65,8 +66,8 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                if (uploadedFile.Length == 0) throw new Exception("Error") ;
-                // await _mediator.Send(new AddMaterialReportRequest() { File = file });
+                if (uploadedFile.Length == 0) throw new Exception("Error");
+                await _mediator.Send(new AddMaterialReportRequest() { File = uploadedFile });
 
                 if (uploadedFile != null)
                 {
@@ -82,13 +83,13 @@ namespace CES.DocManager.WebApi.Controllers
 
                 return await Task.FromResult("Файл успешно записан");
             }
-            catch (Exception )
+            catch (Exception)
             {
                 HttpContext.Response.StatusCode = 500;
 
                 return await Task.FromResult("Произошка ошибка при запими файла");
             }
-         
+
         }
 
         // [Authorize(AuthenticationSchemes =
@@ -198,7 +199,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-               return await _mediator.Send(new DeleteDecommissionedMaterialRequest() { Id = materialId});
+                return await _mediator.Send(new DeleteDecommissionedMaterialRequest() { Id = materialId });
             }
             catch (Exception e)
             {
@@ -243,23 +244,22 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return e.Message;
             }
-           
-        }
 
+        }
 
         [HttpGet("actWriteSpares")]
         [Produces(typeof(byte[]))]
-        public async Task<object> ActWriteSparesAsync(int month,int year)
+        public async Task<object> ActWriteSparesAsync(int month, int year)
         {
             try
             {
-               return await _mediator.Send(new ActWriteSparesRequest()
-               {
-                   Month = month,
-                   Year = year,
-                   Path = _appEnvironment.WebRootPath
-               
-               });
+                return await _mediator.Send(new ActWriteSparesRequest()
+                {
+                    Month = month,
+                    Year = year,
+                    Path = _appEnvironment.WebRootPath
+
+                });
                 //return null;
             }
             catch (Exception e)
@@ -272,5 +272,22 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        [HttpPost("addUsedMaterial")]
+        [Produces(typeof(AddUsedMaterialResponse))]
+        public async Task<object> CreateUsedMaterialAsync(AddUsedMaterialRequest material)
+        {
+            try
+            {
+                return await _mediator.Send(material);
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                   Message = e.Message
+                };
+            } 
+        }
     }
 }

@@ -58,6 +58,8 @@ namespace CES.Infra
         public virtual DbSet<CarMechanicEntity> CarMechanics { get; set; }
 
 
+        public virtual DbSet<UsedMaterialEntity> UsedMaterials { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfig());
@@ -79,6 +81,7 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new EnshrinedMaterialConfig());
             modelBuilder.ApplyConfiguration(new DecommissionedMaterialConfig());
             modelBuilder.ApplyConfiguration(new CarMechanicConfig());
+            modelBuilder.ApplyConfiguration(new UsedMaterialConf());
         }
     }
 }
