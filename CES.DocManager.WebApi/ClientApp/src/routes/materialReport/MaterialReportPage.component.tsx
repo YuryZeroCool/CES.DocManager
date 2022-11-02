@@ -14,6 +14,7 @@ import ProductsTableHeader from '../../components/ProductsTableHeader/ProductsTa
 import ProductsTable from '../../components/ProductTable/ProductsTable.container';
 import CarAttachmentModal from '../../components/CarAttachmentModal/CarAttachmentModal.container';
 import AddMaterialsWriteOffModal from '../../components/AddMaterialsWriteOffModal/AddMaterialsWriteOffModal.container';
+import DetailedInformationModal from '../../components/DetailedInformationModal/DetailedInformationModal.container';
 import { ReportErrors } from '../../types/ReportTypes';
 import './MaterialReportPage.style.scss';
 
@@ -23,6 +24,7 @@ interface Props {
   productsTableError: string;
   isCarAttachmentModalOpen: boolean;
   isAddMaterialsWriteOffModalOpen: boolean;
+  isDetailedInformationModalOpen: boolean;
   materialsTableType: string;
   pageType: string;
   reportName: string;
@@ -43,6 +45,7 @@ export default function MaterialReportPageComponent(props: Props) {
     productsTableError,
     isCarAttachmentModalOpen,
     isAddMaterialsWriteOffModalOpen,
+    isDetailedInformationModalOpen,
     materialsTableType,
     pageType,
     reportName,
@@ -132,6 +135,7 @@ export default function MaterialReportPageComponent(props: Props) {
       {renderSelectReportType()}
       {isCarAttachmentModalOpen && <CarAttachmentModal />}
       {isAddMaterialsWriteOffModalOpen && <AddMaterialsWriteOffModal />}
+      {isDetailedInformationModalOpen && <DetailedInformationModal />}
     </section>
   );
 }

@@ -15,4 +15,5 @@ export interface IModal {
   isAddMedicalCertificateModalOpen: boolean;
   isAddDriverLicenseModalOpen: boolean;
   isAddMaterialsWriteOffModalOpen: boolean;
+  isDetailedInformationModalOpen: boolean;
 }

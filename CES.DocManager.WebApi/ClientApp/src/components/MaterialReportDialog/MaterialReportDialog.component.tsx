@@ -8,6 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import PrintIcon from '@mui/icons-material/Print';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import './MaterialReportDialog.style.scss';
 
 export interface ReportDialogProps {
@@ -36,7 +37,7 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
       {
         top: offSetTop,
         left: offSetX,
-        height: pageType === 'Материалы' && materialsTableType === 'Свободные' ? '150px' : '100px',
+        height: (pageType === 'Материалы' && materialsTableType === 'Прикрепленные') ? '100px' : '150px',
         zIndex: isDialogHightBigger ? 15 : 5,
       }
       }
@@ -64,6 +65,14 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
               <PrintIcon />
             </ListItemIcon>
             <ListItemText primary="Распечатать" />
+          </ListItem>
+        )}
+        {pageType === 'История ремонтов' && (
+          <ListItem button onClick={(event) => handleClose(event, 'Подробнее')}>
+            <ListItemIcon>
+              <InfoOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Подробнее" />
           </ListItem>
         )}
         <ListItem button onClick={(event) => handleClose(event, 'Удалить')}>
