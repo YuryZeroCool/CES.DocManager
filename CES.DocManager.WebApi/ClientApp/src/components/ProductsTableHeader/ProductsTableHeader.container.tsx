@@ -1,6 +1,11 @@
 import { SelectChangeEvent } from '@mui/material/Select';
 import { AxiosError } from 'axios';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
 import uploadNewMaterials from '../../redux/actions/report/materialReport/uploadNewMaterials';
@@ -39,6 +44,8 @@ function ProductsTableHeaderContainer() {
   const [uploadFileError, setUploadFileError] = useState<boolean>(false);
 
   const dispatch: IAuthResponseType = useDispatch();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function getMaterials(): Promise<void> {
     try {
@@ -106,12 +113,18 @@ function ProductsTableHeaderContainer() {
       if (uploadFileError) {
         setUploadFileError(false);
       }
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     } catch (error) {
       if (error instanceof Error || error instanceof AxiosError) {
         dispatch(changeIsUploadNewMaterialsLoader(false));
         dispatch(changeUploadMaterialsMessage(error.message));
         setUploadFileError(true);
         setFileName('');
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
       }
     }
   };
@@ -138,6 +151,7 @@ function ProductsTableHeaderContainer() {
       uploadMaterialsMessage={uploadMaterialsMessage}
       isLoaderModalOpen={isLoaderModalOpen}
       uploadFileError={uploadFileError}
+      fileInputRef={fileInputRef}
       handleChange={handleChange}
       handleClick={handleClick}
       handleInputFileChange={handleInputFileChange}

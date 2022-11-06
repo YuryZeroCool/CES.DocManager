@@ -22,6 +22,7 @@ interface Props {
   uploadMaterialsMessage: string;
   isLoaderModalOpen: boolean;
   uploadFileError: boolean;
+  fileInputRef: React.RefObject<HTMLInputElement>;
   handleChange: (event: SelectChangeEvent) => void;
   handleClick: () => void;
   handleInputFileChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -49,6 +50,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
     uploadMaterialsMessage,
     isLoaderModalOpen,
     uploadFileError,
+    fileInputRef,
     handleChange,
     handleClick,
     handleInputFileChange,
@@ -62,7 +64,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
       <form name="test" encType="multipart/form-data" onSubmit={(event) => handleSubmit(event)}>
         <Button sx={{ minWidth: 120, height: 40 }} variant="contained" size="small" component="label">
           {fileName || 'Добавить'}
-          <input hidden onChange={handleInputFileChange} accept=".xls" type="file" name="uploadedFile" />
+          <input ref={fileInputRef} hidden onChange={handleInputFileChange} accept=".xls" type="file" name="uploadedFile" />
         </Button>
         {fileName !== '' && (
           <IconButton aria-label="upload" sx={{ width: '40px', height: '40px', padding: 0 }} type="submit">
