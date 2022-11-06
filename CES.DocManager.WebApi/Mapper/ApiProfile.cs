@@ -3,8 +3,10 @@ using CES.DocManager.WebApi.Models;
 using CES.Domain.Models.Request.DriverLicense;
 using CES.Domain.Models.Request.DriverMedicalCertificate;
 using CES.Domain.Models.Request.Employee;
+using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Response.CarMechanic;
 using CES.Domain.Models.Response.Division;
+using CES.Domain.Models.Response.MaterialReport;
 using CES.Domain.Security.Login;
 using CES.Infra.Models;
 
@@ -52,6 +54,16 @@ namespace CES.DocManager.WebApi.Mapper
             CreateMap<CarMechanicEntity, GetAllCarMechanicResponse>()
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                .ForMember(dest => dest.FIO, opt => opt.MapFrom(src => src.FIO));
+
+            CreateMap<UsedMaterial, AddUsedMaterialResponse>()
+             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+             .ForMember(dest => dest.NameMaterial, opt => opt.MapFrom(src => src.NameMaterial))
+             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+             .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count))
+             .ForMember(dest => dest.PartyDate, opt => opt.MapFrom(src => src.PartyDate))
+             .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))
+             .ForMember(dest => dest.NameParty, opt => opt.MapFrom(src => src.NameParty));
+
         }
     }
 
