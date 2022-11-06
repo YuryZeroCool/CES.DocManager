@@ -1,6 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IMaterialAttachedResponse, IMaterialsResponse, MaterialAttached } from '../../../types/ReportTypes';
+import {
+  IMaterialAttachedResponse,
+  IMaterialsResponse,
+  MaterialAttached,
+  Product,
+} from '../../../types/ReportTypes';
 import addDecommissionedMaterial from '../../actions/report/materialReport/addDecommissionedMaterials';
+import addUsedMaterial from '../../actions/report/materialReport/addUsedMaterial';
 import createAttachedMaterial from '../../actions/report/materialReport/createAttachedMaterial';
 import deleteAttachedMaterial from '../../actions/report/materialReport/deleteAttachedMaterial';
 import deleteMaterial from '../../actions/report/materialReport/deleteMaterial';
@@ -15,7 +21,10 @@ import uploadNewMaterials from '../../actions/report/materialReport/uploadNewMat
 
 const initial: IMaterialsResponse = {
   uploadMaterialsMessage: '',
+  isUploadNewMaterialsLoader: false,
   getAllMaterials: [],
+  totalCount: '',
+  totalSum: '',
   allAttachedMaterials: [],
   deletedMaterialId: 0,
   getAllGroupAccounts: [],
@@ -60,44 +69,98 @@ const initial: IMaterialsResponse = {
     attachedMaterialsSearchValue: '',
     decommissionedMaterialsSearchValue: '',
   },
+  usedMaterial: {
+    count: 0,
+    id: 0,
+    nameMaterial: '',
+    nameParty: '',
+    partyDate: '',
+    price: 0,
+    unit: '',
+  },
 };
 
 const materialsReducer = createSlice({
   name: 'materials',
   initialState: initial,
   reducers: {
-    editAllMaterials: (state, action: PayloadAction<IMaterialAttachedResponse>) => {
+    editAllMaterialsAttachingMaterial: (
+      state,
+      action: PayloadAction<IMaterialAttachedResponse>,
+    ) => {
       const stateCopy: IMaterialsResponse = state;
-      if (stateCopy.getAllMaterials) {
-        const currentElemId = stateCopy.getAllMaterials?.findIndex(
-          (el) => el.name === action.payload.nameMaterial,
-        );
-        const currentElem = stateCopy.getAllMaterials.filter(
-          (el) => el.name === action.payload.nameMaterial,
-        );
-        const currentPartyId = currentElem[0].party.findIndex(
-          (el) => el.partyName === action.payload.nameParty,
-        );
-        const currentParty = currentElem[0].party.filter(
-          (el) => el.partyName === action.payload.nameParty,
-        );
-        const finalCount = currentParty[currentPartyId].count - action.payload.count;
+      const currentElemIndex = stateCopy.getAllMaterials.findIndex(
+        (el) => el.name === action.payload.nameMaterial,
+      );
+      if (currentElemIndex === -1) throw new Error('Такого материала не существует');
+      const currentElem = stateCopy.getAllMaterials.filter(
+        (el) => el.name === action.payload.nameMaterial,
+      )[0];
 
-        if (finalCount <= 0) {
-          const parties = currentElem[0].party.filter(
-            (el) => el.partyName !== action.payload.nameParty,
-          );
-          stateCopy.getAllMaterials[currentElemId].party.splice(
-            0,
-            stateCopy.getAllMaterials[currentElemId].party.length,
-            ...parties,
-          );
-          if (stateCopy.getAllMaterials[currentElemId].party.length === 0) {
-            stateCopy.getAllMaterials.splice(currentElemId, 1);
-          }
-        } else {
-          stateCopy.getAllMaterials[currentElemId].party[currentPartyId].count = finalCount;
+      const currentPartyIndex = currentElem.party.findIndex(
+        (el) => el.partyName === action.payload.nameParty,
+      );
+      if (currentPartyIndex === -1) throw new Error('Такой партии не существует');
+      const currentParty = currentElem.party.filter(
+        (el) => el.partyName === action.payload.nameParty,
+      )[0];
+
+      const finalCount = currentParty.count - action.payload.count;
+
+      if (finalCount <= 0) {
+        const parties = currentElem.party.filter(
+          (el) => el.partyName !== action.payload.nameParty,
+        );
+        stateCopy.getAllMaterials[currentElemIndex].party.splice(
+          0,
+          stateCopy.getAllMaterials[currentElemIndex].party.length,
+          ...parties,
+        );
+        if (stateCopy.getAllMaterials[currentElemIndex].party.length === 0) {
+          stateCopy.getAllMaterials.splice(currentElemIndex, 1);
         }
+      } else {
+        stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].count = finalCount;
+      }
+      return stateCopy;
+    },
+    editAllMaterialsWritingOffMaterial: (
+      state,
+      action: PayloadAction<Product>,
+    ) => {
+      const stateCopy: IMaterialsResponse = state;
+      const currentElemIndex = stateCopy.getAllMaterials.findIndex(
+        (el) => el.name === action.payload.name,
+      );
+      if (currentElemIndex === -1) throw new Error('Такого материала не существует');
+      const currentElem = stateCopy.getAllMaterials.filter(
+        (el) => el.name === action.payload.name,
+      )[0];
+
+      const currentPartyIndex = currentElem.party.findIndex(
+        (el) => el.partyName === action.payload.party[0].partyName,
+      );
+      if (currentPartyIndex === -1) throw new Error('Такой партии не существует');
+      const currentParty = currentElem.party.filter(
+        (el) => el.partyName === action.payload.party[0].partyName,
+      )[0];
+
+      const finalCount = currentParty.count - action.payload.party[0].count;
+
+      if (finalCount <= 0) {
+        const parties = currentElem.party.filter(
+          (el) => el.partyName !== action.payload.party[0].partyName,
+        );
+        stateCopy.getAllMaterials[currentElemIndex].party.splice(
+          0,
+          stateCopy.getAllMaterials[currentElemIndex].party.length,
+          ...parties,
+        );
+        if (stateCopy.getAllMaterials[currentElemIndex].party.length === 0) {
+          stateCopy.getAllMaterials.splice(currentElemIndex, 1);
+        }
+      } else {
+        stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].count = finalCount;
       }
       return stateCopy;
     },
@@ -231,11 +294,40 @@ const materialsReducer = createSlice({
       };
       return stateCopy;
     },
+    changeUploadMaterialsMessage: (state, action: PayloadAction<string>) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        uploadMaterialsMessage: action.payload,
+      };
+      return stateCopy;
+    },
+    changeIsUploadNewMaterialsLoader: (state, action: PayloadAction<boolean>) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        isUploadNewMaterialsLoader: action.payload,
+      };
+      return stateCopy;
+    },
   },
   extraReducers: (builder) => {
+    builder.addCase(uploadNewMaterials.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        isUploadNewMaterialsLoader: true,
+        uploadMaterialsMessage: '',
+      };
+      return stateCopy;
+    });
     builder.addCase(uploadNewMaterials.fulfilled, (state, action) => {
       let stateCopy = state;
-      stateCopy = { ...stateCopy, uploadMaterialsMessage: action.payload };
+      stateCopy = {
+        ...stateCopy,
+        uploadMaterialsMessage: action.payload,
+        isUploadNewMaterialsLoader: false,
+      };
       return stateCopy;
     });
     builder.addCase(uploadNewMaterials.rejected, (state, action) => {
@@ -249,7 +341,13 @@ const materialsReducer = createSlice({
     });
     builder.addCase(getAllMaterials.fulfilled, (state, action) => {
       let stateCopy = state;
-      stateCopy = { ...stateCopy, getAllMaterials: [...action.payload], status: 'fulfilled' };
+      stateCopy = {
+        ...stateCopy,
+        getAllMaterials: [...action.payload.data],
+        totalCount: action.payload.totalCount,
+        totalSum: action.payload.totalSum,
+        status: 'fulfilled',
+      };
       return stateCopy;
     });
     builder.addCase(getAllMaterials.rejected, (state, action) => {
@@ -359,11 +457,23 @@ const materialsReducer = createSlice({
     builder.addCase(downloadActOfWriteoffOfSpareParts.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
+
+    builder.addCase(addUsedMaterial.fulfilled, (state, action) => {
+      let stateCopy = state;
+      if (action.payload !== null) {
+        stateCopy = { ...stateCopy, usedMaterial: { ...action.payload } };
+      }
+      return stateCopy;
+    });
+    builder.addCase(addUsedMaterial.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
   },
 });
 
 export const {
-  editAllMaterials,
+  editAllMaterialsAttachingMaterial,
+  editAllMaterialsWritingOffMaterial,
   addToCurrentGroupAccount,
   resetAllMaterials,
   resetAllAttachedMaterials,
@@ -381,5 +491,7 @@ export const {
   changeMaterialsSearchValue,
   changeAttachedMaterialsSearchValue,
   changeDecommissionedMaterialsSearchValue,
+  changeUploadMaterialsMessage,
+  changeIsUploadNewMaterialsLoader,
 } = materialsReducer.actions;
 export default materialsReducer.reducer;

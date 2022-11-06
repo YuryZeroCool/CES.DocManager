@@ -30,6 +30,7 @@ export interface Party {
   partyDate: string;
   price: number;
   count: number;
+  totalSum: number;
 }
 
 export interface Product {
@@ -44,7 +45,11 @@ export interface GroupAccount {
   name: string;
 }
 
-export type AllMaterialsResponse = Product[];
+export interface AllMaterialsResponse {
+  totalCount: string;
+  totalSum: string;
+  data: Product[];
+}
 
 export type AllGroupAccountsResponse = GroupAccount[];
 
@@ -84,7 +89,10 @@ export interface ISearch {
 
 export interface IMaterialsResponse {
   uploadMaterialsMessage: string;
-  getAllMaterials: AllMaterialsResponse;
+  isUploadNewMaterialsLoader: boolean;
+  getAllMaterials: Product[];
+  totalCount: string;
+  totalSum: string;
   allAttachedMaterials: IMaterialAttachedResponse[];
   deletedMaterialId: number;
   getAllGroupAccounts?: AllGroupAccountsResponse;
@@ -103,6 +111,7 @@ export interface IMaterialsResponse {
   defectiveSheet: string;
   actOfWriteoffOfSpareParts: string;
   searchValue: ISearch;
+  usedMaterial: IAddUsedMaterialResponse;
 }
 
 export interface AccountsGroupState {
@@ -141,3 +150,18 @@ export type IPeriod = {
   month: number;
   year: number;
 };
+
+export interface IAddUsedMaterialRequest {
+  partyName: string;
+  count: number;
+}
+
+export interface IAddUsedMaterialResponse {
+  count: number;
+  id: number;
+  nameMaterial: string;
+  nameParty: string;
+  partyDate: string;
+  price: number;
+  unit: string;
+}

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import $api from '../../../../http/loginHttp';
-import { AllMaterialsResponse } from '../../../../types/ReportTypes';
+import { AllMaterialsResponse, Product } from '../../../../types/ReportTypes';
 import { FetchTodosError } from '../../../../types/type';
 
 const getAllMaterials = createAsyncThunk<AllMaterialsResponse,
@@ -11,8 +11,13 @@ string, { rejectValue: FetchTodosError }>(
       if (process.env.REACT_APP_ALL_PRODUCTS === undefined) {
         throw Error('Упс, что-то пошло не так...');
       }
-      const response = await $api.get<AllMaterialsResponse>(`${process.env.REACT_APP_ALL_PRODUCTS}?accountsName=${accountsName}`);
-      return response.data;
+      const response = await $api.get<Product[]>(`${process.env.REACT_APP_ALL_PRODUCTS}?accountsName=${accountsName}`);
+
+      return {
+        totalCount: response.headers['x-total-count'],
+        totalSum: response.headers['x-total-sum'],
+        data: response.data,
+      };
     } catch (err) {
       return rejectWithValue({
         message: 'Неверные данные',

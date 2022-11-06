@@ -7,15 +7,21 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import SearchIcon from '@mui/icons-material/Search';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
 import UploadIcon from '@mui/icons-material/Upload';
-import './ProductsTableHeader.style.scss';
+import { RotatingLines } from 'react-loader-spinner';
 import { ISearch } from '../../types/ReportTypes';
+import './ProductsTableHeader.style.scss';
 
 interface Props {
   materialsTableType: string;
   pageType: string;
   fileName: string;
   searchValue: ISearch;
+  isUploadNewMaterialsLoader: boolean;
+  uploadMaterialsMessage: string;
+  isLoaderModalOpen: boolean;
+  uploadFileError: boolean;
   handleChange: (event: SelectChangeEvent) => void;
   handleClick: () => void;
   handleInputFileChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -23,12 +29,26 @@ interface Props {
   handleSearchValueChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'transparent',
+  padding: '20px 32px',
+};
+
 export default function ProductsTableHeaderComponent(props: Props) {
   const {
     materialsTableType,
     pageType,
     fileName,
     searchValue,
+    isUploadNewMaterialsLoader,
+    uploadMaterialsMessage,
+    isLoaderModalOpen,
+    uploadFileError,
     handleChange,
     handleClick,
     handleInputFileChange,
@@ -89,6 +109,27 @@ export default function ProductsTableHeaderComponent(props: Props) {
     />
   );
 
+  const renderLoaderModal = () => (
+    <Modal
+      open={isLoaderModalOpen}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <div className="loader-message-container">
+          <RotatingLines
+            strokeColor="white"
+            strokeWidth="5"
+            animationDuration="0.75"
+            width="80"
+            visible={isUploadNewMaterialsLoader}
+          />
+          {uploadMaterialsMessage !== '' && <p className={uploadFileError ? 'error' : ''}>{uploadMaterialsMessage}</p>}
+        </div>
+      </Box>
+    </Modal>
+  );
+
   return (
     <div className="table-header">
       <div className="table-header-wrapper">
@@ -120,6 +161,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
           {pageType === 'История ремонтов' && renderSearchDecommissionedMaterials()}
         </Box>
       </div>
+      {renderLoaderModal()}
     </div>
   );
 }

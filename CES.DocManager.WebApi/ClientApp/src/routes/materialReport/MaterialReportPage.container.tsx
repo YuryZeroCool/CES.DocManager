@@ -29,6 +29,7 @@ function MaterialReportPageContainer() {
     isCarAttachmentModalOpen,
     isAddMaterialsWriteOffModalOpen,
     isDetailedInformationModalOpen,
+    isAddUsedMaterialModalOpen,
   } = useSelector<RootState,
   IModal>((state) => state.modals);
 
@@ -143,6 +144,7 @@ function MaterialReportPageContainer() {
       isCarAttachmentModalOpen={isCarAttachmentModalOpen}
       isAddMaterialsWriteOffModalOpen={isAddMaterialsWriteOffModalOpen}
       isDetailedInformationModalOpen={isDetailedInformationModalOpen}
+      isAddUsedMaterialModalOpen={isAddUsedMaterialModalOpen}
       materialsTableType={materialsTableType}
       pageType={pageType}
       reportName={reportName}

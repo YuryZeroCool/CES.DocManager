@@ -9,7 +9,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import MaterialReportDialog from '../MaterialReportDialog/MaterialReportDialog.container';
 import {
-  AllMaterialsResponse,
   IAllDecommissionedMaterials,
   IMaterialAttachedResponse,
   ISearch,
@@ -28,9 +27,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
   },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -48,7 +44,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 interface Props {
-  materials: AllMaterialsResponse;
+  materials: Product[];
   allAttachedMaterials: IMaterialAttachedResponse[];
   status: string;
   pageType: string;
@@ -64,6 +60,8 @@ interface Props {
   allDecommissionedMaterials: IAllDecommissionedMaterials[];
   tableIndexArr: number[];
   searchValue: ISearch;
+  totalCount: string;
+  totalSum: string;
   handleContextMenu: (
     event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
     id?: number | undefined,
@@ -102,6 +100,8 @@ export default function ProductsTable(props: Props) {
     divElRef,
     tableIndexArr,
     searchValue,
+    totalCount,
+    totalSum,
     handleContextMenu,
   } = props;
 
@@ -159,6 +159,7 @@ export default function ProductsTable(props: Props) {
       <StyledTableCell align="left">Цена</StyledTableCell>
       <StyledTableCell align="left">Кол-во</StyledTableCell>
       {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && <StyledTableCell align="left">Авто</StyledTableCell>}
+      {pageType === 'Материалы' && materialsTableType === 'Свободные' && <StyledTableCell align="left">Сумма</StyledTableCell>}
     </TableRow>
   );
 
@@ -199,6 +200,21 @@ export default function ProductsTable(props: Props) {
     )
   );
 
+  const renderFirstRow = () => (
+    <StyledTableRow>
+      <StyledTableCell align="center">{null}</StyledTableCell>
+      <StyledTableCell sx={{ maxWidth: 350, fontWeight: 'bold', fontSize: 16 }} component="th" scope="row">
+        Итого
+      </StyledTableCell>
+      <StyledTableCell align="left">{null}</StyledTableCell>
+      <StyledTableCell align="left">{null}</StyledTableCell>
+      <StyledTableCell align="left">{null}</StyledTableCell>
+      <StyledTableCell align="left">{null}</StyledTableCell>
+      <StyledTableCell sx={{ fontWeight: 'bold', fontSize: 16 }} align="left">{totalCount}</StyledTableCell>
+      <StyledTableCell sx={{ fontWeight: 'bold', fontSize: 16 }} align="left">{totalSum}</StyledTableCell>
+    </StyledTableRow>
+  );
+
   const renderMaterialsRows = () => (
     materials && materials?.length > 0 && materials.map(
       (material: Product, index: number) => material.party.map((el) => (
@@ -216,6 +232,7 @@ export default function ProductsTable(props: Props) {
           <StyledTableCell align="left">{el.partyDate.replace(/T/gi, ' ')}</StyledTableCell>
           <StyledTableCell align="left">{el.price}</StyledTableCell>
           <StyledTableCell align="left">{el.count}</StyledTableCell>
+          <StyledTableCell align="left">{el.totalSum}</StyledTableCell>
         </StyledTableRow>
       )),
     )
@@ -265,6 +282,7 @@ export default function ProductsTable(props: Props) {
                 {pageType === 'История ремонтов' && renderHeaderByHistoryPage()}
               </TableHead>
               <TableBody>
+                {pageType === 'Материалы' && materialsTableType === 'Свободные' && renderFirstRow()}
                 {pageType === 'Материалы' && materialsTableType === 'Свободные' && renderMaterialsRows()}
                 {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && renderAttachedMaterialsRows()}
                 {pageType === 'История ремонтов' && renderDecommissionedMaterialsRows()}

@@ -8,17 +8,17 @@ import { toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsRe
 import {
   changeAttachedMaterial,
   changeRowActiveId,
-  editAllMaterials,
+  editAllMaterialsAttachingMaterial,
   resetAllAttachedMaterials,
   resetAllMaterials,
 } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import {
-  AllMaterialsResponse,
   IAllDecommissionedMaterials,
   IMaterialAttachedResponse,
   IMaterialsResponse,
   Party,
+  Product,
 } from '../../types/ReportTypes';
 import { IModal } from '../../types/type';
 import ProductsTableComponent from './ProductsTable.component';
@@ -45,7 +45,7 @@ function ProductsTableContainer(props: Props) {
 
   const [isDialogHightBigger, setIsDialogHightBigger] = useState<boolean>(false);
 
-  const [filteredMaterials, setFilteredMaterials] = useState<AllMaterialsResponse>([]);
+  const [filteredMaterials, setFilteredMaterials] = useState<Product[]>([]);
 
   const [
     filteredAttachedMaterials,
@@ -57,8 +57,7 @@ function ProductsTableContainer(props: Props) {
     setFilteredDecommissionedMaterials,
   ] = useState<IAllDecommissionedMaterials[]>([]);
 
-  const materials = useSelector<RootState,
-  AllMaterialsResponse>((state) => state.materials.getAllMaterials);
+  const materials = useSelector<RootState, Product[]>((state) => state.materials.getAllMaterials);
 
   const { isMaterialReportDialogOpen } = useSelector<RootState,
   IModal>((state) => state.modals);
@@ -74,6 +73,8 @@ function ProductsTableContainer(props: Props) {
     allDecommissionedMaterials,
     pageType,
     searchValue,
+    totalCount,
+    totalSum,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
@@ -103,7 +104,7 @@ function ProductsTableContainer(props: Props) {
     }
   }
 
-  const createTableIndexes = (data: AllMaterialsResponse | IMaterialAttachedResponse[]) => {
+  const createTableIndexes = (data: Product[] | IMaterialAttachedResponse[]) => {
     const numbersArr = [];
     for (let i = 0; i < data.length; i += 1) {
       numbersArr.push(i + 1);
@@ -111,7 +112,7 @@ function ProductsTableContainer(props: Props) {
     setTableIndexArr(numbersArr);
   };
 
-  const filterMaterials = (): AllMaterialsResponse => {
+  const filterMaterials = (): Product[] => {
     const arr = materials.filter((el) => el.name.toLowerCase().includes(
       searchValue.materialsSearchValue,
     )
@@ -192,7 +193,7 @@ function ProductsTableContainer(props: Props) {
 
   useEffect(() => {
     if (createdAttachedMaterial.nameMaterial !== '') {
-      dispatch(editAllMaterials(createdAttachedMaterial));
+      dispatch(editAllMaterialsAttachingMaterial(createdAttachedMaterial));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdAttachedMaterial]);
@@ -253,6 +254,8 @@ function ProductsTableContainer(props: Props) {
       divElRef={divElRef}
       tableIndexArr={tableIndexArr}
       searchValue={searchValue}
+      totalCount={totalCount}
+      totalSum={totalSum}
       handleContextMenu={handleContextMenu}
     />
   );

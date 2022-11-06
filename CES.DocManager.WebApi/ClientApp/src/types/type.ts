@@ -16,4 +16,6 @@ export interface IModal {
   isAddDriverLicenseModalOpen: boolean;
   isAddMaterialsWriteOffModalOpen: boolean;
   isDetailedInformationModalOpen: boolean;
+  isAddUsedMaterialModalOpen: boolean;
+  isLoaderModalOpen: boolean;
 }

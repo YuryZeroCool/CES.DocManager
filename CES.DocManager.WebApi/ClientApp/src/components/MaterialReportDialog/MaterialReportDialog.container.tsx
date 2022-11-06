@@ -11,7 +11,12 @@ import { deleteFromAttachedMaterials, resetDefectiveSheet } from '../../redux/re
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { IMaterialsResponse } from '../../types/ReportTypes';
 import MaterialReportDialogComponent from './MaterialReportDialog.component';
-import { toggleCarAttachmentModal, toggleDetailedInformationModal, toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
+import {
+  toggleAddUsedMaterialModal,
+  toggleCarAttachmentModal,
+  toggleDetailedInformationModal,
+  toggleMaterialReportDialog,
+} from '../../redux/reducers/modals/modalsReducer';
 
 interface Props {
   offSetX: number;
@@ -44,7 +49,7 @@ function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger
     event?.stopPropagation();
     try {
       if (value === 'Списать' && materialsTableType === 'Свободные' && pageType === 'Материалы') {
-        console.log('write-off the material');
+        dispatch(toggleAddUsedMaterialModal(true));
       }
       if (value === 'Удалить' && currentGroupAccount && materialsTableType === 'Свободные' && pageType === 'Материалы') {
         await dispatch(deleteMaterial(rowActiveId));

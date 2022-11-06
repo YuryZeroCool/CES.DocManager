@@ -4,11 +4,11 @@ import logoutReducer from './logoutReducer';
 import medicalCertificatesReducer from './documents/medicalCertificates/medicalCertificatesReducer';
 import divisionsReducer from './divisionsReducer';
 import divisionWorkScheduleReducer from './report/divisionWorkScheduleReducer';
-import materialsReducer from './report/materialsReducer';
 import modalsReducer from './modals/modalsReducer';
 import vehicleReducer from './vehicle/vehicleReducer';
 import driversReducer from './drivers/driversReducer';
 import driverLicenseReducer from './documents/driverLicense/driverLicenseReducer';
+import materialsReducer from './report/materialsReducer';
 
 export const rootReducer = combineReducers({
   login: loginReducer,

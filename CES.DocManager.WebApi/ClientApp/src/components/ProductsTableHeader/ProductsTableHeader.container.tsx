@@ -1,18 +1,23 @@
 import { SelectChangeEvent } from '@mui/material/Select';
 import { AxiosError } from 'axios';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
 import uploadNewMaterials from '../../redux/actions/report/materialReport/uploadNewMaterials';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { toggleAddMaterialsWriteOffModal } from '../../redux/reducers/modals/modalsReducer';
+import { toggleAddMaterialsWriteOffModal, toggleLoaderModal } from '../../redux/reducers/modals/modalsReducer';
 import {
   changeAttachedMaterialsSearchValue,
   changeDecommissionedMaterialsSearchValue,
+  changeIsUploadNewMaterialsLoader,
   changeMaterialsSearchValue,
   changeMaterialsTableType,
+  changeUploadMaterialsMessage,
+  resetAllMaterials,
 } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { IMaterialsResponse } from '../../types/ReportTypes';
+import { IModal } from '../../types/type';
 import ProductsTableHeaderComponent from './ProductsTableHeader.component';
 
 function ProductsTableHeaderContainer() {
@@ -20,12 +25,64 @@ function ProductsTableHeaderContainer() {
     materialsTableType,
     pageType,
     searchValue,
+    currentGroupAccount,
+    isUploadNewMaterialsLoader,
+    uploadMaterialsMessage,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
+  const { isLoaderModalOpen } = useSelector<RootState, IModal>(
+    (state) => state.modals,
+  );
+
   const [fileName, setFileName] = useState<string>('');
-  const [productTableHeaderError, setProductTableHeaderError] = useState<string>('');
+  const [materialsError, setMaterialsError] = useState<string>('');
+  const [uploadFileError, setUploadFileError] = useState<boolean>(false);
 
   const dispatch: IAuthResponseType = useDispatch();
+
+  async function getMaterials(): Promise<void> {
+    try {
+      if (materialsTableType === 'Свободные') {
+        if (currentGroupAccount && currentGroupAccount.length !== 0) {
+          dispatch(resetAllMaterials());
+          await dispatch(getAllMaterials(currentGroupAccount.join(', ')));
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error || error instanceof AxiosError) {
+        setMaterialsError(error.message);
+      }
+    }
+  }
+
+  useEffect(() => {
+    let timerId: NodeJS.Timeout;
+    if (uploadMaterialsMessage !== '') {
+      timerId = setTimeout(() => {
+        dispatch(changeUploadMaterialsMessage(''));
+        dispatch(toggleLoaderModal(false));
+      }, 1500);
+    }
+    return function cleanup() {
+      clearTimeout(timerId);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uploadMaterialsMessage]);
+
+  useEffect(() => {
+    if (isUploadNewMaterialsLoader) {
+      dispatch(toggleLoaderModal(true));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isUploadNewMaterialsLoader]);
+
+  useEffect(() => {
+    if (fileName === '') {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      getMaterials();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileName]);
 
   const handleChange = (event: SelectChangeEvent) => {
     dispatch(changeMaterialsTableType(event.target.value));
@@ -45,9 +102,16 @@ function ProductsTableHeaderContainer() {
     try {
       const formData: FormData = new FormData(event.currentTarget);
       await dispatch(uploadNewMaterials(formData));
+      setFileName('');
+      if (uploadFileError) {
+        setUploadFileError(false);
+      }
     } catch (error) {
       if (error instanceof Error || error instanceof AxiosError) {
-        setProductTableHeaderError(error.message);
+        dispatch(changeIsUploadNewMaterialsLoader(false));
+        dispatch(changeUploadMaterialsMessage(error.message));
+        setUploadFileError(true);
+        setFileName('');
       }
     }
   };
@@ -70,6 +134,10 @@ function ProductsTableHeaderContainer() {
       pageType={pageType}
       fileName={fileName}
       searchValue={searchValue}
+      isUploadNewMaterialsLoader={isUploadNewMaterialsLoader}
+      uploadMaterialsMessage={uploadMaterialsMessage}
+      isLoaderModalOpen={isLoaderModalOpen}
+      uploadFileError={uploadFileError}
       handleChange={handleChange}
       handleClick={handleClick}
       handleInputFileChange={handleInputFileChange}

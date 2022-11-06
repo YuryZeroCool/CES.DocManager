@@ -46,3 +46,18 @@
     color: $border-color-hover;
   }
 }
+
+.loader-message-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    font-size: 20px;
+    margin: 0;
+  }
+
+  .error {
+    color: $color-red;
+  }
+}
