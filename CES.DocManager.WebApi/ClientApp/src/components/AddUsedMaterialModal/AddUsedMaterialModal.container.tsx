@@ -57,6 +57,13 @@ function AddUsedMaterialModalContainer() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    setCurrentMaterial((prevCurrentMaterial) => ({
+      ...prevCurrentMaterial,
+      party: [{ ...prevCurrentMaterial.party[0], count: currentMaterialCount }],
+    }));
+  }, [currentMaterialCount]);
+
   const handleClose = () => {
     dispatch(toggleAddUsedMaterialModal(false));
   };
