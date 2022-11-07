@@ -187,7 +187,7 @@ export default function ProductsTable(props: Props) {
           <StyledTableCell align="left">{material.unit}</StyledTableCell>
           <StyledTableCell align="left">{material.nameParty}</StyledTableCell>
           <StyledTableCell align="left">{material.partyDate.replace(/T/gi, ' ')}</StyledTableCell>
-          <StyledTableCell align="left">{material.price}</StyledTableCell>
+          <StyledTableCell align="left">{material.price.toFixed(2)}</StyledTableCell>
           <StyledTableCell align="left">{material.count}</StyledTableCell>
           <StyledTableCell align="left">
             {material.vehicleBrand}
@@ -230,9 +230,9 @@ export default function ProductsTable(props: Props) {
           <StyledTableCell align="left">{material.unit}</StyledTableCell>
           <StyledTableCell align="left">{el.partyName}</StyledTableCell>
           <StyledTableCell align="left">{el.partyDate.replace(/T/gi, ' ')}</StyledTableCell>
-          <StyledTableCell align="left">{el.price}</StyledTableCell>
+          <StyledTableCell align="left">{el.price.toFixed(2)}</StyledTableCell>
           <StyledTableCell align="left">{el.count}</StyledTableCell>
-          <StyledTableCell align="left">{el.totalSum}</StyledTableCell>
+          <StyledTableCell align="left">{el.totalSum.toFixed(2)}</StyledTableCell>
         </StyledTableRow>
       )),
     )
