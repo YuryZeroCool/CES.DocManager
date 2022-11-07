@@ -4,6 +4,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import downloadActOfWriteoffOfSpareParts from '../../redux/actions/report/materialReport/downloadActOfWriteoffOfSpareParts';
+import downloadActOfWritingOffMaterials from '../../redux/actions/report/materialReport/downloadActOfWritingOffMaterials';
 import getAllDecommissionedMaterials from '../../redux/actions/report/materialReport/getAllDecommissionedMaterials';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
@@ -37,6 +38,7 @@ function MaterialReportPageContainer() {
     materialsTableType,
     pageType,
     actOfWriteoffOfSpareParts,
+    actOfWritingOffMaterials,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
@@ -75,17 +77,28 @@ function MaterialReportPageContainer() {
     return bytes;
   };
 
+  const downloadFile = (fileBase64String: string) => {
+    const blob = new Blob([base64ToArrayBuffer(fileBase64String)]);
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    const fileName = file;
+    link.download = fileName;
+    link.click();
+  };
+
   useEffect(() => {
     if (actOfWriteoffOfSpareParts !== '') {
-      const blob = new Blob([base64ToArrayBuffer(actOfWriteoffOfSpareParts)]);
-      const link = document.createElement('a');
-      link.href = window.URL.createObjectURL(blob);
-      const fileName = file;
-      link.download = fileName;
-      link.click();
+      downloadFile(actOfWriteoffOfSpareParts);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actOfWriteoffOfSpareParts]);
+
+  useEffect(() => {
+    if (actOfWritingOffMaterials !== '') {
+      downloadFile(actOfWritingOffMaterials);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actOfWritingOffMaterials]);
 
   const handleClick = () => {
     if (isMaterialReportDialogOpen) {
@@ -129,7 +142,11 @@ function MaterialReportPageContainer() {
         await dispatch(downloadActOfWriteoffOfSpareParts(reportPeriod));
       }
       if (reportName === 'Акт списания материалов') {
-        console.log('Акт списания материалов');
+        const reportPeriod: IPeriod = {
+          month: dayjs(period).month() + 1,
+          year: dayjs(period).year(),
+        };
+        await dispatch(downloadActOfWritingOffMaterials(reportPeriod));
       }
     } catch (error) {
       if (error instanceof Error || error instanceof AxiosError) {

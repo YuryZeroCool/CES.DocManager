@@ -11,6 +11,7 @@ import createAttachedMaterial from '../../actions/report/materialReport/createAt
 import deleteAttachedMaterial from '../../actions/report/materialReport/deleteAttachedMaterial';
 import deleteMaterial from '../../actions/report/materialReport/deleteMaterial';
 import downloadActOfWriteoffOfSpareParts from '../../actions/report/materialReport/downloadActOfWriteoffOfSpareParts';
+import downloadActOfWritingOffMaterials from '../../actions/report/materialReport/downloadActOfWritingOffMaterials';
 import getAllAttachedMaterials from '../../actions/report/materialReport/getAllAttachedMaterials';
 import getAllDecommissionedMaterials from '../../actions/report/materialReport/getAllDecommissionedMaterials';
 import getAllGroupAccounts from '../../actions/report/materialReport/getAllGroupAccounts';
@@ -64,6 +65,7 @@ const initial: IMaterialsResponse = {
   allDecommissionedMaterials: [],
   defectiveSheet: '',
   actOfWriteoffOfSpareParts: '',
+  actOfWritingOffMaterials: '',
   searchValue: {
     materialsSearchValue: '',
     attachedMaterialsSearchValue: '',
@@ -455,6 +457,17 @@ const materialsReducer = createSlice({
       return stateCopy;
     });
     builder.addCase(downloadActOfWriteoffOfSpareParts.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(downloadActOfWritingOffMaterials.fulfilled, (state, action) => {
+      let stateCopy = state;
+      if (action.payload !== null) {
+        stateCopy = { ...stateCopy, actOfWritingOffMaterials: action.payload };
+      }
+      return stateCopy;
+    });
+    builder.addCase(downloadActOfWritingOffMaterials.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
 

@@ -110,6 +110,7 @@ export interface IMaterialsResponse {
   allDecommissionedMaterials: IAllDecommissionedMaterials[];
   defectiveSheet: string;
   actOfWriteoffOfSpareParts: string;
+  actOfWritingOffMaterials: string;
   searchValue: ISearch;
   usedMaterial: IAddUsedMaterialResponse;
 }
