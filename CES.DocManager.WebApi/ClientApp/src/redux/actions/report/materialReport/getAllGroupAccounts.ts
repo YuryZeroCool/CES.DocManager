@@ -15,7 +15,7 @@ string, { rejectValue: FetchTodosError }>(
       return response.data;
     } catch (err) {
       return rejectWithValue({
-        message: 'Нет данных по заданному периоду',
+        message: 'Нет данных',
       });
     }
   },

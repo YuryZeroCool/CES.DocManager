@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import getAllGroupAccounts from '../../redux/actions/report/materialReport/getAllGroupAccounts';
 import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
 import uploadNewMaterials from '../../redux/actions/report/materialReport/uploadNewMaterials';
 import { RootState } from '../../redux/reducers/combineReducers';
@@ -109,6 +110,7 @@ function ProductsTableHeaderContainer() {
     try {
       const formData: FormData = new FormData(event.currentTarget);
       await dispatch(uploadNewMaterials(formData));
+      await dispatch(getAllGroupAccounts(''));
       setFileName('');
       if (uploadFileError) {
         setUploadFileError(false);
