@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -54,16 +55,16 @@ builder.Services.AddAuthentication(auth =>
 
 string baseUrl = "https://localhost:3000";
 string basehttp = "http://localhost:3000";
-
+string[] paramHeader = { "X-Total-Count", "X-Total-Sum" };
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyPolicy",
         builder =>
         {
             builder.WithOrigins(baseUrl)
-                .WithMethods("PUT", "POST", "DELETE", "GET").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+                .WithMethods("PUT", "POST", "DELETE", "GET").AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithExposedHeaders(paramHeader);
             builder.WithOrigins(basehttp)
-               .WithMethods("PUT", "POST", "DELETE", "GET").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+               .WithMethods("PUT", "POST", "DELETE", "GET").AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithExposedHeaders(paramHeader);
         });
 });
 
@@ -87,8 +88,9 @@ builder.Services.AddMediatR(typeof(GetIsPersonalNumberHandler));
 //// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 //builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.Configure<CookieAuthenticationOptions>(x => x.ExpireTimeSpan = TimeSpan.FromDays(2)); 
-builder.Services.AddControllers();
+builder.Services.Configure<CookieAuthenticationOptions>(x => x.ExpireTimeSpan = TimeSpan.FromDays(2));
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
 //builder.Services.AddSpaStaticFiles(opt => opt.RootPath = "ClientApp/build");
 
 var app = builder.Build();

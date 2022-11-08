@@ -100,7 +100,8 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count))
                 .ForMember(dest => dest.PartyName, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.PartyId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.PartyDate, opt => opt.MapFrom(src => src.PartyDate));
+                .ForMember(dest => dest.PartyDate, opt => opt.MapFrom(src => src.PartyDate))
+                .ForMember(dest => dest.TotalSum, opt => opt.MapFrom(src => src.TotalSum));
 
             CreateMap<ProductGroupAccountEntity, GetAllProductsGroupAccountResponse>()
                   .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -116,7 +117,8 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.Number, opt => opt.MapFrom(src => src.Number));
 
             CreateMap<EnshrinedMaterialEntity, AddEnshrinedMaterialResponse>();
-
+            CreateMap<EnshrinedMaterialEntity, EditEnshrinedMaterialResponse>();
+           
            CreateMap< EnshrinedMaterialEntity, GetAllEnshrinedMaterialResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.NameMaterial, opt => opt.MapFrom(src => src.NameMaterial))
