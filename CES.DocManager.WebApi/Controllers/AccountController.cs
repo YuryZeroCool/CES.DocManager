@@ -163,8 +163,8 @@ namespace CES.DocManager.WebApi.Controllers
 
         //https://stackoverflow.com/questions/53659247/using-aspnetusertokens-table-to-store-refresh-token-in-asp-net-core-web-api
 
-        [Authorize(AuthenticationSchemes =
-            JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        //[Authorize(AuthenticationSchemes =
+        //    JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost("role")]
         public async Task<string> CreateRoleAsync([FromBody] RoleViewModel query)
         {

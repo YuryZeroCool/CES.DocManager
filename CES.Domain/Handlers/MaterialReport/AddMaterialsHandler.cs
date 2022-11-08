@@ -3,7 +3,7 @@ using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using NPOI.SS.UserModel;
+using Spire.Xls;
 
 namespace CES.Domain.Handlers.MaterialReport
 {
@@ -15,112 +15,113 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private bool IsCurrentAccount = false;
 
-        private Stream? fs;
-
-        private IWorkbook? wk;
+        private Workbook? Workbook;
 
         public AddMaterialsHandler(DocMangerContext ctx)
         {
             _ctx = ctx;
         }
-      
+
         public async Task<Unit> Handle(AddMaterialReportRequest request, CancellationToken cancellationToken)
         {
-       
+            Workbook = new Workbook();
+
+            Workbook.LoadFromStream(request.File!.OpenReadStream());
+            Worksheet sheet = Workbook.Worksheets[0];
             int currentRow = 0;
-            using (fs = request.File!.OpenReadStream())
+
+            await CreateAccount(sheet);
+
+            var productGroup = await _ctx.ProductsGroupAccount.ToListAsync(cancellationToken);
+
+            foreach (var account in productGroup) //прохожу по счетам 
             {
-                wk = WorkbookFactory.Create(fs);
-            }
-            await CheckAccountExist(wk);
-            for (int i = 0; i < wk.NumberOfSheets; i++) // По страницам
-            {
-                var sheet = wk.GetSheetAt(i);
-                var productGroup = _ctx.ProductsGroupAccount.ToList();
-                foreach (var account in productGroup) //прохожу по счетам 
+                for (int k = currentRow; k < sheet.Rows.Length; k++) // опеределяю количество строк документе 
                 {
-                    account.AccountName = account.AccountName!.Trim();
-                    for (int k = currentRow; k < sheet.LastRowNum; k++) // опеределяю количество строк документе 
+                    var cell = sheet.Rows[k].CellList[0].Text;
+
+                    if (cell != null)
                     {
-                        var cell = sheet.GetRow(k).GetCell(0);
-
-                        if (cell != null)
+                        if (cell == account.AccountName)
                         {
-                            if (cell.ToString() == account.AccountName)
-                            {
-                                IsCurrentAccount = true;
-                                continue;
-                            }
-                            if (cell.ToString() != account.AccountName && IsCurrentAccount &&
-                                !cell.ToString()!.Equals(""))
-                            {
-                                IsCurrentAccount = false;
-                                currentRow = k;
-                                break;
-                            }
+                            IsCurrentAccount = true;
+                            continue;
+                        }
+                        if (cell != account.AccountName && IsCurrentAccount)
+                        {
+                            IsCurrentAccount = false;
+                            currentRow = k;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (IsCurrentAccount)
+                        {
+                            if (sheet.Rows[k].CellList[14].Value == "") continue;
 
-                            if (IsCurrentAccount)
+                            if(sheet.Rows[k].CellList[1].Text != null) //Добавляем материал в БД 
                             {
-                                var sheetUnit = sheet.GetRow(k).GetCell(6);
-                                var unit = await _ctx.Units.FirstOrDefaultAsync(p =>
-                                    p.Name!.Trim() == sheetUnit.ToString(), cancellationToken);
-                                 NameProduct = sheet.GetRow(k).GetCell(1).ToString()!;
+                                var sheetUnit = sheet.Rows[k].CellList[6].Text;
+                                
+                                NameProduct = sheet.Rows[k].CellList[1].Text;
 
-                                var products = await  _ctx.Products.Where(x => x.Name == NameProduct)
-                                     .Include(p => p.Account).ToListAsync();
+                                var products =  await _ctx.Products.
+                                        Include(p => p.Account).Where(x => x.Name == NameProduct).ToListAsync(cancellationToken);
 
-                                 if (products.Count == 0)
-                                 {
-                                    await CheckProductExist(unit, account);
-                                 }
+                                if (products == null)
+                                {
+                                    await CreateProduct(CreateUnit(sheetUnit, cancellationToken).Result, account);
+                                }
                                 else
                                 {
-                                    foreach (var item in products)
+                                    if (!products.Any(x => x.ProductGroupAccountId == account.Id))
                                     {
-                                        if (item.ProductGroupAccountId != account.Id)
-                                        {
-                                            await CheckProductExist(unit, account); //  DELETE FROM Products WHERE ID = 252
-                                        }   
+                                        await CreateProduct(CreateUnit(sheetUnit, cancellationToken).Result, account); //  DELETE FROM Products WHERE ID = 252  DELETE FROM Parties 
                                     }
                                 }
                             }
-                        }
-                        else
-                        {
-                            if (IsCurrentAccount) // Добовляем партию
+                            else
                             {
-                                if (sheet.GetRow(k).GetCell(2) == null) continue;
+                                if (sheet.Rows[k].CellList[2].Text == null) continue;
 
-                                var currentProduct = await _ctx.Products.FirstOrDefaultAsync(x => x.Name == NameProduct, cancellationToken);
+                                var currentProduct = await _ctx.Products.FirstOrDefaultAsync(p => p.Name == NameProduct, cancellationToken);
 
-                                var partyArr = sheet.GetRow(k).GetCell(2).ToString()!.Split(" от ");
+                                var partyArr = sheet.Rows[k].CellList[2].Text.Split(" от ");
 
                                 if (!_ctx.Parties.Any(p => p.Name == partyArr[0].Substring(7)))
                                 {
+                                    
+                                     var sum = decimal.Parse(sheet.Rows[k].CellList[14].Value.Replace(" ", ""));
+
+                                    
                                     await _ctx.Parties.AddAsync(new PartyEntity()
                                     {
                                         Name = partyArr[0][7..],
                                         DateCreated = DateTime.Now,
-                                        Count = Double.Parse(sheet.GetRow(k).GetCell(13).ToString()!),
+                                        Count = Double.Parse(sheet.Rows[k].CellList[13].Value),
+                                        TotalSum = sum,
                                         PartyDate = GetDate(partyArr[1]),
-                                        Price = decimal.Parse(sheet.GetRow(k).GetCell(5).ToString()!),
+                                        Price = decimal.Parse(sheet.Rows[k].CellList[5].Value),
                                         Product = currentProduct
-                                    },cancellationToken);
+                                    }, cancellationToken);
                                     await _ctx.SaveChangesAsync(cancellationToken);
                                 }
                                 else
                                 {
                                     var party = await _ctx.Parties.FirstOrDefaultAsync(p =>
-                                        p.Name == partyArr[0].Substring(7),cancellationToken);
-                                   var countMaterial =  Double.Parse(sheet.GetRow(k).GetCell(13).ToString()!);
+                                        p.Name == partyArr[0].Substring(7), cancellationToken);
+                                    var countMaterial = Double.Parse(sheet.Rows[k].CellList[13].Value);
 
                                     if (party!.Count != countMaterial)
                                     {
                                         party.Count = countMaterial;
+                                        party.TotalSum = decimal.Parse(sheet.Rows[k].CellList[14].Value);
                                         _ctx.Parties.Update(party);
-                                       await _ctx.SaveChangesAsync(cancellationToken);
+                                        await _ctx.SaveChangesAsync(cancellationToken);
                                     }
                                 }
+
                             }
                         }
                     }
@@ -129,20 +130,19 @@ namespace CES.Domain.Handlers.MaterialReport
             return await Task.FromResult(new Unit());
         }
 
-        private async Task CheckAccountExist(IWorkbook wk)
+        private async Task CreateAccount(Worksheet sheet)
         {
-            ISheet sheet = wk.GetSheetAt(0);
-            for (int i = 0; i < sheet.LastRowNum; i++)
+            for (int i = 0; i < sheet.Rows.Length; i++)
             {
-                var cell = sheet.GetRow(i).GetCell(0);
+                var cell = sheet.Rows[i].CellList[0].Text;
                 if (cell == null) continue;
-                if (!cell.ToString()!.Equals("") && cell.ToString()!.StartsWith("По счету"))
+                if (cell.StartsWith("По счету"))
                 {
-                    if (!_ctx.ProductsGroupAccount.Any(p => p.AccountName == cell.ToString()))
+                    if (!_ctx.ProductsGroupAccount.Any(p => p.AccountName == cell))
                     {
                         _ctx.ProductsGroupAccount.Add(new ProductGroupAccountEntity()
                         {
-                            AccountName = cell.ToString()
+                            AccountName = cell
                         });
                     }
                 }
@@ -150,7 +150,7 @@ namespace CES.Domain.Handlers.MaterialReport
             await _ctx.SaveChangesAsync();
         }
 
-        private async Task CheckProductExist(UnitEntity? unit, ProductGroupAccountEntity? account)
+        private async Task CreateProduct(UnitEntity? unit, ProductGroupAccountEntity? account)
         {
             await _ctx.Products.AddAsync(new ProductEntity()
             {
@@ -159,6 +159,22 @@ namespace CES.Domain.Handlers.MaterialReport
                 Unit = unit
             });
             await _ctx.SaveChangesAsync();
+        }
+
+        private async Task<UnitEntity> CreateUnit(string sheetUnit, CancellationToken cancellationToken)
+        {
+            var materialUnit = await _ctx.Units.FirstOrDefaultAsync(p => p.Name == sheetUnit, cancellationToken);
+
+             if(materialUnit == null)
+             {
+               materialUnit = new UnitEntity()
+               {
+                   Name = sheetUnit,
+               };
+                await _ctx.Units.AddAsync(materialUnit, cancellationToken);
+                await _ctx.SaveChangesAsync(cancellationToken);
+             }
+            return await Task.FromResult(materialUnit);
         }
 
         private static DateTime GetDate(string date)

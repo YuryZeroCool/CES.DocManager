@@ -1,10 +1,5 @@
 ﻿using CES.Infra.Models.MaterialReport;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CES.Infra.Config.MaterialReport
@@ -16,6 +11,7 @@ namespace CES.Infra.Config.MaterialReport
             builder.Property(e => e.Id).ValueGeneratedOnAdd();
 
             builder.Property(x => x.Price).HasPrecision(12, 2);
+            builder.Property(x=>x.TotalSum).HasPrecision(12, 2);
             builder.Property(p => p.PartyDate)
                 .HasColumnType("smalldatetime");
             builder.Property(p => p.DateCreated)

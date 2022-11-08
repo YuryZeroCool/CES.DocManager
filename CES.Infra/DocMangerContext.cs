@@ -31,7 +31,6 @@ namespace CES.Infra
 
         public virtual DbSet<VehicleModelEntity> VehicleModels { get; set; }
 
-
         public virtual DbSet<PartyEntity> Parties { get; set; }
 
         public virtual DbSet<ProductEntity> Products { get; set; }
@@ -41,7 +40,6 @@ namespace CES.Infra
         public virtual DbSet<UnitEntity> Units { get; set; }
 
         public virtual  DbSet<NumberPlateCarEntity> NumberPlateOfCar { get; set; }
-
 
         public virtual DbSet<FuelWorkCardEntity> FuelWorkCards { get; set; }
 
@@ -56,7 +54,6 @@ namespace CES.Infra
         public virtual DbSet<DecommissionedMaterialEntity> DecommissionedMaterials { get; set; }
 
         public virtual DbSet<CarMechanicEntity> CarMechanics { get; set; }
-
 
         public virtual DbSet<UsedMaterialEntity> UsedMaterials { get; set; }
 

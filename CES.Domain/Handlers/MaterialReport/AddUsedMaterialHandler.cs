@@ -5,6 +5,7 @@ using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using NPOI.SS.Formula.Functions;
 using System.Text.Json;
 
 namespace CES.Domain.Handlers.MaterialReport
@@ -24,23 +25,34 @@ namespace CES.Domain.Handlers.MaterialReport
         {
             UsedMaterialEntity? data;
 
-            var party = await _ctx.Parties.Include(x => x.Product!.Unit).FirstOrDefaultAsync(x => x.Name == request.PartyName, cancellationToken);
+            var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.PartyName, cancellationToken);
 
-            if (party == null)  throw new SystemException("Error");
+            if (party == null || party.ProductId == 0) throw new System.Exception("Error");
+
+            var product = await _ctx.Products
+                .Include(p => p.Unit)
+                .Include(p => p.Account)
+                .Include(p => p.Parties)
+                .FirstOrDefaultAsync(x => x.Id == party.ProductId, cancellationToken);
+
+            if (product == null || product.Parties == null || product.Parties.Count == 0) throw new System.Exception("Error");
 
             if (party.Count == request.Count)
             {
                 _ctx.Parties.Remove(party);
 
-                if (party.Product != null)
+                if (product.Parties.Count == 1)
                 {
-                    _ctx.Products.Remove(party.Product);
+                    _ctx.Products.Remove(product);
                 }
             }
             else
             {
                  party.Count -= request.Count;
-                 _ctx.Parties.Update(party);
+
+                if (party.Count < 0) throw new System.Exception("Error");
+
+                _ctx.Parties.Update(party);
             }
             await _ctx.SaveChangesAsync(cancellationToken);
 
@@ -58,13 +70,12 @@ namespace CES.Domain.Handlers.MaterialReport
                         new UsedMaterial
                         {
                             Id = party.Id,
-                            NameMaterial = party.Product!.Name,
+                            NameMaterial = product!.Name,
                             NameParty = party.Name,
                             Count = request.Count,
                             Price = party.Price,
-                            Unit = party.Product.Unit!.Name,
+                            Unit = product.Unit!.Name,
                             PartyDate = party.PartyDate,
-
                         }
                     })
 
@@ -87,11 +98,11 @@ namespace CES.Domain.Handlers.MaterialReport
                     res.Add(new UsedMaterial
                     {
                         Id = party.Id,
-                        NameMaterial = party.Product!.Name,
+                        NameMaterial = product!.Name,
                         NameParty = party.Name,
                         Count = request.Count,
                         Price = party.Price,
-                        Unit = party.Product.Unit!.Name,
+                        Unit = product.Unit!.Name,
                         PartyDate = party.PartyDate,
                     });
                 }
@@ -105,9 +116,9 @@ namespace CES.Domain.Handlers.MaterialReport
             }
             await _ctx.SaveChangesAsync(cancellationToken);
 
-            var updataMaterial = await _ctx.UsedMaterials.FirstOrDefaultAsync(x => x.Period == currentDate);
+            var updatedMaterial = await _ctx.UsedMaterials.FirstOrDefaultAsync(x => x.Period == currentDate, cancellationToken);
 
-            var lastMaterial = JsonSerializer.Deserialize<List<UsedMaterial>>(updataMaterial!.Materials);
+            var lastMaterial = JsonSerializer.Deserialize<List<UsedMaterial>>(updatedMaterial!.Materials);
 
             if (lastMaterial == null) throw new SystemException("Error");
                 

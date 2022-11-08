@@ -1,41 +1,41 @@
-﻿using CES.Domain.Models.Request.MaterialReport;
+﻿using CES.Domain.Models;
+using CES.Domain.Models.Request.MaterialReport;
 using CES.Infra;
-using CES.Infra.Models.MaterialReport;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using NPOI.SS.UserModel;
-using NPOI.Util;
 using Spire.Xls;
 using System.Text.Json;
 
 namespace CES.Domain.Handlers.MaterialReport
 {
-    public class ActWriteSparesHandler : IRequestHandler<ActWriteSparesRequest, byte[]>
+    public class ActUsedMaterialsHandler : IRequestHandler<ActUsedMaterialsRequest, byte[]>
     {
+
         private readonly DocMangerContext _ctx;
 
-        private IWorkbook? _wk;
-
-        public ActWriteSparesHandler(DocMangerContext ctx)
+        public ActUsedMaterialsHandler(DocMangerContext ctx)
         {
             _ctx = ctx;
         }
-        public async Task<byte[]> Handle(ActWriteSparesRequest request, CancellationToken cancellationToken)
+        public async Task<byte[]> Handle(ActUsedMaterialsRequest request, CancellationToken cancellationToken)
         {
             var startRow = 31;
             decimal totalSum = 0;
             double totalCount = 0;
 
-            List<AddDecomissioneMaterial>? materials = null;
+            // MaterialModelBase
 
-            var decommissionedMaterials = await _ctx.DecommissionedMaterials.Where(x => x.CurrentDate.Month == request.Month &&
-            x.CurrentDate.Year == request.Year).ToListAsync(cancellationToken);
+            var usedMaterials = await _ctx.UsedMaterials.FirstOrDefaultAsync(x => x.Period.Month == request.Month &&
+            x.Period.Year == request.Year, cancellationToken);
 
-           
-            materials = JoinMaterials(decommissionedMaterials);
+            if (usedMaterials == null) throw new SystemException("Error");
 
+            var materials = JsonSerializer.Deserialize<List<UsedMaterial>>(usedMaterials.Materials);
+
+            if (materials == null) throw new SystemException("Error");
+             materials=  materials.OrderBy(p => p.NameMaterial).ToList();
             Workbook workbook = new Workbook();
-            workbook.LoadFromFile(request.Path + "/Docs/spares.xls");
+            workbook.LoadFromFile(request.Path + "/Docs/ActUsedMaterials.xls");
             Worksheet sheet = workbook.Worksheets[0];
 
             sheet.InsertRow(startRow, materials.Count);
@@ -43,7 +43,7 @@ namespace CES.Domain.Handlers.MaterialReport
             for (int j = 0; j < materials.Count; j++)
             {
                 totalCount += materials[j].Count;
-                totalSum += materials[j].Price * (decimal)materials[j].Count; 
+                totalSum += materials[j].Price * (decimal)materials[j].Count;
 
                 sheet.SetRowHeight(startRow + j, 50);
 
@@ -78,7 +78,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 sheet.Range[$"K{startRow + j}"].Value = $"{materials[j].Count}";
                 sheet.Range[$"L{startRow + j}:N{startRow + j}"].Value = $"{materials[j].Price}";
                 sheet.Range[$"O{startRow + j}:R{startRow + j}"].Value = $"{materials[j].Price * (decimal)materials[j].Count}";
-                sheet.Range[$"S{startRow + j}:T{startRow + j}"].Value = $"Использована для ремонта автомобиля\n{materials[j].VehicleBrand} гос.№ {materials[j].NumberPlateCar}";
+                sheet.Range[$"S{startRow + j}:T{startRow + j}"].Value = "Использована для ремонта автомобиля:";
             }
 
             sheet.Range[$"K{startRow + materials.Count}"].Style.Font.IsBold = true;
@@ -92,49 +92,9 @@ namespace CES.Domain.Handlers.MaterialReport
             sheet.Range["K7"].Style.Font.IsBold = true;
             sheet.Range["K7"].Text = request.Month < 10 ? $"0{request.Month}/{request.Year}" : $"{request.Month}/{request.Year}";
 
-            workbook.SaveToFile(request.Path + "/Docs/sparesOut.xls", ExcelVersion.Version97to2003);
+            workbook.SaveToFile(request.Path + "/Docs/ActUsedMaterialsOut.xls", ExcelVersion.Version97to2003);
 
-            return await File.ReadAllBytesAsync(request.Path + "/Docs/sparesOut.xls", cancellationToken); 
-        }
-
-        private List<AddDecomissioneMaterial> JoinMaterials(List<DecommissionedMaterialEntity>? decommissionedMaterials)
-        {
-            if (decommissionedMaterials == null) throw new SystemException("Error");
-
-            List<AddDecomissioneMaterial>? MaterialsList = new List<AddDecomissioneMaterial>();
-
-            foreach (var item in decommissionedMaterials)
-            {
-               var  materials = JsonSerializer.Deserialize<List<AddDecomissioneMaterial>>(item.Materials);
-
-                if (materials == null) throw new System.Exception("Error");
-
-                foreach (var material in materials)
-                {
-                     var res = MaterialsList.FirstOrDefault(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty);
-
-                    if (!MaterialsList.Any(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty))
-                    {
-                        MaterialsList.Add(material);
-                    }
-                    else
-                    {
-                        var index =  MaterialsList.FindIndex(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty);
-                        MaterialsList[index].Count += material.Count;
-                        if (!MaterialsList[index].VehicleBrand!.Contains(material.VehicleBrand!))
-                        {
-                            MaterialsList[index].VehicleBrand += $" {material.VehicleBrand}";
-                        }
-
-                        if (!MaterialsList[index].NumberPlateCar!.Contains(material.NumberPlateCar!))
-                        {
-                            MaterialsList[index].NumberPlateCar += $" {material.NumberPlateCar}";
-                        }
-                    }
-                }
-            }
-            
-            return MaterialsList;
+            return await File.ReadAllBytesAsync(request.Path + "/Docs/ActUsedMaterialsOut.xls", cancellationToken);
         }
     }
 }

@@ -23,89 +23,83 @@ namespace CES.Domain.Handlers.MaterialReport
 
         public async Task<AddEnshrinedMaterialResponse> Handle(AddEnshrinedMaterialRequest request, CancellationToken cancellationToken)
         {
+            EnshrinedMaterialEntity? enshrine;
+            
+            var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.Party, cancellationToken);
 
-            var product = await _ctx.Parties.Where(x => x.Name == request.Party).Include(p=>p.Product).ToListAsync(cancellationToken);
+            if (party == null || party.ProductId == 0) throw new System.Exception("Error");
 
-            if (product == null) throw new System.Exception("Error");
+            var product = await _ctx.Products
+                .Include(p => p.Unit)
+                .Include(p => p.Account)
+                .Include(p => p.Parties)
+                .FirstOrDefaultAsync(x => x.Id == party.ProductId, cancellationToken);
 
-            if(product.Count == 0 && product.Count > 1) throw new System.Exception("Error");
+            if (product == null || product.Parties == null || product.Parties.Count == 0) throw new System.Exception("Error");
 
-            var enshrine = new EnshrinedMaterialEntity();
-
-            var IdProduct = 0;
-            var IdParty = 0;
-            int unit = 0;
-            enshrine.Count = request.Count;
-            foreach (var item in product)
+            if (_ctx.EnshrinedMaterial.Any(x => x.VehicleBrand == request.Brand &&
+               x.NumberPlateCar == request.NumberPlateOfCar && x.NameParty == request.Party)) // если существует такой закрепленный материал
             {
-                IdProduct = item.ProductId;
-                IdParty = item.Id;
-                unit = item!.Product!.UnitId;
-                enshrine.NameMaterial = item.Product.Name;
-                enshrine.NameParty = item.Name;
-                enshrine.PartyDate = item.PartyDate;
-                enshrine.Price = item.Price * (decimal)request.Count;
-                enshrine.DateCreated = item.DateCreated;
-                enshrine.AccountName =  _ctx.ProductsGroupAccount.
-                   FirstOrDefaultAsync(x => x.Id == item.Product.ProductGroupAccountId, cancellationToken).Result!.AccountName;
-            }
+                var enshrinedMaterial = await _ctx.EnshrinedMaterial
+                    .FirstOrDefaultAsync(x =>
+                    x.VehicleBrand == request.Brand &&
+                    x.NumberPlateCar == request.NumberPlateOfCar &&
+                    x.NameParty == request.Party, cancellationToken);
 
-            if (enshrine.AccountName == null) throw new System.Exception("Error");
+                if (enshrinedMaterial == null) throw new System.Exception("Error");
+                enshrinedMaterial.Count += request.Count;
+                _ctx.EnshrinedMaterial.Update(enshrinedMaterial);
 
-            enshrine.Unit = _ctx.Units.FirstOrDefaultAsync(x => x.Id == unit, cancellationToken).Result!.Name;
+                await _ctx.SaveChangesAsync(cancellationToken);
 
-            var modelsVehicle = await _ctx.NumberPlateOfCar.Where(x => x.Number == request.NumberPlateOfCar)
-                  .Include(p => p.VehicleModel).ToListAsync(cancellationToken);
-
-            if (modelsVehicle.Count == 0) throw new System.Exception("No vehicle brand");
-
-            var brandId = 0;
-            foreach (var item in modelsVehicle)
-            {
-                enshrine.NumberPlateCar = item.Number;
-                brandId = item.VehicleModel!.VehicleBrandId;
-                enshrine.VehicleModel = item.VehicleModel.Name;
-            }
-            enshrine.VehicleBrand = _ctx.VehicleBrands.FirstOrDefaultAsync(p => p.Id == brandId, cancellationToken).Result!.Name;
-              
-
-            var res = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.Party, cancellationToken);
-
-            if (res == null) throw new SystemException("Error");
-
-            if (product[0].Count > request.Count)
-            {
-                 res.Count -= request.Count;
-                _ctx.Parties.Update(res);
-
-               var enshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x =>
+                enshrine = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x => x.VehicleBrand == request.Brand &&
                x.NumberPlateCar == request.NumberPlateOfCar && x.NameParty == request.Party, cancellationToken);
-                if (enshrinedMaterial == null)
-                {
-                    await _ctx.EnshrinedMaterial.AddAsync(enshrine, cancellationToken);
-                }
-                else
-                {
-                    enshrinedMaterial.Count += request.Count;   
-                    _ctx.EnshrinedMaterial.Update(enshrinedMaterial);
-                }
+            }
+            else
+            {
+                enshrine = new EnshrinedMaterialEntity();
+                enshrine.Count = request.Count;
+                enshrine.NameMaterial = product.Name;
+                enshrine.NameParty = party.Name;
+                enshrine.PartyDate = party.PartyDate;
+                enshrine.Price = party.Price;
+                enshrine.DateCreated = party.DateCreated;
+                enshrine.AccountName = product.Account!.AccountName;
+                enshrine.Unit = product.Unit!.Name;
 
+                var car = await _ctx.NumberPlateOfCar
+                    .Include(p => p.VehicleModel)
+                    .Include(p => p.VehicleModel!.VehicleBrand)
+                    .FirstOrDefaultAsync(x => x.Number == request.NumberPlateOfCar, cancellationToken);
+
+                if (car == null) throw new System.Exception("No vehicle brand");
+
+                enshrine.NumberPlateCar = car.Number;
+                enshrine.VehicleModel = car.VehicleModel!.Name;
+
+                enshrine.VehicleBrand = car.VehicleModel.VehicleBrand!.Name;
+
+                await _ctx.EnshrinedMaterial.AddAsync(enshrine, cancellationToken);
+            }
+
+            if (party.Count > request.Count)
+            {
+                party.Count -= request.Count;
+                _ctx.Parties.Update(party);
 
                 await _ctx.SaveChangesAsync(cancellationToken);
             }
             else
             {
-                if (_ctx.Parties.Where(x => x.ProductId == IdProduct).Count() == 1)
+                if(product.Parties.Count == 1)
                 {
-                    _ctx.Products.Remove(res.Product!);
-                    _ctx.Parties.Remove(res);
+                    _ctx.Products.Remove(party.Product!);
                 }
-                else _ctx.Parties.Remove(res);
+                _ctx.Parties.Remove(party);
 
-                await _ctx.EnshrinedMaterial.AddAsync(enshrine, cancellationToken);
-                 await _ctx.SaveChangesAsync(cancellationToken);
+                await _ctx.SaveChangesAsync(cancellationToken);
             }
-            return  await Task.FromResult(_mapper.Map<AddEnshrinedMaterialResponse>(enshrine));
+            return await Task.FromResult(_mapper.Map<AddEnshrinedMaterialResponse>(enshrine));
         }
     }
 }

@@ -37,7 +37,7 @@ namespace CES.Domain.Handlers.MaterialReport
              var sheet = _wk.GetSheet("Основной");
 
             var decommissionedMaterials = await _ctx.DecommissionedMaterials
-              .Include(p =>p.CarMechanic).Include(p => p.NumberPlateOfCar).FirstOrDefaultAsync(p => p.Id == request.Id);
+              .Include(p =>p.CarMechanic).Include(p => p.NumberPlateOfCar).FirstOrDefaultAsync(p => p.Id == request.Id,cancellationToken);
 
             if (decommissionedMaterials == null) throw new System.Exception("Error");
 

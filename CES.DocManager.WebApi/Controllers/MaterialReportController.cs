@@ -2,11 +2,9 @@
 using CES.Domain.Models.Response.MaterialReport;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Net;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
-using File = System.IO.File;
 
 namespace CES.DocManager.WebApi.Controllers
 {
@@ -31,7 +29,16 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                return await _mediator.Send(new GetTotalMaterialsRequest() { Accounts = accountsName });
+                var totalMaterils = await _mediator.Send(new GetTotalMaterialsRequest() { Accounts = accountsName });
+                if (totalMaterils.Count > 0)
+                {
+                    var count = (decimal)totalMaterils.Select(p => p.Party!.Select(x => x.Count).Sum()).ToList().Sum();
+                    HttpContext.Response.Headers["X-Total-Count"] = count.ToString();
+                   
+                    var sum = (decimal)totalMaterils.Select(p => p.Party!.Select(x => x.TotalSum).Sum()).ToList().Sum();
+                    HttpContext.Response.Headers["X-Total-Sum"] = sum.ToString();
+                }
+                return totalMaterils;
 
             }
             catch (Exception)
@@ -83,11 +90,11 @@ namespace CES.DocManager.WebApi.Controllers
 
                 return await Task.FromResult("Файл успешно записан");
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 HttpContext.Response.StatusCode = 500;
-
-                return await Task.FromResult("Произошка ошибка при запими файла");
+                return await Task.FromResult(e.Message);
+                //return await Task.FromResult("Произошка ошибка при запими файла");
             }
 
         }
@@ -121,10 +128,35 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
                 {
                     message = e.Message
+                };
+            }
+        }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpPatch("editEnshrinedMaterial/{id}")]
+        [Produces(typeof(EditEnshrinedMaterialResponse))]
+        public async Task<object> EditEnshrinedMaterialAsync([FromRoute] int id, [FromBody] JsonPatchDocument enshrinedMaterial)
+        {
+            try
+            {
+                return await _mediator.Send(new EditEnshrinedMaterialRequest()
+                {
+                    Id = id,
+                    EnshrinedMaterial = enshrinedMaterial
+                }
+                );
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    Message = e.Message
                 };
             }
         }
@@ -260,11 +292,9 @@ namespace CES.DocManager.WebApi.Controllers
                     Path = _appEnvironment.WebRootPath
 
                 });
-                //return null;
             }
             catch (Exception e)
             {
-
                 return new
                 {
                     Error = e.Message
@@ -288,6 +318,48 @@ namespace CES.DocManager.WebApi.Controllers
                    Message = e.Message
                 };
             } 
+        }
+
+        [HttpGet("actUsedMaterials")]
+        [Produces(typeof(byte[]))]
+        public async Task<object> ActUsedMaterialsAsync(int month, int year)
+        {
+            try
+            {
+                return await _mediator.Send(new ActUsedMaterialsRequest()
+                {
+                    Month = month,
+                    Year = year,
+                    Path = _appEnvironment.WebRootPath,
+                });
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    Message = e.Message
+                };
+            }
+        }
+
+        [HttpDelete("allDeleteMaterials")]
+        [Produces(typeof(int))]
+        public async Task<object> DeleteMaterialsAsync()
+        {
+            try
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                return await _mediator.Send(new AllDeleteMaterialsRequest());
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    Message = e.Message
+                };
+            }
         }
     }
 }

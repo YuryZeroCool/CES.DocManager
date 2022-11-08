@@ -14,6 +14,8 @@
 
         public DateTime DateCreated { get; set; }
 
+        public decimal TotalSum { get; set; }  
+
         public int ProductId { get; set; }
 
         public ProductEntity? Product { get; set; }
