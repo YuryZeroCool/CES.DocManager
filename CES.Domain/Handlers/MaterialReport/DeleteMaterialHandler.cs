@@ -16,13 +16,27 @@ namespace CES.Domain.Handlers.MaterialReport
 
         public async Task<int> Handle(DeleteMaterialRequest request, CancellationToken cancellationToken)
         {
-            var product = await _ctx.Products.FirstOrDefaultAsync(x => x.Id == request.MaterialId);
+            var material = await _ctx.Parties.FirstOrDefaultAsync(x => x.Id == request.MaterialId,cancellationToken);
+
+            if (material == null) throw new System.Exception("Материал не найден");
+
+            var product = await _ctx.Products
+                .Include(p=>p.Parties)
+                .FirstOrDefaultAsync(x => x.Id == material.ProductId, cancellationToken);
 
             if (product == null) throw new System.Exception("Материал не найден");
 
-            _ctx.Remove(product);
-            await _ctx.SaveChangesAsync();
-            return await Task.FromResult(product.Id);  
+            if(product.Parties!.Count > 1)
+            {
+                _ctx.Parties.Remove(material);
+            }
+            else
+            {
+                _ctx.Parties.Remove(material);
+                _ctx.Products.Remove(product);
+            }
+            await _ctx.SaveChangesAsync(cancellationToken);
+            return await Task.FromResult(material.Id);  
         }
     }
 }

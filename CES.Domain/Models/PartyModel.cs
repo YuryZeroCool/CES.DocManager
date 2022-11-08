@@ -11,5 +11,7 @@
         public decimal Price { get; set; }
 
         public double Count { get; set; }
+
+        public decimal TotalSum { get; set; }
     }
 }

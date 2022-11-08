@@ -5,9 +5,6 @@ using CES.Domain.Models.Response.MaterialReport;
 using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using NPOI.SS.Formula.Functions;
-using System.Linq;
 
 namespace CES.Domain.Handlers.MaterialReport
 {
@@ -48,8 +45,6 @@ namespace CES.Domain.Handlers.MaterialReport
                                    };
                     totalMaterials = totalMaterials.Union(products).ToList();
                 }
-
-
                 return await Task.FromResult(totalMaterials);
             }
             throw new SystemException("Error");

@@ -20,23 +20,28 @@ namespace CES.Domain.Handlers.MaterialReport
 
             if (enshrinedMaterial == null) throw new System.Exception("Error");
 
-            var product = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.NameParty,cancellationToken);
+            var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.NameParty,cancellationToken);
 
-           
-                var unit = await _ctx.Units.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.Unit,cancellationToken);
-                if (unit == null) throw new System.Exception("Error");
+            var unit = await _ctx.Units.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.Unit,cancellationToken);
+            if (unit == null) throw new System.Exception("Error");
 
-                var account = await _ctx.ProductsGroupAccount
-                .FirstOrDefaultAsync(x => x.AccountName == enshrinedMaterial.AccountName,cancellationToken);
+            var account = await _ctx.ProductsGroupAccount
+            .FirstOrDefaultAsync(x => x.AccountName == enshrinedMaterial.AccountName,cancellationToken);
 
-            if (product == null)
+            if (party == null)
             {
-                var material = new ProductEntity
+                var material = _ctx.Products.FirstOrDefault(x => x.Name == enshrinedMaterial.NameMaterial &&
+                 x.Account!.AccountName == enshrinedMaterial.AccountName);
+
+                if (material == null)
                 {
-                    Account = account,
-                    Unit = unit,
-                    Name = enshrinedMaterial.NameMaterial
-                };
+                    material = new ProductEntity
+                    {
+                        Account = account,
+                        Unit = unit,
+                        Name = enshrinedMaterial.NameMaterial
+                    };
+                }
 
                 _ctx.Parties.Add(
                 new PartyEntity()
@@ -46,12 +51,16 @@ namespace CES.Domain.Handlers.MaterialReport
                     Price = enshrinedMaterial.Price / (decimal)enshrinedMaterial.Count,
                     Count = enshrinedMaterial.Count,
                     DateCreated = enshrinedMaterial.DateCreated,
-                    Product = material
+                    Product = material,
+                    TotalSum = (decimal)enshrinedMaterial.Count * enshrinedMaterial.Price
                 });
             }
             else
             {
                 var par = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.NameParty,cancellationToken);
+
+                if (par == null) throw new System.Exception("Error");
+
                 par!.Count += enshrinedMaterial.Count;
                 _ctx.Parties.Update(par);
             }

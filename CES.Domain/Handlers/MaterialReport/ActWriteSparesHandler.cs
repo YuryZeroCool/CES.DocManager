@@ -14,7 +14,7 @@ namespace CES.Domain.Handlers.MaterialReport
     {
         private readonly DocMangerContext _ctx;
 
-        private IWorkbook? _wk; 
+        private IWorkbook? _wk;
 
         public ActWriteSparesHandler(DocMangerContext ctx)
         {
