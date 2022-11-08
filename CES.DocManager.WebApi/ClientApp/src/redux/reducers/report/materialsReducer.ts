@@ -94,7 +94,7 @@ const materialsReducer = createSlice({
       const currentElemIndex = stateCopy.getAllMaterials.findIndex(
         (el) => el.name === action.payload.nameMaterial,
       );
-      if (currentElemIndex === -1) throw new Error('Такого материала не существует');
+      if (currentElemIndex === -1) throw new Error('Не удалось отредактировать материал. Такого материала не найдено. Перезагрузите страницу.');
       const currentElem = stateCopy.getAllMaterials.filter(
         (el) => el.name === action.payload.nameMaterial,
       )[0];
@@ -102,7 +102,7 @@ const materialsReducer = createSlice({
       const currentPartyIndex = currentElem.party.findIndex(
         (el) => el.partyName === action.payload.nameParty,
       );
-      if (currentPartyIndex === -1) throw new Error('Такой партии не существует');
+      if (currentPartyIndex === -1) throw new Error('Не удалось отредактировать материал. Такой партии не нейдено. Перезагрузите страницу.');
       const currentParty = currentElem.party.filter(
         (el) => el.partyName === action.payload.nameParty,
       )[0];
@@ -134,7 +134,7 @@ const materialsReducer = createSlice({
       const currentElemIndex = stateCopy.getAllMaterials.findIndex(
         (el) => el.name === action.payload.name,
       );
-      if (currentElemIndex === -1) throw new Error('Такого материала не существует');
+      if (currentElemIndex === -1) throw new Error('Не удалось отредактировать материал. Такого материала не найдено. Перезагрузите страницу.');
       const currentElem = stateCopy.getAllMaterials.filter(
         (el) => el.name === action.payload.name,
       )[0];
@@ -142,7 +142,7 @@ const materialsReducer = createSlice({
       const currentPartyIndex = currentElem.party.findIndex(
         (el) => el.partyName === action.payload.party[0].partyName,
       );
-      if (currentPartyIndex === -1) throw new Error('Такой партии не существует');
+      if (currentPartyIndex === -1) throw new Error('Не удалось отредактировать материал. Такой партии не нейдено. Перезагрузите страницу.');
       const currentParty = currentElem.party.filter(
         (el) => el.partyName === action.payload.party[0].partyName,
       )[0];
@@ -309,6 +309,14 @@ const materialsReducer = createSlice({
       stateCopy = {
         ...stateCopy,
         isUploadNewMaterialsLoader: action.payload,
+      };
+      return stateCopy;
+    },
+    resetUsedMaterial: (state) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        usedMaterial: initial.usedMaterial,
       };
       return stateCopy;
     },
@@ -506,5 +514,6 @@ export const {
   changeDecommissionedMaterialsSearchValue,
   changeUploadMaterialsMessage,
   changeIsUploadNewMaterialsLoader,
+  resetUsedMaterial,
 } = materialsReducer.actions;
 export default materialsReducer.reducer;

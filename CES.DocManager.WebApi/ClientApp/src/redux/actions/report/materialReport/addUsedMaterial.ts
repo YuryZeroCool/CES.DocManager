@@ -16,7 +16,7 @@ IAddUsedMaterialRequest, { rejectValue: FetchTodosError }>(
       return response.data;
     } catch (err) {
       return rejectWithValue({
-        message: 'Введены неверные данные',
+        message: 'Упс, что-то пошло не так...',
       });
     }
   },

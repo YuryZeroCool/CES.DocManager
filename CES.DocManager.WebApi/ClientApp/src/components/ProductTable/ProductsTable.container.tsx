@@ -33,6 +33,8 @@ const DIALOG_WIDTH = 200;
 function ProductsTableContainer(props: Props) {
   const { productsTableError, setProductsTableError } = props;
 
+  const [editMaterialsError, setEditMaterialsError] = useState<string>('');
+
   const [offSetX, setOffSetX] = useState<number>(0);
 
   const [offSetTop, setOffSetTop] = useState<number>(0);
@@ -192,8 +194,14 @@ function ProductsTableContainer(props: Props) {
   }, [materialsTableType]);
 
   useEffect(() => {
-    if (createdAttachedMaterial.nameMaterial !== '') {
-      dispatch(editAllMaterialsAttachingMaterial(createdAttachedMaterial));
+    if (createdAttachedMaterial.nameMaterial && createdAttachedMaterial.nameMaterial !== '') {
+      try {
+        dispatch(editAllMaterialsAttachingMaterial(createdAttachedMaterial));
+      } catch (error) {
+        if (error instanceof Error || error instanceof AxiosError) {
+          setEditMaterialsError(error.message);
+        }
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdAttachedMaterial]);
@@ -244,6 +252,7 @@ function ProductsTableContainer(props: Props) {
       pageType={pageType}
       status={status}
       productsTableError={productsTableError}
+      editMaterialsError={editMaterialsError}
       rowActiveId={rowActiveId}
       offSetX={offSetX}
       offSetTop={offSetTop}

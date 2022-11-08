@@ -49,6 +49,7 @@ interface Props {
   status: string;
   pageType: string;
   productsTableError: string;
+  editMaterialsError: string;
   rowActiveId: number;
   offSetX: number;
   offSetTop: number;
@@ -90,6 +91,7 @@ export default function ProductsTable(props: Props) {
     pageType,
     status,
     productsTableError,
+    editMaterialsError,
     rowActiveId,
     offSetX,
     offSetTop,
@@ -108,6 +110,10 @@ export default function ProductsTable(props: Props) {
   const renderError = () => {
     if (productsTableError !== '') {
       return (<p className="error-message">{productsTableError}</p>);
+    }
+
+    if (editMaterialsError !== '') {
+      return (<p className="error-message">{editMaterialsError}</p>);
     }
 
     if (pageType === 'Материалы') {

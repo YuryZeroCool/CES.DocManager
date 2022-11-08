@@ -23,6 +23,7 @@ interface AddUsedMaterialModalProps {
   currentMaterial: Product;
   maxNumber: number;
   currentMaterialCount: number;
+  usedMaterialModalError: string;
   handleClose: () => void;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: () => void;
@@ -34,6 +35,7 @@ export default function AddUsedMaterialModalComponent(props: AddUsedMaterialModa
     currentMaterial,
     maxNumber,
     currentMaterialCount,
+    usedMaterialModalError,
     handleChange,
     handleClose,
     onSubmit,
@@ -77,6 +79,7 @@ export default function AddUsedMaterialModalComponent(props: AddUsedMaterialModa
           max={maxNumber}
           onChange={handleChange}
         />
+        {usedMaterialModalError !== '' && <p className="error-message">{usedMaterialModalError}</p>}
         <div className="modal-button-container">
           <Button
             className="modal-button"
