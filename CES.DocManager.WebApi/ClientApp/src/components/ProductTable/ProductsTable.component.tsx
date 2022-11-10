@@ -45,7 +45,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 interface Props {
   materials: Product[];
+  baseMaterials: Product[];
   allAttachedMaterials: IMaterialAttachedResponse[];
+  baseAllAttachedMaterials: IMaterialAttachedResponse[];
   status: string;
   pageType: string;
   productsTableError: string;
@@ -86,7 +88,9 @@ const ProductsTableWrapper = React.forwardRef<HTMLDivElement, ProductsTableProps
 export default function ProductsTable(props: Props) {
   const {
     materials,
+    baseMaterials,
     allAttachedMaterials,
+    baseAllAttachedMaterials,
     allDecommissionedMaterials,
     pageType,
     status,
@@ -117,31 +121,40 @@ export default function ProductsTable(props: Props) {
     }
 
     if (pageType === 'Материалы') {
-      if (materialsTableType === 'Прикрепленные' && allAttachedMaterials?.length === 0 && status === 'fulfilled') {
+      if (materialsTableType === 'Прикрепленные'
+        && allAttachedMaterials.length === 0
+        && status === 'fulfilled'
+        && searchValue.attachedMaterialsSearchValue === '') {
         return (<p className="error-message">Нет закрепленных материалов</p>);
       }
       if (materialsTableType === 'Прикрепленные'
-        && allAttachedMaterials?.length === 0
+        && allAttachedMaterials.length === 0
         && status === 'fulfilled'
-        && searchValue.attachedMaterialsSearchValue !== '') {
+        && searchValue.attachedMaterialsSearchValue !== ''
+        && allAttachedMaterials.length !== baseAllAttachedMaterials.length) {
         return (<p className="error-message">Совпадений не найдено</p>);
       }
       if (materialsTableType === 'Свободные'
         && materials.length === 0
         && status === 'fulfilled'
-        && searchValue.materialsSearchValue !== '') {
+        && searchValue.materialsSearchValue !== ''
+        && materials.length !== baseMaterials.length) {
         return (<p className="error-message">Совпадений не найдено</p>);
       }
     }
 
     if (pageType === 'История ремонтов') {
-      if (allDecommissionedMaterials?.length === 0 && status === 'fulfilled') {
-        return (<p className="error-message">История ремонтов пуста</p>);
-      }
-      if (allDecommissionedMaterials?.length === 0
+      if (allDecommissionedMaterials.length === 0
         && status === 'fulfilled'
         && searchValue.decommissionedMaterialsSearchValue !== '') {
-        return (<p className="error-message">Совпадений не найдено</p>);
+        return <p className="error-message">Совпадений не найдено</p>;
+      }
+      if (allDecommissionedMaterials.length === 0
+        && status === 'fulfilled'
+        && searchValue.decommissionedMaterialsSearchValue === '') {
+        return (
+          <p className="error-message">История ремонтов пуста</p>
+        );
       }
     }
 

@@ -28,6 +28,8 @@ interface Props {
   setProductsTableError: React.Dispatch<React.SetStateAction<string>>;
 }
 
+type MaterialsType = Product[] | IMaterialAttachedResponse[] | IAllDecommissionedMaterials[];
+
 const DIALOG_WIDTH = 200;
 
 function ProductsTableContainer(props: Props) {
@@ -106,7 +108,7 @@ function ProductsTableContainer(props: Props) {
     }
   }
 
-  const createTableIndexes = (data: Product[] | IMaterialAttachedResponse[]) => {
+  const createTableIndexes = (data: MaterialsType) => {
     const numbersArr = [];
     for (let i = 0; i < data.length; i += 1) {
       numbersArr.push(i + 1);
@@ -132,13 +134,24 @@ function ProductsTableContainer(props: Props) {
     return arr;
   };
 
+  const filterDecommissionedMaterials = (): IAllDecommissionedMaterials[] => {
+    const arr = allDecommissionedMaterials.filter(
+      (el) => el.carMechanic.toLowerCase().includes(
+        searchValue.decommissionedMaterialsSearchValue,
+      )
+      || el.currentDate?.toString().includes(searchValue.decommissionedMaterialsSearchValue)
+      || `${el.materials[0].vehicleBrand}(${el.materials[0].numberPlateCar})`.toLowerCase().includes(searchValue.decommissionedMaterialsSearchValue),
+    );
+    return arr;
+  };
+
   useEffect(() => {
     if (materials.length !== 0) {
       createTableIndexes(materials);
       setFilteredMaterials(filterMaterials());
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [materials.length]);
+  }, [materials]);
 
   useEffect(() => {
     if (allAttachedMaterials.length !== 0) {
@@ -146,7 +159,15 @@ function ProductsTableContainer(props: Props) {
       setFilteredAttachedMaterials(filterAttachedMaterials());
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allAttachedMaterials.length]);
+  }, [allAttachedMaterials]);
+
+  useEffect(() => {
+    if (allAttachedMaterials.length !== 0) {
+      createTableIndexes(allAttachedMaterials);
+      setFilteredDecommissionedMaterials(filterDecommissionedMaterials());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allDecommissionedMaterials]);
 
   useEffect(() => {
     if (divElRef.current) {
@@ -174,15 +195,7 @@ function ProductsTableContainer(props: Props) {
   }, [searchValue.attachedMaterialsSearchValue]);
 
   useEffect(() => {
-    setFilteredDecommissionedMaterials(
-      allDecommissionedMaterials.filter(
-        (el) => el.carMechanic.toLowerCase().includes(
-          searchValue.decommissionedMaterialsSearchValue,
-        )
-        || el.currentDate?.toString().includes(searchValue.decommissionedMaterialsSearchValue)
-        || `${el.materials[0].vehicleBrand}(${el.materials[0].numberPlateCar})`.toLowerCase().includes(searchValue.decommissionedMaterialsSearchValue),
-      ),
-    );
+    setFilteredDecommissionedMaterials(filterDecommissionedMaterials());
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue.decommissionedMaterialsSearchValue]);
 
@@ -247,7 +260,9 @@ function ProductsTableContainer(props: Props) {
   return (
     <ProductsTableComponent
       materials={searchValue.materialsSearchValue === '' ? materials : filteredMaterials}
+      baseMaterials={materials}
       allAttachedMaterials={searchValue.attachedMaterialsSearchValue === '' ? allAttachedMaterials : filteredAttachedMaterials}
+      baseAllAttachedMaterials={allAttachedMaterials}
       allDecommissionedMaterials={searchValue.decommissionedMaterialsSearchValue === '' ? allDecommissionedMaterials : filteredDecommissionedMaterials}
       pageType={pageType}
       status={status}
