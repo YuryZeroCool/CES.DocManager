@@ -26,7 +26,7 @@ interface Props {
 
 function AccountCheckboxesContainer({ setProductsTableError }: Props) {
   const groupAccounts = useSelector<RootState,
-  AllGroupAccountsResponse | undefined>((state) => state.materials.getAllGroupAccounts);
+  AllGroupAccountsResponse>((state) => state.materials.getAllGroupAccounts);
 
   const { currentGroupAccount } = useSelector<RootState,
   IMaterialsResponse>((state) => state.materials);
@@ -37,7 +37,7 @@ function AccountCheckboxesContainer({ setProductsTableError }: Props) {
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
-  const [expanded, setExpanded] = React.useState<boolean>(true);
+  const [expanded, setExpanded] = React.useState<boolean>(false);
 
   const dispatch: IAuthResponseType = useDispatch();
 

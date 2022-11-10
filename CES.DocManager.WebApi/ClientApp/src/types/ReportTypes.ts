@@ -95,7 +95,7 @@ export interface IMaterialsResponse {
   totalSum: string;
   allAttachedMaterials: IMaterialAttachedResponse[];
   deletedMaterialId: number;
-  getAllGroupAccounts?: AllGroupAccountsResponse;
+  getAllGroupAccounts: AllGroupAccountsResponse;
   currentGroupAccount?: CurrentGroupAccountResponse;
   status: string;
   rowActiveId: number;
