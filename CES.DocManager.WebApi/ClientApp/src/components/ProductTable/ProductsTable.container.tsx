@@ -79,6 +79,7 @@ function ProductsTableContainer(props: Props) {
     searchValue,
     totalCount,
     totalSum,
+    isCheckedByDate,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
@@ -117,11 +118,42 @@ function ProductsTableContainer(props: Props) {
   };
 
   const filterMaterials = (): Product[] => {
-    const arr = materials.filter((el) => el.name.toLowerCase().includes(
-      searchValue.materialsSearchValue,
-    )
-      || el.party.filter((elem) => (
-        elem.partyName.includes(searchValue.materialsSearchValue))).length !== 0);
+    const arr: Product[] = [];
+    if (!isCheckedByDate) {
+      for (let i = 0; i < materials.length; i += 1) {
+        const ifIncludeName = materials[i].name.toLowerCase().includes(
+          searchValue.materialsSearchValue,
+        );
+        const filteredElem = {
+          ...materials[i],
+          party: [
+            ...materials[i].party.filter((elem) => (
+              elem.partyName.startsWith(searchValue.materialsSearchValue)
+            )),
+          ],
+        };
+        if (ifIncludeName) {
+          arr.push(materials[i]);
+          // eslint-disable-next-line no-continue
+          continue;
+        }
+        if (filteredElem.party.length !== 0) {
+          arr.push(filteredElem);
+        }
+      }
+    } else {
+      materials.forEach((el: Product) => {
+        const filteredElem = {
+          ...el,
+          party: [...el.party.filter((elem) => elem.partyDate.toString().startsWith(
+            searchValue.materialsSearchValue,
+          ))],
+        };
+        if (filteredElem.party.length !== 0) {
+          arr.push(filteredElem);
+        }
+      });
+    }
     return arr;
   };
 
@@ -146,30 +178,6 @@ function ProductsTableContainer(props: Props) {
   };
 
   useEffect(() => {
-    if (materials.length !== 0) {
-      createTableIndexes(materials);
-      setFilteredMaterials(filterMaterials());
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [materials]);
-
-  useEffect(() => {
-    if (allAttachedMaterials.length !== 0) {
-      createTableIndexes(allAttachedMaterials);
-      setFilteredAttachedMaterials(filterAttachedMaterials());
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allAttachedMaterials]);
-
-  useEffect(() => {
-    if (allAttachedMaterials.length !== 0) {
-      createTableIndexes(allAttachedMaterials);
-      setFilteredDecommissionedMaterials(filterDecommissionedMaterials());
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allDecommissionedMaterials]);
-
-  useEffect(() => {
     if (divElRef.current) {
       setTableHeight(divElRef.current.getBoundingClientRect().height);
       setTableWidth(divElRef.current.getBoundingClientRect().width);
@@ -185,6 +193,42 @@ function ProductsTableContainer(props: Props) {
   }, [DIALOG_HEIGHT, tableHeight]);
 
   useEffect(() => {
+    if (materials.length !== 0) {
+      setFilteredMaterials(filterMaterials());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [materials]);
+
+  useEffect(() => {
+    if (allAttachedMaterials.length !== 0) {
+      setFilteredAttachedMaterials(filterAttachedMaterials());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allAttachedMaterials]);
+
+  useEffect(() => {
+    if (allDecommissionedMaterials.length !== 0) {
+      setFilteredDecommissionedMaterials(filterDecommissionedMaterials());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allDecommissionedMaterials]);
+
+  useEffect(() => {
+    createTableIndexes(filteredMaterials);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredMaterials]);
+
+  useEffect(() => {
+    createTableIndexes(filteredAttachedMaterials);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredAttachedMaterials]);
+
+  useEffect(() => {
+    createTableIndexes(filteredDecommissionedMaterials);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredDecommissionedMaterials]);
+
+  useEffect(() => {
     setFilteredMaterials(filterMaterials());
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue.materialsSearchValue]);
@@ -198,6 +242,11 @@ function ProductsTableContainer(props: Props) {
     setFilteredDecommissionedMaterials(filterDecommissionedMaterials());
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue.decommissionedMaterialsSearchValue]);
+
+  useEffect(() => {
+    setFilteredMaterials(filterMaterials());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCheckedByDate]);
 
   useEffect(() => {
     setProductsTableError('');

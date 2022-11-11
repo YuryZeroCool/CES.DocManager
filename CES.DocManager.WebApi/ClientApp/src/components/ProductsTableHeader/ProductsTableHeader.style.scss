@@ -16,6 +16,11 @@
   align-items: center;
 }
 
+.search-block {
+  display: flex;
+  flex-direction: column;
+}
+
 .table-header-select {
   border: 1px solid rgba(0, 0, 0, 0.23) !important;
 
@@ -59,5 +64,26 @@
 
   .error {
     color: $color-red;
+  }
+}
+
+.checkbox-search-label {
+  margin-left: 38px !important;
+  margin-top: 5px;
+
+  .MuiButtonBase-root.MuiCheckbox-root {
+    padding: 0;
+    margin-right: 5px;
+    width: 17px;
+    height: 17px;
+  }
+  
+  .MuiSvgIcon-root {
+    width: 17px;
+    height: 17px;
+  }
+
+  .MuiTypography-root {
+    font-size: 13px;
   }
 }

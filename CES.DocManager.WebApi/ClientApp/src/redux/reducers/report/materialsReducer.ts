@@ -80,6 +80,7 @@ const initial: IMaterialsResponse = {
     price: 0,
     unit: '',
   },
+  isCheckedByDate: false,
 };
 
 const materialsReducer = createSlice({
@@ -293,6 +294,14 @@ const materialsReducer = createSlice({
           ...stateCopy.searchValue,
           decommissionedMaterialsSearchValue: action.payload,
         },
+      };
+      return stateCopy;
+    },
+    toggleCheckboxByDateInMaterials: (state, action: PayloadAction<boolean>) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        isCheckedByDate: action.payload,
       };
       return stateCopy;
     },
@@ -512,6 +521,7 @@ export const {
   changeMaterialsSearchValue,
   changeAttachedMaterialsSearchValue,
   changeDecommissionedMaterialsSearchValue,
+  toggleCheckboxByDateInMaterials,
   changeUploadMaterialsMessage,
   changeIsUploadNewMaterialsLoader,
   resetUsedMaterial,

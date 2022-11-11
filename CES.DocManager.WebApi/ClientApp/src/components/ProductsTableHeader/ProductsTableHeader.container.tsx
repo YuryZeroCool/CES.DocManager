@@ -20,6 +20,7 @@ import {
   changeMaterialsTableType,
   changeUploadMaterialsMessage,
   resetAllMaterials,
+  toggleCheckboxByDateInMaterials,
 } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { IMaterialsResponse } from '../../types/ReportTypes';
@@ -34,6 +35,7 @@ function ProductsTableHeaderContainer() {
     currentGroupAccount,
     isUploadNewMaterialsLoader,
     uploadMaterialsMessage,
+    isCheckedByDate,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const { isLoaderModalOpen } = useSelector<RootState, IModal>(
@@ -143,6 +145,10 @@ function ProductsTableHeaderContainer() {
     }
   };
 
+  const handleChangeCheckbox = (event: ChangeEvent<HTMLInputElement>) => {
+    dispatch(toggleCheckboxByDateInMaterials(event.target.checked));
+  };
+
   return (
     <ProductsTableHeaderComponent
       materialsTableType={materialsTableType}
@@ -154,7 +160,9 @@ function ProductsTableHeaderContainer() {
       isLoaderModalOpen={isLoaderModalOpen}
       uploadFileError={uploadFileError}
       fileInputRef={fileInputRef}
+      isCheckedByDate={isCheckedByDate}
       handleChange={handleChange}
+      handleChangeCheckbox={handleChangeCheckbox}
       handleClick={handleClick}
       handleInputFileChange={handleInputFileChange}
       // eslint-disable-next-line @typescript-eslint/no-misused-promises

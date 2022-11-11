@@ -10,6 +10,8 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import UploadIcon from '@mui/icons-material/Upload';
 import { RotatingLines } from 'react-loader-spinner';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 import { ISearch } from '../../types/ReportTypes';
 import './ProductsTableHeader.style.scss';
 
@@ -23,7 +25,9 @@ interface Props {
   isLoaderModalOpen: boolean;
   uploadFileError: boolean;
   fileInputRef: React.RefObject<HTMLInputElement>;
+  isCheckedByDate: boolean;
   handleChange: (event: SelectChangeEvent) => void;
+  handleChangeCheckbox: (event: ChangeEvent<HTMLInputElement>) => void;
   handleClick: () => void;
   handleInputFileChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
@@ -51,7 +55,9 @@ export default function ProductsTableHeaderComponent(props: Props) {
     isLoaderModalOpen,
     uploadFileError,
     fileInputRef,
+    isCheckedByDate,
     handleChange,
+    handleChangeCheckbox,
     handleClick,
     handleInputFileChange,
     handleSubmit,
@@ -72,6 +78,22 @@ export default function ProductsTableHeaderComponent(props: Props) {
           </IconButton>
         )}
       </form>
+    )
+  );
+
+  const renderCheckbox = () => (
+    pageType === 'Материалы' && materialsTableType === 'Свободные' && (
+      <FormControlLabel
+        className="checkbox-search-label"
+        control={(
+          <Checkbox
+            checked={isCheckedByDate}
+            onChange={handleChangeCheckbox}
+            inputProps={{ 'aria-label': 'controlled' }}
+          />
+        )}
+        label="Поиск по дате"
+      />
     )
   );
 
@@ -153,15 +175,18 @@ export default function ProductsTableHeaderComponent(props: Props) {
         {pageType === 'Материалы' && materialsTableType === 'Прикрепленные'
         && <Button sx={{ m: 1, minWidth: 120 }} variant="contained" size="small" onClick={handleClick}>Добавить ремонт</Button>}
       </div>
-      <div className="table-header-wrapper">
-        <IconButton aria-label="search" className="icon-search">
-          <SearchIcon />
-        </IconButton>
-        <Box sx={{ minWidth: 300 }}>
-          {pageType === 'Материалы' && materialsTableType === 'Свободные' && renderSearchMaterials()}
-          {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && renderSearchAttachedMaterials()}
-          {pageType === 'История ремонтов' && renderSearchDecommissionedMaterials()}
-        </Box>
+      <div className="search-block">
+        <div className="table-header-wrapper">
+          <IconButton aria-label="search" className="icon-search">
+            <SearchIcon />
+          </IconButton>
+          <Box sx={{ minWidth: 300 }}>
+            {pageType === 'Материалы' && materialsTableType === 'Свободные' && renderSearchMaterials()}
+            {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && renderSearchAttachedMaterials()}
+            {pageType === 'История ремонтов' && renderSearchDecommissionedMaterials()}
+          </Box>
+        </div>
+        {renderCheckbox()}
       </div>
       {renderLoaderModal()}
     </div>

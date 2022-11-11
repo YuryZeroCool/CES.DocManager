@@ -113,6 +113,7 @@ export interface IMaterialsResponse {
   actOfWritingOffMaterials: string;
   searchValue: ISearch;
   usedMaterial: IAddUsedMaterialResponse;
+  isCheckedByDate: boolean;
 }
 
 export interface AccountsGroupState {
