@@ -5,7 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import downloadActOfWriteoffOfSpareParts from '../../redux/actions/report/materialReport/downloadActOfWriteoffOfSpareParts';
 import downloadActOfWritingOffMaterials from '../../redux/actions/report/materialReport/downloadActOfWritingOffMaterials';
+import getAllAttachedMaterials from '../../redux/actions/report/materialReport/getAllAttachedMaterials';
 import getAllDecommissionedMaterials from '../../redux/actions/report/materialReport/getAllDecommissionedMaterials';
+import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
 import { changePageType, changeRowActiveId } from '../../redux/reducers/report/materialsReducer';
@@ -39,25 +41,33 @@ function MaterialReportPageContainer() {
     pageType,
     actOfWriteoffOfSpareParts,
     actOfWritingOffMaterials,
+    currentGroupAccount,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
 
   useEffect(() => {
-    async function getDecommissionedMaterials(): Promise<void> {
-      if (pageType === 'История ремонтов') {
-        try {
+    async function getMaterials(): Promise<void> {
+      try {
+        if (pageType === 'История ремонтов') {
           await dispatch(getAllDecommissionedMaterials(''));
-        } catch (error) {
-          if (error instanceof Error || error instanceof AxiosError) {
-            setProductsTableError(error.message);
-          }
+        }
+        if (pageType === 'Материалы' && materialsTableType === 'Прикрепленные') {
+          await dispatch(getAllAttachedMaterials(''));
+        }
+        if (pageType === 'Материалы' && materialsTableType === 'Свободные' && currentGroupAccount.length !== 0) {
+          await dispatch(getAllMaterials(currentGroupAccount.join(', ')));
+        }
+      } catch (error) {
+        if (error instanceof Error || error instanceof AxiosError) {
+          setProductsTableError(error.message);
         }
       }
     }
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    getDecommissionedMaterials();
-  }, [dispatch, pageType]);
+    getMaterials();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageType]);
 
   useEffect(() => {
     if (period) {

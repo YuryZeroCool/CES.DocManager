@@ -3,15 +3,15 @@ import { AxiosError } from 'axios';
 import $api from '../../../../http/loginHttp';
 import { FetchTodosError } from '../../../../types/type';
 
-const deleteAttachedMaterial = createAsyncThunk<
+const deleteDecommissionedMaterial = createAsyncThunk<
 number, number, { rejectValue: FetchTodosError }>(
-  'deleteAttachedMaterial',
+  'deleteDecommissionedMaterial',
   async (MaterialId: number, { rejectWithValue }) => {
     try {
-      if (process.env.REACT_APP_DELETE_ATTACHED_MATERIAL === undefined) {
+      if (process.env.REACT_APP_DELETE_DECOMMISSIONED_MATERIAL === undefined) {
         throw Error('Упс, что-то пошло не так...');
       }
-      const response = await $api.delete<number>(`${process.env.REACT_APP_DELETE_ATTACHED_MATERIAL}/${MaterialId}`);
+      const response = await $api.delete<number>(`${process.env.REACT_APP_DELETE_DECOMMISSIONED_MATERIAL}/${MaterialId}`);
       return response.data;
     } catch (err) {
       if (err instanceof Error || err instanceof AxiosError) {
@@ -26,4 +26,4 @@ number, number, { rejectValue: FetchTodosError }>(
   },
 );
 
-export default deleteAttachedMaterial;
+export default deleteDecommissionedMaterial;

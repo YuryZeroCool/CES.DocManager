@@ -14,8 +14,8 @@ string, { rejectValue: FetchTodosError }>(
       const response = await $api.get<Product[]>(`${process.env.REACT_APP_ALL_PRODUCTS}?accountsName=${accountsName}`);
 
       return {
-        totalCount: response.headers['x-total-count'],
-        totalSum: response.headers['x-total-sum'],
+        totalCount: response.headers['x-total-count'] ? response.headers['x-total-count'] : '',
+        totalSum: response.headers['x-total-sum'] ? response.headers['x-total-sum'] : '',
         data: response.data,
       };
     } catch (err) {

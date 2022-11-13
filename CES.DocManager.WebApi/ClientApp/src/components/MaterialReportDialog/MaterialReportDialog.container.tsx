@@ -4,10 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import printJS from 'print-js';
 import deleteAttachedMaterial from '../../redux/actions/report/materialReport/deleteAttachedMaterial';
 import deleteMaterial from '../../redux/actions/report/materialReport/deleteMaterial';
-import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
 import getDefectiveSheet from '../../redux/actions/report/materialReport/getDefectiveSheet';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { deleteFromAttachedMaterials, resetDefectiveSheet } from '../../redux/reducers/report/materialsReducer';
+import {
+  deleteFromAttachedMaterials,
+  deleteFromDecommissionedMaterials,
+  deleteFromMaterials,
+  resetDefectiveSheet,
+} from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { IMaterialsResponse } from '../../types/ReportTypes';
 import MaterialReportDialogComponent from './MaterialReportDialog.component';
@@ -17,6 +21,7 @@ import {
   toggleDetailedInformationModal,
   toggleMaterialReportDialog,
 } from '../../redux/reducers/modals/modalsReducer';
+import deleteDecommissionedMaterial from '../../redux/actions/report/materialReport/deleteDecommissionedMaterial';
 
 interface Props {
   offSetX: number;
@@ -53,14 +58,15 @@ function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger
       }
       if (value === 'Удалить' && currentGroupAccount && materialsTableType === 'Свободные' && pageType === 'Материалы') {
         await dispatch(deleteMaterial(rowActiveId));
-        await dispatch(getAllMaterials(currentGroupAccount.join(', ')));
+        dispatch(deleteFromMaterials(rowActiveId));
       }
       if (value === 'Удалить' && materialsTableType === 'Прикрепленные' && pageType === 'Материалы') {
         await dispatch(deleteAttachedMaterial(rowActiveId));
         dispatch(deleteFromAttachedMaterials(rowActiveId));
       }
       if (value === 'Удалить' && pageType === 'История ремонтов') {
-        console.log('delete from history of repairs');
+        await dispatch(deleteDecommissionedMaterial(rowActiveId));
+        dispatch(deleteFromDecommissionedMaterials(rowActiveId));
       }
       if (value === 'Распечатать' && pageType === 'История ремонтов') {
         await dispatch(getDefectiveSheet(rowActiveId));

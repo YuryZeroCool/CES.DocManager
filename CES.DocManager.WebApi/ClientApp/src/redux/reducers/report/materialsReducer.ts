@@ -9,6 +9,7 @@ import addDecommissionedMaterial from '../../actions/report/materialReport/addDe
 import addUsedMaterial from '../../actions/report/materialReport/addUsedMaterial';
 import createAttachedMaterial from '../../actions/report/materialReport/createAttachedMaterial';
 import deleteAttachedMaterial from '../../actions/report/materialReport/deleteAttachedMaterial';
+import deleteDecommissionedMaterial from '../../actions/report/materialReport/deleteDecommissionedMaterial';
 import deleteMaterial from '../../actions/report/materialReport/deleteMaterial';
 import downloadActOfWriteoffOfSpareParts from '../../actions/report/materialReport/downloadActOfWriteoffOfSpareParts';
 import downloadActOfWritingOffMaterials from '../../actions/report/materialReport/downloadActOfWritingOffMaterials';
@@ -63,6 +64,7 @@ const initial: IMaterialsResponse = {
     materials: [],
   },
   allDecommissionedMaterials: [],
+  deletedDecommissionedMaterialId: 0,
   defectiveSheet: '',
   actOfWriteoffOfSpareParts: '',
   actOfWritingOffMaterials: '',
@@ -87,6 +89,27 @@ const materialsReducer = createSlice({
   name: 'materials',
   initialState: initial,
   reducers: {
+    deleteFromMaterials: (state, action: PayloadAction<number>) => {
+      const stateCopy: IMaterialsResponse = state;
+      const chosenMaterial = stateCopy.getAllMaterials.filter(
+        (material: Product) => material.party.filter(
+          (el) => el.partyId === action.payload,
+        ).length !== 0,
+      )[0];
+      const chosenElemIndex = stateCopy.getAllMaterials.findIndex(
+        (el) => el.id === chosenMaterial.id,
+      );
+
+      if (chosenMaterial.party.length === 1) {
+        stateCopy.getAllMaterials.splice(chosenElemIndex, 1);
+      } else {
+        const parties = chosenMaterial.party.filter(
+          (el) => el.partyId !== action.payload,
+        );
+        stateCopy.getAllMaterials[chosenElemIndex].party = [...parties];
+      }
+      return stateCopy;
+    },
     editAllMaterialsAttachingMaterial: (
       state,
       action: PayloadAction<IMaterialAttachedResponse>,
@@ -241,6 +264,16 @@ const materialsReducer = createSlice({
       stateCopy = {
         ...stateCopy,
         allAttachedMaterials: stateCopy.allAttachedMaterials.filter(
+          (el) => el.id !== action.payload,
+        ),
+      };
+      return stateCopy;
+    },
+    deleteFromDecommissionedMaterials: (state, action: PayloadAction<number>) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        allDecommissionedMaterials: stateCopy.allDecommissionedMaterials.filter(
           (el) => el.id !== action.payload,
         ),
       };
@@ -498,10 +531,20 @@ const materialsReducer = createSlice({
     builder.addCase(addUsedMaterial.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
+
+    builder.addCase(deleteDecommissionedMaterial.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, deletedDecommissionedMaterialId: action.payload };
+      return stateCopy;
+    });
+    builder.addCase(deleteDecommissionedMaterial.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
   },
 });
 
 export const {
+  deleteFromMaterials,
   editAllMaterialsAttachingMaterial,
   editAllMaterialsWritingOffMaterial,
   addToCurrentGroupAccount,
@@ -515,6 +558,7 @@ export const {
   resetAttachedMaterial,
   resetCreatedAttachedMaterial,
   deleteFromAttachedMaterials,
+  deleteFromDecommissionedMaterials,
   changeMaterialsTableType,
   changePageType,
   resetDefectiveSheet,

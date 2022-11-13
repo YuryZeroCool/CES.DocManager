@@ -96,7 +96,7 @@ export interface IMaterialsResponse {
   allAttachedMaterials: IMaterialAttachedResponse[];
   deletedMaterialId: number;
   getAllGroupAccounts: AllGroupAccountsResponse;
-  currentGroupAccount?: CurrentGroupAccountResponse;
+  currentGroupAccount: CurrentGroupAccountResponse;
   status: string;
   rowActiveId: number;
   accordionHeight: number;
@@ -107,6 +107,7 @@ export interface IMaterialsResponse {
   deletedAttachedMaterialId: number;
   allMechanics: AllMechanicsResponse[];
   decommissionedMaterial: IDecommissionedMaterialRequest;
+  deletedDecommissionedMaterialId: number;
   allDecommissionedMaterials: IAllDecommissionedMaterials[];
   defectiveSheet: string;
   actOfWriteoffOfSpareParts: string;
