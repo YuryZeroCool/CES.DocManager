@@ -100,7 +100,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
   const renderSearchMaterials = () => (
     <TextField
       id="outlined-basic"
-      label="Search"
+      label="Поиск"
       variant="outlined"
       size="small"
       value={searchValue.materialsSearchValue}
@@ -112,7 +112,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
   const renderSearchAttachedMaterials = () => (
     <TextField
       id="outlined-basic"
-      label="Search"
+      label="Поиск"
       variant="outlined"
       size="small"
       value={searchValue.attachedMaterialsSearchValue}
@@ -124,7 +124,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
   const renderSearchDecommissionedMaterials = () => (
     <TextField
       id="outlined-basic"
-      label="Search"
+      label="Поиск"
       variant="outlined"
       size="small"
       value={searchValue.decommissionedMaterialsSearchValue}
