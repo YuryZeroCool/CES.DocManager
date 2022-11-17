@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .modal-select-container,
 .modal-button-container {
   display: flex;
@@ -18,13 +20,29 @@
 }
 
 .material-number {
-  width: 50px;
+  width: 70px;
   border: 1px solid rgba(0, 0, 0, 0.23);
   border-radius: 4px;
   padding: 4px;
   box-sizing: border-box;
 
+  &:focus-visible {
+    outline: 1px solid $color-black;
+  }
+
   &:hover {
     border-color: rgba(0, 0, 0, 0.87);
+  }
+}
+
+.number-error {
+  border-color: $color-red;
+
+  &:focus-visible {
+    outline-color: $color-red;
+  }
+
+  &:hover {
+    border-color: $color-red;
   }
 }

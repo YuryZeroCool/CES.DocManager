@@ -24,7 +24,7 @@ const defaultUsedMaterial: Product = {
 function AddUsedMaterialModalContainer() {
   const [usedMaterialModalError, setUsedMaterialModalError] = useState<string>('');
   const [currentMaterial, setCurrentMaterial] = useState<Product>(defaultUsedMaterial);
-  const [currentMaterialCount, setCurrentMaterialCount] = useState<number>(1);
+  const [currentMaterialCount, setCurrentMaterialCount] = useState<number>(0);
   const [maxNumber, setMaxNumber] = useState<number>(0);
 
   const { isAddUsedMaterialModalOpen } = useSelector<RootState, IModal>(
@@ -115,6 +115,7 @@ function AddUsedMaterialModalContainer() {
       currentMaterial={currentMaterial}
       maxNumber={maxNumber}
       currentMaterialCount={currentMaterialCount}
+      unit={currentMaterial.unit}
       usedMaterialModalError={usedMaterialModalError}
       handleClose={handleClose}
       handleChange={handleChange}

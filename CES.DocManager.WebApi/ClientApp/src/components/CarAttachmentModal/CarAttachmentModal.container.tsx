@@ -25,9 +25,9 @@ function CarAttachmentModalContainer() {
   MaterialAttached>((state) => state.materials.attachedMaterial);
 
   const [modalError, setModalError] = useState<string>('');
-  const [brand, setBrand] = useState('');
-  const [numbersPlateOfCarState, setNumbersPlateOfCarState] = useState('');
-  const [attachedMaterialNumber, setAttachedMaterialNumber] = useState(0);
+  const [brand, setBrand] = useState<string>('');
+  const [numbersPlateOfCarState, setNumbersPlateOfCarState] = useState<string>('');
+  const [attachedMaterialNumber, setAttachedMaterialNumber] = useState<number>(0);
 
   const dispatch: IAuthResponseType = useDispatch();
 
@@ -110,9 +110,10 @@ function CarAttachmentModalContainer() {
   return (
     <CarAttachmentModalComponent
       brand={brand}
+      unit={attachedMaterial.unit}
       numbersPlateOfCarState={numbersPlateOfCarState}
       attachedMaterialNumber={attachedMaterialNumber}
-      maxNumber={attachedMaterial.count}
+      maxNumber={attachedMaterial.count !== undefined ? attachedMaterial.count : 0}
       isCarAttachmentModalOpen={isCarAttachmentModalOpen}
       allBrands={allBrands}
       numbersPlateOfCar={numbersPlateOfCar}

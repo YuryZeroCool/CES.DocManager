@@ -1,4 +1,10 @@
-import { Button, MenuItem, SelectChangeEvent } from '@mui/material';
+import {
+  Button,
+  MenuItem,
+  SelectChangeEvent,
+  TextField,
+  Typography,
+} from '@mui/material';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -16,7 +22,7 @@ const style = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  width: 400,
+  width: 450,
   minHeight: 200,
   bgcolor: 'background.paper',
   border: '2px solid #000',
@@ -31,7 +37,8 @@ interface Props {
   numbersPlateOfCarState: string;
   attachedMaterialNumber: number;
   numbersPlateOfCar: INumbersPlateOfCarResponse | undefined;
-  maxNumber: number | undefined;
+  maxNumber: number;
+  unit: string | undefined;
   handleClose: () => void;
   handleChange: (event: SelectChangeEvent) => void;
   handleSubmit: () => void;
@@ -46,6 +53,7 @@ export default function CarAttachmentModalComponent(props: Props) {
     attachedMaterialNumber,
     numbersPlateOfCar,
     maxNumber,
+    unit,
     handleClose,
     handleChange,
     handleSubmit,
@@ -92,19 +100,26 @@ export default function CarAttachmentModalComponent(props: Props) {
             </Select>
           </FormControl>
           <input
-            className="material-number"
+            className={attachedMaterialNumber > maxNumber ? 'material-number number-error' : 'material-number'}
             type="number"
+            step={unit === 'шт' ? '1' : '0.001'}
             value={attachedMaterialNumber}
             name="attachedMaterialNumber"
-            min="1"
+            min="0"
             max={maxNumber}
             onChange={handleChange}
           />
         </div>
+        <Typography id="modal-modal-title" variant="subtitle1" component="h6" sx={{ marginBottom: '10px' }}>
+          Всего в наличии:&nbsp;
+          {maxNumber}
+          &nbsp;
+          {unit}
+        </Typography>
         <div className="modal-button-container">
           <Button
             className="modal-button"
-            disabled={brand === '' || numbersPlateOfCarState === '' || attachedMaterialNumber === 0}
+            disabled={brand === '' || numbersPlateOfCarState === '' || attachedMaterialNumber === 0 || attachedMaterialNumber > maxNumber}
             variant="contained"
             size="small"
             onClick={handleSubmit}

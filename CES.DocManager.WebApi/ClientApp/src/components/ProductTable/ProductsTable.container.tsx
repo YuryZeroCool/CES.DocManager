@@ -277,7 +277,12 @@ function ProductsTableContainer(props: Props) {
     event.preventDefault();
     if (event.button === 2 && event.currentTarget.offsetParent) {
       if (pageType === 'Материалы' && materialsTableType === 'Свободные' && el) {
-        dispatch(changeAttachedMaterial({ party: el.partyName, count: el.count }));
+        dispatch(changeAttachedMaterial({
+          party: el.partyName,
+          count: el.count,
+          unit: materials.filter((e) => (
+            e.party.filter((elem) => elem.partyId === el.partyId)).length !== 0)[0].unit,
+        }));
         dispatch(changeRowActiveId(el.partyId));
       }
       if (pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && id) {

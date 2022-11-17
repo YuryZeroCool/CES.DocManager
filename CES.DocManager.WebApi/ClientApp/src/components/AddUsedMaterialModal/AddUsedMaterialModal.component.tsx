@@ -24,6 +24,7 @@ interface AddUsedMaterialModalProps {
   maxNumber: number;
   currentMaterialCount: number;
   usedMaterialModalError: string;
+  unit: string;
   handleClose: () => void;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: () => void;
@@ -36,6 +37,7 @@ export default function AddUsedMaterialModalComponent(props: AddUsedMaterialModa
     maxNumber,
     currentMaterialCount,
     usedMaterialModalError,
+    unit,
     handleChange,
     handleClose,
     onSubmit,
@@ -71,12 +73,13 @@ export default function AddUsedMaterialModalComponent(props: AddUsedMaterialModa
           {maxNumber}
         </Typography>
         <input
-          className="material-number"
+          className={currentMaterialCount > maxNumber ? 'material-number number-error' : 'material-number'}
           type="number"
           value={currentMaterialCount}
           name="currentMaterialCount"
-          min="1"
+          min="0"
           max={maxNumber}
+          step={unit === 'шт' ? '1' : '0.001'}
           onChange={handleChange}
         />
         {usedMaterialModalError !== '' && <p className="error-message">{usedMaterialModalError}</p>}
@@ -86,6 +89,7 @@ export default function AddUsedMaterialModalComponent(props: AddUsedMaterialModa
             variant="contained"
             type="submit"
             size="small"
+            disabled={currentMaterialCount === 0 || currentMaterialCount > maxNumber}
             onClick={onSubmit}
           >
             Сохранить
