@@ -60,6 +60,7 @@ export interface MaterialAttached {
   count?: number;
   numberPlateOfCar?: string;
   brand?: string;
+  unit?: string;
 }
 
 export interface IMaterialAttachedResponse {
@@ -167,4 +168,24 @@ export interface IAddUsedMaterialResponse {
   partyDate: string;
   price: number;
   unit: string;
+}
+
+export interface IPatchAttachedMaterialData {
+  op: string;
+  path: string;
+  value: string;
+}
+
+export interface IPatchAttachedMaterialRequest {
+  id: number;
+  data: IPatchAttachedMaterialData[];
+}
+
+export interface IPatchAttachedMaterialResponse {
+  id: number;
+  dateCreated: Date;
+  vehicleBrand: string;
+  vehicleModel: string;
+  numberPlateCar: string;
+  accountName: string;
 }
