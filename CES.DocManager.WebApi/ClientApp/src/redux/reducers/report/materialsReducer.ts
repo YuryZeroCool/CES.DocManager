@@ -132,7 +132,15 @@ const materialsReducer = createSlice({
         (el) => el.partyName === action.payload.nameParty,
       )[0];
 
-      const finalCount = currentParty.count - action.payload.count;
+      const finalCount = Math.round((currentParty.count - action.payload.count) * 1000) / 1000;
+      stateCopy.totalCount = (
+        Math.round((Number(stateCopy.totalCount) - action.payload.count) * 1000) / 1000
+      ).toString();
+      stateCopy.totalSum = (
+        Number(stateCopy.totalSum) - Number(
+          (action.payload.count * action.payload.price).toFixed(2),
+        )
+      ).toFixed(2);
 
       if (finalCount <= 0) {
         const parties = currentElem.party.filter(
@@ -148,6 +156,11 @@ const materialsReducer = createSlice({
         }
       } else {
         stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].count = finalCount;
+        stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].totalSum = Number(
+          (
+            finalCount * stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].price
+          ).toFixed(2),
+        );
       }
       return stateCopy;
     },
@@ -172,7 +185,17 @@ const materialsReducer = createSlice({
         (el) => el.partyName === action.payload.party[0].partyName,
       )[0];
 
-      const finalCount = currentParty.count - action.payload.party[0].count;
+      const finalCount = (
+        Math.round((currentParty.count - action.payload.party[0].count) * 1000) / 1000
+      );
+      stateCopy.totalCount = (
+        Math.round((Number(stateCopy.totalCount) - action.payload.party[0].count) * 1000) / 1000
+      ).toString();
+      stateCopy.totalSum = (
+        Number(stateCopy.totalSum) - Number(
+          (action.payload.party[0].count * action.payload.party[0].price).toFixed(2),
+        )
+      ).toFixed(2);
 
       if (finalCount <= 0) {
         const parties = currentElem.party.filter(
@@ -188,6 +211,11 @@ const materialsReducer = createSlice({
         }
       } else {
         stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].count = finalCount;
+        stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].totalSum = Number(
+          (
+            finalCount * stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].price
+          ).toFixed(2),
+        );
       }
       return stateCopy;
     },

@@ -91,7 +91,7 @@ function CarAttachmentModalContainer() {
       setNumbersPlateOfCarState(event.target.value);
     }
     if (event.target.name === 'attachedMaterialNumber') {
-      setAttachedMaterialNumber(Number(event.target.value));
+      setAttachedMaterialNumber(Math.round((Number(event.target.value)) * 1000) / 1000);
     }
   };
 
