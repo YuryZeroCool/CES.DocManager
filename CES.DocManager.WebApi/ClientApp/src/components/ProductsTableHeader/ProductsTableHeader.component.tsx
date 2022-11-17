@@ -12,7 +12,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import { RotatingLines } from 'react-loader-spinner';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import { ISearch } from '../../types/ReportTypes';
+import { IMaterialAttachedResponse, ISearch } from '../../types/ReportTypes';
 import './ProductsTableHeader.style.scss';
 
 interface Props {
@@ -26,6 +26,7 @@ interface Props {
   uploadFileError: boolean;
   fileInputRef: React.RefObject<HTMLInputElement>;
   isCheckedByDate: boolean;
+  allAttachedMaterials: IMaterialAttachedResponse[];
   handleChange: (event: SelectChangeEvent) => void;
   handleChangeCheckbox: (event: ChangeEvent<HTMLInputElement>) => void;
   handleClick: () => void;
@@ -56,6 +57,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
     uploadFileError,
     fileInputRef,
     isCheckedByDate,
+    allAttachedMaterials,
     handleChange,
     handleChangeCheckbox,
     handleClick,
@@ -172,8 +174,17 @@ export default function ProductsTableHeaderComponent(props: Props) {
             </FormControl>
           </Box>
         )}
-        {pageType === 'Материалы' && materialsTableType === 'Прикрепленные'
-        && <Button sx={{ m: 1, minWidth: 120 }} variant="contained" size="small" onClick={handleClick}>Добавить ремонт</Button>}
+        {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && (
+          <Button
+            sx={{ m: 1, minWidth: 120 }}
+            disabled={allAttachedMaterials.length === 0}
+            variant="contained"
+            size="small"
+            onClick={handleClick}
+          >
+            Добавить ремонт
+          </Button>
+        )}
       </div>
       <div className="search-block">
         <div className="table-header-wrapper">

@@ -36,6 +36,7 @@ function ProductsTableHeaderContainer() {
     isUploadNewMaterialsLoader,
     uploadMaterialsMessage,
     isCheckedByDate,
+    allAttachedMaterials,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const { isLoaderModalOpen } = useSelector<RootState, IModal>(
@@ -161,6 +162,7 @@ function ProductsTableHeaderContainer() {
       uploadFileError={uploadFileError}
       fileInputRef={fileInputRef}
       isCheckedByDate={isCheckedByDate}
+      allAttachedMaterials={allAttachedMaterials}
       handleChange={handleChange}
       handleChangeCheckbox={handleChangeCheckbox}
       handleClick={handleClick}
