@@ -39,6 +39,7 @@ const initial: IMaterialsResponse = {
     count: 0,
     numberPlateOfCar: '',
     brand: '',
+    unit: '',
   },
   createdAttachedMaterial: {
     id: 0,
