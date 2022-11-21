@@ -1,5 +1,6 @@
 import { SelectChangeEvent } from '@mui/material/Select';
 import { AxiosError } from 'axios';
+import dayjs from 'dayjs';
 import React, {
   ChangeEvent,
   FormEvent,
@@ -73,6 +74,8 @@ function AddMaterialsWriteOffModalContainer() {
 
   const [formState, setFormState] = useState<IMaterialsWriteOffForm>(defaultFormValues);
 
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+
   const { allMechanics, allAttachedMaterials } = useSelector<RootState, IMaterialsResponse>(
     (state) => state.materials,
   );
@@ -145,6 +148,19 @@ function AddMaterialsWriteOffModalContainer() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkedAttachedMaterials]);
 
+  useEffect(() => {
+    if (tableAttachedMaterialsArray[0].nameMaterial !== '') {
+      const arr = tableAttachedMaterialsArray.filter((el) => el.currentCount !== 0);
+      console.log(arr);
+      if (arr.length === checkedAttachedMaterials.length) {
+        setIsDisabled(false);
+      } else {
+        setIsDisabled(true);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tableAttachedMaterialsArray]);
+
   const getAllAttachedCars = () => {
     const attachedCars: string[] = [];
     allAttachedMaterials.forEach((el: IMaterialAttachedResponse) => {
@@ -212,9 +228,10 @@ function AddMaterialsWriteOffModalContainer() {
       };
       return newEl;
     });
+    const currentDay = dayjs(formState.currentDate).date();
     const data: IDecommissionedMaterialRequest = {
       carMechanic: formState.mechanic,
-      currentDate: formState.currentDate,
+      currentDate: dayjs(formState.currentDate).date(currentDay + 1).toDate(),
       materials: allMaterials,
     };
     try {
@@ -235,6 +252,8 @@ function AddMaterialsWriteOffModalContainer() {
       allMechanics={allMechanics}
       attachedMaterialsByCar={attachedMaterialsByCar}
       tableAttachedMaterialsArray={tableAttachedMaterialsArray}
+      isDisabled={isDisabled}
+      checkedAttachedMaterials={checkedAttachedMaterials}
       handleClose={handleClose}
       handleChange={handleChange}
       changeCurrentDate={changeCurrentDate}
