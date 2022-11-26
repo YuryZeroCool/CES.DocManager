@@ -19,7 +19,23 @@ import getAllGroupAccounts from '../../actions/report/materialReport/getAllGroup
 import getAllMaterials from '../../actions/report/materialReport/getAllMaterials';
 import getAllMechanics from '../../actions/report/materialReport/getAllMechanics';
 import getDefectiveSheet from '../../actions/report/materialReport/getDefectiveSheet';
+import patchAttachedMaterial from '../../actions/report/materialReport/patchAttachedMaterial';
 import uploadNewMaterials from '../../actions/report/materialReport/uploadNewMaterials';
+
+const defaultAttachedMaterial: IMaterialAttachedResponse = {
+  id: 0,
+  nameMaterial: '',
+  nameParty: '',
+  partyDate: '',
+  unit: '',
+  price: 0,
+  count: 0,
+  dateCreated: '',
+  vehicleBrand: '',
+  vehicleModel: '',
+  numberPlateCar: '',
+  accountName: '',
+};
 
 const initial: IMaterialsResponse = {
   uploadMaterialsMessage: '',
@@ -41,20 +57,7 @@ const initial: IMaterialsResponse = {
     brand: '',
     unit: '',
   },
-  createdAttachedMaterial: {
-    id: 0,
-    nameMaterial: '',
-    nameParty: '',
-    partyDate: '',
-    unit: '',
-    price: 0,
-    count: 0,
-    dateCreated: '',
-    vehicleBrand: '',
-    vehicleModel: '',
-    numberPlateCar: '',
-    accountName: '',
-  },
+  createdAttachedMaterial: defaultAttachedMaterial,
   pageType: 'Материалы',
   materialsTableType: 'Свободные',
   deletedAttachedMaterialId: 0,
@@ -84,6 +87,7 @@ const initial: IMaterialsResponse = {
     unit: '',
   },
   isCheckedByDate: false,
+  editedAttachedMaterial: defaultAttachedMaterial,
 };
 
 const materialsReducer = createSlice({
@@ -286,6 +290,24 @@ const materialsReducer = createSlice({
         ...stateCopy,
         createdAttachedMaterial: { ...initial.createdAttachedMaterial },
       };
+      return stateCopy;
+    },
+    resetEditedAttachedMaterial: (state) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        editedAttachedMaterial: { ...initial.editedAttachedMaterial },
+      };
+      return stateCopy;
+    },
+    editAttachedMaterial: (state, action: PayloadAction<IMaterialAttachedResponse>) => {
+      const stateCopy: IMaterialsResponse = state;
+      const currentEl = stateCopy.allAttachedMaterials.findIndex(
+        (el) => el.id === action.payload.id,
+      );
+      if (currentEl !== -1) {
+        stateCopy.allAttachedMaterials[currentEl] = { ...action.payload };
+      }
       return stateCopy;
     },
     deleteFromAttachedMaterials: (state, action: PayloadAction<number>) => {
@@ -569,6 +591,15 @@ const materialsReducer = createSlice({
     builder.addCase(deleteDecommissionedMaterial.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
+
+    builder.addCase(patchAttachedMaterial.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, editedAttachedMaterial: { ...action.payload } };
+      return stateCopy;
+    });
+    builder.addCase(patchAttachedMaterial.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
   },
 });
 
@@ -585,6 +616,8 @@ export const {
   changeAccordionHeight,
   changeAttachedMaterial,
   resetAttachedMaterial,
+  resetEditedAttachedMaterial,
+  editAttachedMaterial,
   resetCreatedAttachedMaterial,
   deleteFromAttachedMaterials,
   deleteFromDecommissionedMaterials,

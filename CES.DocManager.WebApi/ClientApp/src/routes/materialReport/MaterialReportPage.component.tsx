@@ -16,6 +16,7 @@ import CarAttachmentModal from '../../components/CarAttachmentModal/CarAttachmen
 import AddMaterialsWriteOffModal from '../../components/AddMaterialsWriteOffModal/AddMaterialsWriteOffModal.container';
 import DetailedInformationModal from '../../components/DetailedInformationModal/DetailedInformationModal.container';
 import AddUsedMaterialModal from '../../components/AddUsedMaterialModal/AddUsedMaterialModal.container';
+import EditAttachedMaterialModal from '../../components/EditAttachedMaterialModal/EditAttachedMaterialModal.container';
 import { ReportErrors } from '../../types/ReportTypes';
 import './MaterialReportPage.style.scss';
 
@@ -27,6 +28,7 @@ interface Props {
   isAddMaterialsWriteOffModalOpen: boolean;
   isDetailedInformationModalOpen: boolean;
   isAddUsedMaterialModalOpen: boolean;
+  isEditAttachedMaterialModalOpen: boolean;
   materialsTableType: string;
   pageType: string;
   reportName: string;
@@ -49,6 +51,7 @@ export default function MaterialReportPageComponent(props: Props) {
     isAddMaterialsWriteOffModalOpen,
     isDetailedInformationModalOpen,
     isAddUsedMaterialModalOpen,
+    isEditAttachedMaterialModalOpen,
     materialsTableType,
     pageType,
     reportName,
@@ -140,6 +143,7 @@ export default function MaterialReportPageComponent(props: Props) {
       {isAddMaterialsWriteOffModalOpen && <AddMaterialsWriteOffModal />}
       {isDetailedInformationModalOpen && <DetailedInformationModal />}
       {isAddUsedMaterialModalOpen && <AddUsedMaterialModal />}
+      {isEditAttachedMaterialModalOpen && <EditAttachedMaterialModal />}
     </section>
   );
 }

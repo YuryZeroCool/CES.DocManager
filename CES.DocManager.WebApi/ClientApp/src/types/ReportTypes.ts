@@ -116,6 +116,7 @@ export interface IMaterialsResponse {
   searchValue: ISearch;
   usedMaterial: IAddUsedMaterialResponse;
   isCheckedByDate: boolean;
+  editedAttachedMaterial: IMaterialAttachedResponse;
 }
 
 export interface AccountsGroupState {
@@ -179,13 +180,4 @@ export interface IPatchAttachedMaterialData {
 export interface IPatchAttachedMaterialRequest {
   id: number;
   data: IPatchAttachedMaterialData[];
-}
-
-export interface IPatchAttachedMaterialResponse {
-  id: number;
-  dateCreated: Date;
-  vehicleBrand: string;
-  vehicleModel: string;
-  numberPlateCar: string;
-  accountName: string;
 }
