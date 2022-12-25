@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20221128185118_AddNumbersPlateCarKey")]
+    partial class AddNumbersPlateCarKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -438,7 +440,7 @@ namespace CES.Infra.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("DivisionNumberId")
+                    b.Property<int?>("DivisionNumberId")
                         .HasColumnType("int");
 
                     b.Property<int>("GarageNumber")
@@ -625,10 +627,8 @@ namespace CES.Infra.Migrations
             modelBuilder.Entity("CES.Infra.Models.NumberPlateCarEntity", b =>
                 {
                     b.HasOne("CES.Infra.Models.DivisionEntity", "DivisionNumber")
-                        .WithMany("NumbersPlateCarEntity")
-                        .HasForeignKey("DivisionNumberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("DivisionNumberId");
 
                     b.HasOne("CES.Infra.Models.VehicleModelEntity", "VehicleModel")
                         .WithMany("NumberPlateCar")
@@ -658,8 +658,6 @@ namespace CES.Infra.Migrations
             modelBuilder.Entity("CES.Infra.Models.DivisionEntity", b =>
                 {
                     b.Navigation("EmployeeEntities");
-
-                    b.Navigation("NumbersPlateCarEntity");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.EmployeeEntity", b =>

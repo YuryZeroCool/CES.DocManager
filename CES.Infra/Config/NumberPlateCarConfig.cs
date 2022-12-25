@@ -12,6 +12,8 @@ namespace CES.Infra.Config
 
             builder.Property(t => t.Number)
                 .HasMaxLength(100);
+
+          
             builder.HasMany(x => x.DecommissionedMaterials).WithOne(p=>p.NumberPlateOfCar);
         }
     }

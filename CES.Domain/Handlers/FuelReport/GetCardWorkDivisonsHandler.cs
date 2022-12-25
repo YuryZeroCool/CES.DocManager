@@ -28,7 +28,7 @@ namespace CES.Domain.Handlers.Report
 
            var  workCardDivisions = await _ctx.WorkCardDivisions.Where(p => p.PeriodReport == period).ToListAsync(cancellationToken);
 
-            if (workCardDivisions == null) throw new System.Exception("Error");
+            if (workCardDivisions == null || workCardDivisions.Count == 0) throw new System.Exception("Error");
 
             var car = await _ctx.NumberPlateOfCar
                 .Where(p => p.GarageNumber == request.GarageNumber)

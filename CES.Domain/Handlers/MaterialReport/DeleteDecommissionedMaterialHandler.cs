@@ -4,7 +4,6 @@ using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace CES.Domain.Handlers.MaterialReport
@@ -24,44 +23,39 @@ namespace CES.Domain.Handlers.MaterialReport
         }
         public async Task<int> Handle(DeleteDecommissionedMaterialRequest request, CancellationToken cancellationToken)
         {
-            var material = await _ctx.DecommissionedMaterials.Where(x => x.Id == request.Id)
+            var material = await _ctx.DecommissionedMaterials
                 .Include(p => p.NumberPlateOfCar)
-                .Include(p => p.CarMechanic).ToListAsync();
-
+                .Include(p => p.CarMechanic)
+                .FirstOrDefaultAsync(x => x.Id == request.Id);
 
             if (material == null) throw new System.Exception("Error");
+               var materials =  JsonSerializer.Deserialize<List<AddDecomissioneMaterial>>(material.Materials);
 
-            foreach (var item in material)
+            if (materials == null) throw new System.Exception("Error");
+
+
+            foreach (var mater in materials)
             {
-                if (item == null) throw new System.Exception("Error");
-               var materials =  JsonSerializer.Deserialize<List<AddDecomissioneMaterial>>(item.Materials);
+                var EnshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x => x.NameMaterial == mater.NameMaterial
+                && x.NameParty == mater.NameParty
+                && x.NumberPlateCar == mater.NumberPlateCar, cancellationToken);
 
-                if (materials == null) throw new System.Exception("Error");
-
-
-                foreach (var mater in materials)
+                if(EnshrinedMaterial != null)
                 {
-                    var EnshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x => x.NameMaterial == mater.NameMaterial
-                    && x.NameParty == mater.NameParty
-                    && x.NumberPlateCar == mater.NumberPlateCar);
-
-                    if(EnshrinedMaterial != null)
-                    {
-                        EnshrinedMaterial.Count += mater.Count;
-                        _ctx.EnshrinedMaterial.Update(EnshrinedMaterial);
-                    }
-                    else
-                    {
-                        var res = _mapper.Map<EnshrinedMaterialEntity>(mater);
-                        res.Id = 0;
-                       await  _ctx.EnshrinedMaterial.AddAsync(res);
-                    }
+                    EnshrinedMaterial.Count += mater.Count;
+                    _ctx.EnshrinedMaterial.Update(EnshrinedMaterial);
                 }
-                _ctx.DecommissionedMaterials.Remove(item);
-                await _ctx.SaveChangesAsync(cancellationToken);
-                Id = item.Id;
+                else
+                {
+                    var res = _mapper.Map<EnshrinedMaterialEntity>(mater);
+                    res.Id = 0;
+                    await  _ctx.EnshrinedMaterial.AddAsync(res,cancellationToken);
+                }
             }
-
+                _ctx.DecommissionedMaterials.Remove(material);
+                await _ctx.SaveChangesAsync(cancellationToken);
+                Id = material.Id;
+  
             return await Task.FromResult(Id);
         }
     }

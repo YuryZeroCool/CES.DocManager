@@ -48,7 +48,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 {
                     Name = enshrinedMaterial.NameParty,
                     PartyDate = enshrinedMaterial.PartyDate,
-                    Price = enshrinedMaterial.Price / (decimal)enshrinedMaterial.Count,
+                    Price = enshrinedMaterial.Price,
                     Count = enshrinedMaterial.Count,
                     DateCreated = enshrinedMaterial.DateCreated,
                     Product = material,
@@ -62,6 +62,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 if (par == null) throw new System.Exception("Error");
 
                 par!.Count += enshrinedMaterial.Count;
+                par.TotalSum = (decimal)par.Count * par.Price;
                 _ctx.Parties.Update(par);
             }
             _ctx.EnshrinedMaterial.Remove(enshrinedMaterial);

@@ -24,17 +24,13 @@ namespace CES.Domain.Handlers.MaterialReport
         }
         public async Task<AddDecommissionedMaterialResponse> Handle(AddDecommissionedMaterialRequest request, CancellationToken cancellationToken)
         {
-            if(request.Materials == null) throw new System.Exception("Error");
-
-            if (request.Materials.Count == 0) throw new System.Exception("Error");
+            if(request.Materials == null || request.Materials.Count == 0) throw new System.Exception("Error");
 
             foreach (var material in request.Materials)
             {
                var enshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x=>x.Id == material.Id,cancellationToken);
 
-                if (enshrinedMaterial == null) throw new System.Exception("Error");
-
-                if(material.Count == 0) throw new System.Exception("Error");
+                if (enshrinedMaterial == null || material.Count == 0) throw new System.Exception("Error");
 
                 if(material.Count == enshrinedMaterial.Count)
                 {
@@ -47,7 +43,8 @@ namespace CES.Domain.Handlers.MaterialReport
                     _ctx.Update(enshrinedMaterial);
                 }
                 Materials.Add(material);
-                NumberPlateOfCar = await _ctx.NumberPlateOfCar.FirstOrDefaultAsync(x => x.Number == material.NumberPlateCar,cancellationToken);
+                NumberPlateOfCar = await _ctx.NumberPlateOfCar
+                    .FirstOrDefaultAsync(x => x.Number == material.NumberPlateCar,cancellationToken);
                 if(NumberPlateOfCar == null) throw new System.Exception("Error");
             }
             var mehanic = await _ctx.CarMechanics.FirstOrDefaultAsync(x => x.FIO == request.CarMechanic);
