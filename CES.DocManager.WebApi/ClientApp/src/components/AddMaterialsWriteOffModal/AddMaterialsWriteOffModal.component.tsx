@@ -68,6 +68,8 @@ interface Props {
   attachedCars: string[];
   attachedMaterialsByCar: IMaterialAttachedResponse[];
   tableAttachedMaterialsArray: ITableAttachedMaterials[];
+  isDisabled: boolean;
+  checkedAttachedMaterials: IMaterialAttachedResponse[];
   handleClose: () => void;
   handleChange: (event: SelectChangeEvent) => void;
   changeMaterialsByCar: (event: SelectChangeEvent<string[]>) => void;
@@ -89,6 +91,8 @@ export default function AddMaterialsWriteOffModalComponent(props: Props) {
     attachedCars,
     attachedMaterialsByCar,
     tableAttachedMaterialsArray,
+    isDisabled,
+    checkedAttachedMaterials,
     handleClose,
     handleChange,
     changeMaterialsByCar,
@@ -120,8 +124,6 @@ export default function AddMaterialsWriteOffModalComponent(props: Props) {
             {...params}
             sx={{ width: '30%' }}
             size="small"
-            // helperText={error?.message}
-            // error={!!error?.message}
           />
         )}
       />
@@ -138,7 +140,6 @@ export default function AddMaterialsWriteOffModalComponent(props: Props) {
         value={mechanic}
         label="Выбрать механика..."
         onChange={(event) => handleChange(event)}
-        // error={!!error?.message}
       >
         {allMechanics && allMechanics.map((el) => (
           <MenuItem key={el.id} value={el.fio}>{el.fio}</MenuItem>
@@ -157,7 +158,6 @@ export default function AddMaterialsWriteOffModalComponent(props: Props) {
         value={car}
         label="Выбрать машину..."
         onChange={(event) => handleChange(event)}
-        // error={!!error?.message}
       >
         {attachedCars && attachedCars.map((el) => (
           <MenuItem key={el} value={el}>{el}</MenuItem>
@@ -180,7 +180,6 @@ export default function AddMaterialsWriteOffModalComponent(props: Props) {
         renderValue={(selected) => selected.join(', ')}
         onChange={changeMaterialsByCar}
         inputProps={{ readOnly: car === '' }}
-        // error={!!error?.message}
       >
         {attachedMaterialsByCar && attachedMaterialsByCar.length > 0
         && attachedMaterialsByCar.map((el) => (
@@ -201,8 +200,8 @@ export default function AddMaterialsWriteOffModalComponent(props: Props) {
         <TableHead>
           <StyledTableRow>
             <StyledTableCell sx={{ width: '5%' }} align="center">№</StyledTableCell>
-            <StyledTableCell sx={{ width: '80%' }} align="left">Наименование</StyledTableCell>
-            <StyledTableCell sx={{ width: '15%' }} align="left">Количество</StyledTableCell>
+            <StyledTableCell sx={{ width: '77%' }} align="left">Наименование</StyledTableCell>
+            <StyledTableCell sx={{ width: '18%' }} align="left">Количество</StyledTableCell>
           </StyledTableRow>
         </TableHead>
         <TableBody>
@@ -218,16 +217,17 @@ export default function AddMaterialsWriteOffModalComponent(props: Props) {
               <StyledTableCell align="left">{el.nameMaterial}</StyledTableCell>
               <StyledTableCell align="left">
                 <input
-                  className="material-number"
+                  className="material-number table-material-number"
                   type="number"
                   value={el.currentCount}
                   name="attachedMaterialNumber"
                   min="0"
                   max={el.count}
+                  step={el.unit === 'шт' ? '1' : '0.001'}
                   onChange={(event) => handleNumberChange(event, el.id)}
                 />
                 <span>
-                  /
+                  &nbsp;/&nbsp;
                   {el.count}
                 </span>
               </StyledTableCell>
@@ -258,7 +258,7 @@ export default function AddMaterialsWriteOffModalComponent(props: Props) {
             {renderTable()}
             <div className="modal-button-container">
               <Button
-                // disabled={!isValid}
+                disabled={currentDate === null || car === '' || mechanic === '' || checkedAttachedMaterials.length === 0 || isDisabled}
                 className="modal-button"
                 variant="contained"
                 type="submit"

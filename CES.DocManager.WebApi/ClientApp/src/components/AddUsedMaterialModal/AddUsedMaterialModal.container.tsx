@@ -91,7 +91,7 @@ function AddUsedMaterialModalContainer() {
         setUsedMaterialModalError('');
       }
       const data: IAddUsedMaterialRequest = {
-        count: currentMaterialCount,
+        count: Math.round(currentMaterialCount * 1000) / 1000,
         partyName: currentMaterial.party.filter((el) => el.partyId === rowActiveId)[0].partyName,
       };
       await dispatch(addUsedMaterial(data));

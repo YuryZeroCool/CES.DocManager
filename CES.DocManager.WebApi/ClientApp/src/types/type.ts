@@ -18,4 +18,5 @@ export interface IModal {
   isDetailedInformationModalOpen: boolean;
   isAddUsedMaterialModalOpen: boolean;
   isLoaderModalOpen: boolean;
+  isEditAttachedMaterialModalOpen: boolean;
 }

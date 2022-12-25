@@ -1,18 +1,18 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 import $api from '../../../../http/loginHttp';
-import { IPatchAttachedMaterialRequest, IPatchAttachedMaterialResponse } from '../../../../types/ReportTypes';
+import { IMaterialAttachedResponse, IPatchAttachedMaterialRequest } from '../../../../types/ReportTypes';
 import { FetchTodosError } from '../../../../types/type';
 
 const patchAttachedMaterial = createAsyncThunk<
-IPatchAttachedMaterialResponse, IPatchAttachedMaterialRequest, { rejectValue: FetchTodosError }>(
+IMaterialAttachedResponse, IPatchAttachedMaterialRequest, { rejectValue: FetchTodosError }>(
   'patchAttachedMaterial',
   async (material: IPatchAttachedMaterialRequest, { rejectWithValue }) => {
     try {
       if (process.env.REACT_APP_PATCH_ATTACHED_MATERIAL === undefined) {
         throw Error('Упс, что-то пошло не так...');
       }
-      const response = await $api.patch<IPatchAttachedMaterialResponse>(
+      const response = await $api.patch<IMaterialAttachedResponse>(
         `${process.env.REACT_APP_PATCH_ATTACHED_MATERIAL}/${material.id}`,
         material.data,
       );
@@ -20,7 +20,7 @@ IPatchAttachedMaterialResponse, IPatchAttachedMaterialRequest, { rejectValue: Fe
     } catch (err) {
       if (err instanceof Error || err instanceof AxiosError) {
         return rejectWithValue({
-          message: err.message,
+          message: 'Материал не отредактирован',
         });
       }
       return rejectWithValue({

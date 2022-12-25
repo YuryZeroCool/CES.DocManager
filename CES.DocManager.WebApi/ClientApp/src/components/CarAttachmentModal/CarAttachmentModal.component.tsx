@@ -2,7 +2,6 @@ import {
   Button,
   MenuItem,
   SelectChangeEvent,
-  TextField,
   Typography,
 } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -32,11 +31,11 @@ const style = {
 
 interface Props {
   isCarAttachmentModalOpen: boolean;
-  allBrands: IAllBrandsResponse | undefined;
+  allBrands: IAllBrandsResponse;
   brand: string;
   numbersPlateOfCarState: string;
   attachedMaterialNumber: number;
-  numbersPlateOfCar: INumbersPlateOfCarResponse | undefined;
+  numbersPlateOfCar: INumbersPlateOfCarResponse;
   maxNumber: number;
   unit: string | undefined;
   handleClose: () => void;

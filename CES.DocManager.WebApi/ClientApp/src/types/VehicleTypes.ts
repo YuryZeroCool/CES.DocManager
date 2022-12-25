@@ -13,6 +13,6 @@ export type IAllBrandsResponse = IBrand[];
 export type INumbersPlateOfCarResponse = INumberPlateOfCar[];
 
 export interface IVehicleResponse {
-  allBrands?: IAllBrandsResponse;
-  numbersPlateOfCar?: INumbersPlateOfCarResponse;
+  allBrands: IAllBrandsResponse;
+  numbersPlateOfCar: INumbersPlateOfCarResponse;
 }

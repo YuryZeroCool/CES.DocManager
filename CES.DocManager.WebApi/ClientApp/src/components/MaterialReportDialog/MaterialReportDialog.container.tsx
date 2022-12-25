@@ -19,6 +19,7 @@ import {
   toggleAddUsedMaterialModal,
   toggleCarAttachmentModal,
   toggleDetailedInformationModal,
+  toggleEditAttachedMaterialModal,
   toggleMaterialReportDialog,
 } from '../../redux/reducers/modals/modalsReducer';
 import deleteDecommissionedMaterial from '../../redux/actions/report/materialReport/deleteDecommissionedMaterial';
@@ -72,7 +73,7 @@ function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger
         await dispatch(getDefectiveSheet(rowActiveId));
       }
       if (value === 'Редактировать' && materialsTableType === 'Прикрепленные' && pageType === 'Материалы') {
-        console.log('edit attached material');
+        dispatch(toggleEditAttachedMaterialModal(true));
       }
       if (value === 'Прикрепить авто') {
         dispatch(toggleCarAttachmentModal(true));
