@@ -8,7 +8,8 @@ namespace CES.Infra.Config
     {
         public void Configure(EntityTypeBuilder<VehicleBrandEntity> builder)
         {
-            builder.HasMany(x => x.VehiclesModels).WithOne(p => p.VehicleBrand);
+            builder.HasMany(x => x.VehiclesModels)
+                .WithOne(p => p.VehicleBrand);
         }
     }
 }

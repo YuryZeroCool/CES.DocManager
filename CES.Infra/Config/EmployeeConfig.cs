@@ -8,9 +8,11 @@ namespace CES.Infra.Config
     {
         public void Configure(EntityTypeBuilder<EmployeeEntity> builder)
         {
-            builder.HasMany(x => x.DriverLicense).WithOne(c => c.Employee);
+            builder.HasMany(x => x.DriverLicense)
+                .WithOne(c => c.Employee);
 
-            builder.HasMany(x => x.MedicalCertificates).WithOne(c => c.Employee);
+            builder.HasMany(x => x.MedicalCertificates)
+                .WithOne(c => c.Employee);
 
             builder.Property(x => x.BthDate)
                 .HasColumnType("DATE");
@@ -19,7 +21,10 @@ namespace CES.Infra.Config
                 .IsRequired();
 
             builder.HasIndex(p => p.PersonnelNumber)
-                .IsUnique(true);
+                .IsUnique();
+
+            //builder.Property(t => t.CarNumber)
+            //    .IsRequired(false);
         }
     }
 }

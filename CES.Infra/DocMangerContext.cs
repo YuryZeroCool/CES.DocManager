@@ -39,7 +39,7 @@ namespace CES.Infra
 
         public virtual DbSet<UnitEntity> Units { get; set; }
 
-        public virtual  DbSet<NumberPlateCarEntity> NumberPlateOfCar { get; set; }
+        public virtual  DbSet<NumberPlateOfCarEntity> NumberPlateOfCar { get; set; }
 
         public virtual DbSet<FuelWorkCardEntity> FuelWorkCards { get; set; }
 

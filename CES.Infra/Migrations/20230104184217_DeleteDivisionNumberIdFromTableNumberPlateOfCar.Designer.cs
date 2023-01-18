@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20230104184217_DeleteDivisionNumberIdFromTableNumberPlateOfCar")]
+    partial class DeleteDivisionNumberIdFromTableNumberPlateOfCar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,9 +140,6 @@ namespace CES.Infra.Migrations
                     b.Property<DateTime>("BthDate")
                         .HasColumnType("DATE");
 
-                    b.Property<int?>("CarNumberId")
-                        .HasColumnType("int");
-
                     b.Property<int>("DivisionNumberId")
                         .HasColumnType("int");
 
@@ -156,8 +155,6 @@ namespace CES.Infra.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CarNumberId");
 
                     b.HasIndex("DivisionNumberId");
 
@@ -435,7 +432,7 @@ namespace CES.Infra.Migrations
                     b.ToTable("UsedMaterials");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.NumberPlateOfCarEntity", b =>
+            modelBuilder.Entity("CES.Infra.Models.NumberPlateCarEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -450,7 +447,7 @@ namespace CES.Infra.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("VehicleModelId")
+                    b.Property<int?>("VehicleModelId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -522,21 +519,6 @@ namespace CES.Infra.Migrations
                     b.ToTable("WorkCardDivisions");
                 });
 
-            modelBuilder.Entity("DivisionEntityNumberPlateOfCarEntity", b =>
-                {
-                    b.Property<int>("DivisionsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberPlateOfCarsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("DivisionsId", "NumberPlateOfCarsId");
-
-                    b.HasIndex("NumberPlateOfCarsId");
-
-                    b.ToTable("DivisionEntityNumberPlateOfCarEntity");
-                });
-
             modelBuilder.Entity("CES.Infra.Models.Drivers.DriverLicenseEntity", b =>
                 {
                     b.HasOne("CES.Infra.Models.EmployeeEntity", "Employee")
@@ -561,17 +543,11 @@ namespace CES.Infra.Migrations
 
             modelBuilder.Entity("CES.Infra.Models.EmployeeEntity", b =>
                 {
-                    b.HasOne("CES.Infra.Models.NumberPlateOfCarEntity", "CarNumber")
-                        .WithMany("Employees")
-                        .HasForeignKey("CarNumberId");
-
                     b.HasOne("CES.Infra.Models.DivisionEntity", "DivisionNumber")
                         .WithMany("EmployeeEntities")
                         .HasForeignKey("DivisionNumberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("CarNumber");
 
                     b.Navigation("DivisionNumber");
                 });
@@ -587,7 +563,7 @@ namespace CES.Infra.Migrations
 
             modelBuilder.Entity("CES.Infra.Models.FuelWorkCardEntity", b =>
                 {
-                    b.HasOne("CES.Infra.Models.NumberPlateOfCarEntity", "NumberPlateCar")
+                    b.HasOne("CES.Infra.Models.NumberPlateCarEntity", "NumberPlateCar")
                         .WithMany("FuelWorkCards")
                         .HasForeignKey("NumberPlateCarId");
 
@@ -602,7 +578,7 @@ namespace CES.Infra.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CES.Infra.Models.NumberPlateOfCarEntity", "NumberPlateOfCar")
+                    b.HasOne("CES.Infra.Models.NumberPlateCarEntity", "NumberPlateOfCar")
                         .WithMany("DecommissionedMaterials")
                         .HasForeignKey("NumberPlateOfCarId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -643,13 +619,11 @@ namespace CES.Infra.Migrations
                     b.Navigation("Unit");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.NumberPlateOfCarEntity", b =>
+            modelBuilder.Entity("CES.Infra.Models.NumberPlateCarEntity", b =>
                 {
                     b.HasOne("CES.Infra.Models.VehicleModelEntity", "VehicleModel")
                         .WithMany("NumberPlateCar")
-                        .HasForeignKey("VehicleModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VehicleModelId");
 
                     b.Navigation("VehicleModel");
                 });
@@ -663,21 +637,6 @@ namespace CES.Infra.Migrations
                         .IsRequired();
 
                     b.Navigation("VehicleBrand");
-                });
-
-            modelBuilder.Entity("DivisionEntityNumberPlateOfCarEntity", b =>
-                {
-                    b.HasOne("CES.Infra.Models.DivisionEntity", null)
-                        .WithMany()
-                        .HasForeignKey("DivisionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CES.Infra.Models.NumberPlateOfCarEntity", null)
-                        .WithMany()
-                        .HasForeignKey("NumberPlateOfCarsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CES.Infra.Models.CarMechanicEntity", b =>
@@ -717,11 +676,9 @@ namespace CES.Infra.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.NumberPlateOfCarEntity", b =>
+            modelBuilder.Entity("CES.Infra.Models.NumberPlateCarEntity", b =>
                 {
                     b.Navigation("DecommissionedMaterials");
-
-                    b.Navigation("Employees");
 
                     b.Navigation("FuelWorkCards");
                 });

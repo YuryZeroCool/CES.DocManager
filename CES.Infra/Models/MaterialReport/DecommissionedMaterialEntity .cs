@@ -6,7 +6,7 @@
 
         public DateTime CurrentDate { get; set; }
 
-        public NumberPlateCarEntity? NumberPlateOfCar { get; set; }
+        public NumberPlateOfCarEntity? NumberPlateOfCar { get; set; }
 
         public int NumberPlateOfCarId { get; set; }
 

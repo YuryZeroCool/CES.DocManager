@@ -17,8 +17,13 @@ namespace CES.Infra.Models
 
         public int DivisionNumberId { get; set; }
 
+        public int? CarNumberId { get; set; }
+
         [JsonIgnore]
         public DivisionEntity DivisionNumber { get; set; }
+
+        [JsonIgnore]
+        public NumberPlateOfCarEntity? CarNumber { get; set; }
 
         public ICollection<DriverLicenseEntity> DriverLicense { get; set; }
 

@@ -14,7 +14,7 @@ namespace CES.Infra.Models
         public  DateTime ? WorkDate { get; set; }
 
         [JsonIgnore]
-        public  NumberPlateCarEntity? NumberPlateCar { get; set; }
+        public  NumberPlateOfCarEntity? NumberPlateCar { get; set; }
 
         public byte[]? Data { get; set; }
     }

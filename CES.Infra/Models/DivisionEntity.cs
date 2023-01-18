@@ -11,14 +11,14 @@ namespace CES.Infra.Models
         [JsonIgnore]
         public ICollection<EmployeeEntity> EmployeeEntities { get; set; }
 
+
         [JsonIgnore]
-        public ICollection<NumberPlateCarEntity> NumbersPlateCarEntity { get; set; }
+        public ICollection<NumberPlateOfCarEntity>? NumberPlateOfCars { get; set; }
 
         public DivisionEntity()
         {
             EmployeeEntities = new List<EmployeeEntity>();
-
-            NumbersPlateCarEntity = new List<NumberPlateCarEntity>();
+            NumberPlateOfCars = new List<NumberPlateOfCarEntity>();
         }
     }
 }
