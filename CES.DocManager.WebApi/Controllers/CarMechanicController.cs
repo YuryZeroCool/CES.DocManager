@@ -2,8 +2,6 @@
 using CES.Domain.Models.Request.CarMechanic;
 using CES.Domain.Models.Response.CarMechanic;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;

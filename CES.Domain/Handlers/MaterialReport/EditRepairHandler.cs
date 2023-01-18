@@ -1,12 +1,7 @@
 ﻿using CES.Domain.Models.Request.MaterialReport;
 using CES.Infra;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace CES.Domain.Handlers.MaterialReport
 {
@@ -21,13 +16,13 @@ namespace CES.Domain.Handlers.MaterialReport
         public async Task<int> Handle(EditRepairRequest request, CancellationToken cancellationToken)
         {
 
-            var repair = await _ctx.DecommissionedMaterials.FindAsync(request.RepairId);
+            var repair = await _ctx.DecommissionedMaterials.FindAsync(request.RepairId, cancellationToken);
 
             if (repair == null) throw new System.Exception("Error");
 
-            var date = JsonSerializer.Deserialize<List<AddDecomissioneMaterial>>(repair.Materials);
+            var date = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(repair.Materials);
             
-                throw new NotImplementedException();
+            throw new NotImplementedException();
 
         }
     }

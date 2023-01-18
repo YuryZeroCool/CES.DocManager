@@ -81,10 +81,10 @@
     
   <ItemGroup>
     <Reference Include="Spire.Pdf">
-      <HintPath>..\..\..\12.7\Bin\netstandard2.0\Spire.Pdf.dll</HintPath>
+      <HintPath>..\CES.Domain\Spire.Pdf.dll</HintPath>
     </Reference>
     <Reference Include="Spire.XLS">
-      <HintPath>..\..\..\12.7\Bin\netstandard2.0\Spire.XLS.dll</HintPath>
+      <HintPath>..\CES.Domain\Spire.XLS.dll</HintPath>
     </Reference>
   </ItemGroup>
     

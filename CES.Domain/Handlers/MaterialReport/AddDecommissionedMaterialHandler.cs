@@ -11,16 +11,16 @@ namespace CES.Domain.Handlers.MaterialReport
 {
     public class AddDecommissionedMaterialHandler : IRequestHandler<AddDecommissionedMaterialRequest, AddDecommissionedMaterialResponse>
     {
-        private NumberPlateCarEntity? NumberPlateOfCar;
+        private NumberPlateOfCarEntity? _numberPlateOfCar;
 
         private readonly DocMangerContext _ctx;
 
-        private readonly List<AddDecomissioneMaterial> Materials;
+        private readonly List<AddDecommissionedMaterial> _materials;
 
         public AddDecommissionedMaterialHandler(DocMangerContext ctx)
-        {
+        { 
             _ctx = ctx;
-           Materials = new List<AddDecomissioneMaterial>();
+            _materials = new List<AddDecommissionedMaterial>();
         }
         public async Task<AddDecommissionedMaterialResponse> Handle(AddDecommissionedMaterialRequest request, CancellationToken cancellationToken)
         {
@@ -28,11 +28,14 @@ namespace CES.Domain.Handlers.MaterialReport
 
             foreach (var material in request.Materials)
             {
-               var enshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x=>x.Id == material.Id,cancellationToken);
+               var enshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x =>
+                   x.Id == material.Id, cancellationToken);
 
                 if (enshrinedMaterial == null || material.Count == 0) throw new System.Exception("Error");
 
-                if(material.Count == enshrinedMaterial.Count)
+                var difference = Math.Abs(material.Count * .00001);
+
+                if (Math.Abs(material.Count - enshrinedMaterial.Count) <= difference)
                 {
                     _ctx.EnshrinedMaterial.Remove(enshrinedMaterial);
                 }
@@ -42,19 +45,20 @@ namespace CES.Domain.Handlers.MaterialReport
                     if (enshrinedMaterial.Count < 0) throw new System.Exception("Error");
                     _ctx.Update(enshrinedMaterial);
                 }
-                Materials.Add(material);
-                NumberPlateOfCar = await _ctx.NumberPlateOfCar
+                _materials.Add(material);
+                _numberPlateOfCar = await _ctx.NumberPlateOfCar
                     .FirstOrDefaultAsync(x => x.Number == material.NumberPlateCar,cancellationToken);
-                if(NumberPlateOfCar == null) throw new System.Exception("Error");
+                if(_numberPlateOfCar == null) throw new System.Exception("Error");
             }
-            var mehanic = await _ctx.CarMechanics.FirstOrDefaultAsync(x => x.FIO == request.CarMechanic);
-            if (mehanic == null) throw new System.Exception("Error");
+            var mechanic = await _ctx.CarMechanics.FirstOrDefaultAsync(x =>
+                x.FIO == request.CarMechanic, cancellationToken);
+            if (mechanic == null) throw new System.Exception("Error");
             var decommissionMaterial = new DecommissionedMaterialEntity()
             {
                 CurrentDate = request.CurrentDate,
-                CarMechanic = mehanic,
-                Materials = JsonSerializer.SerializeToUtf8Bytes(Materials),
-                NumberPlateOfCar = NumberPlateOfCar,
+                CarMechanic = mechanic,
+                Materials = JsonSerializer.SerializeToUtf8Bytes(_materials),
+                NumberPlateOfCar = _numberPlateOfCar,
             };
             await _ctx.DecommissionedMaterials.AddAsync(decommissionMaterial, cancellationToken);
             await _ctx.SaveChangesAsync(cancellationToken);
@@ -64,7 +68,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 Id = decommissionMaterial.Id,
                 CarMechanic = decommissionMaterial.CarMechanic.FIO,
                 CurrentDate = decommissionMaterial.CurrentDate,
-                Materials = JsonSerializer.Deserialize<List<AddDecomissioneMaterial>>(decommissionMaterial.Materials)
+                Materials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(decommissionMaterial.Materials)
             });
         }
     }

@@ -22,7 +22,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
         public async Task<List<GetTotalMaterialsResponse>> Handle(GetTotalMaterialsRequest request, CancellationToken cancellationToken)
         {
-            if(request.Accounts != null)
+            if (request.Accounts != null)
             {
                 var arrAccounts = request.Accounts.Split(", ").ToList();
                 if (arrAccounts == null) throw new System.Exception("Error");

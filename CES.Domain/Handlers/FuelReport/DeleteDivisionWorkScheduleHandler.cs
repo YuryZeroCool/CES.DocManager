@@ -2,7 +2,7 @@
 using CES.Infra;
 using MediatR;
 
-namespace CES.Domain.Handlers.Report
+namespace CES.Domain.Handlers.FuelReport
 {
     public class DeleteDivisionWorkScheduleHandler : IRequestHandler<DeleteDivisionWorkScheduleRequest,int>
     {

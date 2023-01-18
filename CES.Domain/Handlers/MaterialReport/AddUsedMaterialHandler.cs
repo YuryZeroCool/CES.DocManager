@@ -5,7 +5,6 @@ using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using NPOI.SS.Formula.Functions;
 using System.Text.Json;
 
 namespace CES.Domain.Handlers.MaterialReport
@@ -23,8 +22,6 @@ namespace CES.Domain.Handlers.MaterialReport
         }
         public async  Task<AddUsedMaterialResponse> Handle(AddUsedMaterialRequest request, CancellationToken cancellationToken)
         {
-            UsedMaterialEntity? data;
-
             var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.PartyName, cancellationToken);
 
             if (party == null || party.ProductId == 0) throw new System.Exception("Error");
@@ -37,7 +34,9 @@ namespace CES.Domain.Handlers.MaterialReport
 
             if (product == null || product.Parties == null || product.Parties.Count == 0) throw new System.Exception("Error");
 
-            if (party.Count == request.Count)
+            var difference = Math.Abs(party.Count * .00001);
+
+            if (Math.Abs(party.Count - request.Count) <= difference)
             {
                 _ctx.Parties.Remove(party);
 
@@ -70,7 +69,7 @@ namespace CES.Domain.Handlers.MaterialReport
                         new UsedMaterial
                         {
                             Id = party.Id,
-                            NameMaterial = product!.Name,
+                            NameMaterial = product.Name,
                             NameParty = party.Name,
                             Count = request.Count,
                             Price = party.Price,
@@ -83,7 +82,7 @@ namespace CES.Domain.Handlers.MaterialReport
             }
             else
             {
-                data = await _ctx.UsedMaterials.FirstOrDefaultAsync(x => x.Period == currentDate, cancellationToken);
+                var data = await _ctx.UsedMaterials.FirstOrDefaultAsync(x => x.Period == currentDate, cancellationToken);
 
                 if (data == null) throw new SystemException("Error");
 
@@ -98,7 +97,7 @@ namespace CES.Domain.Handlers.MaterialReport
                     res.Add(new UsedMaterial
                     {
                         Id = party.Id,
-                        NameMaterial = product!.Name,
+                        NameMaterial = product.Name,
                         NameParty = party.Name,
                         Count = request.Count,
                         Price = party.Price,

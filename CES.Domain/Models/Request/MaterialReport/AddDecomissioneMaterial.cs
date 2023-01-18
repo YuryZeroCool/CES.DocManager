@@ -2,5 +2,5 @@
 
 namespace CES.Domain.Models.Request.MaterialReport
 {
-    public class AddDecomissioneMaterial : AddEnshrinedMaterialResponse {}
+    public class AddDecommissionedMaterial : AddEnshrinedMaterialResponse {}
 }

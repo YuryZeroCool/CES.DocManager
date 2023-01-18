@@ -61,12 +61,12 @@ namespace CES.Domain.Handlers.MaterialReport
 
                 if (par == null) throw new System.Exception("Error");
 
-                par!.Count += enshrinedMaterial.Count;
+                par.Count += enshrinedMaterial.Count;
                 par.TotalSum = (decimal)par.Count * par.Price;
                 _ctx.Parties.Update(par);
             }
             _ctx.EnshrinedMaterial.Remove(enshrinedMaterial);
-           return  _ctx.SaveChangesAsync(cancellationToken).Result;
+            return  _ctx.SaveChangesAsync(cancellationToken).Result;
         }
     }
 }

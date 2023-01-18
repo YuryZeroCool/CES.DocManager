@@ -3,8 +3,6 @@ using CES.DocManager.WebApi.Models;
 using CES.Domain.Models.Request.DriverMedicalCertificate;
 using CES.Domain.Models.Response.Employees;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;

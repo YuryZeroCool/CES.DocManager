@@ -1,4 +1,4 @@
-﻿using CES.Domain.Handlers.Report;
+﻿using CES.Domain.Handlers.FuelReport;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 

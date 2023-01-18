@@ -4,30 +4,32 @@ using CES.Domain.Models.Response.Employees;
 using CES.Infra;
 using CES.Infra.Models;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace CES.Domain.Handlers.Employees
 {
     public class CreateEmployeeHandler : IRequestHandler<CreateEmployeeRequest, CreateEmployeeResponse>
     {
-        public readonly DocMangerContext _docMangerContext;
+        private readonly DocMangerContext _docManagerCtx;
 
-        public readonly IMapper _mapper;
+        private readonly IMapper _mapper;
 
-        public CreateEmployeeHandler(DocMangerContext mangerContex, IMapper mapper)
+        public CreateEmployeeHandler(DocMangerContext managerContext, IMapper mapper)
         {
-            _docMangerContext = mangerContex;
+            _docManagerCtx = managerContext;
             _mapper = mapper;
 
         }
         public async Task<CreateEmployeeResponse> Handle(CreateEmployeeRequest request, CancellationToken cancellationToken)
         {
-            var DivisionNumberId = _docMangerContext.Divisions.FirstOrDefault(x => x.Name == request.DivisionNumber);
-            if (DivisionNumberId == null) throw new SystemException("Error");
+            var divisionNumberId = await _docManagerCtx.Divisions.FirstOrDefaultAsync(x =>
+                x.Name == request.DivisionNumber, cancellationToken);
+            if (divisionNumberId == null) throw new SystemException("Error");
 
             var employee = _mapper.Map<EmployeeEntity>(request);
-            employee.DivisionNumber = DivisionNumberId;
-            await  _docMangerContext.AddAsync(employee,cancellationToken);
-            await _docMangerContext.SaveChangesAsync(cancellationToken);
+            employee.DivisionNumber = divisionNumberId;
+            await _docManagerCtx.AddAsync(employee,cancellationToken);
+            await _docManagerCtx.SaveChangesAsync(cancellationToken);
 
             var res = _mapper.Map<CreateEmployeeResponse>(employee);
             if (res == null) throw new System.Exception("Error");

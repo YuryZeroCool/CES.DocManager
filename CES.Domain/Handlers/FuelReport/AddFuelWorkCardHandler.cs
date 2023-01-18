@@ -7,15 +7,15 @@ using Microsoft.EntityFrameworkCore;
 using NPOI.SS.UserModel;
 using System.Text.Json;
 
-namespace CES.Domain.Handlers.Report
+namespace CES.Domain.Handlers.FuelReport
 {
     public class AddFuelWorkCardHandler : IRequestHandler<FuelWorkCardRequest, int>
     {
-        private  Stream? fs;
+        private Stream? _fs;
 
-        private  IWorkbook? wk;
+        private IWorkbook? _wk;
 
-        private readonly DocMangerContext? _ctx;
+        private readonly DocMangerContext _ctx;
 
         public AddFuelWorkCardHandler(DocMangerContext ctx)
         {
@@ -26,14 +26,14 @@ namespace CES.Domain.Handlers.Report
         {
             if (request.FuelWorkCardFile == null) throw new System.Exception("Error");
 
-            using (fs = request.FuelWorkCardFile.OpenReadStream())
+            await using (_fs = request.FuelWorkCardFile.OpenReadStream())
             {
-                wk = WorkbookFactory.Create(fs);
+                _wk = WorkbookFactory.Create(_fs);
             }
             
-            for (int i = 0; i < wk.NumberOfSheets; i++)
+            for (var i = 0; i < _wk.NumberOfSheets; i++)
             {
-                var rows = wk.GetSheetAt(i);
+                var rows = _wk.GetSheetAt(i);
                 if (rows == null || rows.LastRowNum == 0) continue;
 
                 var row = rows.GetRow(1).GetCell(0).ToString() ?? throw new System.Exception("Error");
@@ -42,7 +42,7 @@ namespace CES.Domain.Handlers.Report
                 row.Contains(p.Number!.Trim()), cancellationToken);
 
                 List<FuelWorkCardModel> rowsArr = new();
-                var currentDate = GetDate(rows.GetRow(6).GetCell(1).ToString());
+                var currentDate = GetDate(rows.GetRow(6)?.GetCell(1)?.ToString());
                 var card = new FuelWorkCardEntity
                 {
                     NumberPlateCar = carId,

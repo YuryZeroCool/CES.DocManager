@@ -5,7 +5,7 @@ using CES.XmlFormat;
 using CES.XmlFormat.Models;
 using MediatR;
 
-namespace CES.Domain.Handlers.Report
+namespace CES.Domain.Handlers.FuelReport
 {
     public class GetVehicleExpenseSheetHandler : IRequestHandler<GetVehicleExpenseSheetRequest, List<List<GetVehicleExpenseSheetResponse>>>
     {
@@ -24,10 +24,8 @@ namespace CES.Domain.Handlers.Report
 
             DirectoryInfo dirInfo = new(request.Path + "/download");
             var dirPath = request.Path + "/download/" + dirInfo.GetFiles()[0].Name;
-           // _readExcel = new ReadExcel(dirPath);
-            //var data =  _mapper.Map<List<List<FuelWorkAccountingCard>>, List<List<VehicleExpenseSheetResponse>>>
-            //(_readExcel.readExcel().ToList());
-            foreach (var sheet in _readExcel.readExcel())
+           
+            foreach (var sheet in _readExcel.ReadExcelDocument())
             {
                 rowArr = new List<GetVehicleExpenseSheetResponse>();
 
@@ -37,20 +35,8 @@ namespace CES.Domain.Handlers.Report
                 }
                 sheetsArr.Add(rowArr);
             }
-            return await Task.FromResult(sheetsArr);
 
-            //catch (IndexOutOfRangeException)
-            //{
-            //    List<string> errorData = new List<string>();
-            //    errorData.Add("folder is empty");
-            //    return Task.FromResult(new List<List<string>>() { errorData });
-            //}
-            //catch (System.Exception)
-            //{
-            //    List<string> errorData = new List<string>();
-            //    errorData.Add("File read error!");
-            //    return Task.FromResult(new List<List<string>>() { errorData });
-            //}
+            return await Task.FromResult(sheetsArr);
         }
     }
 }

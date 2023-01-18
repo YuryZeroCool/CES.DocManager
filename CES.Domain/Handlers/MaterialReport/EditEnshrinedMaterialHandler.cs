@@ -18,18 +18,15 @@ namespace CES.Domain.Handlers.MaterialReport
         {
             _ctx = ctx;
             _mapper = mapper;
-           
         }
 
         public async Task<EditEnshrinedMaterialResponse> Handle(EditEnshrinedMaterialRequest request, CancellationToken cancellationToken)
         {
-            double countNew = 0 ;
-
-            var material =  await _ctx.EnshrinedMaterial.FindAsync(request.Id);
+            var material =  await _ctx.EnshrinedMaterial.FindAsync(request.Id, cancellationToken);
 
             if (material == null) throw new System.Exception("Error");
 
-            countNew = material.Count;
+            var countNew = material.Count;
 
             request.EnshrinedMaterial!.ApplyTo(material);
             await _ctx.SaveChangesAsync(cancellationToken);
@@ -43,15 +40,15 @@ namespace CES.Domain.Handlers.MaterialReport
                 var nameMaterial = await _ctx.Products
                     .FirstOrDefaultAsync(x=>x.Name == material.NameMaterial, cancellationToken);
 
-                if(nameMaterial == null) //Если не существует материала
+                if (nameMaterial == null) // Если не существует материала
                 {
                     nameMaterial = new ProductEntity()
                     {
                         Name = material.NameMaterial,
                         Account = _ctx.ProductsGroupAccount
-                        .FirstOrDefaultAsync(x=>x.AccountName == material.AccountName,cancellationToken).Result,
+                            .FirstOrDefaultAsync(x=>x.AccountName == material.AccountName,cancellationToken).Result,
                         Unit = _ctx.Units
-                        .FirstOrDefaultAsync(x => x.Name == material.Unit, cancellationToken).Result,
+                            .FirstOrDefaultAsync(x => x.Name == material.Unit, cancellationToken).Result,
                     };
                 } 
                 
@@ -82,8 +79,9 @@ namespace CES.Domain.Handlers.MaterialReport
                     res.TotalSum = material.Price * (decimal)countNew;
                     _ctx.Parties.Update(res);
                 }
-               await _ctx.SaveChangesAsync(cancellationToken);
+                await _ctx.SaveChangesAsync(cancellationToken);
             }
+
             return await Task.FromResult(_mapper.Map<EditEnshrinedMaterialResponse>(material));
         }
     }

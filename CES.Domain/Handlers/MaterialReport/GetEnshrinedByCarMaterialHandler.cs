@@ -18,7 +18,7 @@ namespace CES.Domain.Handlers.MaterialReport
            var materials = _ctx.EnshrinedMaterial
                 .Where(x => x.VehicleModel == request.Model && x.NumberPlateCar == request.NumberOfPlate);
 
-            if (materials == null || materials.Count() == 0) throw new System.Exception("Error");
+            if (materials == null || !materials.Any()) throw new System.Exception("Error");
            
             throw new NotImplementedException();
         }

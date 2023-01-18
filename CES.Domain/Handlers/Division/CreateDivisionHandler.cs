@@ -27,9 +27,10 @@ namespace CES.Domain.Handlers.Division
                 throw new RestException(HttpStatusCode.OK, "Такая смена существует");
 
             _docMangerContext.Divisions.Add(_mapper.Map<CreateDivisionRequest, DivisionEntity>(request));
-            await _docMangerContext.SaveChangesAsync();
+            await _docMangerContext.SaveChangesAsync(cancellationToken);
 
             var division = _docMangerContext.Divisions.FirstOrDefault(p => p.Name == request.DivisionName);
+            if (division == null) throw new System.Exception("Error");
             return await Task.FromResult(_mapper.Map<DivisionEntity, GetDivisionNumbersResponse>(division));
         }
     }

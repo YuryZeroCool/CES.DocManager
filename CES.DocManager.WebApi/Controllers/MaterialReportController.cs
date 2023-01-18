@@ -1,4 +1,5 @@
-﻿using CES.Domain.Models.Request.MaterialReport;
+﻿using System.Globalization;
+using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Request.Vehicle;
 using CES.Domain.Models.Response.MaterialReport;
 using MediatR;
@@ -32,16 +33,16 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 if (accountsName == null) throw new Exception("Error");
 
-                var totalMaterils = await _mediator.Send(new GetTotalMaterialsRequest() { Accounts = accountsName });
-                if (totalMaterils.Count > 0)
-                {
-                    var count = (decimal)totalMaterils.Select(p => p.Party!.Select(x => x.Count).Sum()).ToList().Sum();
-                    HttpContext.Response.Headers["X-Total-Count"] = count.ToString();
+                var totalMaterials = await _mediator.Send(new GetTotalMaterialsRequest() { Accounts = accountsName });
+                if (totalMaterials.Count <= 0) return totalMaterials;
+                var count = (decimal)totalMaterials.Select(p =>
+                    p.Party!.Select(x => x.Count).Sum()).ToList().Sum();
+                HttpContext.Response.Headers["X-Total-Count"] = count.ToString(CultureInfo.InvariantCulture);
                    
-                    var sum = (decimal)totalMaterils.Select(p => p.Party!.Select(x => x.TotalSum).Sum()).ToList().Sum();
-                    HttpContext.Response.Headers["X-Total-Sum"] = sum.ToString();
-                }
-                return totalMaterils;
+                var sum = totalMaterials.Select(p => 
+                    p.Party!.Select(x => x.TotalSum).Sum()).ToList().Sum();
+                HttpContext.Response.Headers["X-Total-Sum"] = sum.ToString(CultureInfo.InvariantCulture);
+                return totalMaterials;
 
             }
             catch (Exception)
@@ -75,24 +76,18 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                if (uploadedFile.Length == 0) throw new Exception("Error");
+                if (uploadedFile.Length == 0 || uploadedFile == null) throw new Exception("Error");
                 await _mediator.Send(new AddMaterialReportRequest() { File = uploadedFile });
 
-                if (uploadedFile != null)
-                {
-                    // путь к папке Files
-                    string path = _appEnvironment.WebRootPath + "/download/" + uploadedFile.FileName;
-                    // сохраняем файл в папку Files в каталоге wwwroot
-                    using (var fileStream = new FileStream(path, FileMode.Create))
-                    {
-                        await uploadedFile.CopyToAsync(fileStream);
-                    }
-                }
+                var path = _appEnvironment.WebRootPath + "/download/" + uploadedFile.FileName;
+                await using var fileStream = new FileStream(path, FileMode.Create);
+                await uploadedFile.CopyToAsync(fileStream);
+            
                 HttpContext.Response.StatusCode = 200;
 
                 return await Task.FromResult("Файл успешно записан");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 HttpContext.Response.StatusCode = 500;
                 return await Task.FromResult("Произошка ошибка при запими файла");
@@ -139,7 +134,7 @@ namespace CES.DocManager.WebApi.Controllers
 
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        [HttpPatch("editEnshrinedMaterial/{id}")]
+        [HttpPatch("editEnshrinedMaterial/{id:int}")]
         [Produces(typeof(EditEnshrinedMaterialResponse))]
         public async Task<object> EditEnshrinedMaterialAsync([FromRoute] int id, [FromBody] JsonPatchDocument enshrinedMaterial)
         {
@@ -157,7 +152,7 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
                 {
-                    Message = e.Message
+                    e.Message
                 };
             }
         }
@@ -166,21 +161,21 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpDelete("deleteEnshrinedMaterial/{MaterialId:int}")]
         [Produces(typeof(int))]
-        public async Task<object> DeleteEnshrinedMaterialAsync(int MaterialId)
+        public async Task<object> DeleteEnshrinedMaterialAsync(int materialId)
         {
             try
             {
                 return await _mediator.Send(new DeleteEnshrinedMaterialRequest()
                 {
-                    MaterialId = MaterialId
+                    MaterialId = materialId
                 });
             }
             catch (Exception e)
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
-                {
-                    Message = e.Message
+                { 
+                    e.Message
                 };
             }
         }
@@ -202,8 +197,8 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
-                {
-                    Message = e.Message
+                { 
+                    e.Message
                 };
             }
         }
@@ -222,8 +217,8 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
-                {
-                    Message = e.Message
+                { 
+                    e.Message
                 };
             }
         }
@@ -242,8 +237,8 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
-                {
-                    Message = e.Message
+                { 
+                    e.Message
                 };
             }
         }
@@ -263,7 +258,7 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
                 {
-                    Message = e.Message
+                    e.Message
                 };
             }
         }
@@ -330,7 +325,7 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
                 {
-                   Message = e.Message
+                    e.Message
                 };
             } 
         }
@@ -355,7 +350,7 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
                 {
-                    Message = e.Message
+                    e.Message
                 };
             }
         }
@@ -376,7 +371,7 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
                 {
-                    Message = e.Message
+                   e.Message
                 };
             }
         }
@@ -402,7 +397,7 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
                 {
-                    Message = e.Message
+                   e.Message
                 };
             }
         }
@@ -411,7 +406,7 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("getEnshrinedByCarMaterial")]
         [Produces(typeof(int))]
-        public async Task<object> GetEnshrinedByCarMaterialAync(string model, string numberOfPlate)
+        public async Task<object> GetEnshrinedByCarMaterialAsync(string model, string numberOfPlate)
         {
             try
             {
@@ -428,7 +423,7 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
                 {
-                    Message = e.Message
+                    e.Message
                 };
             }
         }

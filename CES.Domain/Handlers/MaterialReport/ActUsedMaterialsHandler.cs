@@ -31,13 +31,13 @@ namespace CES.Domain.Handlers.MaterialReport
 
             if (materials == null) throw new SystemException("Error");
              materials=  materials.OrderBy(p => p.NameMaterial).ToList();
-            Workbook workbook = new Workbook();
+            var workbook = new Workbook();
             workbook.LoadFromFile(request.Path+"/Docs/materialAct.xls");
-            Worksheet sheet = workbook.Worksheets[0];
+            var sheet = workbook.Worksheets[0];
 
             sheet.InsertRow(startRow, materials.Count);
 
-            for (int j = 0; j < materials.Count; j++)
+            for (var j = 0; j < materials.Count; j++)
             {
                 totalCount += materials[j].Count;
                 totalSum += materials[j].Price * (decimal)materials[j].Count;
