@@ -220,17 +220,17 @@ export default function ProductsTable(props: Props) {
   );
 
   const renderFirstRow = () => (
-    <StyledTableRow>
+    <StyledTableRow className="first-row">
       <StyledTableCell align="center">{null}</StyledTableCell>
-      <StyledTableCell sx={{ maxWidth: 350, fontWeight: 'bold', fontSize: 16 }} component="th" scope="row">
+      <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">
         Итого
       </StyledTableCell>
       <StyledTableCell align="left">{null}</StyledTableCell>
       <StyledTableCell align="left">{null}</StyledTableCell>
       <StyledTableCell align="left">{null}</StyledTableCell>
       <StyledTableCell align="left">{null}</StyledTableCell>
-      <StyledTableCell sx={{ fontWeight: 'bold', fontSize: 16 }} align="left">{totalCount}</StyledTableCell>
-      <StyledTableCell sx={{ fontWeight: 'bold', fontSize: 16 }} align="left">{totalSum}</StyledTableCell>
+      <StyledTableCell align="left">{totalCount}</StyledTableCell>
+      <StyledTableCell align="left">{totalSum}</StyledTableCell>
     </StyledTableRow>
   );
 

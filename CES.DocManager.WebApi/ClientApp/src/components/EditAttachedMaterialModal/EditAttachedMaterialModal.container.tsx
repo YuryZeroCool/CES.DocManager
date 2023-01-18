@@ -8,7 +8,7 @@ import getAllBrands from '../../redux/actions/vehicle/getAllBrands';
 import getNumbersPlateOfCar from '../../redux/actions/vehicle/getNumbersPlateOfCar';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleEditAttachedMaterialModal } from '../../redux/reducers/modals/modalsReducer';
-import { editAllMaterialsAttachingMaterial, editAttachedMaterial, resetEditedAttachedMaterial } from '../../redux/reducers/report/materialsReducer';
+import { editAttachedMaterial, resetEditedAttachedMaterial } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import {
   IMaterialAttachedResponse,

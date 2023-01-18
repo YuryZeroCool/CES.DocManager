@@ -51,6 +51,8 @@ function ProductsTableContainer(props: Props) {
 
   const [filteredMaterials, setFilteredMaterials] = useState<Product[]>([]);
 
+  const [dialogHeight, setDialogHeight] = useState<number>(150);
+
   const [
     filteredAttachedMaterials,
     setFilteredAttachedMaterials,
@@ -84,9 +86,9 @@ function ProductsTableContainer(props: Props) {
 
   const dispatch: IAuthResponseType = useDispatch();
 
-  const DIALOG_HEIGHT = materialsTableType === 'Свободные' ? 150 : 100;
-
   const TABLE_HEAD_HEIGHT = 57;
+
+  const FIRST_ROW_HEIGHT = materialsTableType === 'Свободные' ? 55 : 0;
 
   const divElRef = React.createRef<HTMLDivElement>();
 
@@ -185,12 +187,20 @@ function ProductsTableContainer(props: Props) {
   }, [divElRef]);
 
   useEffect(() => {
-    if (DIALOG_HEIGHT > tableHeight - TABLE_HEAD_HEIGHT) {
+    if (dialogHeight > tableHeight - TABLE_HEAD_HEIGHT) {
       setIsDialogHightBigger(true);
     } else {
       setIsDialogHightBigger(false);
     }
-  }, [DIALOG_HEIGHT, tableHeight]);
+  }, [dialogHeight, tableHeight]);
+
+  useEffect(() => {
+    if (pageType === 'Материалы' && materialsTableType === 'Прикрепленные') {
+      setDialogHeight(100);
+    } else {
+      setDialogHeight(150);
+    }
+  }, [pageType, materialsTableType]);
 
   useEffect(() => {
     if (materials.length !== 0) {
@@ -268,6 +278,33 @@ function ProductsTableContainer(props: Props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createdAttachedMaterial]);
 
+  const countDialogYOffset = (event: React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
+    if (event.currentTarget.offsetParent) {
+      const tableTop = event.currentTarget.offsetParent.getBoundingClientRect().top;
+
+      if (dialogHeight > tableHeight - TABLE_HEAD_HEIGHT - FIRST_ROW_HEIGHT
+      || event.clientY - tableTop - TABLE_HEAD_HEIGHT < dialogHeight) {
+        setIsDialogHightBigger(true);
+      } else {
+        setIsDialogHightBigger(false);
+      }
+
+      if (event.clientY - tableTop + dialogHeight < tableHeight) {
+        setOffSetTop(event.currentTarget.offsetTop + (
+          event.clientY - event.currentTarget.getBoundingClientRect().top));
+      }
+
+      if (event.clientY - tableTop + dialogHeight > tableHeight) {
+        setOffSetTop(event.currentTarget.offsetTop + (
+          event.clientY - event.currentTarget.getBoundingClientRect().top) - dialogHeight);
+      }
+
+      if (event.clientX + DIALOG_WIDTH > tableWidth) {
+        setOffSetX(event.clientX - DIALOG_WIDTH);
+      }
+    }
+  };
+
   const handleContextMenu = (
     event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
     id?: number,
@@ -294,20 +331,7 @@ function ProductsTableContainer(props: Props) {
 
       dispatch(toggleMaterialReportDialog(true));
       setOffSetX(event.clientX);
-
-      const tableTop = event.currentTarget.offsetParent.getBoundingClientRect().top;
-
-      if (event.clientY - tableTop + DIALOG_HEIGHT < tableHeight) {
-        setOffSetTop(event.currentTarget.offsetTop + (
-          event.clientY - event.currentTarget.getBoundingClientRect().top));
-      }
-      if (event.clientY - tableTop + DIALOG_HEIGHT > tableHeight) {
-        setOffSetTop(event.currentTarget.offsetTop + (
-          event.clientY - event.currentTarget.getBoundingClientRect().top) - DIALOG_HEIGHT);
-      }
-      if (event.clientX + DIALOG_WIDTH > tableWidth) {
-        setOffSetX(event.clientX - DIALOG_WIDTH);
-      }
+      countDialogYOffset(event);
     }
   };
 
