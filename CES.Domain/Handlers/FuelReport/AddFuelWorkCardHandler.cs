@@ -11,10 +11,11 @@ namespace CES.Domain.Handlers.Report
 {
     public class AddFuelWorkCardHandler : IRequestHandler<FuelWorkCardRequest, int>
     {
-        private  Stream fs;
-        private  IWorkbook wk;
+        private  Stream? fs;
 
-        private readonly DocMangerContext _ctx;
+        private  IWorkbook? wk;
+
+        private readonly DocMangerContext? _ctx;
 
         public AddFuelWorkCardHandler(DocMangerContext ctx)
         {
@@ -41,11 +42,11 @@ namespace CES.Domain.Handlers.Report
                 row.Contains(p.Number!.Trim()), cancellationToken);
 
                 List<FuelWorkCardModel> rowsArr = new();
-
+                var currentDate = GetDate(rows.GetRow(6).GetCell(1).ToString());
                 var card = new FuelWorkCardEntity
                 {
                     NumberPlateCar = carId,
-                    WorkDate = GetDate(rows.GetRow(6).GetCell(1).ToString())
+                    WorkDate = new DateTime(currentDate.Year, currentDate.Month, 1)
                 };
 
                 for (int j = 6; j < rows.LastRowNum; j++)
@@ -57,7 +58,10 @@ namespace CES.Domain.Handlers.Report
                         {
                             var cardRow = new FuelWorkCardModel();
                             bool res = false;
-                            if (rows.GetRow(j).GetCell(1).ToString() != null) cardRow.Date = GetDate(rows.GetRow(j).GetCell(1).ToString());
+                            if (rows.GetRow(j).GetCell(1).ToString() != null)
+                            {
+                                cardRow.Date = GetDate(rows.GetRow(j).GetCell(1).ToString());
+                            }
 
                             if (rows.GetRow(j).GetCell(2).ToString() != "")
                             {
@@ -140,7 +144,7 @@ namespace CES.Domain.Handlers.Report
         {
             if (string.IsNullOrEmpty(date)) throw new System.Exception("Error");
 
-            var strDate = date.Split(".").Reverse();
+            var strDate = date.Split(".").Reverse().ToList();
             var newDate = String.Join('-', strDate);
 
             return DateTime.Parse(newDate);

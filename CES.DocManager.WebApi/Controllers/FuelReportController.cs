@@ -54,10 +54,14 @@ namespace CES.DocManager.WebApi.Controllers
                     ReportPeriod = reportPeriod,
                 });
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
-                return new object();
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    Message = e.Message
+                };
             }
            
         }

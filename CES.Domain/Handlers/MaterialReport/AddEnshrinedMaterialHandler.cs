@@ -85,6 +85,7 @@ namespace CES.Domain.Handlers.MaterialReport
             if (party.Count > request.Count)
             {
                 party.Count -= request.Count;
+                party.TotalSum -= (decimal)request.Count * party.Price;
                 _ctx.Parties.Update(party);
 
                 await _ctx.SaveChangesAsync(cancellationToken);

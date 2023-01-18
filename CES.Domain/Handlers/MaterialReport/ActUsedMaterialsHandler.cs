@@ -1,5 +1,4 @@
-﻿using CES.Domain.Models;
-using CES.Domain.Models.Request.MaterialReport;
+﻿using CES.Domain.Models.Request.MaterialReport;
 using CES.Infra;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +22,6 @@ namespace CES.Domain.Handlers.MaterialReport
             decimal totalSum = 0;
             double totalCount = 0;
 
-            // MaterialModelBase
-
             var usedMaterials = await _ctx.UsedMaterials.FirstOrDefaultAsync(x => x.Period.Month == request.Month &&
             x.Period.Year == request.Year, cancellationToken);
 
@@ -35,7 +32,7 @@ namespace CES.Domain.Handlers.MaterialReport
             if (materials == null) throw new SystemException("Error");
              materials=  materials.OrderBy(p => p.NameMaterial).ToList();
             Workbook workbook = new Workbook();
-            workbook.LoadFromFile(request.Path + "/Docs/ActUsedMaterials.xls");
+            workbook.LoadFromFile(request.Path+"/Docs/materialAct.xls");
             Worksheet sheet = workbook.Worksheets[0];
 
             sheet.InsertRow(startRow, materials.Count);
@@ -62,39 +59,38 @@ namespace CES.Domain.Handlers.MaterialReport
                 sheet.Range[$"A{startRow + j}:T{startRow + j}"].BorderInside(LineStyleType.Thin);
                 sheet.Range[$"A{startRow + j}:T{startRow + j}"].BorderAround(LineStyleType.Thin);
 
-                sheet.Range[$"A{startRow + j}:B{startRow + j}"].Style.Font.Size = 10;
+                sheet.Range[$"A{startRow + j}"].Style.Font.Size = 10;
                 sheet.Range[$"G{startRow + j}"].Style.Font.Size = 10;
-                sheet.Range[$"H{startRow + j}:J{startRow + j}"].Style.Font.Size = 10;
+                sheet.Range[$"H{startRow + j}"].Style.Font.Size = 10;
                 sheet.Range[$"K{startRow + j}"].Style.Font.Size = 10;
-                sheet.Range[$"L{startRow + j}:N{startRow + j}"].Style.Font.Size = 10;
-                sheet.Range[$"O{startRow + j}:R{startRow + j}"].Style.Font.Size = 10;
-                sheet.Range[$"L{startRow + j}:N{startRow + j}"].NumberFormat = "0.00";
-                sheet.Range[$"O{startRow + j}:R{startRow + j}"].NumberFormat = "0.00";
+                sheet.Range[$"L{startRow + j}"].Style.Font.Size = 10;
+                sheet.Range[$"O{startRow + j}"].Style.Font.Size = 10;
+                sheet.Range[$"L{startRow + j}"].NumberFormat = "0.00";
+                sheet.Range[$"O{startRow + j}"].NumberFormat = "0.00";
 
-                sheet.Range[$"A{startRow + j}:B{startRow + j}"].Value = $"{1 + j}";
-                sheet.Range[$"C{startRow + j}:F{startRow + j}"].Value = $"{materials[j].NameMaterial}";
+                sheet.Range[$"A{startRow + j}"].Value = $"{1 + j}";
+                sheet.Range[$"C{startRow + j}"].Value = $"{materials[j].NameMaterial}";
                 sheet.Range[$"G{startRow + j}"].Value = $"{materials[j].Unit}";
-                sheet.Range[$"H{startRow + j}:J{startRow + j}"].Value = $"{materials[j].NameParty}";
+                sheet.Range[$"H{startRow + j}"].Value = $"{materials[j].NameParty}";
                 sheet.Range[$"K{startRow + j}"].Value = $"{materials[j].Count}";
-                sheet.Range[$"L{startRow + j}:N{startRow + j}"].Value = $"{materials[j].Price}";
-                sheet.Range[$"O{startRow + j}:R{startRow + j}"].Value = $"{materials[j].Price * (decimal)materials[j].Count}";
-                sheet.Range[$"S{startRow + j}:T{startRow + j}"].Value = "Использована для ремонта автомобиля:";
+                sheet.Range[$"L{startRow + j}"].Value = $"{materials[j].Price}";
+                sheet.Range[$"O{startRow + j}"].Value = $"{materials[j].Price * (decimal)materials[j].Count}";
+                sheet.Range[$"S{startRow + j}"].Value = "Использована для ремонта автомобиля:";
             }
 
             sheet.Range[$"K{startRow + materials.Count}"].Style.Font.IsBold = true;
-            sheet.Range[$"O{startRow + materials.Count}:R{startRow + materials.Count}"].Style.Font.IsBold = true;
+            sheet.Range[$"O{startRow + materials.Count}"].Style.Font.IsBold = true;
 
             sheet.Range[$"K{startRow + materials.Count}"].Value = $"{totalCount}";
-            sheet.Range[$"O{startRow + materials.Count}:R{startRow + materials.Count}"].Value = $"{totalSum}";
+            sheet.Range[$"O{startRow + materials.Count}"].Value = $"{totalSum}";
 
             sheet.Range["K7"].Style.HorizontalAlignment = HorizontalAlignType.Center;
             sheet.Range["K7"].Style.VerticalAlignment = VerticalAlignType.Center;
             sheet.Range["K7"].Style.Font.IsBold = true;
             sheet.Range["K7"].Text = request.Month < 10 ? $"0{request.Month}/{request.Year}" : $"{request.Month}/{request.Year}";
+            workbook.SaveToFile(request.Path+"/Docs/materialAct_Out.xls", ExcelVersion.Version97to2003);
 
-            workbook.SaveToFile(request.Path + "/Docs/ActUsedMaterialsOut.xls", ExcelVersion.Version97to2003);
-
-            return await File.ReadAllBytesAsync(request.Path + "/Docs/ActUsedMaterialsOut.xls", cancellationToken);
+            return await File.ReadAllBytesAsync(request.Path + "/Docs/materialAct_Out.xls", cancellationToken);
         }
     }
 }

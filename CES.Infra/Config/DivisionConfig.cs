@@ -9,6 +9,7 @@ namespace CES.Infra.Config
         public void Configure(EntityTypeBuilder<DivisionEntity> builder)
         {
             builder.HasMany(x => x.EmployeeEntities).WithOne(p => p.DivisionNumber);
+            builder.HasMany(x => x.NumbersPlateCarEntity).WithOne(p => p.DivisionNumber);
         }
     }
 }

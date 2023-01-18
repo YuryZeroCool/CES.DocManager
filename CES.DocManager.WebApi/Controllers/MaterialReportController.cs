@@ -1,4 +1,5 @@
 ﻿using CES.Domain.Models.Request.MaterialReport;
+using CES.Domain.Models.Request.Vehicle;
 using CES.Domain.Models.Response.MaterialReport;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
@@ -29,6 +30,8 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
+                if (accountsName == null) throw new Exception("Error");
+
                 var totalMaterils = await _mediator.Send(new GetTotalMaterialsRequest() { Accounts = accountsName });
                 if (totalMaterils.Count > 0)
                 {
@@ -43,7 +46,6 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception)
             {
-
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new object();
             }
@@ -93,8 +95,7 @@ namespace CES.DocManager.WebApi.Controllers
             catch (Exception e)
             {
                 HttpContext.Response.StatusCode = 500;
-                return await Task.FromResult(e.Message);
-                //return await Task.FromResult("Произошка ошибка при запими файла");
+                return await Task.FromResult("Произошка ошибка при запими файла");
             }
 
         }
@@ -207,6 +208,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost("addDecommissionedMaterial")]
         [Produces(typeof(AddDecommissionedMaterialResponse))]
         public async Task<object> AddDecommissionedMaterialAsync(AddDecommissionedMaterialRequest material)
@@ -225,6 +228,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpDelete("deleteDecommissionedMaterial/{MaterialId:int}")]
         [Produces(typeof(int))]
         public async Task<object> DeleteDecommissionedMaterialAsync(int materialId)
@@ -243,6 +248,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("getAllDecommissionedMaterials")]
         [Produces(typeof(List<GetAllDecommissionedMaterialsResponse>))]
         public async Task<object> GetAllDecommissionedMaterialsAsync()
@@ -261,6 +268,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("getDefectiveSheet")]
         public async Task<string> GetDefectiveSheetAsync(int id)
         {
@@ -274,11 +283,14 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return e.Message;
             }
 
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("actWriteSpares")]
         [Produces(typeof(byte[]))]
         public async Task<object> ActWriteSparesAsync(int month, int year)
@@ -295,6 +307,7 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
                 {
                     Error = e.Message
@@ -302,6 +315,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost("addUsedMaterial")]
         [Produces(typeof(AddUsedMaterialResponse))]
         public async Task<object> CreateUsedMaterialAsync(AddUsedMaterialRequest material)
@@ -320,6 +335,8 @@ namespace CES.DocManager.WebApi.Controllers
             } 
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("actUsedMaterials")]
         [Produces(typeof(byte[]))]
         public async Task<object> ActUsedMaterialsAsync(int month, int year)
@@ -343,6 +360,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpDelete("allDeleteMaterials")]
         [Produces(typeof(int))]
         public async Task<object> DeleteMaterialsAsync()
@@ -361,5 +380,58 @@ namespace CES.DocManager.WebApi.Controllers
                 };
             }
         }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpPatch("editRepair/{repairId}")]
+        [Produces(typeof(int))]
+        public async Task<object> EditRepairAsync([FromRoute] int repairId, [FromBody] JsonPatchDocument repair)
+        {
+            try
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                return await _mediator.Send(new EditRepairRequest()
+                {
+                    RepairId = repairId,
+                    Repair = repair
+                }
+                );
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    Message = e.Message
+                };
+            }
+        }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("getEnshrinedByCarMaterial")]
+        [Produces(typeof(int))]
+        public async Task<object> GetEnshrinedByCarMaterialAync(string model, string numberOfPlate)
+        {
+            try
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                return await _mediator.Send(new GetEnshrinedByCarMaterialRequest()
+                {
+                    Model = model,
+                    NumberOfPlate = numberOfPlate
+                }
+                );
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    Message = e.Message
+                };
+            }
+        }
+
     }
 }
