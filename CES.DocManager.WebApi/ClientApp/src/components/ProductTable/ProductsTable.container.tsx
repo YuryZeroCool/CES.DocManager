@@ -22,6 +22,7 @@ import {
 } from '../../types/ReportTypes';
 import { IModal } from '../../types/type';
 import ProductsTableComponent from './ProductsTable.component';
+import { DIALOG_WIDTH, TABLE_HEAD_HEIGHT } from './ProductTable.config';
 
 interface Props {
   productsTableError: string;
@@ -29,8 +30,6 @@ interface Props {
 }
 
 type MaterialsType = Product[] | IMaterialAttachedResponse[] | IAllDecommissionedMaterials[];
-
-const DIALOG_WIDTH = 200;
 
 function ProductsTableContainer(props: Props) {
   const { productsTableError, setProductsTableError } = props;
@@ -85,8 +84,6 @@ function ProductsTableContainer(props: Props) {
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
-
-  const TABLE_HEAD_HEIGHT = 57;
 
   const FIRST_ROW_HEIGHT = materialsTableType === 'Свободные' ? 55 : 0;
 

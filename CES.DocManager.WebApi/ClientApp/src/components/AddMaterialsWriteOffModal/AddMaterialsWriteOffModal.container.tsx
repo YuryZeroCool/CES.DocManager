@@ -151,7 +151,6 @@ function AddMaterialsWriteOffModalContainer() {
   useEffect(() => {
     if (tableAttachedMaterialsArray[0].nameMaterial !== '') {
       const arr = tableAttachedMaterialsArray.filter((el) => el.currentCount !== 0);
-      console.log(arr);
       if (arr.length === checkedAttachedMaterials.length) {
         setIsDisabled(false);
       } else {

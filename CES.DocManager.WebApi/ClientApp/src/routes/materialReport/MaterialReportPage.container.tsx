@@ -14,9 +14,8 @@ import { changePageType, changeRowActiveId } from '../../redux/reducers/report/m
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { IMaterialsResponse, IPeriod, ReportErrors } from '../../types/ReportTypes';
 import { IModal } from '../../types/type';
+import MONTHS from './MaterialReportPage.config';
 import MaterialReportPageComponent from './MaterialReportPage.component';
-
-const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
 function MaterialReportPageContainer() {
   const [productsTableError, setProductsTableError] = useState<string>('');
