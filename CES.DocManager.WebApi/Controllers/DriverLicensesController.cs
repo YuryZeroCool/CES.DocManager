@@ -4,8 +4,6 @@ using CES.Domain.Exception;
 using CES.Domain.Models.Request.DriverLicense;
 using CES.Domain.Models.Response.DriverLicense;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -31,11 +29,11 @@ namespace CES.DocManager.WebApi.Controllers
         //    JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("isPersonalSerialNumber/{SerialNumber}")]
         [Produces(typeof(bool))]
-        public async Task<object> GetIsPersonalNumber(string SerialNumber)
+        public async Task<object> GetIsPersonalNumber(string serialNumber)
         {
             try
             {
-                return await _mediator.Send(new GetIsPersonalSerialNumberRequest() { SerialNumber = SerialNumber });
+                return await _mediator.Send(new GetIsPersonalSerialNumberRequest() { SerialNumber = serialNumber });
             }
             catch (Exception)
             {

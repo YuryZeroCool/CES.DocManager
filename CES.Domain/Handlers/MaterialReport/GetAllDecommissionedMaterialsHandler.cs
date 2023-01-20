@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CES.Domain.Models.Request.MaterialReport;
+﻿using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Response.MaterialReport;
 using CES.Infra;
 using MediatR;
@@ -13,15 +12,11 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private readonly DocMangerContext _ctx;
 
-        private readonly IMapper _mapper;
-
-
         private readonly List<GetAllDecommissionedMaterialsResponse> _materialsResponses;
 
-        public GetAllDecommissionedMaterialsHandler(DocMangerContext ctx,IMapper mapper)
+        public GetAllDecommissionedMaterialsHandler(DocMangerContext ctx)
         {
             _ctx = ctx;
-            _mapper = mapper;
             _materialsResponses = new List<GetAllDecommissionedMaterialsResponse>(); 
         }
         public async Task<List<GetAllDecommissionedMaterialsResponse>> Handle(GetAllDecommissionedMaterialsRequest request, CancellationToken cancellationToken)
@@ -32,9 +27,9 @@ namespace CES.Domain.Handlers.MaterialReport
 
             foreach (var item in materials)
             {
-                var decomissioneMaterials = JsonSerializer.Deserialize<List<AddDecomissioneMaterial>>(item.Materials);
+                var decommissionedMaterials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(item.Materials);
 
-                if (decomissioneMaterials == null) throw new System.Exception("Error");
+                if (decommissionedMaterials == null) throw new System.Exception("Error");
 
                 if (item.CarMechanic == null) throw new System.Exception("Error");
 
@@ -43,7 +38,7 @@ namespace CES.Domain.Handlers.MaterialReport
                     Id = item.Id,
                     CarMechanic = item.CarMechanic.FIO,
                     CurrentDate = item.CurrentDate,
-                    Materials = decomissioneMaterials
+                    Materials = decommissionedMaterials
                 });
                              
             }

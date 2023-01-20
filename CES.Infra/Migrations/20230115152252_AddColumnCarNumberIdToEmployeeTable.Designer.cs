@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20230115152252_AddColumnCarNumberIdToEmployeeTable")]
+    partial class AddColumnCarNumberIdToEmployeeTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -522,21 +524,6 @@ namespace CES.Infra.Migrations
                     b.ToTable("WorkCardDivisions");
                 });
 
-            modelBuilder.Entity("DivisionEntityNumberPlateOfCarEntity", b =>
-                {
-                    b.Property<int>("DivisionsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberPlateOfCarsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("DivisionsId", "NumberPlateOfCarsId");
-
-                    b.HasIndex("NumberPlateOfCarsId");
-
-                    b.ToTable("DivisionEntityNumberPlateOfCarEntity");
-                });
-
             modelBuilder.Entity("CES.Infra.Models.Drivers.DriverLicenseEntity", b =>
                 {
                     b.HasOne("CES.Infra.Models.EmployeeEntity", "Employee")
@@ -663,21 +650,6 @@ namespace CES.Infra.Migrations
                         .IsRequired();
 
                     b.Navigation("VehicleBrand");
-                });
-
-            modelBuilder.Entity("DivisionEntityNumberPlateOfCarEntity", b =>
-                {
-                    b.HasOne("CES.Infra.Models.DivisionEntity", null)
-                        .WithMany()
-                        .HasForeignKey("DivisionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CES.Infra.Models.NumberPlateOfCarEntity", null)
-                        .WithMany()
-                        .HasForeignKey("NumberPlateOfCarsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CES.Infra.Models.CarMechanicEntity", b =>

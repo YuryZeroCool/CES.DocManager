@@ -9,6 +9,6 @@ namespace CES.Domain.Models.Request.MaterialReport
 
         public DateTime CurrentDate { get; set; }   
 
-        public List<AddDecomissioneMaterial>? Materials { get; set; }  
+        public List<AddDecommissionedMaterial>? Materials { get; set; }  
     }
 }

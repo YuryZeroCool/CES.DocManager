@@ -25,7 +25,7 @@ namespace CES.Domain.Handlers.MaterialReport
             _ctx.ProductsGroupAccount.RemoveRange(_ctx.ProductsGroupAccount);  
 
 
-            await _ctx.SaveChangesAsync();
+            await _ctx.SaveChangesAsync(cancellationToken);
             return await Task.FromResult(200);
         }
     }

@@ -57,15 +57,17 @@ namespace CES.Domain.Handlers.MaterialReport
             }
             else
             {
-                enshrine = new EnshrinedMaterialEntity();
-                enshrine.Count = request.Count;
-                enshrine.NameMaterial = product.Name;
-                enshrine.NameParty = party.Name;
-                enshrine.PartyDate = party.PartyDate;
-                enshrine.Price = party.Price;
-                enshrine.DateCreated = party.DateCreated;
-                enshrine.AccountName = product.Account!.AccountName;
-                enshrine.Unit = product.Unit!.Name;
+                enshrine = new EnshrinedMaterialEntity
+                {
+                    Count = request.Count,
+                    NameMaterial = product.Name,
+                    NameParty = party.Name,
+                    PartyDate = party.PartyDate,
+                    Price = party.Price,
+                    DateCreated = party.DateCreated,
+                    AccountName = product.Account!.AccountName,
+                    Unit = product.Unit!.Name
+                };
 
                 var car = await _ctx.NumberPlateOfCar
                     .Include(p => p.VehicleModel)

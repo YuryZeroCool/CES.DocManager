@@ -22,21 +22,20 @@ namespace CES.Domain.Handlers.MaterialReport
             decimal totalSum = 0;
             double totalCount = 0;
 
-            List<AddDecomissioneMaterial>? materials = null;
+            var decommissionedMaterials = await _ctx.DecommissionedMaterials
+                .Where(x => 
+                    x.CurrentDate.Month == request.Month &&
+                    x.CurrentDate.Year == request.Year).ToListAsync(cancellationToken);
 
-            var decommissionedMaterials = await _ctx.DecommissionedMaterials.Where(x => x.CurrentDate.Month == request.Month &&
-            x.CurrentDate.Year == request.Year).ToListAsync(cancellationToken);
+            var materials = JoinMaterials(decommissionedMaterials);
 
-           
-            materials = JoinMaterials(decommissionedMaterials);
-
-            Workbook workbook = new Workbook();
+            var workbook = new Workbook();
             workbook.LoadFromFile(request.Path + "/Docs/materialAct.xls");
-            Worksheet sheet = workbook.Worksheets[0];
+            var sheet = workbook.Worksheets[0];
 
             sheet.InsertRow(startRow, materials.Count);
 
-            for (int j = 0; j < materials.Count; j++)
+            for (var j = 0; j < materials.Count; j++)
             {
                 totalCount += materials[j].Count;
                 totalSum += materials[j].Price * (decimal)materials[j].Count; 
@@ -95,44 +94,42 @@ namespace CES.Domain.Handlers.MaterialReport
             return await File.ReadAllBytesAsync(request.Path + "/Docs/materialAct_Out.xls", cancellationToken); 
         }
 
-        private List<AddDecomissioneMaterial> JoinMaterials(List<DecommissionedMaterialEntity>? decommissionedMaterials)
+        private List<AddDecommissionedMaterial> JoinMaterials(List<DecommissionedMaterialEntity>? decommissionedMaterials)
         {
             if (decommissionedMaterials == null) throw new SystemException("Error");
 
-            List<AddDecomissioneMaterial>? MaterialsList = new List<AddDecomissioneMaterial>();
+            var materialsList = new List<AddDecommissionedMaterial>();
 
             foreach (var item in decommissionedMaterials)
             {
-               var  materials = JsonSerializer.Deserialize<List<AddDecomissioneMaterial>>(item.Materials);
+               var  materials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(item.Materials);
 
                 if (materials == null) throw new System.Exception("Error");
 
-                foreach (var material in materials)
+                foreach (var material in from material in materials let res = materialsList.FirstOrDefault(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty) select material)
                 {
-                     var res = MaterialsList.FirstOrDefault(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty);
-
-                    if (!MaterialsList.Any(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty))
+                    if (!materialsList.Any(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty))
                     {
-                        MaterialsList.Add(material);
+                        materialsList.Add(material);
                     }
                     else
                     {
-                        var index =  MaterialsList.FindIndex(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty);
-                        MaterialsList[index].Count += material.Count;
-                        if (!MaterialsList[index].VehicleBrand!.Contains(material.VehicleBrand!))
+                        var index =  materialsList.FindIndex(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty);
+                        materialsList[index].Count += material.Count;
+                        if (!materialsList[index].VehicleBrand!.Contains(material.VehicleBrand!))
                         {
-                            MaterialsList[index].VehicleBrand += $" {material.VehicleBrand}";
+                            materialsList[index].VehicleBrand += $" {material.VehicleBrand}";
                         }
 
-                        if (!MaterialsList[index].NumberPlateCar!.Contains(material.NumberPlateCar!))
+                        if (!materialsList[index].NumberPlateCar!.Contains(material.NumberPlateCar!))
                         {
-                            MaterialsList[index].NumberPlateCar += $" {material.NumberPlateCar}";
+                            materialsList[index].NumberPlateCar += $" {material.NumberPlateCar}";
                         }
                     }
                 }
             }
             
-            return MaterialsList;
+            return materialsList;
         }
     }
 }

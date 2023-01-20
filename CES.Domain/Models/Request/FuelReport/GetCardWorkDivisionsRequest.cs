@@ -1,4 +1,4 @@
-﻿using CES.Domain.Handlers.Report;
+﻿using CES.Domain.Handlers.FuelReport;
 using CES.Domain.Models.Response.Report;
 using MediatR;
 

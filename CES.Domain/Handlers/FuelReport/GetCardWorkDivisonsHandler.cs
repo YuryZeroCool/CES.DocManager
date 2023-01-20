@@ -7,14 +7,14 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
-namespace CES.Domain.Handlers.Report
+namespace CES.Domain.Handlers.FuelReport
 {
-    public class GetCardWorkDivisonsHandler : IRequestHandler<GetCardWorkDivisionsRequest, GetCardWorkDivisionsResponse>
+    public class GetCardWorkDivisionsHandler : IRequestHandler<GetCardWorkDivisionsRequest, GetCardWorkDivisionsResponse>
     {
         private readonly DocMangerContext _ctx;
 
         private readonly Date _date;
-        public GetCardWorkDivisonsHandler(DocMangerContext ctx)
+        public GetCardWorkDivisionsHandler(DocMangerContext ctx)
         {
             _ctx = ctx;
             _date = new Date();
@@ -26,102 +26,99 @@ namespace CES.Domain.Handlers.Report
 
             var period = _date.SplitDate(request.ReportPeriod!);
 
-           var  workCardDivisions = await _ctx.WorkCardDivisions.Where(p => p.PeriodReport == period).ToListAsync(cancellationToken);
+            var workCardDivisions = await _ctx.WorkCardDivisions
+                .Where(p => p.PeriodReport == period)
+                .ToListAsync(cancellationToken);
 
             if (workCardDivisions == null || workCardDivisions.Count == 0) throw new System.Exception("Error");
 
             var car = await _ctx.NumberPlateOfCar
                 .Where(p => p.GarageNumber == request.GarageNumber)
-                .Include(p => p.FuelWorkCards.Where(x=>x.WorkDate == period)).ToListAsync(cancellationToken);
+                .Include(p =>
+                    p.FuelWorkCards.Where(x=>x.WorkDate == period)).ToListAsync(cancellationToken);
 
             var arr = JsonSerializer.Deserialize<List<FuelWorkCardModel>>(car[0].FuelWorkCards.ToList()[0].Data);
 
             if (arr == null) throw new System.Exception("Error");
 
-
             foreach (var item in workCardDivisions)
             {
-                if( item.Division == "Смена №1")
+                if (item == null) throw new System.Exception("Error");
+
+                switch (item.Division)
                 {
-                   var dates = JsonSerializer.Deserialize<List<DateTime>>(item.Date);
-
-                    if (dates == null) throw new System.Exception("Error");
-                    foreach (var date in dates)
+                    case "Смена №1":
                     {
-                       var res = arr.Where(x => x.Date == date);
-                        if (res.Any() && res != null)
+                        var dates = JsonSerializer.Deserialize<List<DateTime>>(item.Date);
+
+                        if (dates == null) throw new System.Exception("Error");
+                        foreach (var card in dates.Select(date => arr
+                                     .Where(x => x.Date == date))
+                                     .Where(res => res.Any())
+                                     .SelectMany(res => res))
                         {
-                            foreach (var card in res)
-                            {
-                                cardWorkDivision.MileagePerMonthDivision1 += card.MileagePerDay;
-                                cardWorkDivision.FuelPerMonthDivision1 += card.ActualConsumption;
-                                cardWorkDivision.SumMileage += card!.MileagePerDay;
-                                cardWorkDivision.SumFuel += card.ActualConsumption;
-                            } 
+                            cardWorkDivision.MileagePerMonthDivision1 += card.MileagePerDay;
+                            cardWorkDivision.FuelPerMonthDivision1 += card.ActualConsumption;
+                            cardWorkDivision.SumMileage += card.MileagePerDay;
+                            cardWorkDivision.SumFuel += card.ActualConsumption;
                         }
+
+                        break;
                     }
-                }
-                if (item.Division == "Смена №2")
-                {
-                    var dates = JsonSerializer.Deserialize<List<DateTime>>(item.Date);
-                    if (dates == null) throw new System.Exception("Error");
-
-                    foreach (var date in dates)
+                    case "Смена №2":
                     {
-                        var res = arr.Where(x => x.Date == date);
+                        var dates = JsonSerializer.Deserialize<List<DateTime>>(item.Date);
+                        if (dates == null) throw new System.Exception("Error");
 
-                        if (res.Any() && res != null)
+                        foreach (var card in dates.Select(date => arr
+                                     .Where(x => x.Date == date))
+                                     .Where(res => res.Any())
+                                     .SelectMany(res => res))
                         {
-                            foreach(var card in res)
-                            {
-                                cardWorkDivision.MileagePerMonthDivision2 += card.MileagePerDay;
-                                cardWorkDivision.FuelPerMonthDivision2 += card.ActualConsumption;
-                                cardWorkDivision.SumMileage += card!.MileagePerDay;
-                                cardWorkDivision.SumFuel += card.ActualConsumption;
-                            }
+                            cardWorkDivision.MileagePerMonthDivision2 += card.MileagePerDay;
+                            cardWorkDivision.FuelPerMonthDivision2 += card.ActualConsumption;
+                            cardWorkDivision.SumMileage += card.MileagePerDay;
+                            cardWorkDivision.SumFuel += card.ActualConsumption;
                         }
+
+                        break;
                     }
-                }
-                if (item.Division == "Смена №3")
-                {
-                    var dates = JsonSerializer.Deserialize<List<DateTime>>(item.Date);
-
-                    if (dates == null) throw new System.Exception("Error");
-
-                    foreach (var date in dates)
+                    case "Смена №3":
                     {
-                        var res = arr.Where(x => x.Date == date);
-                        if (res.Any() && res != null)
+                        var dates = JsonSerializer.Deserialize<List<DateTime>>(item.Date);
+
+                        if (dates == null) throw new System.Exception("Error");
+
+                        foreach (var card in dates.Select(date => arr
+                                     .Where(x => x.Date == date))
+                                     .Where(res => res.Any())
+                                     .SelectMany(res => res))
                         {
-                            foreach (var card in res)
-                            {
-                                cardWorkDivision.MileagePerMonthDivision3 += card.MileagePerDay;
-                                cardWorkDivision.FuelPerMonthDivision3 += card.ActualConsumption;
-                                cardWorkDivision.SumMileage += card!.MileagePerDay;
-                                cardWorkDivision.SumFuel += card.ActualConsumption;
-                            }
+                            cardWorkDivision.MileagePerMonthDivision3 += card.MileagePerDay;
+                            cardWorkDivision.FuelPerMonthDivision3 += card.ActualConsumption;
+                            cardWorkDivision.SumMileage += card.MileagePerDay;
+                            cardWorkDivision.SumFuel += card.ActualConsumption;
                         }
+
+                        break;
                     }
-                }
-               if (item.Division == "Смена №4")
-               {
-                    var dates = JsonSerializer.Deserialize<List<DateTime>>(item.Date);
-                    if (dates == null) throw new System.Exception("Error");
-
-                    foreach (var date in dates)
+                    case "Смена №4":
                     {
-                        var res = arr.Where(x => x.Date == date);
+                        var dates = JsonSerializer.Deserialize<List<DateTime>>(item.Date);
+                        if (dates == null) throw new System.Exception("Error");
 
-                        if (res.Any() && res != null)
+                        foreach (var card in dates.Select(date => arr
+                                     .Where(x => x.Date == date))
+                                     .Where(res => res.Any())
+                                     .SelectMany(res => res))
                         {
-                            foreach (var card in res)
-                            {
-                                cardWorkDivision.MileagePerMonthDivision4 += card.MileagePerDay;
-                                cardWorkDivision.FuelPerMonthDivision4 += card.ActualConsumption;
-                                cardWorkDivision.SumMileage += card!.MileagePerDay;
-                                cardWorkDivision.SumFuel += card.ActualConsumption;
-                            }
+                            cardWorkDivision.MileagePerMonthDivision4 += card.MileagePerDay;
+                            cardWorkDivision.FuelPerMonthDivision4 += card.ActualConsumption;
+                            cardWorkDivision.SumMileage += card.MileagePerDay;
+                            cardWorkDivision.SumFuel += card.ActualConsumption;
                         }
+
+                        break;
                     }
                 }
             }

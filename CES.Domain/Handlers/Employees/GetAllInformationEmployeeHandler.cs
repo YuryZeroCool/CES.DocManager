@@ -1,31 +1,34 @@
 ﻿using CES.Domain.Models.Request.Employee;
 using CES.Infra;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace CES.Domain.Handlers.Employees
 {
     public class GetAllInformationEmployeeHandler : IRequestHandler<GetAllInformationEmployeeRequest, object>
     {
-        private readonly DocMangerContext _context;
+        private readonly DocMangerContext _ctx;
 
         public GetAllInformationEmployeeHandler(DocMangerContext context)
         {
-            _context = context;
+            _ctx = context;
         }
 
         public async Task<object> Handle(GetAllInformationEmployeeRequest request, CancellationToken cancellationToken)
         {
-            object query = null;
-            var emp = _context.Employees.FirstOrDefault(emp =>
-                emp.LastName == request.LastName && emp.FirstName == request.FirstName);
+            object query;
+            var emp = await _ctx.Employees.FirstOrDefaultAsync(emp =>
+                emp.LastName == request.LastName && emp.FirstName == request.FirstName, cancellationToken);
+            if (emp == null) throw new System.Exception("Error");
+
             var empId = emp.Id;
 
-            if (_context.DriverMedicalCertificate.Any(p => p.EmployeeId == empId)
-                && _context.DriverLicenses.Any(p => p.EmployeeId == empId))
+            if (await _ctx.DriverMedicalCertificate.AnyAsync(p => p.EmployeeId == empId, cancellationToken)
+                && await _ctx.DriverLicenses.AnyAsync(p => p.EmployeeId == empId, cancellationToken))
             {
-                query = from b in _context.Employees
-                        join p in _context.DriverLicenses on b.Id equals p.EmployeeId
-                        join c in _context.DriverMedicalCertificate on b.Id equals c.EmployeeId
+                query = from b in _ctx.Employees
+                        join p in _ctx.DriverLicenses on b.Id equals p.EmployeeId
+                        join c in _ctx.DriverMedicalCertificate on b.Id equals c.EmployeeId
                         where b.Id == empId
                         select new
                         {
@@ -46,10 +49,10 @@ namespace CES.Domain.Handlers.Employees
                 return await Task.FromResult(query);
             }
 
-            if (_context.DriverMedicalCertificate.Any(p => p.EmployeeId == empId))
+            if (await _ctx.DriverMedicalCertificate.AnyAsync(p => p.EmployeeId == empId, cancellationToken))
             {
-                query = from b in _context.Employees
-                        join c in _context.DriverMedicalCertificate on b.Id equals c.EmployeeId
+                query = from b in _ctx.Employees
+                        join c in _ctx.DriverMedicalCertificate on b.Id equals c.EmployeeId
                         where b.Id == empId
                         select new
                         {
@@ -63,11 +66,12 @@ namespace CES.Domain.Handlers.Employees
                             IssueDateMedicalCertificate = c.IssueDate,
                             ExpiryDateMedicalCertificate = c.ExpiryDate
                         };
+                return await Task.FromResult(query);
             }
-            if (_context.DriverLicenses.Any(p => p.EmployeeId == empId))
+            if (await _ctx.DriverLicenses.AnyAsync(p => p.EmployeeId == empId, cancellationToken))
             {
-                query = from b in _context.Employees
-                        join p in _context.DriverLicenses on b.Id equals p.EmployeeId
+                query = from b in _ctx.Employees
+                        join p in _ctx.DriverLicenses on b.Id equals p.EmployeeId
                         where b.Id == empId
                         select new
                         {

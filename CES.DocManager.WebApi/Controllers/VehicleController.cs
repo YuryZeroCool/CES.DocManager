@@ -1,7 +1,5 @@
 ﻿using CES.Domain.Exception;
-using CES.Domain.Models.Request.Report;
 using CES.Domain.Models.Request.Vehicle;
-using CES.Domain.Models.Response.Report;
 using CES.Domain.Models.Response.Vehicle;
 using MediatR;
 using Microsoft.AspNetCore.Cors;

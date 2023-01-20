@@ -15,7 +15,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private readonly IMapper _mapper;
 
-        private int Id;
+        private int _id;
         public DeleteDecommissionedMaterialHandler(DocMangerContext ctx,IMapper mapper)
         {
             _ctx = ctx;
@@ -26,24 +26,25 @@ namespace CES.Domain.Handlers.MaterialReport
             var material = await _ctx.DecommissionedMaterials
                 .Include(p => p.NumberPlateOfCar)
                 .Include(p => p.CarMechanic)
-                .FirstOrDefaultAsync(x => x.Id == request.Id);
+                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (material == null) throw new System.Exception("Error");
-               var materials =  JsonSerializer.Deserialize<List<AddDecomissioneMaterial>>(material.Materials);
+               var materials =  JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(material.Materials);
 
             if (materials == null) throw new System.Exception("Error");
 
 
             foreach (var mater in materials)
             {
-                var EnshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x => x.NameMaterial == mater.NameMaterial
-                && x.NameParty == mater.NameParty
-                && x.NumberPlateCar == mater.NumberPlateCar, cancellationToken);
+                var enshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x =>
+                    x.NameMaterial == mater.NameMaterial
+                    && x.NameParty == mater.NameParty
+                    && x.NumberPlateCar == mater.NumberPlateCar, cancellationToken);
 
-                if(EnshrinedMaterial != null)
+                if(enshrinedMaterial != null)
                 {
-                    EnshrinedMaterial.Count += mater.Count;
-                    _ctx.EnshrinedMaterial.Update(EnshrinedMaterial);
+                    enshrinedMaterial.Count += mater.Count;
+                    _ctx.EnshrinedMaterial.Update(enshrinedMaterial);
                 }
                 else
                 {
@@ -52,11 +53,11 @@ namespace CES.Domain.Handlers.MaterialReport
                     await  _ctx.EnshrinedMaterial.AddAsync(res,cancellationToken);
                 }
             }
-                _ctx.DecommissionedMaterials.Remove(material);
-                await _ctx.SaveChangesAsync(cancellationToken);
-                Id = material.Id;
+            _ctx.DecommissionedMaterials.Remove(material);
+            await _ctx.SaveChangesAsync(cancellationToken);
+            _id = material.Id;
   
-            return await Task.FromResult(Id);
+            return await Task.FromResult(_id);
         }
     }
 }

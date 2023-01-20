@@ -1,15 +1,8 @@
-﻿using AutoMapper.Configuration.Conventions;
-using CES.DocManager.WebApi.Models;
-using CES.Domain.Handlers.Report;
-using CES.Domain.Models.Request.MaterialReport;
-using CES.Domain.Models.Request.Report;
-using CES.Domain.Models.Response.Division;
-using CES.Domain.Models.Response.MaterialReport;
+﻿using CES.Domain.Models.Request.Report;
 using CES.Domain.Models.Response.Report;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Specialized;
 using System.Net;
 
 namespace CES.DocManager.WebApi.Controllers
@@ -44,7 +37,7 @@ namespace CES.DocManager.WebApi.Controllers
         [HttpGet("getCardWorkDivisions")]
         [Produces(typeof(List<GetCardWorkDivisionsResponse>))]
 
-        public async Task<object> GetCardWorkDivisonsAsync(int carGarage, string reportPeriod)
+        public async Task<object> GetCardWorkDivisionsAsync(int carGarage, string reportPeriod)
         {
             try
             {
@@ -60,7 +53,7 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new
                 {
-                    Message = e.Message
+                    e.Message
                 };
             }
            
@@ -95,12 +88,12 @@ namespace CES.DocManager.WebApi.Controllers
 
         [HttpDelete("deleteDivsionWorkSchedule")]
         [Produces(typeof(int))]
-        public async Task<object> DeleteDivisionWorkScheduleAsync(int IdDivision)
+        public async Task<object> DeleteDivisionWorkScheduleAsync(int idDivision)
         {
             try
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                return await _mediator.Send(new DeleteDivisionWorkScheduleRequest() { IdDivison =IdDivision});
+                return await _mediator.Send(new DeleteDivisionWorkScheduleRequest() { IdDivison = idDivision});
             }
             catch (Exception)
             {

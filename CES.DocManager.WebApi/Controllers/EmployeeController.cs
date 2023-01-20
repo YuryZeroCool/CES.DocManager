@@ -98,7 +98,8 @@ namespace CES.DocManager.WebApi.Controllers
         
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("noDriverLicense")]
-        public async Task<IEnumerable<GetEmployeesByDivisionResponse>> GetListEmployeesNoDriverLicense()
+        [Produces(typeof(IEnumerable<GetEmployeesByDivisionResponse>))]
+        public async Task<object> GetListEmployeesNoDriverLicense()
         {
             try
             {
@@ -106,14 +107,15 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception)
             {
-                throw;
+                return new { } ;
             }
-
         }
 
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("expiringDriverLicense")]
-        public async Task<IEnumerable<GetExpiringDocumentEmployeeResponse>> GetExpiringDriverLicense(int numberMonth)
+        [Produces(typeof(IEnumerable<GetExpiringDocumentEmployeeResponse>))]
+
+        public async Task<object> GetExpiringDriverLicense(int numberMonth)
         {
             try
             {
@@ -122,13 +124,14 @@ namespace CES.DocManager.WebApi.Controllers
             catch (Exception)
             {
 
-                throw;
+                return new { };
             }
         }
 
        // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("expiringDriverMedicalCertificate")]
-        public async Task<IEnumerable<GetExpiringDocumentEmployeeResponse>> GetExpiringDriverMedicalCertificate(int numberMonth)
+        [Produces(typeof(IEnumerable<GetExpiringDocumentEmployeeResponse>))] 
+        public async Task<object> GetExpiringDriverMedicalCertificate(int numberMonth)
         {
             try
             {
@@ -141,13 +144,15 @@ namespace CES.DocManager.WebApi.Controllers
             catch (Exception)
             {
 
-                throw;
+                return new { };
             }
         }
 
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("noDriverMedicalCertificate")]
-        public async Task<IEnumerable<GetEmployeesByDivisionResponse>> GetNoMedicalCertificate()
+        [Produces(typeof(IEnumerable<GetEmployeesByDivisionResponse>))]
+
+        public async Task<object> GetNoMedicalCertificate()
         {
             try
             {
@@ -156,12 +161,13 @@ namespace CES.DocManager.WebApi.Controllers
             catch (Exception)
             {
 
-                throw;
+                return new {};
             }
         }
 
        // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("allInformationEmployee")]
+        
         public async Task<object> GetAllInformationEmployee([FromQuery()] GetEmployeeViewModel model)
         {
             try
@@ -171,13 +177,15 @@ namespace CES.DocManager.WebApi.Controllers
             catch (Exception)
             {
 
-                throw;
+                return  new { };
             }
         }
 
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost("createEmployee")]
-        public async Task<CreateEmployeeResponse> CreateEmployee(CreateEmployeeViewModel model)
+        [Produces(typeof(CreateEmployeeResponse))]
+
+        public async Task<object> CreateEmployee(CreateEmployeeViewModel model)
         {
             try
             {
@@ -185,7 +193,7 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception)
             {
-                throw;
+                return new { };
             }
         }
     }

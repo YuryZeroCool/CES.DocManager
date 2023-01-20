@@ -11,26 +11,27 @@ namespace CES.Domain.Handlers.DriverLicense
 {
     public class CreateDriverLicenseHandler : IRequestHandler<CreateDriverLicenseRequest, GetDriverLicenseResponse>
     {
-        private readonly DocMangerContext _context;
+        private readonly DocMangerContext _ctx;
         private readonly IMapper _mapper;
 
 
         public CreateDriverLicenseHandler(DocMangerContext context, IMapper mapper)
         {
-            _context = context;
+            _ctx = context;
             _mapper = mapper;
         }
 
         public async Task<GetDriverLicenseResponse> Handle(CreateDriverLicenseRequest request, CancellationToken cancellationToken)
         { 
-            var epm = _context.Employees.FirstOrDefault(x => x.FirstName == request.FirstName && x.LastName == request.LastName);
-            if (epm == null) throw new RestException(HttpStatusCode.BadRequest, "Переданы некорректные даные");
+            var epm = _ctx.Employees.FirstOrDefault(x => x.FirstName == request.FirstName && x.LastName == request.LastName);
+            if (epm == null) throw new RestException(HttpStatusCode.BadRequest, "Переданы некорректные данные");
             request.EmployeeId = epm.Id;
             var license = _mapper.Map<CreateDriverLicenseRequest, DriverLicenseEntity>(request);
-            await _context.DriverLicenses.AddAsync(license);
-            await _context.SaveChangesAsync();
-            var query = from b in _context.Employees
-                join c in _context.DriverLicenses on b.Id equals c.EmployeeId
+            await _ctx.DriverLicenses.AddAsync(license, cancellationToken);
+            await _ctx.SaveChangesAsync(cancellationToken);
+
+            var query = from b in _ctx.Employees
+                join c in _ctx.DriverLicenses on b.Id equals c.EmployeeId
                 where b.Id == request.EmployeeId
                 select new GetDriverLicenseResponse
                 {

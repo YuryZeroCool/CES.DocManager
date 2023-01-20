@@ -21,11 +21,12 @@ namespace CES.Domain.Handlers.Vehicle
 
         public async Task<List<GetAllNumbersPlateResponse>> Handle(GetAllNumbersPalteRequest request, CancellationToken cancellationToken)
         {
-            var brand = await _ctx.VehicleBrands.FirstOrDefaultAsync(x => x.Name == request.Brand);
+            var brand = await _ctx.VehicleBrands.FirstOrDefaultAsync(x => x.Name == request.Brand, cancellationToken);
 
             if (brand == null)  throw new System.Exception("Error");
 
-            var models = await _ctx.VehicleModels.Where(x => x.VehicleBrand == brand).ToListAsync();
+            var models = await _ctx.VehicleModels
+                .Where(x => x.VehicleBrand == brand).ToListAsync(cancellationToken);
 
             if (models == null) throw new System.Exception("Error");
 
@@ -38,7 +39,7 @@ namespace CES.Domain.Handlers.Vehicle
 
                 date = date.Union(second).ToList();   
             }
-                return await Task.FromResult(date);
+            return await Task.FromResult(date);
         }
     }
 }

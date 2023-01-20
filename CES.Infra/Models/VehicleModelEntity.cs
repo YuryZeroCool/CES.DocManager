@@ -14,11 +14,11 @@ namespace CES.Infra.Models
         public VehicleBrandEntity? VehicleBrand { get; set; }
 
         [JsonIgnore]
-        public ICollection<NumberPlateCarEntity> NumberPlateCar { get; set; }
+        public ICollection<NumberPlateOfCarEntity> NumberPlateCar { get; set; }
 
         public VehicleModelEntity()
         {
-            NumberPlateCar = new List<NumberPlateCarEntity>();
+            NumberPlateCar = new List<NumberPlateOfCarEntity>();
         }
     }
 }

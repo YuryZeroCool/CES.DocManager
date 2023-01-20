@@ -8,7 +8,7 @@
         
         public DivisionEntity? DivisionId { get; set; }
 
-        public NumberPlateCarEntity? NumberPlateCarId { get; set; }
+        public NumberPlateOfCarEntity? NumberPlateCarId { get; set; }
 
         public int FuelMileage { get; set; }
 

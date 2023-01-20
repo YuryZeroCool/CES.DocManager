@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20230115153508_AddTableManyDivisionsToManyCarNumbers")]
+    partial class AddTableManyDivisionsToManyCarNumbers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -112,7 +112,7 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.NameBrand, opt => opt.MapFrom(src => src.Name));
 
-            CreateMap<NumberPlateCarEntity, GetAllNumbersPlateResponse>()
+            CreateMap<NumberPlateOfCarEntity, GetAllNumbersPlateResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Number, opt => opt.MapFrom(src => src.Number));
 
@@ -131,7 +131,7 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.VehicleBrand, opt => opt.MapFrom(src => src.VehicleBrand))
                 .ForMember(dest => dest.NumberPlateCar, opt => opt.MapFrom(src => src.NumberPlateCar));
 
-            CreateMap<AddDecomissioneMaterial, EnshrinedMaterialEntity>();
+            CreateMap<AddDecommissionedMaterial, EnshrinedMaterialEntity>();
 
             CreateMap<EnshrinedMaterialEntity,GetAllDecommissionedMaterialsResponse>();
         }

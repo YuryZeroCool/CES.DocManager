@@ -11,24 +11,24 @@ namespace CES.Domain.Handlers.MaterialReport
     {
         private readonly DocMangerContext _ctx;
 
-        private string? NameProduct;
+        private string? _nameProduct;
 
-        private bool IsCurrentAccount = false;
+        private bool _isCurrentAccount;
 
-        private Workbook? Workbook;
+        private readonly Workbook _workbook;
 
         public AddMaterialsHandler(DocMangerContext ctx)
         {
             _ctx = ctx;
+            _workbook = new Workbook();
+            _isCurrentAccount = false;
         }
 
         public async Task<Unit> Handle(AddMaterialReportRequest request, CancellationToken cancellationToken)
         {
-            Workbook = new Workbook();
-
-            Workbook.LoadFromStream(request.File!.OpenReadStream());
-            Worksheet sheet = Workbook.Worksheets[0];
-            int currentRow = 0;
+            _workbook.LoadFromStream(request.File!.OpenReadStream());
+            var sheet = _workbook.Worksheets[0];
+            var currentRow = 0;
 
             await CreateAccount(sheet);
 
@@ -36,7 +36,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
             foreach (var account in productGroup) //прохожу по счетам 
             {
-                for (int k = currentRow; k < sheet.Rows.Length; k++) // опеределяю количество строк документе 
+                for (var k = currentRow; k < sheet.Rows.Length; k++) // опеределяю количество строк документе 
                 {
                     var cell = sheet.Rows[k].CellList[0].Text;
 
@@ -44,19 +44,19 @@ namespace CES.Domain.Handlers.MaterialReport
                     {
                         if (cell == account.AccountName)
                         {
-                            IsCurrentAccount = true;
+                            _isCurrentAccount = true;
                             continue;
                         }
-                        if (cell != account.AccountName && IsCurrentAccount)
+                        if (cell != account.AccountName && _isCurrentAccount)
                         {
-                            IsCurrentAccount = false;
+                            _isCurrentAccount = false;
                             currentRow = k;
                             break;
                         }
                     }
                     else
                     {
-                        if (IsCurrentAccount)
+                        if (_isCurrentAccount)
                         {
                             if (sheet.Rows[k].CellList[14].Value == "") continue;
 
@@ -64,10 +64,10 @@ namespace CES.Domain.Handlers.MaterialReport
                             {
                                 var sheetUnit = sheet.Rows[k].CellList[6].Text;
                                 
-                                NameProduct = sheet.Rows[k].CellList[1].Text;
+                                _nameProduct = sheet.Rows[k].CellList[1].Text;
 
                                 var products =  await _ctx.Products.
-                                        Include(p => p.Account).Where(x => x.Name == NameProduct).ToListAsync(cancellationToken);
+                                        Include(p => p.Account).Where(x => x.Name == _nameProduct).ToListAsync(cancellationToken);
 
                                 if (products == null)
                                 {
@@ -85,21 +85,19 @@ namespace CES.Domain.Handlers.MaterialReport
                             {
                                 if (sheet.Rows[k].CellList[2].Text == null) continue;
 
-                                var currentProduct = await _ctx.Products.FirstOrDefaultAsync(p => p.Name == NameProduct, cancellationToken);
+                                var currentProduct = await _ctx.Products.FirstOrDefaultAsync(p => p.Name == _nameProduct, cancellationToken);
 
                                 var partyArr = sheet.Rows[k].CellList[2].Text.Split(" от ");
 
                                 if (!_ctx.Parties.Any(p => p.Name == partyArr[0].Substring(7)))
                                 {
-                                    
-                                     var sum = decimal.Parse(sheet.Rows[k].CellList[14].Value.Replace(" ", ""));
+                                    var sum = decimal.Parse(sheet.Rows[k].CellList[14].Value.Replace(" ", ""));
 
-                                    
                                     await _ctx.Parties.AddAsync(new PartyEntity()
                                     {
                                         Name = partyArr[0][7..],
                                         DateCreated = DateTime.Now,
-                                        Count = Double.Parse(sheet.Rows[k].CellList[13].Value),
+                                        Count = double.Parse(sheet.Rows[k].CellList[13].Value),
                                         TotalSum = sum,
                                         PartyDate = GetDate(partyArr[1]),
                                         Price = decimal.Parse(sheet.Rows[k].CellList[5].Value),
@@ -111,9 +109,12 @@ namespace CES.Domain.Handlers.MaterialReport
                                 {
                                     var party = await _ctx.Parties.FirstOrDefaultAsync(p =>
                                         p.Name == partyArr[0].Substring(7), cancellationToken);
-                                    var countMaterial = Double.Parse(sheet.Rows[k].CellList[13].Value);
+                                    if (party == null) throw new System.Exception("Error");
 
-                                    if (party!.Count != countMaterial)
+                                    var countMaterial = double.Parse(sheet.Rows[k].CellList[13].Value);
+                                    var difference = Math.Abs(party.Count * .00001);
+
+                                    if (Math.Abs(party.Count - countMaterial) <= difference)
                                     {
                                         party.Count = countMaterial;
                                         party.TotalSum = decimal.Parse(sheet.Rows[k].CellList[14].Value);
@@ -154,7 +155,7 @@ namespace CES.Domain.Handlers.MaterialReport
         {
             await _ctx.Products.AddAsync(new ProductEntity()
             {
-                Name = NameProduct,
+                Name = _nameProduct,
                 Account = account,
                 Unit = unit
             });

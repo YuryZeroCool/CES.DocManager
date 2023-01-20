@@ -12,29 +12,20 @@ namespace CES.Domain.Handlers.MaterialReport
     {
         private readonly DocMangerContext _ctx;
 
-        //private IWorkbook? _wk;
-
-
-        private int Counter;
-
-
+        private int _counter;
         public GetDefectiveSheetHandler(DocMangerContext ctx)
         {
             _ctx = ctx;
-            Counter = 8;
+            _counter = 8;
         }
         public async Task <string> Handle(GetDefectiveSheetRequest request, CancellationToken cancellationToken)
         {
-        
-            var pathXLS = request.Path+ "/Docs/repair.xls";
-            var pathPDF = request.Path + "/Docs/repair.pdf";
+            var pathXls = request.Path+ "/Docs/repair.xls";
+            var pathPdf = request.Path + "/Docs/repair.pdf";
 
-            byte[] bytes;
-            string res;
-         
-            Workbook workbook = new Workbook();
-            workbook.LoadFromFile(pathXLS);
-            Worksheet sheet = workbook.Worksheets[0];
+            var workbook = new Workbook();
+            workbook.LoadFromFile(pathXls);
+            var sheet = workbook.Worksheets[0];
 
             var decommissionedMaterials = await _ctx.DecommissionedMaterials
               .Include(p =>p.CarMechanic)
@@ -43,7 +34,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
             if (decommissionedMaterials == null) throw new System.Exception("Error");
 
-                var materials = JsonSerializer.Deserialize<List<AddDecomissioneMaterial>>(decommissionedMaterials.Materials);
+                var materials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(decommissionedMaterials.Materials);
 
                 if (decommissionedMaterials.NumberPlateOfCar == null) throw new System.Exception("Error");
 
@@ -52,21 +43,21 @@ namespace CES.Domain.Handlers.MaterialReport
                 sheet.Range[$"C4"].Value = $"{materials[0].VehicleBrand + "-" + materials[0].VehicleModel}";
                 sheet.Range[$"G4"].Value = $"{decommissionedMaterials.NumberPlateOfCar.Number}";
 
-            for (int i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 if(i < materials.Count)
                 {
-                    sheet.Range[$"C{Counter}"].Value = $"{materials[i].NameMaterial}";
-                    sheet.Range[$"G{Counter}"].Value = $"{materials[i].Count}";
-                    sheet.Range[$"H{Counter}"].Value = "выполнено";
-                    Counter++;
+                    sheet.Range[$"C{_counter}"].Value = $"{materials[i].NameMaterial}";
+                    sheet.Range[$"G{_counter}"].Value = $"{materials[i].Count}";
+                    sheet.Range[$"H{_counter}"].Value = "выполнено";
+                    _counter++;
                 }
                 else
                 {
-                    sheet.Range[$"C{Counter}"].Value = "";
-                    sheet.Range[$"G{Counter}"].Value = "";
-                    sheet.Range[$"H{Counter}"].Value = "";
-                    Counter++;
+                    sheet.Range[$"C{_counter}"].Value = "";
+                    sheet.Range[$"G{_counter}"].Value = "";
+                    sheet.Range[$"H{_counter}"].Value = "";
+                    _counter++;
                 }
             }
 
@@ -74,14 +65,14 @@ namespace CES.Domain.Handlers.MaterialReport
             sheet.Range[$"B26"].Value = $"{decommissionedMaterials.CurrentDate.Day}";
             sheet.Range[$"C26"].Value = $"{GetStringMonth(decommissionedMaterials.CurrentDate.Month)}";
 
-            workbook.SaveToFile(pathXLS, ExcelVersion.Version97to2003);
-            var str = $"-f pdf -o {pathPDF} {pathXLS}";
-            System.Diagnostics.Process.Start("unoconv", str)?.WaitForExit();
+            workbook.SaveToFile(pathXls, ExcelVersion.Version97to2003);
+            var str = $"-f pdf -o {pathPdf} {pathXls}";
+            await System.Diagnostics.Process.Start("unoconv", str).WaitForExitAsync(cancellationToken);
 
-            bytes = await File.ReadAllBytesAsync(pathPDF);
+            var bytes = await File.ReadAllBytesAsync(pathPdf, cancellationToken);
 
             if (bytes == null) throw new SystemException("Error");
-            res = Convert.ToBase64String(bytes);
+            var res = Convert.ToBase64String(bytes);
             
             return await Task.FromResult(res);
         }
@@ -103,9 +94,9 @@ namespace CES.Domain.Handlers.MaterialReport
                 "Декабря" 
             };
 
-            for (int i = 1; i <= arrMonths.Length; i++)
+            for (var i = 1; i <= arrMonths.Length; i++)
             {
-                if(i == month)
+                if (i == month)
                 {
                     return arrMonths[i-1];
                 }
