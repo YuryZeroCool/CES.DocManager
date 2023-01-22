@@ -428,5 +428,26 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("getAllUsedMaterials")]
+        [Produces(typeof(List<GetAllUsedMaterialsResponse>))]
+        public async Task<object> GetAllUsedMaterialsAsync(int month, int year)
+        {
+            try
+            {
+                return await _mediator.Send(new GetAllUsedMaterialsRequest()
+                {
+                    Month = month, 
+                    Year = year
+                });
+            }
+            catch (Exception)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new object();
+            }
+        }
     }
 }

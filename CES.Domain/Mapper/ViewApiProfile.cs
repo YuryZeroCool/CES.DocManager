@@ -134,6 +134,8 @@ namespace CES.Domain.Mapper
             CreateMap<AddDecommissionedMaterial, EnshrinedMaterialEntity>();
 
             CreateMap<EnshrinedMaterialEntity,GetAllDecommissionedMaterialsResponse>();
+
+            CreateMap<UsedMaterial, GetAllUsedMaterialsResponse>();
         }
     }
 }

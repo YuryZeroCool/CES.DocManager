@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace CES.Domain.Handlers.MaterialReport
 {
-    public class DeleteDecommissionedMaterialHandler : IRequestHandler<DeleteDecommissionedMaterialRequest,int>
+    public class DeleteDecommissionedMaterialHandler : IRequestHandler<DeleteDecommissionedMaterialRequest, int>
     {
 
         private readonly DocMangerContext _ctx;
