@@ -9,6 +9,7 @@ import vehicleReducer from './vehicle/vehicleReducer';
 import driversReducer from './drivers/driversReducer';
 import driverLicenseReducer from './documents/driverLicense/driverLicenseReducer';
 import materialsReducer from './report/materialsReducer';
+import commonInfoReducer from './commonInfo/commonInfoReducer';
 
 export const rootReducer = combineReducers({
   login: loginReducer,
@@ -21,6 +22,7 @@ export const rootReducer = combineReducers({
   modals: modalsReducer,
   vehicle: vehicleReducer,
   drivers: driversReducer,
+  commonInfo: commonInfoReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
