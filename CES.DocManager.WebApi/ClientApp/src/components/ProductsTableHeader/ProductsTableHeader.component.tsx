@@ -12,8 +12,13 @@ import UploadIcon from '@mui/icons-material/Upload';
 import { RotatingLines } from 'react-loader-spinner';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import { IMaterialAttachedResponse, ISearch } from '../../types/ReportTypes';
 import './ProductsTableHeader.style.scss';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { IMaterialAttachedResponse, ISearch } from '../../types/ReportTypes';
+import TABLE_TYPES from './ProductsTableHeader.config';
 
 interface Props {
   materialsTableType: string;
@@ -27,6 +32,9 @@ interface Props {
   fileInputRef: React.RefObject<HTMLInputElement>;
   isCheckedByDate: boolean;
   allAttachedMaterials: IMaterialAttachedResponse[];
+  calendarPeriod: Dayjs | null;
+  handleUsedMaterialsCalendarChange: (value: Dayjs | null) => void;
+  handleUsedMaterialsCalendarClose: () => void;
   handleChange: (event: SelectChangeEvent) => void;
   handleChangeCheckbox: (event: ChangeEvent<HTMLInputElement>) => void;
   handleClick: () => void;
@@ -58,6 +66,9 @@ export default function ProductsTableHeaderComponent(props: Props) {
     fileInputRef,
     isCheckedByDate,
     allAttachedMaterials,
+    calendarPeriod,
+    handleUsedMaterialsCalendarChange,
+    handleUsedMaterialsCalendarClose,
     handleChange,
     handleChangeCheckbox,
     handleClick,
@@ -123,6 +134,18 @@ export default function ProductsTableHeaderComponent(props: Props) {
     />
   );
 
+  const renderSearchUsedMaterials = () => (
+    <TextField
+      id="outlined-basic"
+      label="Поиск"
+      variant="outlined"
+      size="small"
+      value={searchValue.usedMaterialSearchValue}
+      className="table-header-search"
+      onChange={handleSearchValueChange}
+    />
+  );
+
   const renderSearchDecommissionedMaterials = () => (
     <TextField
       id="outlined-basic"
@@ -156,35 +179,67 @@ export default function ProductsTableHeaderComponent(props: Props) {
     </Modal>
   );
 
+  const renderTableTypesSelect = () => (
+    <Box sx={{ m: 1, minWidth: 140 }}>
+      <FormControl fullWidth size="small">
+        <Select
+          value={materialsTableType}
+          onChange={handleChange}
+          className="table-header-select"
+        >
+          {TABLE_TYPES.map((el, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <MenuItem key={index} value={el}>{el}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Box>
+  );
+
+  const renderAddRepairButton = () => (
+    <Button
+      sx={{ m: 1, minWidth: 120 }}
+      disabled={allAttachedMaterials.length === 0}
+      variant="contained"
+      size="small"
+      onClick={handleClick}
+    >
+      Добавить ремонт
+    </Button>
+  );
+
+  const renderUsedMaterialsCalendar = () => (
+    <FormControl sx={{ width: 250, height: 40 }} size="small">
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
+        <DatePicker
+          views={['month', 'year']}
+          label=""
+          minDate={dayjs('2010-01-01')}
+          maxDate={dayjs()}
+          value={calendarPeriod}
+          onChange={(newValue) => {
+            handleUsedMaterialsCalendarChange(newValue);
+          }}
+          onClose={() => {
+            handleUsedMaterialsCalendarClose();
+          }}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          renderInput={(params) => (
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            <TextField {...params} helperText={null} size="small" placeholder="" />
+          )}
+        />
+      </LocalizationProvider>
+    </FormControl>
+  );
+
   return (
     <div className="table-header">
       <div className="table-header-wrapper">
         {renderUploadFileForm()}
-        {pageType === 'Материалы' && (
-          <Box sx={{ m: 1, minWidth: 140 }}>
-            <FormControl fullWidth size="small">
-              <Select
-                value={materialsTableType}
-                onChange={handleChange}
-                className="table-header-select"
-              >
-                <MenuItem value="Свободные">Свободные</MenuItem>
-                <MenuItem value="Прикрепленные">Прикрепленные</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-        )}
-        {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && (
-          <Button
-            sx={{ m: 1, minWidth: 120 }}
-            disabled={allAttachedMaterials.length === 0}
-            variant="contained"
-            size="small"
-            onClick={handleClick}
-          >
-            Добавить ремонт
-          </Button>
-        )}
+        {pageType === 'Материалы' && renderTableTypesSelect()}
+        {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && renderAddRepairButton()}
+        {pageType === 'Материалы' && materialsTableType === 'Списанные' && renderUsedMaterialsCalendar()}
       </div>
       <div className="search-block">
         <div className="table-header-wrapper">
@@ -194,6 +249,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
           <Box sx={{ minWidth: 300 }}>
             {pageType === 'Материалы' && materialsTableType === 'Свободные' && renderSearchMaterials()}
             {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && renderSearchAttachedMaterials()}
+            {pageType === 'Материалы' && materialsTableType === 'Списанные' && renderSearchUsedMaterials()}
             {pageType === 'История ремонтов' && renderSearchDecommissionedMaterials()}
           </Box>
         </div>

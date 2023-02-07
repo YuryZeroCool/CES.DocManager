@@ -1,5 +1,6 @@
 import { SelectChangeEvent } from '@mui/material/Select';
 import { AxiosError } from 'axios';
+import { Dayjs } from 'dayjs';
 import React, {
   ChangeEvent,
   useEffect,
@@ -9,6 +10,7 @@ import React, {
 import { useDispatch, useSelector } from 'react-redux';
 import getAllGroupAccounts from '../../redux/actions/report/materialReport/getAllGroupAccounts';
 import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
+import getAllUsedMaterials from '../../redux/actions/report/materialReport/getAllUsedMaterials';
 import uploadNewMaterials from '../../redux/actions/report/materialReport/uploadNewMaterials';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleAddMaterialsWriteOffModal, toggleLoaderModal } from '../../redux/reducers/modals/modalsReducer';
@@ -18,16 +20,27 @@ import {
   changeIsUploadNewMaterialsLoader,
   changeMaterialsSearchValue,
   changeMaterialsTableType,
+  changePeriod,
   changeUploadMaterialsMessage,
+  changeUsedMaterialsSearchValue,
   resetAllMaterials,
+  resetAllUsedMaterials,
   toggleCheckboxByDateInMaterials,
 } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
-import { IMaterialsResponse } from '../../types/ReportTypes';
+import { IMaterialsResponse, IPeriod } from '../../types/ReportTypes';
 import { IModal } from '../../types/type';
 import ProductsTableHeaderComponent from './ProductsTableHeader.component';
 
 function ProductsTableHeaderContainer() {
+  const [fileName, setFileName] = useState<string>('');
+  const [materialsError, setMaterialsError] = useState<string>('');
+  const [uploadFileError, setUploadFileError] = useState<boolean>(false);
+
+  const dispatch: IAuthResponseType = useDispatch();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const {
     materialsTableType,
     pageType,
@@ -37,19 +50,32 @@ function ProductsTableHeaderContainer() {
     uploadMaterialsMessage,
     isCheckedByDate,
     allAttachedMaterials,
+    period,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const { isLoaderModalOpen } = useSelector<RootState, IModal>(
     (state) => state.modals,
   );
 
-  const [fileName, setFileName] = useState<string>('');
-  const [materialsError, setMaterialsError] = useState<string>('');
-  const [uploadFileError, setUploadFileError] = useState<boolean>(false);
+  const [calendarPeriod, setCalendarPeriod] = useState<Dayjs | null>(period);
 
-  const dispatch: IAuthResponseType = useDispatch();
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const countCurrentPeriod = (): IPeriod => {
+    let currentMonth = 0;
+    let currentYear = 0;
+    let currentPeriod: IPeriod = {
+      month: 0,
+      year: 0,
+    };
+    if (period) {
+      currentMonth = period.month();
+      currentYear = period.year();
+      currentPeriod = {
+        month: currentMonth + 1,
+        year: currentYear,
+      };
+    }
+    return currentPeriod;
+  };
 
   async function getMaterials(): Promise<void> {
     try {
@@ -58,6 +84,10 @@ function ProductsTableHeaderContainer() {
           dispatch(resetAllMaterials());
           await dispatch(getAllMaterials(currentGroupAccount.join(', ')));
         }
+      }
+      if (materialsTableType === 'Списанные') {
+        dispatch(resetAllUsedMaterials());
+        await dispatch(getAllUsedMaterials(countCurrentPeriod()));
       }
     } catch (error) {
       if (error instanceof Error || error instanceof AxiosError) {
@@ -95,8 +125,31 @@ function ProductsTableHeaderContainer() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileName]);
 
+  useEffect(() => {
+    if (period) {
+      if (!calendarPeriod) {
+        setCalendarPeriod(period);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      getMaterials();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [period]);
+
   const handleChange = (event: SelectChangeEvent) => {
     dispatch(changeMaterialsTableType(event.target.value));
+  };
+
+  const handleUsedMaterialsCalendarChange = (value: Dayjs | null) => {
+    if (value) {
+      setCalendarPeriod(value);
+    }
+  };
+
+  const handleUsedMaterialsCalendarClose = () => {
+    if (calendarPeriod) {
+      dispatch(changePeriod(calendarPeriod));
+    }
   };
 
   const handleInputFileChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -141,6 +194,9 @@ function ProductsTableHeaderContainer() {
     if (pageType === 'Материалы' && materialsTableType === 'Прикрепленные') {
       dispatch(changeAttachedMaterialsSearchValue(event.target.value.toLocaleLowerCase()));
     }
+    if (pageType === 'Материалы' && materialsTableType === 'Списанные') {
+      dispatch(changeUsedMaterialsSearchValue(event.target.value.toLocaleLowerCase()));
+    }
     if (pageType === 'История ремонтов') {
       dispatch(changeDecommissionedMaterialsSearchValue(event.target.value.toLocaleLowerCase()));
     }
@@ -163,6 +219,9 @@ function ProductsTableHeaderContainer() {
       fileInputRef={fileInputRef}
       isCheckedByDate={isCheckedByDate}
       allAttachedMaterials={allAttachedMaterials}
+      calendarPeriod={calendarPeriod}
+      handleUsedMaterialsCalendarChange={handleUsedMaterialsCalendarChange}
+      handleUsedMaterialsCalendarClose={handleUsedMaterialsCalendarClose}
       handleChange={handleChange}
       handleChangeCheckbox={handleChangeCheckbox}
       handleClick={handleClick}

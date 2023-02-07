@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs';
+
 export interface Division {
   id: number;
   division: string;
@@ -86,6 +88,7 @@ export interface ISearch {
   materialsSearchValue: string;
   attachedMaterialsSearchValue: string;
   decommissionedMaterialsSearchValue: string;
+  usedMaterialSearchValue: string;
 }
 
 export interface IMaterialsResponse {
@@ -114,9 +117,11 @@ export interface IMaterialsResponse {
   actOfWriteoffOfSpareParts: string;
   actOfWritingOffMaterials: string;
   searchValue: ISearch;
-  usedMaterial: IAddUsedMaterialResponse;
+  usedMaterial: IUsedMaterialResponse;
+  allUsedMaterials: IUsedMaterialResponse[];
   isCheckedByDate: boolean;
   editedAttachedMaterial: IMaterialAttachedResponse;
+  period: Dayjs | null;
 }
 
 export interface AccountsGroupState {
@@ -151,17 +156,17 @@ export type ReportErrors = {
   periodError: boolean;
 };
 
-export type IPeriod = {
+export interface IPeriod {
   month: number;
   year: number;
-};
+}
 
 export interface IAddUsedMaterialRequest {
   partyName: string;
   count: number;
 }
 
-export interface IAddUsedMaterialResponse {
+export interface IUsedMaterialResponse {
   count: number;
   id: number;
   nameMaterial: string;

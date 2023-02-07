@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Dayjs } from 'dayjs';
 import {
   IMaterialAttachedResponse,
   IMaterialsResponse,
@@ -18,6 +19,7 @@ import getAllDecommissionedMaterials from '../../actions/report/materialReport/g
 import getAllGroupAccounts from '../../actions/report/materialReport/getAllGroupAccounts';
 import getAllMaterials from '../../actions/report/materialReport/getAllMaterials';
 import getAllMechanics from '../../actions/report/materialReport/getAllMechanics';
+import getAllUsedMaterials from '../../actions/report/materialReport/getAllUsedMaterials';
 import getDefectiveSheet from '../../actions/report/materialReport/getDefectiveSheet';
 import patchAttachedMaterial from '../../actions/report/materialReport/patchAttachedMaterial';
 import uploadNewMaterials from '../../actions/report/materialReport/uploadNewMaterials';
@@ -76,6 +78,7 @@ const initial: IMaterialsResponse = {
     materialsSearchValue: '',
     attachedMaterialsSearchValue: '',
     decommissionedMaterialsSearchValue: '',
+    usedMaterialSearchValue: '',
   },
   usedMaterial: {
     count: 0,
@@ -86,8 +89,10 @@ const initial: IMaterialsResponse = {
     price: 0,
     unit: '',
   },
+  allUsedMaterials: [],
   isCheckedByDate: false,
   editedAttachedMaterial: defaultAttachedMaterial,
+  period: null,
 };
 
 const materialsReducer = createSlice({
@@ -300,6 +305,11 @@ const materialsReducer = createSlice({
       };
       return stateCopy;
     },
+    resetAllUsedMaterials: (state) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = { ...stateCopy, allUsedMaterials: [] };
+      return stateCopy;
+    },
     editAttachedMaterial: (state, action: PayloadAction<IMaterialAttachedResponse>) => {
       const stateCopy: IMaterialsResponse = state;
       const currentEl = stateCopy.allAttachedMaterials.findIndex(
@@ -381,6 +391,14 @@ const materialsReducer = createSlice({
       };
       return stateCopy;
     },
+    changeUsedMaterialsSearchValue: (state, action: PayloadAction<string>) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        searchValue: { ...stateCopy.searchValue, usedMaterialSearchValue: action.payload },
+      };
+      return stateCopy;
+    },
     toggleCheckboxByDateInMaterials: (state, action: PayloadAction<boolean>) => {
       let stateCopy: IMaterialsResponse = state;
       stateCopy = {
@@ -410,6 +428,14 @@ const materialsReducer = createSlice({
       stateCopy = {
         ...stateCopy,
         usedMaterial: initial.usedMaterial,
+      };
+      return stateCopy;
+    },
+    changePeriod: (state, action: PayloadAction<Dayjs>) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        period: action.payload,
       };
       return stateCopy;
     },
@@ -572,6 +598,24 @@ const materialsReducer = createSlice({
       throw Error(action.payload?.message);
     });
 
+    builder.addCase(getAllUsedMaterials.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, status: 'pending' };
+      return stateCopy;
+    });
+    builder.addCase(getAllUsedMaterials.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        allUsedMaterials: [...action.payload],
+        status: 'fulfilled',
+      };
+      return stateCopy;
+    });
+    builder.addCase(getAllUsedMaterials.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
     builder.addCase(addUsedMaterial.fulfilled, (state, action) => {
       let stateCopy = state;
       if (action.payload !== null) {
@@ -610,6 +654,7 @@ export const {
   addToCurrentGroupAccount,
   resetAllMaterials,
   resetAllAttachedMaterials,
+  resetAllUsedMaterials,
   deleteFromCurrentGroupAccount,
   changeStatus,
   changeRowActiveId,
@@ -627,9 +672,11 @@ export const {
   changeMaterialsSearchValue,
   changeAttachedMaterialsSearchValue,
   changeDecommissionedMaterialsSearchValue,
+  changeUsedMaterialsSearchValue,
   toggleCheckboxByDateInMaterials,
   changeUploadMaterialsMessage,
   changeIsUploadNewMaterialsLoader,
   resetUsedMaterial,
+  changePeriod,
 } = materialsReducer.actions;
 export default materialsReducer.reducer;

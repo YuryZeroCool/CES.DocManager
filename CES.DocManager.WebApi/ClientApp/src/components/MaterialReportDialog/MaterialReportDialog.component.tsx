@@ -1,6 +1,6 @@
 import React, { SyntheticEvent } from 'react';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
@@ -37,7 +37,7 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
       {
         top: offSetTop,
         left: offSetX,
-        height: (pageType === 'Материалы' && materialsTableType === 'Прикрепленные') ? '100px' : '150px',
+        height: (pageType === 'Материалы' && (materialsTableType === 'Прикрепленные' || materialsTableType === 'Списанные')) ? '100px' : '150px',
         zIndex: isDialogHightBigger ? 15 : 5,
       }
       }
@@ -45,50 +45,50 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
       <List sx={{ pt: 0 }}>
         {pageType === 'Материалы' && materialsTableType === 'Свободные' && (
           <>
-            <ListItem button onClick={(event) => handleClose(event, 'Прикрепить авто')}>
+            <ListItemButton onClick={(event) => handleClose(event, 'Прикрепить авто')}>
               <ListItemIcon>
                 <AttachFileIcon />
               </ListItemIcon>
               <ListItemText primary="Прикрепить авто" />
-            </ListItem>
-            <ListItem button onClick={(event) => handleClose(event, 'Списать')}>
+            </ListItemButton>
+            <ListItemButton onClick={(event) => handleClose(event, 'Списать')}>
               <ListItemIcon>
                 <BorderColorIcon />
               </ListItemIcon>
               <ListItemText primary="Списать" />
-            </ListItem>
+            </ListItemButton>
           </>
         )}
         {pageType === 'История ремонтов' && (
-          <ListItem button onClick={(event) => handleClose(event, 'Распечатать')}>
+          <ListItemButton onClick={(event) => handleClose(event, 'Распечатать')}>
             <ListItemIcon>
               <PrintIcon />
             </ListItemIcon>
             <ListItemText primary="Распечатать" />
-          </ListItem>
+          </ListItemButton>
         )}
         {pageType === 'История ремонтов' && (
-          <ListItem button onClick={(event) => handleClose(event, 'Подробнее')}>
+          <ListItemButton onClick={(event) => handleClose(event, 'Подробнее')}>
             <ListItemIcon>
               <InfoOutlinedIcon />
             </ListItemIcon>
             <ListItemText primary="Подробнее" />
-          </ListItem>
+          </ListItemButton>
         )}
-        <ListItem button onClick={(event) => handleClose(event, 'Удалить')}>
-          <ListItemIcon>
-            <DeleteIcon />
-          </ListItemIcon>
-          <ListItemText primary="Удалить" />
-        </ListItem>
-        {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && (
-          <ListItem button onClick={(event) => handleClose(event, 'Редактировать')}>
+        {pageType === 'Материалы' && (materialsTableType === 'Прикрепленные' || materialsTableType === 'Списанные') && (
+          <ListItemButton onClick={(event) => handleClose(event, 'Редактировать')}>
             <ListItemIcon>
               <EditIcon />
             </ListItemIcon>
             <ListItemText primary="Редактировать" />
-          </ListItem>
+          </ListItemButton>
         )}
+        <ListItemButton onClick={(event) => handleClose(event, 'Удалить')}>
+          <ListItemIcon>
+            <DeleteIcon />
+          </ListItemIcon>
+          <ListItemText primary="Удалить" />
+        </ListItemButton>
       </List>
     </div>
   );

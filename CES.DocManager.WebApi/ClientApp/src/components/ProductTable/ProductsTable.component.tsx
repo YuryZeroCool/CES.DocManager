@@ -12,15 +12,16 @@ import {
   IAllDecommissionedMaterials,
   IMaterialAttachedResponse,
   ISearch,
+  IUsedMaterialResponse,
   Party,
   Product,
 } from '../../types/ReportTypes';
 import './ProductTable.style.scss';
-
-const HEADER_WIDTH = '10vh';
-const REPORT_PAGE_NAVIGATION = '40px';
-const TABLE_HEADER_WIDTH = '9vh';
-const MARGIN = '3vh';
+import {
+  HEADER_WIDTH,
+  MARGIN, REPORT_PAGE_NAVIGATION,
+  TABLE_HEADER_WIDTH,
+} from './ProductTable.config';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -47,6 +48,8 @@ interface Props {
   materials: Product[];
   baseMaterials: Product[];
   allAttachedMaterials: IMaterialAttachedResponse[];
+  allUsedMaterials: IUsedMaterialResponse[];
+  baseAllUsedMaterials: IUsedMaterialResponse[];
   baseAllAttachedMaterials: IMaterialAttachedResponse[];
   status: string;
   pageType: string;
@@ -85,12 +88,14 @@ const ProductsTableWrapper = React.forwardRef<HTMLDivElement, ProductsTableProps
   ),
 );
 
-export default function ProductsTable(props: Props) {
+export default function ProductsTableComponent(props: Props) {
   const {
     materials,
     baseMaterials,
     allAttachedMaterials,
     baseAllAttachedMaterials,
+    allUsedMaterials,
+    baseAllUsedMaterials,
     allDecommissionedMaterials,
     pageType,
     status,
@@ -111,62 +116,93 @@ export default function ProductsTable(props: Props) {
     handleContextMenu,
   } = props;
 
-  const renderError = () => {
-    if (productsTableError !== '') {
-      return (<p className="error-message">{productsTableError}</p>);
-    }
+  const renderProductsTableError = () => (
+    <p className="error-message">{productsTableError}</p>
+  );
 
-    if (editMaterialsError !== '') {
-      return (<p className="error-message">{editMaterialsError}</p>);
-    }
+  const renderEditMaterialsError = () => (
+    <p className="error-message">{editMaterialsError}</p>
+  );
 
-    if (pageType === 'Материалы') {
-      if (materialsTableType === 'Прикрепленные'
-        && allAttachedMaterials.length === 0
+  const renderDecommissionedMaterialsError = () => (
+    <>
+      {allDecommissionedMaterials.length === 0
         && status === 'fulfilled'
-        && searchValue.attachedMaterialsSearchValue === '') {
-        return (<p className="error-message">Нет закрепленных материалов</p>);
-      }
-      if (materialsTableType === 'Прикрепленные'
-        && allAttachedMaterials.length === 0
+        && searchValue.decommissionedMaterialsSearchValue === '' && (
+          <p className="error-message">История ремонтов пуста</p>
+      )}
+      {allDecommissionedMaterials.length === 0
         && status === 'fulfilled'
-        && searchValue.attachedMaterialsSearchValue !== ''
-        && allAttachedMaterials.length !== baseAllAttachedMaterials.length) {
-        return (<p className="error-message">Совпадений не найдено</p>);
-      }
-      if (materialsTableType === 'Свободные'
-        && materials.length === 0
+        && searchValue.decommissionedMaterialsSearchValue !== '' && (
+          <p className="error-message">Совпадений не найдено</p>
+      )}
+    </>
+  );
+
+  const renderAllMaterialsError = () => (
+    <>
+      {materials.length === 0
+        && status === 'fulfilled'
+        && searchValue.materialsSearchValue === '' && (
+          <p className="error-message">По этому счету нет материалов</p>
+      )}
+      {materials.length === 0
         && status === 'fulfilled'
         && searchValue.materialsSearchValue !== ''
-        && materials.length !== baseMaterials.length) {
-        return (<p className="error-message">Совпадений не найдено</p>);
-      }
-    }
+        && materials.length !== baseMaterials.length && (
+          <p className="error-message">Совпадений не найдено</p>
+      )}
+    </>
+  );
 
-    if (pageType === 'История ремонтов') {
-      if (allDecommissionedMaterials.length === 0
+  const renderAttachedMaterialsError = () => (
+    <>
+      {allAttachedMaterials.length === 0
         && status === 'fulfilled'
-        && searchValue.decommissionedMaterialsSearchValue !== '') {
-        return <p className="error-message">Совпадений не найдено</p>;
-      }
-      if (allDecommissionedMaterials.length === 0
+        && searchValue.attachedMaterialsSearchValue === '' && (
+          <p className="error-message">Нет закрепленных материалов</p>
+      )}
+      {allAttachedMaterials.length === 0
         && status === 'fulfilled'
-        && searchValue.decommissionedMaterialsSearchValue === '') {
-        return (
-          <p className="error-message">История ремонтов пуста</p>
-        );
-      }
-    }
+        && searchValue.attachedMaterialsSearchValue !== ''
+        && allAttachedMaterials.length !== baseAllAttachedMaterials.length && (
+          <p className="error-message">Совпадений не найдено</p>
+      )}
+    </>
+  );
 
-    return pageType === 'Материалы'
-      && materialsTableType === 'Свободные'
-      && materials.length === 0
-      && status === 'fulfilled'
-      && searchValue.materialsSearchValue === ''
-      && (
-        <p className="error-message">По этому счету нет материалов</p>
-      );
-  };
+  const renderUsedMaterialsError = () => (
+    <>
+      {allUsedMaterials.length === 0
+        && status === 'fulfilled'
+        && searchValue.usedMaterialSearchValue === '' && (
+          <p className="error-message">Нет списанных материалов</p>
+      )}
+      {allUsedMaterials.length === 0
+        && status === 'fulfilled'
+        && searchValue.usedMaterialSearchValue !== ''
+        && allUsedMaterials.length !== baseAllUsedMaterials.length && (
+          <p className="error-message">Совпадений не найдено</p>
+      )}
+    </>
+  );
+
+  const renderMaterialsError = () => (
+    <>
+      {materialsTableType === 'Свободные' && renderAllMaterialsError()}
+      {materialsTableType === 'Прикрепленные' && renderAttachedMaterialsError()}
+      {materialsTableType === 'Списанные' && renderUsedMaterialsError()}
+    </>
+  );
+
+  const renderError = () => (
+    <>
+      {productsTableError !== '' && renderProductsTableError()}
+      {editMaterialsError !== '' && renderEditMaterialsError()}
+      {pageType === 'Материалы' && renderMaterialsError()}
+      {pageType === 'История ремонтов' && renderDecommissionedMaterialsError()}
+    </>
+  );
 
   const renderHeaderByMaterialsPage = () => (
     <TableRow>
@@ -214,6 +250,28 @@ export default function ProductsTable(props: Props) {
             {material.numberPlateCar}
             )
           </StyledTableCell>
+        </StyledTableRow>
+      ),
+    )
+  );
+
+  const renderUsedMaterialsRows = () => (
+    allUsedMaterials && allUsedMaterials.length > 0 && allUsedMaterials.map(
+      (material: IUsedMaterialResponse, index: number) => (
+        <StyledTableRow
+          className={rowActiveId === material.id ? 'active' : ''}
+          key={material.id}
+          onContextMenu={(event) => handleContextMenu(event, material.id)}
+        >
+          <StyledTableCell align="center">{tableIndexArr[index]}</StyledTableCell>
+          <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">
+            {material.nameMaterial}
+          </StyledTableCell>
+          <StyledTableCell align="left">{material.unit}</StyledTableCell>
+          <StyledTableCell align="left">{material.nameParty}</StyledTableCell>
+          <StyledTableCell align="left">{material.partyDate.replace(/T/gi, ' ')}</StyledTableCell>
+          <StyledTableCell align="left">{material.price.toFixed(2)}</StyledTableCell>
+          <StyledTableCell align="left">{material.count}</StyledTableCell>
         </StyledTableRow>
       ),
     )
@@ -281,6 +339,7 @@ export default function ProductsTable(props: Props) {
   const renderTable = () => (
     productsTableError === '' && ((pageType === 'Материалы' && materialsTableType === 'Свободные' && materials && materials?.length > 0)
     || (pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && allAttachedMaterials && allAttachedMaterials.length > 0)
+    || (pageType === 'Материалы' && materialsTableType === 'Списанные' && allUsedMaterials && allUsedMaterials.length > 0)
     || (pageType === 'История ремонтов' && allDecommissionedMaterials && allDecommissionedMaterials.length > 0))
     && (
       <ProductsTableWrapper>
@@ -303,6 +362,7 @@ export default function ProductsTable(props: Props) {
               <TableBody>
                 {pageType === 'Материалы' && materialsTableType === 'Свободные' && renderFirstRow()}
                 {pageType === 'Материалы' && materialsTableType === 'Свободные' && renderMaterialsRows()}
+                {pageType === 'Материалы' && materialsTableType === 'Списанные' && renderUsedMaterialsRows()}
                 {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && renderAttachedMaterialsRows()}
                 {pageType === 'История ремонтов' && renderDecommissionedMaterialsRows()}
               </TableBody>

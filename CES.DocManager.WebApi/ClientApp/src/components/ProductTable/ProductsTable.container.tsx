@@ -1,4 +1,5 @@
 import { AxiosError } from 'axios';
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import getAllAttachedMaterials from '../../redux/actions/report/materialReport/getAllAttachedMaterials';
@@ -7,6 +8,7 @@ import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
 import {
   changeAttachedMaterial,
+  changePeriod,
   changeRowActiveId,
   editAllMaterialsAttachingMaterial,
   resetAllAttachedMaterials,
@@ -17,6 +19,7 @@ import {
   IAllDecommissionedMaterials,
   IMaterialAttachedResponse,
   IMaterialsResponse,
+  IUsedMaterialResponse,
   Party,
   Product,
 } from '../../types/ReportTypes';
@@ -29,7 +32,10 @@ interface Props {
   setProductsTableError: React.Dispatch<React.SetStateAction<string>>;
 }
 
-type MaterialsType = Product[] | IMaterialAttachedResponse[] | IAllDecommissionedMaterials[];
+type MaterialsType = Product[]
+| IMaterialAttachedResponse[]
+| IAllDecommissionedMaterials[]
+| IUsedMaterialResponse[];
 
 function ProductsTableContainer(props: Props) {
   const { productsTableError, setProductsTableError } = props;
@@ -58,6 +64,11 @@ function ProductsTableContainer(props: Props) {
   ] = useState<IMaterialAttachedResponse[]>([]);
 
   const [
+    filteredUsedMaterials,
+    setFilteredUsedMaterials,
+  ] = useState<IUsedMaterialResponse[]>([]);
+
+  const [
     filteredDecommissionedMaterials,
     setFilteredDecommissionedMaterials,
   ] = useState<IAllDecommissionedMaterials[]>([]);
@@ -69,6 +80,7 @@ function ProductsTableContainer(props: Props) {
 
   const {
     allAttachedMaterials,
+    allUsedMaterials,
     materialsTableType,
     currentGroupAccount,
     rowActiveId,
@@ -81,6 +93,7 @@ function ProductsTableContainer(props: Props) {
     totalCount,
     totalSum,
     isCheckedByDate,
+    period,
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
@@ -100,6 +113,17 @@ function ProductsTableContainer(props: Props) {
       if (materialsTableType === 'Прикрепленные') {
         dispatch(resetAllAttachedMaterials());
         await dispatch(getAllAttachedMaterials(''));
+      }
+      if (materialsTableType === 'Списанные') {
+        if (!period) {
+          const currentMonth = dayjs().month();
+          const currentYear = dayjs().year();
+          const currentPeriod = {
+            month: currentMonth === 0 ? 12 : currentMonth,
+            year: currentMonth === 0 ? (currentYear - 1) : currentYear,
+          };
+          dispatch(changePeriod(dayjs().set('year', currentPeriod.year).set('month', currentPeriod.month - 1)));
+        }
       }
     } catch (error) {
       if (error instanceof Error || error instanceof AxiosError) {
@@ -165,6 +189,14 @@ function ProductsTableContainer(props: Props) {
     return arr;
   };
 
+  const filterUsedMaterials = (): IUsedMaterialResponse[] => {
+    const arr = allUsedMaterials.filter(
+      (el) => el.nameMaterial.toLowerCase().includes(searchValue.usedMaterialSearchValue)
+      || el.nameParty.includes(searchValue.usedMaterialSearchValue),
+    );
+    return arr;
+  };
+
   const filterDecommissionedMaterials = (): IAllDecommissionedMaterials[] => {
     const arr = allDecommissionedMaterials.filter(
       (el) => el.carMechanic.toLowerCase().includes(
@@ -192,7 +224,7 @@ function ProductsTableContainer(props: Props) {
   }, [dialogHeight, tableHeight]);
 
   useEffect(() => {
-    if (pageType === 'Материалы' && materialsTableType === 'Прикрепленные') {
+    if (pageType === 'Материалы' && (materialsTableType === 'Прикрепленные' || materialsTableType === 'Списанные')) {
       setDialogHeight(100);
     } else {
       setDialogHeight(150);
@@ -205,6 +237,13 @@ function ProductsTableContainer(props: Props) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [materials]);
+
+  useEffect(() => {
+    if (allUsedMaterials.length !== 0) {
+      setFilteredUsedMaterials(filterUsedMaterials());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allUsedMaterials]);
 
   useEffect(() => {
     if (allAttachedMaterials.length !== 0) {
@@ -226,6 +265,11 @@ function ProductsTableContainer(props: Props) {
   }, [filteredMaterials]);
 
   useEffect(() => {
+    createTableIndexes(filteredUsedMaterials);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredUsedMaterials]);
+
+  useEffect(() => {
     createTableIndexes(filteredAttachedMaterials);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredAttachedMaterials]);
@@ -244,6 +288,11 @@ function ProductsTableContainer(props: Props) {
     setFilteredAttachedMaterials(filterAttachedMaterials());
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue.attachedMaterialsSearchValue]);
+
+  useEffect(() => {
+    setFilteredUsedMaterials(filterUsedMaterials());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue.usedMaterialSearchValue]);
 
   useEffect(() => {
     setFilteredDecommissionedMaterials(filterDecommissionedMaterials());
@@ -322,6 +371,9 @@ function ProductsTableContainer(props: Props) {
       if (pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && id) {
         dispatch(changeRowActiveId(id));
       }
+      if (pageType === 'Материалы' && materialsTableType === 'Списанные' && id) {
+        dispatch(changeRowActiveId(id));
+      }
       if (pageType === 'История ремонтов' && material) {
         dispatch(changeRowActiveId(material.id));
       }
@@ -336,6 +388,8 @@ function ProductsTableContainer(props: Props) {
     <ProductsTableComponent
       materials={searchValue.materialsSearchValue === '' ? materials : filteredMaterials}
       baseMaterials={materials}
+      allUsedMaterials={searchValue.usedMaterialSearchValue === '' ? allUsedMaterials : filteredUsedMaterials}
+      baseAllUsedMaterials={allUsedMaterials}
       allAttachedMaterials={searchValue.attachedMaterialsSearchValue === '' ? allAttachedMaterials : filteredAttachedMaterials}
       baseAllAttachedMaterials={allAttachedMaterials}
       allDecommissionedMaterials={searchValue.decommissionedMaterialsSearchValue === '' ? allDecommissionedMaterials : filteredDecommissionedMaterials}
