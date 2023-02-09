@@ -106,7 +106,8 @@ function AddMaterialsWriteOffModalContainer() {
   const getCheckedAttachedMaterials = (materialsByCar: string[]) => {
     const arr: IMaterialAttachedResponse[] = [];
     materialsByCar.forEach((el) => {
-      arr.push(...attachedMaterialsByCar.filter((material) => el === material.nameMaterial));
+      arr.push(...attachedMaterialsByCar.filter((material) => (
+        el.includes(material.nameMaterial) && el.includes(material.nameParty))));
     });
     setCheckedAttachedMaterials([...arr]);
   };

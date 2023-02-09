@@ -183,11 +183,11 @@ export default function AddMaterialsWriteOffModalComponent(props: Props) {
       >
         {attachedMaterialsByCar && attachedMaterialsByCar.length > 0
         && attachedMaterialsByCar.map((el) => (
-          <MenuItem key={el.id} value={el.nameMaterial}>
+          <MenuItem key={el.id} value={`${el.nameMaterial} Партия № ${el.nameParty}`}>
             <Checkbox
-              checked={materialsByCar.indexOf(el.nameMaterial) > -1}
+              checked={materialsByCar.indexOf(`${el.nameMaterial} Партия № ${el.nameParty}`) > -1}
             />
-            <ListItemText primary={el.nameMaterial} />
+            <ListItemText primary={`${el.nameMaterial} Партия № ${el.nameParty}`} />
           </MenuItem>
         ))}
       </Select>
@@ -214,7 +214,7 @@ export default function AddMaterialsWriteOffModalComponent(props: Props) {
               <StyledTableCell align="center" component="th" scope="row">
                 {index + 1}
               </StyledTableCell>
-              <StyledTableCell align="left">{el.nameMaterial}</StyledTableCell>
+              <StyledTableCell align="left">{el.nameMaterial ? `${el.nameMaterial} Партия № ${el.nameParty}` : ''}</StyledTableCell>
               <StyledTableCell align="left">
                 <input
                   className="material-number table-material-number"
