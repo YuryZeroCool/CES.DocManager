@@ -558,7 +558,7 @@ const materialsReducer = createSlice({
     });
     builder.addCase(getAllDecommissionedMaterials.fulfilled, (state, action) => {
       let stateCopy = state;
-      stateCopy = { ...stateCopy, allDecommissionedMaterials: [...action.payload.reverse()], status: 'fulfilled' };
+      stateCopy = { ...stateCopy, allDecommissionedMaterials: [...action.payload], status: 'fulfilled' };
       return stateCopy;
     });
     builder.addCase(getAllDecommissionedMaterials.rejected, (state, action) => {
