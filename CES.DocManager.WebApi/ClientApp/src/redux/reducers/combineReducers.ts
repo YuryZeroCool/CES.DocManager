@@ -3,7 +3,7 @@ import loginReducer from './loginReducer';
 import logoutReducer from './logoutReducer';
 import medicalCertificatesReducer from './documents/medicalCertificates/medicalCertificatesReducer';
 import divisionsReducer from './divisionsReducer';
-import divisionWorkScheduleReducer from './report/divisionWorkScheduleReducer';
+import fuelReportReducer from './report/fuelReportReducer';
 import modalsReducer from './modals/modalsReducer';
 import vehicleReducer from './vehicle/vehicleReducer';
 import driversReducer from './drivers/driversReducer';
@@ -17,7 +17,7 @@ export const rootReducer = combineReducers({
   driverLicense: driverLicenseReducer,
   medicalCertificates: medicalCertificatesReducer,
   divisions: divisionsReducer,
-  divisionWorkSchedule: divisionWorkScheduleReducer,
+  fuelReport: fuelReportReducer,
   materials: materialsReducer,
   modals: modalsReducer,
   vehicle: vehicleReducer,

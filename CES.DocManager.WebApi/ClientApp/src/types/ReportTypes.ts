@@ -20,10 +20,34 @@ export interface ICreateDivisionWorkScheduleResponse extends IDivisionWorkSchedu
 
 export type IAllDivisionWorkSchedulesResponse = ICreateDivisionWorkScheduleResponse[];
 
-export interface DivisionWorkScheduleResponse {
-  delete?: IDivisionWorkSchedule;
-  create?: ICreateDivisionWorkScheduleResponse;
-  getAll?: IAllDivisionWorkSchedulesResponse;
+export interface IWorkCard {
+  id: number;
+  division: string;
+  mileagePerMonth: number;
+  fuelPerMonth: number;
+}
+
+export interface IGetFuelReportInfoResponse {
+  id: number;
+  carNumber: string;
+  workCards: IWorkCard[];
+  sumMileage: number;
+  sumFuel: number;
+}
+
+export interface DivisionData {
+  id: number;
+  divisionName: string;
+  data: IGetFuelReportInfoResponse[];
+}
+
+export interface FuelReportResponse {
+  deletedDivisionWorkSchedule: IDivisionWorkSchedule;
+  createdDivisionWorkSchedule: ICreateDivisionWorkScheduleResponse;
+  allDivisionWorkSchedule: IAllDivisionWorkSchedulesResponse;
+  period: Dayjs | null;
+  status: string;
+  fuelReportInfo: IGetFuelReportInfoResponse[];
 }
 
 export interface Party {

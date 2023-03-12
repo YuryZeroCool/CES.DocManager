@@ -3,18 +3,22 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import { AxiosError } from 'axios';
 import { DateObject } from 'react-multi-date-picker';
 import { useDispatch, useSelector } from 'react-redux';
+import dayjs, { Dayjs } from 'dayjs';
 import getDivisions from '../../redux/actions/getAllDivisions';
 import createDivisionWorkSchedule from '../../redux/actions/report/fuelReport/createDivisionWorkSchedule';
 import deleteDivisionWorkSchedule from '../../redux/actions/report/fuelReport/deleteDivisionWorkSchedule';
 import getAllDivisionWorkSchedules from '../../redux/actions/report/fuelReport/getAllDivisionWorkSchedules';
-import { RootState } from '../../redux/reducers/combineReducers';
 import { IAuthResponseType } from '../../redux/store/configureStore';
+import FuelReportPageComponent from './FuelReportPage.component';
+import { RootState } from '../../redux/reducers/combineReducers';
 import {
   Division,
-  IAllDivisionWorkSchedulesResponse,
+  FuelReportResponse,
   IDivisionWorkScheduleRequest,
 } from '../../types/ReportTypes';
-import FuelReportPageComponent from './FuelReportPage.component';
+import { changeFuelReportPeriod } from '../../redux/reducers/report/fuelReportReducer';
+import getFuelReportInfo from '../../redux/actions/report/fuelReport/getFuelReportInfo';
+import countCurrentPeriod from '../../index.config';
 
 const defaultValues: IDivisionWorkScheduleRequest = {
   division: '',
@@ -31,15 +35,18 @@ function FuelReportPageContainer() {
     setDivisionWorkSchedule,
   ] = useState<IDivisionWorkScheduleRequest>(defaultValues);
   const [workScheduleError, setWorkScheduleError] = useState<string>('');
+  const [fuelReportInfoError, setFuelReportInfoError] = useState<string>('');
+  const [expanded, setExpanded] = useState<boolean>(false);
 
   const divisions = useSelector<RootState, Division[]>(
     (state) => state.divisions,
   );
 
-  const allDivisionWorkScheduleState = useSelector<RootState,
-  IAllDivisionWorkSchedulesResponse | undefined>(
-    (state) => state.divisionWorkSchedule.getAll,
+  const { allDivisionWorkSchedule, period } = useSelector<RootState, FuelReportResponse>(
+    (state) => state.fuelReport,
   );
+
+  const [fuelReportPeriod, setFuelReportPeriod] = useState<Dayjs | null>(period);
 
   const dispatch: IAuthResponseType = useDispatch();
 
@@ -68,6 +75,15 @@ function FuelReportPageContainer() {
     async function getAllDivisionWorkSchedule(): Promise<void> {
       try {
         await dispatch(getAllDivisionWorkSchedules(createCurrentPeriod()));
+        if (!period) {
+          const currentMonth = dayjs().month();
+          const currentYear = dayjs().year();
+          const currentPeriod = {
+            month: currentMonth === 0 ? 12 : currentMonth,
+            year: currentMonth === 0 ? (currentYear - 1) : currentYear,
+          };
+          dispatch(changeFuelReportPeriod(dayjs().set('year', currentPeriod.year).set('month', currentPeriod.month - 1)));
+        }
       } catch (error) {
         if (error instanceof Error || error instanceof AxiosError) {
           setWorkScheduleError(error.message);
@@ -127,6 +143,27 @@ function FuelReportPageContainer() {
     }
   }, [dates]);
 
+  useEffect(() => {
+    async function getFuelReport(): Promise<void> {
+      try {
+        await dispatch(getFuelReportInfo(countCurrentPeriod(period)));
+      } catch (error) {
+        if (error instanceof Error || error instanceof AxiosError) {
+          setFuelReportInfoError(error.message);
+        }
+      }
+    }
+
+    if (period) {
+      if (!fuelReportPeriod) {
+        setFuelReportPeriod(period);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      getFuelReport();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [period]);
+
   const onChange = (val: DateObject[]) => {
     setDates(val);
     setWorkScheduleError('');
@@ -166,20 +203,42 @@ function FuelReportPageContainer() {
     return arr.join(', ');
   };
 
+  const handleAccordionChange = () => {
+    setExpanded(!expanded);
+  };
+
+  const handleFuelReportCalendarChange = (value: Dayjs | null) => {
+    if (value) {
+      setFuelReportPeriod(value);
+    }
+  };
+
+  const handleFuelReportCalendarClose = () => {
+    if (fuelReportPeriod) {
+      dispatch(changeFuelReportPeriod(fuelReportPeriod));
+    }
+  };
+
   return (
     <FuelReportPageComponent
       dates={dates}
       currentDivision={currentDivision}
       divisions={divisions}
       workScheduleError={workScheduleError}
-      allDivisionWorkScheduleState={allDivisionWorkScheduleState}
+      allDivisionWorkScheduleState={allDivisionWorkSchedule}
       isDivisionSelected={isDivisionSelected}
       isDatesSelected={isDatesSelected}
+      expanded={expanded}
+      fuelReportPeriod={fuelReportPeriod}
+      fuelReportInfoError={fuelReportInfoError}
       onChange={onChange}
       handleChange={handleChange}
       handleClick={handleClick}
       handeDeleteElement={handeDeleteElement}
       createDatesStr={createDatesStr}
+      handleAccordionChange={handleAccordionChange}
+      handleFuelReportCalendarChange={handleFuelReportCalendarChange}
+      handleFuelReportCalendarClose={handleFuelReportCalendarClose}
     />
   );
 }

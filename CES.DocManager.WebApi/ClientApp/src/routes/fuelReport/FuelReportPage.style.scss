@@ -4,6 +4,16 @@
   display: flex;
 }
 
+.fuel-report-calendar-block {
+  padding: 15px;
+  margin-bottom: 20px;
+  background-color: $background-color-white;
+
+  h6 {
+    margin-bottom: 1rem;
+  }
+}
+
 .calendar-form-title {
   margin-bottom: 10px;
 }
@@ -88,6 +98,12 @@
 .icon-delete {
   &:hover {
     cursor: pointer;
+  }
+}
+
+.fuel-report-calendar {
+  legend {
+    float: right !important;
   }
 }
 
