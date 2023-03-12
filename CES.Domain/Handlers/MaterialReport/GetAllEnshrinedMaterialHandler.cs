@@ -22,6 +22,7 @@ namespace CES.Domain.Handlers.MaterialReport
         {
             var material =  await _ctx.EnshrinedMaterial.Select(p=>
                 _mapper.Map<GetAllEnshrinedMaterialResponse>(p)).ToListAsync(cancellationToken);
+
             if (material == null) throw new System.Exception("Error");
 
             return material;    

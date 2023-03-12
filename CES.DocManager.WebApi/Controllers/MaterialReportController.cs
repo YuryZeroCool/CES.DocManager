@@ -1,11 +1,11 @@
-﻿using System.Globalization;
-using CES.Domain.Models.Request.MaterialReport;
+﻿using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Request.Vehicle;
 using CES.Domain.Models.Response.MaterialReport;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Net;
 
 namespace CES.DocManager.WebApi.Controllers
@@ -49,6 +49,31 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new object();
+            }
+        }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpPatch("editMaterial/{id:int}")]
+        [Produces(typeof(EditMaterialResponse))]
+        public async Task<object> EditMaterialAsync([FromRoute] int id, [FromBody] JsonPatchDocument editedMaterial)
+        {
+            try
+            {
+                return await _mediator.Send(new EditMaterialRequest()
+                    {
+                        PartyId = id,
+                        EditedMaterial = editedMaterial
+                    }
+                );
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    e.Message
+                };
             }
         }
 

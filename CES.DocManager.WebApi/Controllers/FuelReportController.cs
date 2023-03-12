@@ -1,4 +1,6 @@
-﻿using CES.Domain.Models.Request.Report;
+﻿using CES.Domain.Models.Request.FuelReport;
+using CES.Domain.Models.Request.Report;
+using CES.Domain.Models.Response.FuelReport;
 using CES.Domain.Models.Response.Report;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
@@ -34,17 +36,17 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-        [HttpGet("getCardWorkDivisions")]
-        [Produces(typeof(List<GetCardWorkDivisionsResponse>))]
+        [HttpGet("getFuelReportInfo")]
+        [Produces(typeof(List<GetAllWorkCardsResponse>))]
 
-        public async Task<object> GetCardWorkDivisionsAsync(int carGarage, string reportPeriod)
+        public async Task<object> GetAllWorkCardsAsync(int month, int year)
         {
             try
             {
-                return await _mediator.Send(new GetCardWorkDivisionsRequest()
+                return await _mediator.Send(new GetAllWorkCardsRequest()
                 {
-                    GarageNumber = carGarage,
-                    ReportPeriod = reportPeriod,
+                    Month = month,
+                    Year = year,
                 });
             }
             catch (Exception e)
