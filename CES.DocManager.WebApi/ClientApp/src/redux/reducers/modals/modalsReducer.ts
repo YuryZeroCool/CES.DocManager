@@ -12,6 +12,7 @@ const initial: IModal = {
   isAddUsedMaterialModalOpen: false,
   isLoaderModalOpen: false,
   isEditAttachedMaterialModalOpen: false,
+  isAddActModalOpen: false,
 };
 
 const modalsReducer = createSlice({
@@ -68,6 +69,11 @@ const modalsReducer = createSlice({
       stateCopy = { ...stateCopy, isEditAttachedMaterialModalOpen: action.payload };
       return stateCopy;
     },
+    toggleAddActModal: (state, action: PayloadAction<boolean>) => {
+      let stateCopy: IModal = state;
+      stateCopy = { ...stateCopy, isAddActModalOpen: action.payload };
+      return stateCopy;
+    },
   },
   extraReducers: () => {},
 });
@@ -83,5 +89,6 @@ export const {
   toggleAddUsedMaterialModal,
   toggleLoaderModal,
   toggleEditAttachedMaterialModal,
+  toggleAddActModal,
 } = modalsReducer.actions;
 export default modalsReducer.reducer;

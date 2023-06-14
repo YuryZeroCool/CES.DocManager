@@ -24,6 +24,7 @@ export default function HeaderComponent(props: Props) {
           <div className="logo-container" />
           <nav className="nav">
             <NavLink to="/">Главная</NavLink>
+            <NavLink to="/mes">ОИС</NavLink>
             <Box sx={{ minWidth: 120 }}>
               <FormControl fullWidth>
                 <Select

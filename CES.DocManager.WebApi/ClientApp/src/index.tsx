@@ -11,6 +11,7 @@ import DocumentsPage from './routes/documents/DocumentsPage.container';
 import TechniquePage from './routes/technique/TechniquePage.container';
 import DriversPage from './routes/drivers/DriversPage.container';
 import LoginPage from './routes/login/LoginPage.container';
+import MesPage from './routes/mes/MesPage.container';
 import RequireAuth from './hoc/RequireAuth';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/index.scss';
@@ -29,6 +30,7 @@ root.render(
           <Route path="technique" element={<RequireAuth><TechniquePage /></RequireAuth>} />
           <Route path="drivers" element={<RequireAuth><DriversPage /></RequireAuth>} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="mes" element={<RequireAuth><MesPage /></RequireAuth>} />
         </Route>
       </Routes>
     </BrowserRouter>
