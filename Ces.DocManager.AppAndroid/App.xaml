@@ -12,18 +12,16 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
-    
     <Application.MainPage>
         <Shell>
-        <TabBar x:Name="PhoneTabs">
+            <TabBar x:Name="PhoneTabs">
                 <Tab Title="Home" Icon="tab_home.png">
-                <ShellContent ContentTemplate="{DataTemplate page:HomePage}"/>
-            </Tab>
-                <Tab Title="Settings" Icon="tab_settings.png">
+                    <ShellContent ContentTemplate="{DataTemplate page:HomePage}"/>
+                </Tab>
+                <Tab Title="Settings" Icon="tab_settings.png" >
                     <ShellContent ContentTemplate="{DataTemplate page:SettingsPage}"/>
                 </Tab>
             </TabBar>
-
         </Shell>
-        </Application.MainPage>
+    </Application.MainPage>
 </Application>

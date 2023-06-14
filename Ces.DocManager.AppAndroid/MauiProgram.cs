@@ -1,4 +1,6 @@
 ﻿using Ces.DocManager.AppAndroid.Pages;
+using Ces.DocManager.AppAndroid.Services;
+using Ces.DocManager.AppAndroid.ViewModels;
 
 namespace Ces.DocManager.AppAndroid
 {
@@ -16,10 +18,18 @@ namespace Ces.DocManager.AppAndroid
                 });
 
             var services = builder.Services;
-
+            services.AddSingleton<INoteService, NoteService>();
             services.AddSingleton<HomePage>();
+            services.AddSingleton<CreateNote>();
+            services.AddSingleton<SearchNote>();
+            services.AddSingleton<EditNote>();
 
 
+            services.AddSingleton<HomeViewModel>();
+            services.AddSingleton<AddNoteViewModel>();
+            services.AddSingleton<SearchViewModel>();
+            services.AddSingleton<EditNoteViewModel>();
+            
             return builder.Build();
         }
     }

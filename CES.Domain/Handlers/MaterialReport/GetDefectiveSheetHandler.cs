@@ -64,6 +64,7 @@ namespace CES.Domain.Handlers.MaterialReport
             sheet.Range[$"G23"].Value = $"/{decommissionedMaterials.CarMechanic?.FIO}/";
             sheet.Range[$"B26"].Value = $"{decommissionedMaterials.CurrentDate.Day}";
             sheet.Range[$"C26"].Value = $"{GetStringMonth(decommissionedMaterials.CurrentDate.Month)}";
+            sheet.Range[$"D26"].Value = $"{decommissionedMaterials.CurrentDate.Year}";
 
             workbook.SaveToFile(pathXls, ExcelVersion.Version97to2003);
             var str = $"-f pdf -o {pathPdf} {pathXls}";

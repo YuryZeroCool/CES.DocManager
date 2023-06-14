@@ -1,53 +1,109 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Ces.DocManager.AppAndroid.Pages.SearchNote"
+             xmlns:searchHandlers="clr-namespace:Ces.DocManager.AppAndroid.SearchHandlers"
+             xmlns:search="Ces.DocManager.AppAndroid.Pages.SearchNote"
              xmlns:models="clr-namespace:Ces.DocManager.AppAndroid.Models.ViewModels"
              xmlns:local="clr-namespace:Ces.DocManager.AppAndroid.ViewModels"
              xmlns:viewModels="clr-namespace:Ces.DocManager.AppAndroid.ViewModels"
-             x:DataType="viewModels:HomeViewModel"
-             x:Class="Ces.DocManager.AppAndroid.Pages.HomePage"
-             Title="HomePage">
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Добавить" IconImageSource="{
-                            FontImage Glyph='Добавить',
-                            Color=White, Size=50}"
-                            Command="{Binding  AddNotesCommand}"
-                     />
-        <ToolbarItem Text="Поиск"
-                     IconImageSource="{
-                            FontImage Glyph=Поиск,
-                            Color=White, Size=50}"
-                            Command="{Binding  SearchNotesCommand}"
-                     />
-    </ContentPage.ToolbarItems>
+             x:DataType="viewModels:SearchViewModel"
+             Title="SearchNote">
+    <Shell.SearchHandler >
+        <searchHandlers:NoteSearchHandler
+            ShowsResults = "True"
+            QueryIcon="search"
+            ClearIcon="close"
+            Command="{Binding GetAllNoteCommand}"
+            Query="{Binding Note.Description}"
+            DisplayMemberName = "Name"  
+        >
+            <SearchHandler.Keyboard>
+                <Keyboard x:FactoryMethod="Create">
+                    <x:Arguments>
+                        <KeyboardFlags>All</KeyboardFlags>
+                    </x:Arguments>
+                </Keyboard>
+            </SearchHandler.Keyboard>
+        </searchHandlers:NoteSearchHandler>
+
+    </Shell.SearchHandler>
+
     <AbsoluteLayout>
+
+        <Grid VerticalOptions="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Text="от:"
+                Margin="5"
+                FontSize="20"
+                FontAttributes="Bold" />
+            <DatePicker
+                Grid.Row="0"
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                Format="Y"
+                Margin="5"
+                FontSize="16"
+                Date="{Binding Note.MinDate}"/>
+            <Label
+                Grid.Row="0"
+                Grid.Column="2"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Text="до:"
+                FontSize="20"
+                Margin="5"
+                FontAttributes="Bold" />
+            <DatePicker
+                Grid.Row="0"
+                Grid.Column="3"
+                Format="Y"
+                FontSize="16"
+                Margin="5"
+                HorizontalOptions="Center"
+                 Date="{Binding Note.MaxDate}"/>
+        </Grid>
+
         <CollectionView
-            AbsoluteLayout.LayoutBounds="1,1,1,1"
+            AbsoluteLayout.LayoutBounds="1,1,1,0.92"
             AbsoluteLayout.LayoutFlags="All"
-            Margin="10"
+            Margin="5"
             x:Name="collectionView"
             ItemsSource="{Binding NotesList}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:NoteViewModel">
                     <Border
-                    Stroke="Black"
-                    Padding="5"
-                    BackgroundColor="#D8EBFF"
-                    Margin="0, 0, 0, 3">
+                        Stroke="Black"
+                        Padding="5"
+                        BackgroundColor="#D8EBFF"
+                        Margin="0, 0, 0, 3">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="7" />
                         </Border.StrokeShape>
                         <Border.Triggers>
                             <DataTrigger
-                            TargetType="Border"
-                            Binding="{Binding Source={x:Reference Checkbox}, Path=IsChecked}"
-                            Value="true">
+                                TargetType="Border"
+                                Binding="{Binding Source={x:Reference Checkbox}, Path=IsChecked}"
+                                Value="true">
                                 <Setter Property="Stroke"
-                                Value="DarkBlue"/>
+                                    Value="DarkBlue"/>
                                 <Setter Property="StrokeThickness"
-                                Value="2"/>
+                                    Value="2"/>
                                 <Setter Property="Padding"
-                                Value="4"/>
+                                    Value="4"/>
                             </DataTrigger>
                         </Border.Triggers>
                         <VerticalStackLayout >
@@ -67,7 +123,7 @@
                                     VerticalOptions="Center">
                                     <Label Text="{Binding Counter}" FontAttributes="Bold" />
                                 </VerticalStackLayout>
-                                
+
                                 <VerticalStackLayout
                                     Grid.Row="0" 
                                     Grid.Column="1"
@@ -80,9 +136,6 @@
                                 <local:TagButton
                                     x:Name="Checkbox"
                                     IsChecked="{Binding IsChecked}"
-                                    Command="{Binding Source={x:Reference collectionView},
-                                    Path=BindingContext.CompletedNoteCommand}"
-                                    CommandParameter="{Binding}"
                                     Source="square_icon.svg"                             
                                     Grid.Row="0"
                                     Grid.Column="2"
@@ -92,11 +145,11 @@
                                     CornerRadius="0">
                                     <local:TagButton.Triggers>
                                         <DataTrigger
-                                        TargetType="local:TagButton"
-                                        Binding="{Binding Source={x:Reference Checkbox}, Path=IsChecked}"
-                                        Value="true">
+                                            TargetType="local:TagButton"
+                                            Binding="{Binding Source={x:Reference Checkbox}, Path=IsChecked}"
+                                            Value="true">
                                             <Setter Property="Source"
-                                            Value="check_icon.svg"/>
+                                                Value="check_icon.svg"/>
                                         </DataTrigger>
                                     </local:TagButton.Triggers>
                                 </local:TagButton>
@@ -104,7 +157,7 @@
                         </VerticalStackLayout>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Source={x:RelativeSource
-                            AncestorType={x:Type viewModels:HomeViewModel}},
+                            AncestorType={x:Type viewModels:SearchViewModel}},
                             Path=DisplayActionCommand}"
                             NumberOfTapsRequired="2"         
                             CommandParameter="{Binding .}" />
@@ -113,6 +166,7 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+
         <AbsoluteLayout 
             AbsoluteLayout.LayoutBounds="1,1,1,1"
             AbsoluteLayout.LayoutFlags="All"
@@ -126,5 +180,4 @@
                 />
         </AbsoluteLayout>
     </AbsoluteLayout>
-    
 </ContentPage>

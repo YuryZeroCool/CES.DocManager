@@ -4,5 +4,6 @@
       "commandName": "MsixPackage",
       "nativeDebugging": false
     }
-  }
+  },
+  "Base_Url": "https://ces-docmanager.site"
 }

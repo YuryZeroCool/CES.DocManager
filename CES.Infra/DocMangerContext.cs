@@ -1,10 +1,12 @@
 ﻿using CES.Infra.Config;
 using CES.Infra.Config.Fuel;
 using CES.Infra.Config.MaterialReport;
+using CES.Infra.Config.Men;
 using CES.Infra.Models;
 using CES.Infra.Models.Drivers;
 using CES.Infra.Models.Fuel;
 using CES.Infra.Models.MaterialReport;
+using CES.Infra.Models.Men;
 using Microsoft.EntityFrameworkCore;
 
 namespace CES.Infra
@@ -13,7 +15,7 @@ namespace CES.Infra
     {
         //dotnet ef migrations add InitialCreate --context BlogContext --output-dir Migrations/SqlServerMigrations
         //Add-Migration  DecommissionedMaterialTablePeriodToCurrentDate  -context DocMangerContext
-        //  update-database -Context DocMangerContext
+        //  update-database -context DocMangerContext
 
         public DocMangerContext(DbContextOptions<DocMangerContext> options)
             : base(options)
@@ -57,6 +59,8 @@ namespace CES.Infra
 
         public virtual DbSet<UsedMaterialEntity> UsedMaterials { get; set; }
 
+        public virtual DbSet<NoteEntity> NoteEntities { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfig());
@@ -65,7 +69,6 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new MedicalCertificateConfig());
             modelBuilder.ApplyConfiguration(new VehicleBrandConfig());
             modelBuilder.ApplyConfiguration(new VehicleModelConfig());
-
             modelBuilder.ApplyConfiguration(new ProductConfig());
             modelBuilder.ApplyConfiguration(new ProductGroupAccountConfig());
             modelBuilder.ApplyConfiguration(new UnitConfig());
@@ -79,6 +82,7 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new DecommissionedMaterialConfig());
             modelBuilder.ApplyConfiguration(new CarMechanicConfig());
             modelBuilder.ApplyConfiguration(new UsedMaterialConf());
+            modelBuilder.ApplyConfiguration(new NoteConfig());
         }
     }
 }

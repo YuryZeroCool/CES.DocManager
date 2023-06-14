@@ -13,7 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CES.InfraSecurity", "CES.In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CES.XmlFormat", "CES.XmlFormat\CES.XmlFormat.csproj", "{8A24E15D-B335-4072-9C30-EF73DD1CF0D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CES.DomainTests", "CES.DomainTests\CES.DomainTests.csproj", "{219BC7CB-6531-4FD5-8852-93130F71890A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CES.DomainTests", "CES.DomainTests\CES.DomainTests.csproj", "{219BC7CB-6531-4FD5-8852-93130F71890A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ces.DocManager.AppAndroid", "Ces.DocManager.AppAndroid\Ces.DocManager.AppAndroid.csproj", "{F539D56C-2637-4245-9048-3AC41F7F80D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ces.DocManager.AppAndroid.UnitTests", "Ces.DocManager.AppAndroid.UnitTests\Ces.DocManager.AppAndroid.UnitTests.csproj", "{B8098869-C0E0-4E55-8F7C-CFA6F8BEDDE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,16 @@ Global
 		{219BC7CB-6531-4FD5-8852-93130F71890A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{219BC7CB-6531-4FD5-8852-93130F71890A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{219BC7CB-6531-4FD5-8852-93130F71890A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F539D56C-2637-4245-9048-3AC41F7F80D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F539D56C-2637-4245-9048-3AC41F7F80D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F539D56C-2637-4245-9048-3AC41F7F80D8}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F539D56C-2637-4245-9048-3AC41F7F80D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F539D56C-2637-4245-9048-3AC41F7F80D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F539D56C-2637-4245-9048-3AC41F7F80D8}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B8098869-C0E0-4E55-8F7C-CFA6F8BEDDE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8098869-C0E0-4E55-8F7C-CFA6F8BEDDE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8098869-C0E0-4E55-8F7C-CFA6F8BEDDE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8098869-C0E0-4E55-8F7C-CFA6F8BEDDE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
