@@ -15,7 +15,7 @@ using System.Net;
 namespace CES.DocManager.WebApi.Controllers
 {
     [EnableCors("MyPolicy")]
-    [Route("men/")]
+    [Route("mes/")]
     public class MesController : ControllerBase
     {
         private readonly IMediator _mediator;
