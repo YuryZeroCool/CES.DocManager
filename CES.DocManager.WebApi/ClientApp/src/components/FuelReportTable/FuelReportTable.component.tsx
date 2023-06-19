@@ -64,14 +64,15 @@ export default function FuelReportTableComponent(props: Props) {
       <TableRow>
         <StyledTableCell />
         {fuelReportDivisions.map((el) => (
-          <StyledTableCell align="center" colSpan={2}>{el}</StyledTableCell>
+          <StyledTableCell key={el} align="center" colSpan={2}>{el}</StyledTableCell>
         ))}
         <StyledTableCell align="center" colSpan={2} sx={{ fontWeight: 'bold' }}>ИТОГО</StyledTableCell>
       </TableRow>
       <TableRow>
         <StyledTableCell align="center" sx={{ top: 57, minWidth: 250 }}>Машина</StyledTableCell>
-        {fuelReportTableHeaderSells.map((el) => (
-          <StyledTableCell align="center" sx={{ top: 57 }}>{el}</StyledTableCell>
+        {fuelReportTableHeaderSells.map((el, index) => (
+          /* eslint react/no-array-index-key: 0 */
+          <StyledTableCell key={`${el}-${index}`} align="center" sx={{ top: 57 }}>{el}</StyledTableCell>
         ))}
       </TableRow>
     </TableHead>

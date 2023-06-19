@@ -54,7 +54,6 @@ function FuelReportTableContainer(props: Props) {
         });
         newDivisionsWithoutShiftsData.push(elem);
       });
-      console.log(newDivisionsWithoutShiftsData);
       setDivisionsWithShiftsData([...fuelReportInfo.filter((el) => el.workCards.length > 1)]);
       setDivisionsWithoutShiftsData(newDivisionsWithoutShiftsData);
     }
