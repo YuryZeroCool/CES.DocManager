@@ -1,14 +1,20 @@
-import Button from '@mui/material/Button';
 import React from 'react';
+import Button from '@mui/material/Button';
 import AddActModal from '../../components/AddActModal/AddActModal.container';
+import { INote } from '../../types/MesTypes';
 
 interface Props {
-  handleClick: () => void;
   isAddActModalOpen: boolean;
+  allNotes: INote[];
+  handleClick: () => void;
 }
 
 export default function MesPageComponent(props: Props) {
-  const { handleClick, isAddActModalOpen } = props;
+  const {
+    isAddActModalOpen,
+    allNotes,
+    handleClick,
+  } = props;
 
   return (
     <div>
