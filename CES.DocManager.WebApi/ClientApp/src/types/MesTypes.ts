@@ -26,4 +26,5 @@ export interface IFullNoteData extends INote {
 export interface INotesState {
   allNotes: INote[];
   allFullNoteData: IFullNoteData[];
+  editedNoteId: number;
 }

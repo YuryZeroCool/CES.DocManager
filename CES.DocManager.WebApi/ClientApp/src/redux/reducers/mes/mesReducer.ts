@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import getAllNotes from '../../actions/mes/getAllNotes';
 import getAllFullNoteData from '../../actions/mes/getAllFullNoteData';
 import { INotesState } from '../../../types/MesTypes';
@@ -6,12 +6,19 @@ import { INotesState } from '../../../types/MesTypes';
 const initial: INotesState = {
   allNotes: [],
   allFullNoteData: [],
+  editedNoteId: 0,
 };
 
 const vehicleReducer = createSlice({
   name: 'notes',
   initialState: initial,
-  reducers: {},
+  reducers: {
+    changeEditedNoteId: (state, action: PayloadAction<number>) => {
+      let stateCopy: INotesState = state;
+      stateCopy = { ...stateCopy, editedNoteId: action.payload };
+      return stateCopy;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getAllNotes.fulfilled, (state, action) => {
       let stateCopy = state;
@@ -32,5 +39,9 @@ const vehicleReducer = createSlice({
     });
   },
 });
+
+export const {
+  changeEditedNoteId,
+} = vehicleReducer.actions;
 
 export default vehicleReducer.reducer;

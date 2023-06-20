@@ -7,17 +7,12 @@ import { IAuthResponseType } from '../../redux/store/configureStore';
 import { IModal } from '../../types/type';
 import MesPageComponent from './MesPage.component';
 import getAllNotes from '../../redux/actions/mes/getAllNotes';
-import { INotesState } from '../../types/MesTypes';
 
 function MesPageContainer() {
   const [mesError, setMesError] = useState<string>('');
 
   const { isAddActModalOpen } = useSelector<RootState, IModal>(
     (state) => state.modals,
-  );
-
-  const { allNotes } = useSelector<RootState, INotesState>(
-    (state) => state.mes,
   );
 
   const dispatch: IAuthResponseType = useDispatch();
@@ -40,7 +35,7 @@ function MesPageContainer() {
     <MesPageComponent
       isAddActModalOpen={isAddActModalOpen}
       handleClick={handleClick}
-      allNotes={allNotes}
+      mesError={mesError}
     />
   );
 }
