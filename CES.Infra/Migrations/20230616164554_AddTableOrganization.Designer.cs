@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20230616164554_AddTableOrganization")]
+    partial class AddTableOrganization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -435,7 +437,7 @@ namespace CES.Infra.Migrations
                     b.ToTable("UsedMaterials");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.Mes.NoteEntity", b =>
+            modelBuilder.Entity("CES.Infra.Models.Men.NoteEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -463,7 +465,7 @@ namespace CES.Infra.Migrations
                     b.ToTable("NoteEntities");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.Mes.OrganizationEntity", b =>
+            modelBuilder.Entity("CES.Infra.Models.Men.OrganizationEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -482,7 +484,8 @@ namespace CES.Infra.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PayerAccountNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
@@ -490,6 +493,9 @@ namespace CES.Infra.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("PayerAccountNumber")
                         .IsUnique();
 
                     b.ToTable("OrganizationEntities");

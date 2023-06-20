@@ -64,7 +64,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\download\" />
     <Folder Include="wwwroot\js\" />
-    <Folder Include="wwwroot\07\" />
   </ItemGroup>
     
   <ItemGroup>

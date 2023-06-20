@@ -1,6 +1,6 @@
-﻿namespace CES.DocManager.WebApi.Models
+﻿namespace CES.Domain.Models.Request.Mes
 {
-    public class NoteViewModel
+    public class Note
     {
         public int Id { get; set; }
 

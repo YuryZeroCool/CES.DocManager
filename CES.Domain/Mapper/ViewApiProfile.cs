@@ -5,19 +5,19 @@ using CES.Domain.Models.Request.DriverLicense;
 using CES.Domain.Models.Request.DriverMedicalCertificate;
 using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Request.MaterialReport;
-using CES.Domain.Models.Request.Men;
+using CES.Domain.Models.Request.Mes;
 using CES.Domain.Models.Request.Vehicle;
 using CES.Domain.Models.Response.Division;
 using CES.Domain.Models.Response.Employees;
 using CES.Domain.Models.Response.MaterialReport;
-using CES.Domain.Models.Response.Men;
+using CES.Domain.Models.Response.Mes;
 using CES.Domain.Models.Response.Report;
 using CES.Domain.Models.Response.Vehicle;
 using CES.Domain.Security.Registration;
 using CES.Infra.Models;
 using CES.Infra.Models.Drivers;
 using CES.Infra.Models.MaterialReport;
-using CES.Infra.Models.Men;
+using CES.Infra.Models.Mes;
 using CES.InfraSecurity.Models;
 using CES.XmlFormat.Models;
 
@@ -142,7 +142,18 @@ namespace CES.Domain.Mapper
 
             CreateMap<AddNoteRequest, NoteEntity>();
 
-            CreateMap<NoteEntity, GetNotesResponse>();
+            CreateMap<NoteEntity, GetSortedNotesResponse>();
+
+            CreateMap<NoteEntity, GetAllNotesResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
+                .ForMember(dest => dest.IsChecked, opt => opt.MapFrom(src => src.IsChecked));
+
+            CreateMap<CreateOrganizationRequest, OrganizationEntity>();
+
+            CreateMap<OrganizationEntity, CreateOrganizationResponse>();
+
         }
     }
 }

@@ -1,12 +1,12 @@
 ﻿using CES.Infra.Config;
 using CES.Infra.Config.Fuel;
 using CES.Infra.Config.MaterialReport;
-using CES.Infra.Config.Men;
+using CES.Infra.Config.Mes;
 using CES.Infra.Models;
 using CES.Infra.Models.Drivers;
 using CES.Infra.Models.Fuel;
 using CES.Infra.Models.MaterialReport;
-using CES.Infra.Models.Men;
+using CES.Infra.Models.Mes;
 using Microsoft.EntityFrameworkCore;
 
 namespace CES.Infra
@@ -60,7 +60,9 @@ namespace CES.Infra
         public virtual DbSet<UsedMaterialEntity> UsedMaterials { get; set; }
 
         public virtual DbSet<NoteEntity> NoteEntities { get; set; }
-        
+
+        public virtual DbSet<OrganizationEntity> OrganizationEntities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfig());
@@ -83,6 +85,7 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new CarMechanicConfig());
             modelBuilder.ApplyConfiguration(new UsedMaterialConf());
             modelBuilder.ApplyConfiguration(new NoteConfig());
+            modelBuilder.ApplyConfiguration(new OrganizationConfig());
         }
     }
 }
