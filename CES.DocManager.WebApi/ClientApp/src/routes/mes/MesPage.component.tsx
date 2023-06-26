@@ -1,11 +1,13 @@
 import React from 'react';
 import Button from '@mui/material/Button';
 import AddActModal from '../../components/AddActModal/AddActModal.container';
+import EditNoteModal from '../../components/EditNoteModal/EditNoteModal.container';
 import NotesTable from '../../components/NotesTable/NotesTable.container';
 import './MesPage.style.scss';
 
 interface Props {
   isAddActModalOpen: boolean;
+  isEditNoteModalOpen: boolean;
   mesError: string;
   handleClick: () => void;
 }
@@ -13,6 +15,7 @@ interface Props {
 export default function MesPageComponent(props: Props) {
   const {
     isAddActModalOpen,
+    isEditNoteModalOpen,
     mesError,
     handleClick,
   } = props;
@@ -26,6 +29,7 @@ export default function MesPageComponent(props: Props) {
       <Button variant="contained" onClick={handleClick}>Добавить акт</Button>
       {renderNotesTable()}
       {isAddActModalOpen && <AddActModal />}
+      {isEditNoteModalOpen && <EditNoteModal />}
     </section>
   );
 }

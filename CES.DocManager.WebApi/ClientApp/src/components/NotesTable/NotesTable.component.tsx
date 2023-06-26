@@ -3,6 +3,7 @@ import TableRow from '@mui/material/TableRow';
 import {
   Box,
   Checkbox,
+  Modal,
   Paper,
   Table,
   TableBody,
@@ -11,6 +12,7 @@ import {
   TableHead,
   TableSortLabel,
 } from '@mui/material';
+import { RotatingLines } from 'react-loader-spinner';
 import { ReactComponent as EditIcon } from '../../assets/icons/edit-icon.svg';
 import { INote } from '../../types/MesTypes';
 
@@ -33,9 +35,21 @@ const headCells: readonly HeadCell[] = [
   },
 ];
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 80,
+  bgcolor: 'transparent',
+  border: 'none',
+  outline: 'none',
+};
+
 interface Props {
   allNotes: INote[];
   mesError: string;
+  requestStatus: string;
   handleEditIconClick: (id: number) => void;
 }
 
@@ -43,6 +57,7 @@ export default function ProductsTableComponent(props: Props) {
   const {
     allNotes,
     mesError,
+    requestStatus,
     handleEditIconClick,
   } = props;
 
@@ -74,7 +89,7 @@ export default function ProductsTableComponent(props: Props) {
 
   const renderTableBody = () => (
     <TableBody>
-      {allNotes.map((row, index) => (
+      {allNotes.map((row) => (
         <TableRow
           hover
           tabIndex={-1}
@@ -106,6 +121,24 @@ export default function ProductsTableComponent(props: Props) {
     </TableBody>
   );
 
+  const renderLoaderModal = () => (
+    <Modal
+      open
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <RotatingLines
+          strokeColor="white"
+          strokeWidth="5"
+          animationDuration="0.5"
+          width="80"
+          visible
+        />
+      </Box>
+    </Modal>
+  );
+
   const renderTable = () => (
     allNotes.length !== 0 && (
       <Box sx={{ width: '100%' }}>
@@ -128,6 +161,7 @@ export default function ProductsTableComponent(props: Props) {
     <div className="notes-table">
       {renderError()}
       {renderTable()}
+      {allNotes.length === 0 && requestStatus !== 'fulfilled' && renderLoaderModal()}
     </div>
   );
 }

@@ -6,6 +6,7 @@ export interface INote {
 }
 
 export interface ContactInfo {
+  id: number;
   address: string;
   tel: string;
 }
@@ -27,4 +28,6 @@ export interface INotesState {
   allNotes: INote[];
   allFullNoteData: IFullNoteData[];
   editedNoteId: number;
+  selectedNoteId: number;
+  requestStatus: string;
 }
