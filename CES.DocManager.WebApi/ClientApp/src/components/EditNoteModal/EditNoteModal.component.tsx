@@ -20,7 +20,7 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 600,
+  width: 800,
   bgcolor: 'background.paper',
   borderRadius: '10px',
   border: 'none',
@@ -104,7 +104,7 @@ export default function EditNoteModalComponent(props: Props) {
           id="outlined-controlled"
           variant="outlined"
           label="Адрес"
-          sx={{ width: '210px' }}
+          sx={{ width: '60%' }}
           size="small"
           value={el.address}
           onChange={(event) => handleAddressChange(event.target.value, index)}
@@ -114,7 +114,7 @@ export default function EditNoteModalComponent(props: Props) {
           label="Телефон"
           variant="outlined"
           size="small"
-          sx={{ width: '210px' }}
+          sx={{ width: '26%' }}
           value={el.tel}
           onChange={(event) => handleTelChange(event.target.value, index)}
         />
@@ -122,7 +122,7 @@ export default function EditNoteModalComponent(props: Props) {
           disabled={el.address !== '' || el.tel !== '' || formState.noteContactsInfo.length === 1}
           color="primary"
           aria-label="add"
-          sx={{ width: '30px', height: '30px', minHeight: '30px' }}
+          sx={{ width: '4%', height: '30px', minHeight: '30px' }}
           onClick={() => handleDeleteButtonClick(el.id)}
         >
           <DeleteIcon sx={{ width: '20px', height: '20px' }} />
@@ -131,7 +131,7 @@ export default function EditNoteModalComponent(props: Props) {
           <Fab
             color="primary"
             aria-label="add"
-            sx={{ width: '30px', height: '30px', minHeight: '30px' }}
+            sx={{ width: '4%', height: '30px', minHeight: '30px' }}
             onClick={handleAddButtonClick}
           >
             <AddIcon sx={{ width: '20px', height: '20px' }} />
