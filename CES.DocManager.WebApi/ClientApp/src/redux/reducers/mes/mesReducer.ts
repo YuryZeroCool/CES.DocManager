@@ -3,6 +3,15 @@ import getAllNotes from '../../actions/mes/getAllNotes';
 import getAllFullNoteData from '../../actions/mes/getAllFullNoteData';
 import { INotesState } from '../../../types/MesTypes';
 import editExistedNote from '../../actions/mes/editExistedNote';
+import createOrganization from '../../actions/mes/createOrganization';
+
+export const organizationDefaultValues = {
+  name: '',
+  payerAccountNumber: '',
+  address: '',
+  email: '',
+  phone: '',
+};
 
 const initial: INotesState = {
   allNotes: [],
@@ -10,6 +19,7 @@ const initial: INotesState = {
   editedNoteId: 0,
   selectedNoteId: 0,
   requestStatus: '',
+  createdOrganization: organizationDefaultValues,
 };
 
 const vehicleReducer = createSlice({
@@ -75,6 +85,23 @@ const vehicleReducer = createSlice({
       return stateCopy;
     });
     builder.addCase(editExistedNote.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(createOrganization.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        createdOrganization: { ...organizationDefaultValues },
+      };
+      return stateCopy;
+    });
+    builder.addCase(createOrganization.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, createdOrganization: { ...action.payload } };
+      return stateCopy;
+    });
+    builder.addCase(createOrganization.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
   },

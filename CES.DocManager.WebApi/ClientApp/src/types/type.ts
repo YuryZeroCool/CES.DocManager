@@ -21,4 +21,5 @@ export interface IModal {
   isEditAttachedMaterialModalOpen: boolean;
   isAddActModalOpen: boolean;
   isEditNoteModalOpen: boolean;
+  isAddOrganizationModalOpen: boolean;
 }

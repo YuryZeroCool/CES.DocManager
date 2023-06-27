@@ -24,10 +24,19 @@ export interface IFullNoteData extends INote {
   tel: string;
 }
 
+export interface Organization {
+  name: string;
+  payerAccountNumber: string;
+  address: string;
+  email: string;
+  phone: string;
+}
+
 export interface INotesState {
   allNotes: INote[];
   allFullNoteData: IFullNoteData[];
   editedNoteId: number;
   selectedNoteId: number;
   requestStatus: string;
+  createdOrganization: Organization;
 }

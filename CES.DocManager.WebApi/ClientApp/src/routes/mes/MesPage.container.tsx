@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AxiosError } from 'axios';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { toggleAddActModal } from '../../redux/reducers/modals/modalsReducer';
+import { toggleAddActModal, toggleAddOrganizationModal } from '../../redux/reducers/modals/modalsReducer';
 import getAllNotes from '../../redux/actions/mes/getAllNotes';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import MesPageComponent from './MesPage.component';
@@ -14,6 +14,7 @@ function MesPageContainer() {
   const {
     isAddActModalOpen,
     isEditNoteModalOpen,
+    isAddOrganizationModalOpen,
   } = useSelector<RootState, IModal>(
     (state) => state.modals,
   );
@@ -30,16 +31,22 @@ function MesPageContainer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleClick = () => {
+  const handleAddActBtnClick = () => {
     dispatch(toggleAddActModal(true));
+  };
+
+  const handleAddOrganizationBtnClick = () => {
+    dispatch(toggleAddOrganizationModal(true));
   };
 
   return (
     <MesPageComponent
       isAddActModalOpen={isAddActModalOpen}
       isEditNoteModalOpen={isEditNoteModalOpen}
+      isAddOrganizationModalOpen={isAddOrganizationModalOpen}
       mesError={mesError}
-      handleClick={handleClick}
+      handleAddActBtnClick={handleAddActBtnClick}
+      handleAddOrganizationBtnClick={handleAddOrganizationBtnClick}
     />
   );
 }
