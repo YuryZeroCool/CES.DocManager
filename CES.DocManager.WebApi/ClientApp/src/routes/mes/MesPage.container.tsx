@@ -7,6 +7,9 @@ import getAllNotes from '../../redux/actions/mes/getAllNotes';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import MesPageComponent from './MesPage.component';
 import { IModal } from '../../types/type';
+import { changeMesPageType } from '../../redux/reducers/mes/mesReducer';
+import { INotesState } from '../../types/MesTypes';
+import getOrganizations from '../../redux/actions/mes/getOrganizations';
 
 function MesPageContainer() {
   const [mesError, setMesError] = useState<string>('');
@@ -17,6 +20,12 @@ function MesPageContainer() {
     isAddOrganizationModalOpen,
   } = useSelector<RootState, IModal>(
     (state) => state.modals,
+  );
+
+  const {
+    mesPageType,
+  } = useSelector<RootState, INotesState>(
+    (state) => state.mes,
   );
 
   const dispatch: IAuthResponseType = useDispatch();
@@ -31,6 +40,28 @@ function MesPageContainer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (mesPageType === 'Заявки') {
+      setMesError('');
+      dispatch(getAllNotes())
+        .catch((error) => {
+          if (error instanceof Error || error instanceof AxiosError) {
+            setMesError(error.message);
+          }
+        });
+    }
+    if (mesPageType === 'Организации') {
+      setMesError('');
+      dispatch(getOrganizations())
+        .catch((error) => {
+          if (error instanceof Error || error instanceof AxiosError) {
+            setMesError(error.message);
+          }
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mesPageType]);
+
   const handleAddActBtnClick = () => {
     dispatch(toggleAddActModal(true));
   };
@@ -39,14 +70,25 @@ function MesPageContainer() {
     dispatch(toggleAddOrganizationModal(true));
   };
 
+  const handleChangeMesPageType = (value: string) => {
+    dispatch(changeMesPageType(value));
+  };
+
+  const handleChangeErrorMessage = (value: string) => {
+    setMesError(value);
+  };
+
   return (
     <MesPageComponent
       isAddActModalOpen={isAddActModalOpen}
       isEditNoteModalOpen={isEditNoteModalOpen}
       isAddOrganizationModalOpen={isAddOrganizationModalOpen}
       mesError={mesError}
+      mesPageType={mesPageType}
       handleAddActBtnClick={handleAddActBtnClick}
       handleAddOrganizationBtnClick={handleAddOrganizationBtnClick}
+      handleChangeMesPageType={handleChangeMesPageType}
+      handleChangeErrorMessage={handleChangeErrorMessage}
     />
   );
 }

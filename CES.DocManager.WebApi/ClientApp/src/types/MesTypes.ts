@@ -32,6 +32,10 @@ export interface Organization {
   phone: string;
 }
 
+export interface OrganizationResponse extends Organization {
+  id: number;
+}
+
 export interface INotesState {
   allNotes: INote[];
   allFullNoteData: IFullNoteData[];
@@ -39,4 +43,7 @@ export interface INotesState {
   selectedNoteId: number;
   requestStatus: string;
   createdOrganization: Organization;
+  allOrganizations: OrganizationResponse[];
+  deletedOrganizationId: number;
+  mesPageType: string;
 }

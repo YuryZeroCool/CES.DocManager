@@ -2,7 +2,6 @@ import * as React from 'react';
 import TableRow from '@mui/material/TableRow';
 import {
   Box,
-  Checkbox,
   Modal,
   Paper,
   Table,
@@ -14,7 +13,8 @@ import {
 } from '@mui/material';
 import { RotatingLines } from 'react-loader-spinner';
 import { ReactComponent as EditIcon } from '../../assets/icons/edit-icon.svg';
-import { INote } from '../../types/MesTypes';
+import { ReactComponent as DeleteIcon } from '../../assets/icons/delete-icon.svg';
+import { OrganizationResponse } from '../../types/MesTypes';
 
 interface HeadCell {
   id: number;
@@ -26,12 +26,27 @@ const headCells: readonly HeadCell[] = [
   {
     id: 1,
     numeric: false,
-    label: 'Комментарий',
+    label: 'Название организации',
   },
   {
     id: 2,
     numeric: true,
-    label: 'Дата создания',
+    label: 'Адрес',
+  },
+  {
+    id: 3,
+    numeric: true,
+    label: 'Email',
+  },
+  {
+    id: 4,
+    numeric: true,
+    label: 'Телефон',
+  },
+  {
+    id: 5,
+    numeric: true,
+    label: 'УНП',
   },
 ];
 
@@ -47,18 +62,20 @@ const style = {
 };
 
 interface Props {
-  allNotes: INote[];
+  allOrganizations: OrganizationResponse[];
   mesError: string;
   requestStatus: string;
   handleEditIconClick: (id: number) => void;
+  handleDeleteIconClick: (id: number) => void;
 }
 
-export default function NotesTableComponent(props: Props) {
+export default function OrganizationsTableComponent(props: Props) {
   const {
-    allNotes,
+    allOrganizations,
     mesError,
     requestStatus,
     handleEditIconClick,
+    handleDeleteIconClick,
   } = props;
 
   const renderError = () => (
@@ -70,7 +87,6 @@ export default function NotesTableComponent(props: Props) {
   const renderTableHead = () => (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox" />
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -90,31 +106,35 @@ export default function NotesTableComponent(props: Props) {
 
   const renderTableBody = () => (
     <TableBody>
-      {allNotes.map((row) => (
+      {allOrganizations.map((row) => (
         <TableRow
           hover
           tabIndex={-1}
           key={row.id}
           sx={{ cursor: 'pointer' }}
         >
-          <TableCell padding="checkbox">
-            <Checkbox
-              color="primary"
-              checked={row.isChecked}
-            />
-          </TableCell>
           <TableCell
             component="th"
             scope="row"
           >
-            {row.comment}
+            {row.name}
           </TableCell>
-          <TableCell width="180px">{row.date.replace('T', ' ')}</TableCell>
+          <TableCell>{row.address}</TableCell>
+          <TableCell>{row.email}</TableCell>
+          <TableCell>{row.phone}</TableCell>
+          <TableCell>{row.payerAccountNumber}</TableCell>
           <TableCell width="30px">
             <EditIcon
               width={20}
               height={20}
-              onClick={() => handleEditIconClick(row.id)}
+              // onClick={() => handleEditIconClick(row.id)}
+            />
+          </TableCell>
+          <TableCell width="30px">
+            <DeleteIcon
+              width={20}
+              height={20}
+              onClick={() => handleDeleteIconClick(row.id)}
             />
           </TableCell>
         </TableRow>
@@ -141,7 +161,7 @@ export default function NotesTableComponent(props: Props) {
   );
 
   const renderTable = () => (
-    allNotes.length !== 0 && (
+    allOrganizations.length !== 0 && (
       <Box sx={{ width: '100%' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
           <TableContainer>
@@ -162,7 +182,7 @@ export default function NotesTableComponent(props: Props) {
     <div className="notes-table">
       {renderError()}
       {renderTable()}
-      {allNotes.length === 0 && requestStatus !== 'fulfilled' && renderLoaderModal()}
+      {allOrganizations.length === 0 && requestStatus !== 'fulfilled' && mesError === '' && renderLoaderModal()}
     </div>
   );
 }
