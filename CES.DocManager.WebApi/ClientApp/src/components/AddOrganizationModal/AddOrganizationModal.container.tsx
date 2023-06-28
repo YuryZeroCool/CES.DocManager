@@ -37,14 +37,6 @@ function AddOrganizationModalContainer() {
 
   const dispatch: IAuthResponseType = useDispatch();
 
-  useEffect(() => {
-    if (createdOrganization.name !== '') {
-      reset();
-      dispatch(toggleAddOrganizationModal(false));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createdOrganization]);
-
   const handleClose = () => {
     dispatch(toggleAddOrganizationModal(false));
   };
@@ -52,6 +44,8 @@ function AddOrganizationModalContainer() {
   const onSubmit = async (data: Organization) => {
     try {
       await dispatch(createOrganization(data));
+      reset();
+      dispatch(toggleAddOrganizationModal(false));
     } catch (error) {
       if (error instanceof Error || error instanceof AxiosError) {
         setOrganizationError(error.message);
