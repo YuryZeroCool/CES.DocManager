@@ -127,7 +127,7 @@ export default function OrganizationsTableComponent(props: Props) {
             <EditIcon
               width={20}
               height={20}
-              // onClick={() => handleEditIconClick(row.id)}
+              onClick={() => handleEditIconClick(row.id)}
             />
           </TableCell>
           <TableCell width="30px">

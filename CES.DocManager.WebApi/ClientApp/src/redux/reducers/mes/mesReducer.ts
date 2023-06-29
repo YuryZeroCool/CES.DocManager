@@ -1,13 +1,15 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import getAllNotes from '../../actions/mes/getAllNotes';
 import getAllFullNoteData from '../../actions/mes/getAllFullNoteData';
-import { INotesState } from '../../../types/MesTypes';
+import { INotesState, OrganizationResponse } from '../../../types/MesTypes';
 import editExistedNote from '../../actions/mes/editExistedNote';
 import createOrganization from '../../actions/mes/createOrganization';
 import getOrganizations from '../../actions/mes/getOrganizations';
 import deleteOrganization from '../../actions/mes/deleteOrganization';
+import editOrganization from '../../actions/mes/editOrganization';
 
-export const organizationDefaultValues = {
+const organizationDefault = {
+  id: 0,
   name: '',
   payerAccountNumber: '',
   address: '',
@@ -21,14 +23,16 @@ const initial: INotesState = {
   editedNoteId: 0,
   selectedNoteId: 0,
   requestStatus: '',
-  createdOrganization: organizationDefaultValues,
+  createdOrganization: organizationDefault,
   allOrganizations: [],
+  selectedOrganizationId: 0,
+  editedOrganization: organizationDefault,
   deletedOrganizationId: 0,
   mesPageType: 'Заявки',
 };
 
-const vehicleReducer = createSlice({
-  name: 'notes',
+const mesReducer = createSlice({
+  name: 'mes',
   initialState: initial,
   reducers: {
     changeMesPageType: (state, action: PayloadAction<string>) => {
@@ -41,6 +45,11 @@ const vehicleReducer = createSlice({
       stateCopy = { ...stateCopy, selectedNoteId: action.payload };
       return stateCopy;
     },
+    changeSelectedOrganizationId: (state, action: PayloadAction<number>) => {
+      let stateCopy: INotesState = state;
+      stateCopy = { ...stateCopy, selectedOrganizationId: action.payload };
+      return stateCopy;
+    },
     editAllNotes: (state, action: PayloadAction<number>) => {
       let stateCopy: INotesState = state;
       stateCopy = {
@@ -49,12 +58,30 @@ const vehicleReducer = createSlice({
       };
       return stateCopy;
     },
-    editAllOrganizations: (state, action: PayloadAction<number>) => {
+    editOrganizationsAfterDelete: (state, action: PayloadAction<number>) => {
       let stateCopy: INotesState = state;
       stateCopy = {
         ...stateCopy,
         allOrganizations: [...stateCopy.allOrganizations.filter((el) => el.id !== action.payload)],
       };
+      return stateCopy;
+    },
+    editOrganizationsAfterAdd: (state, action: PayloadAction<OrganizationResponse>) => {
+      let stateCopy: INotesState = state;
+      stateCopy = {
+        ...stateCopy,
+        allOrganizations: [...stateCopy.allOrganizations, action.payload],
+      };
+      return stateCopy;
+    },
+    editOrganizationsAfterEdit: (state, action: PayloadAction<OrganizationResponse>) => {
+      const stateCopy: INotesState = state;
+      const currentElIndex = stateCopy.allOrganizations.findIndex(
+        (el) => el.id === action.payload.id,
+      );
+      if (currentElIndex !== -1) {
+        stateCopy.allOrganizations[currentElIndex] = { ...action.payload };
+      }
       return stateCopy;
     },
   },
@@ -110,7 +137,7 @@ const vehicleReducer = createSlice({
       let stateCopy = state;
       stateCopy = {
         ...stateCopy,
-        createdOrganization: { ...organizationDefaultValues },
+        createdOrganization: { ...organizationDefault },
       };
       return stateCopy;
     });
@@ -164,14 +191,38 @@ const vehicleReducer = createSlice({
     builder.addCase(deleteOrganization.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
+
+    builder.addCase(editOrganization.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        requestStatus: 'pending',
+      };
+      return stateCopy;
+    });
+    builder.addCase(editOrganization.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        editedOrganization: { ...action.payload },
+        requestStatus: 'fulfilled',
+      };
+      return stateCopy;
+    });
+    builder.addCase(editOrganization.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
   },
 });
 
 export const {
   changeSelectedNoteId,
+  changeSelectedOrganizationId,
   editAllNotes,
   changeMesPageType,
-  editAllOrganizations,
-} = vehicleReducer.actions;
+  editOrganizationsAfterDelete,
+  editOrganizationsAfterAdd,
+  editOrganizationsAfterEdit,
+} = mesReducer.actions;
 
-export default vehicleReducer.reducer;
+export default mesReducer.reducer;

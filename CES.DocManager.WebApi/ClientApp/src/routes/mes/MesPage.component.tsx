@@ -11,6 +11,7 @@ interface Props {
   isAddActModalOpen: boolean;
   isEditNoteModalOpen: boolean;
   isAddOrganizationModalOpen: boolean;
+  isEditOrganizationModalOpen: boolean;
   mesError: string;
   mesPageType: string;
   handleAddActBtnClick: () => void;
@@ -24,6 +25,7 @@ export default function MesPageComponent(props: Props) {
     isAddActModalOpen,
     isEditNoteModalOpen,
     isAddOrganizationModalOpen,
+    isEditOrganizationModalOpen,
     mesError,
     mesPageType,
     handleAddActBtnClick,
@@ -82,7 +84,7 @@ export default function MesPageComponent(props: Props) {
       {mesPageType === 'Организации' && renderOrganizationsTable()}
       {isAddActModalOpen && <AddActModal />}
       {isEditNoteModalOpen && <EditNoteModal />}
-      {isAddOrganizationModalOpen && <AddOrganizationModal />}
+      {(isAddOrganizationModalOpen || isEditOrganizationModalOpen) && <AddOrganizationModal />}
     </section>
   );
 }

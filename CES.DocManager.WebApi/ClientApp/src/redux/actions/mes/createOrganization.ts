@@ -2,13 +2,13 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { FetchTodosError } from '../../../types/type';
 import $api from '../../../http/loginHttp';
-import { Organization } from '../../../types/MesTypes';
+import { Organization, OrganizationResponse } from '../../../types/MesTypes';
 
 type ErrorMessage = {
   message: string;
 };
 
-const createOrganization = createAsyncThunk<Organization,
+const createOrganization = createAsyncThunk<OrganizationResponse,
 Organization, { rejectValue: FetchTodosError }>(
   'createOrganization',
   async (req, { rejectWithValue }) => {
@@ -16,7 +16,7 @@ Organization, { rejectValue: FetchTodosError }>(
       if (process.env.REACT_APP_CREATE_ORGANIZATION === undefined) {
         throw Error('Упс, что-то пошло не так...');
       }
-      const response = await $api.post<Organization>(
+      const response = await $api.post<OrganizationResponse>(
         process.env.REACT_APP_CREATE_ORGANIZATION,
         req,
       );

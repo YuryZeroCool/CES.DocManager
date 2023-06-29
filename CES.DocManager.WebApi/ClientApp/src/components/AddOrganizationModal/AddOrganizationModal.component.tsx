@@ -9,7 +9,6 @@ import {
   Controller,
   FormState,
   UseFormHandleSubmit,
-  UseFormReset,
 } from 'react-hook-form';
 import { Organization } from '../../types/MesTypes';
 import './AddOrganizationModal.style.scss';
@@ -30,11 +29,11 @@ const style = {
 
 interface Props {
   isAddOrganizationModalOpen: boolean;
+  isEditOrganizationModalOpen: boolean;
   control: Control<Organization, Organization>;
   formState: FormState<Organization>;
   organizationError: string;
   handleSubmit: UseFormHandleSubmit<Organization>;
-  reset: UseFormReset<Organization>;
   handleClose: () => void;
   onSubmit: (data: Organization) => Promise<void>;
 }
@@ -42,18 +41,19 @@ interface Props {
 export default function AddOrganizationModalComponent(props: Props) {
   const {
     isAddOrganizationModalOpen,
+    isEditOrganizationModalOpen,
     control,
     formState,
     organizationError,
     handleSubmit,
-    reset,
     handleClose,
     onSubmit,
   } = props;
 
   const renderTitle = () => (
     <Typography id="modal-modal-title" variant="h6" component="h2" className="modal-title">
-      Добавить организацию
+      {isAddOrganizationModalOpen && 'Добавить организацию'}
+      {isEditOrganizationModalOpen && 'Редактировать организацию'}
     </Typography>
   );
 
@@ -95,7 +95,7 @@ export default function AddOrganizationModalComponent(props: Props) {
     <Controller
       name="address"
       control={control}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({ field: { onChange, value } }) => (
         <TextField
           margin="dense"
           size="small"
@@ -114,7 +114,7 @@ export default function AddOrganizationModalComponent(props: Props) {
     <Controller
       name="payerAccountNumber"
       control={control}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({ field: { onChange, value } }) => (
         <TextField
           margin="dense"
           size="small"
@@ -185,7 +185,7 @@ export default function AddOrganizationModalComponent(props: Props) {
 
   return (
     <Modal
-      open={isAddOrganizationModalOpen}
+      open={isAddOrganizationModalOpen || isEditOrganizationModalOpen}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -215,10 +215,7 @@ export default function AddOrganizationModalComponent(props: Props) {
               className="modal-button"
               variant="contained"
               size="small"
-              onClick={() => {
-                reset();
-                handleClose();
-              }}
+              onClick={() => handleClose()}
             >
               Отмена
             </Button>

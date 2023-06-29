@@ -42,8 +42,10 @@ export interface INotesState {
   editedNoteId: number;
   selectedNoteId: number;
   requestStatus: string;
-  createdOrganization: Organization;
+  createdOrganization: OrganizationResponse;
   allOrganizations: OrganizationResponse[];
   deletedOrganizationId: number;
+  editedOrganization: OrganizationResponse;
+  selectedOrganizationId: number;
   mesPageType: string;
 }

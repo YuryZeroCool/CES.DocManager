@@ -6,10 +6,10 @@ import { toggleAddActModal, toggleAddOrganizationModal } from '../../redux/reduc
 import getAllNotes from '../../redux/actions/mes/getAllNotes';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import MesPageComponent from './MesPage.component';
-import { IModal } from '../../types/type';
 import { changeMesPageType } from '../../redux/reducers/mes/mesReducer';
 import { INotesState } from '../../types/MesTypes';
 import getOrganizations from '../../redux/actions/mes/getOrganizations';
+import { IModal } from '../../types/type';
 
 function MesPageContainer() {
   const [mesError, setMesError] = useState<string>('');
@@ -18,6 +18,7 @@ function MesPageContainer() {
     isAddActModalOpen,
     isEditNoteModalOpen,
     isAddOrganizationModalOpen,
+    isEditOrganizationModalOpen,
   } = useSelector<RootState, IModal>(
     (state) => state.modals,
   );
@@ -83,6 +84,7 @@ function MesPageContainer() {
       isAddActModalOpen={isAddActModalOpen}
       isEditNoteModalOpen={isEditNoteModalOpen}
       isAddOrganizationModalOpen={isAddOrganizationModalOpen}
+      isEditOrganizationModalOpen={isEditOrganizationModalOpen}
       mesError={mesError}
       mesPageType={mesPageType}
       handleAddActBtnClick={handleAddActBtnClick}

@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AxiosError } from 'axios';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { toggleEditNoteModal } from '../../redux/reducers/modals/modalsReducer';
 import OrganizationsTableComponent from './OrganizationsTable.component';
 import { IAuthResponseType } from '../../redux/store/configureStore';
-import { changeSelectedNoteId, editAllOrganizations } from '../../redux/reducers/mes/mesReducer';
+import {
+  changeSelectedOrganizationId,
+  editOrganizationsAfterAdd,
+  editOrganizationsAfterDelete,
+  editOrganizationsAfterEdit,
+} from '../../redux/reducers/mes/mesReducer';
 import { INotesState } from '../../types/MesTypes';
 import deleteOrganization from '../../redux/actions/mes/deleteOrganization';
+import { toggleEditOrganizationModal } from '../../redux/reducers/modals/modalsReducer';
 
 interface Props {
   mesError: string;
@@ -20,20 +25,36 @@ function OrganizationsTableContainer(props: Props) {
   const {
     allOrganizations,
     requestStatus,
+    createdOrganization,
+    editedOrganization,
   } = useSelector<RootState, INotesState>(
     (state) => state.mes,
   );
 
   const dispatch: IAuthResponseType = useDispatch();
 
+  useEffect(() => {
+    if (createdOrganization.id !== 0) {
+      dispatch(editOrganizationsAfterAdd(createdOrganization));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createdOrganization]);
+
+  useEffect(() => {
+    if (editedOrganization.id !== 0) {
+      dispatch(editOrganizationsAfterEdit(editedOrganization));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editedOrganization]);
+
   const handleEditIconClick = (id: number) => {
-    dispatch(changeSelectedNoteId(id));
-    dispatch(toggleEditNoteModal(true));
+    dispatch(changeSelectedOrganizationId(id));
+    dispatch(toggleEditOrganizationModal(true));
   };
 
   const handleDeleteIconClick = (id: number) => {
     dispatch(deleteOrganization(id))
-      .then(() => dispatch(editAllOrganizations(id)))
+      .then(() => dispatch(editOrganizationsAfterDelete(id)))
       .catch((error) => {
         if (error instanceof Error || error instanceof AxiosError) {
           handleChangeErrorMessage(error.message);

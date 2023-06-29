@@ -22,4 +22,5 @@ export interface IModal {
   isAddActModalOpen: boolean;
   isEditNoteModalOpen: boolean;
   isAddOrganizationModalOpen: boolean;
+  isEditOrganizationModalOpen: boolean;
 }
