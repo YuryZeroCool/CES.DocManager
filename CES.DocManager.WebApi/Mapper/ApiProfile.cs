@@ -81,9 +81,8 @@ namespace CES.DocManager.WebApi.Mapper
 
                 CreateMap<ContactInfoViewModel, ContactInfoModel>();
 
-            CreateMap<OrganizationViewModel, CreateOrganizationRequest>();
-                
-            
+                CreateMap<OrganizationViewModel, CreateOrganizationRequest>();
+                CreateMap<OrganizationViewModel, EditOrganizationRequest>();
         }
     }
 
