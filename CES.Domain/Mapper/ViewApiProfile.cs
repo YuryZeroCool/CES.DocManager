@@ -11,6 +11,7 @@ using CES.Domain.Models.Response.Division;
 using CES.Domain.Models.Response.Employees;
 using CES.Domain.Models.Response.MaterialReport;
 using CES.Domain.Models.Response.Mes;
+using CES.Domain.Models.Response.Mes.Acts;
 using CES.Domain.Models.Response.Report;
 using CES.Domain.Models.Response.Vehicle;
 using CES.Domain.Security.Registration;
@@ -148,11 +149,29 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
-                .ForMember(dest => dest.IsChecked, opt => opt.MapFrom(src => src.IsChecked));
+                .ForMember(dest => dest.IsChecked, opt => opt.MapFrom(src => src.IsChecked))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+                .ForMember(dest => dest.Tel, opt => opt.MapFrom(src => src.Tel));
+;
 
             CreateMap<CreateOrganizationRequest, OrganizationEntity>();
 
             CreateMap<OrganizationEntity, CreateOrganizationResponse>();
+            
+            CreateMap<OrganizationEntity, GetOrganizationsResponse>();
+
+            CreateMap<EditOrganizationRequest, OrganizationEntity>();
+
+            CreateMap<OrganizationEntity, EditOrganizationResponse> ();
+
+            CreateMap<OrganizationEntity, Organization>();
+
+            CreateMap<NoteEntity, NotesWithoutActResponse>();
+
+            //CreateMap<WorkNameInActEntity, CreateWorkNameInActResponse>()
+            //    .ForMember(dest => dest.CreatedAct, opt => opt.MapFrom(src => src.DateOfCreation));
+            //   // .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PriceOfWorkInActId.Price));
+            ;
 
         }
     }

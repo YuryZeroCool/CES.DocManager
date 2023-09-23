@@ -88,9 +88,9 @@ namespace CES.DocManager.WebApi.Controllers
             return await Task.FromResult(StatusCode(res));
         }
 
-        [HttpDelete("deleteDivsionWorkSchedule")]
+        [HttpDelete("deleteDivisionWorkSchedule")]
         [Produces(typeof(int))]
-        public async Task<object> DeleteDivisionWorkScheduleAsync(int idDivision)
+        public async Task<object> DeleteDivisionWorkSchedule(int idDivision)
         {
             try
             {

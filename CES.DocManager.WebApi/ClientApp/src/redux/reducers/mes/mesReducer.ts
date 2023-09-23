@@ -1,12 +1,20 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import getAllNotes from '../../actions/mes/getAllNotes';
 import getAllFullNoteData from '../../actions/mes/getAllFullNoteData';
-import { INotesState, OrganizationResponse } from '../../../types/MesTypes';
+import {
+  ActDataFromFileResponse,
+  INotesState,
+  ISearchOrganization,
+  OrganizationResponse,
+} from '../../../types/MesTypes';
 import editExistedNote from '../../actions/mes/editExistedNote';
 import createOrganization from '../../actions/mes/createOrganization';
-import getOrganizations from '../../actions/mes/getOrganizations';
 import deleteOrganization from '../../actions/mes/deleteOrganization';
 import editOrganization from '../../actions/mes/editOrganization';
+import searchOrganizations from '../../actions/mes/searchOrganizations';
+import getNotesWithoutActs from '../../actions/mes/getNotesWithoutActs';
+import getActTypesFromFile from '../../actions/mes/getActTypesFromFile';
+import getActDataFromFile from '../../actions/mes/getActDataFromFile';
 
 const organizationDefault = {
   id: 0,
@@ -17,6 +25,17 @@ const organizationDefault = {
   phone: '',
 };
 
+const searchOrganizationsDefault: ISearchOrganization = {
+  totalPage: 1,
+  organizations: [],
+};
+
+const actDataFromFileDefault: ActDataFromFileResponse = {
+  actType: '',
+  season: '',
+  act: [],
+};
+
 const initial: INotesState = {
   allNotes: [],
   allFullNoteData: [],
@@ -24,11 +43,14 @@ const initial: INotesState = {
   selectedNoteId: 0,
   requestStatus: '',
   createdOrganization: organizationDefault,
-  allOrganizations: [],
+  allOrganizations: searchOrganizationsDefault,
   selectedOrganizationId: 0,
   editedOrganization: organizationDefault,
   deletedOrganizationId: 0,
-  mesPageType: 'Заявки',
+  mesPageType: localStorage.getItem('mesPageType') || 'Заявки',
+  notesWithoutAct: [],
+  actTypesFromFile: [],
+  actDataFromFile: actDataFromFileDefault,
 };
 
 const mesReducer = createSlice({
@@ -62,7 +84,12 @@ const mesReducer = createSlice({
       let stateCopy: INotesState = state;
       stateCopy = {
         ...stateCopy,
-        allOrganizations: [...stateCopy.allOrganizations.filter((el) => el.id !== action.payload)],
+        allOrganizations: {
+          ...stateCopy.allOrganizations,
+          organizations: [
+            ...stateCopy.allOrganizations.organizations.filter((el) => el.id !== action.payload),
+          ],
+        },
       };
       return stateCopy;
     },
@@ -70,17 +97,20 @@ const mesReducer = createSlice({
       let stateCopy: INotesState = state;
       stateCopy = {
         ...stateCopy,
-        allOrganizations: [...stateCopy.allOrganizations, action.payload],
+        allOrganizations: {
+          ...stateCopy.allOrganizations,
+          organizations: [...stateCopy.allOrganizations.organizations, action.payload],
+        },
       };
       return stateCopy;
     },
     editOrganizationsAfterEdit: (state, action: PayloadAction<OrganizationResponse>) => {
       const stateCopy: INotesState = state;
-      const currentElIndex = stateCopy.allOrganizations.findIndex(
+      const currentElIndex = stateCopy.allOrganizations.organizations.findIndex(
         (el) => el.id === action.payload.id,
       );
       if (currentElIndex !== -1) {
-        stateCopy.allOrganizations[currentElIndex] = { ...action.payload };
+        stateCopy.allOrganizations.organizations[currentElIndex] = { ...action.payload };
       }
       return stateCopy;
     },
@@ -150,7 +180,7 @@ const mesReducer = createSlice({
       throw Error(action.payload?.message);
     });
 
-    builder.addCase(getOrganizations.pending, (state) => {
+    builder.addCase(searchOrganizations.pending, (state) => {
       let stateCopy = state;
       stateCopy = {
         ...stateCopy,
@@ -158,16 +188,19 @@ const mesReducer = createSlice({
       };
       return stateCopy;
     });
-    builder.addCase(getOrganizations.fulfilled, (state, action) => {
+    builder.addCase(searchOrganizations.fulfilled, (state, action) => {
       let stateCopy = state;
       stateCopy = {
         ...stateCopy,
-        allOrganizations: [...action.payload],
+        allOrganizations: {
+          totalPage: action.payload.totalPage,
+          organizations: [...action.payload.organizations],
+        },
         requestStatus: 'fulfilled',
       };
       return stateCopy;
     });
-    builder.addCase(getOrganizations.rejected, (state, action) => {
+    builder.addCase(searchOrganizations.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
 
@@ -210,6 +243,51 @@ const mesReducer = createSlice({
       return stateCopy;
     });
     builder.addCase(editOrganization.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(getNotesWithoutActs.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        requestStatus: 'pending',
+      };
+      return stateCopy;
+    });
+    builder.addCase(getNotesWithoutActs.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        notesWithoutAct: [...action.payload],
+        requestStatus: 'fulfilled',
+      };
+      return stateCopy;
+    });
+    builder.addCase(getNotesWithoutActs.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(getActTypesFromFile.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        actTypesFromFile: [...action.payload],
+      };
+      return stateCopy;
+    });
+    builder.addCase(getActTypesFromFile.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(getActDataFromFile.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        actDataFromFile: { ...action.payload },
+      };
+      return stateCopy;
+    });
+    builder.addCase(getActDataFromFile.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
   },

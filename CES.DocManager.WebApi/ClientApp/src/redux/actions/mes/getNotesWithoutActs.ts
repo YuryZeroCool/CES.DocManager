@@ -1,18 +1,18 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { FetchTodosError } from '../../../types/type';
 import $api from '../../../http/loginHttp';
-import { OrganizationResponse } from '../../../types/MesTypes';
+import { IFullNoteData } from '../../../types/MesTypes';
 
-const getOrganizations = createAsyncThunk<OrganizationResponse[],
+const getNotesWithoutActs = createAsyncThunk<IFullNoteData[],
 void, { rejectValue: FetchTodosError }>(
-  'getOrganizations',
+  'getNotesWithoutActs',
   async (_, { rejectWithValue }) => {
     try {
-      if (process.env.REACT_APP_GET_ORGANIZATIONS === undefined) {
+      if (process.env.REACT_APP_GET_NOTES_WITHOUT_ACTS === undefined) {
         throw Error('Упс, что-то пошло не так...');
       }
-      const response = await $api.get<OrganizationResponse[]>(
-        process.env.REACT_APP_GET_ORGANIZATIONS,
+      const response = await $api.get<IFullNoteData[]>(
+        process.env.REACT_APP_GET_NOTES_WITHOUT_ACTS,
       );
       return response.data;
     } catch (err) {
@@ -23,4 +23,4 @@ void, { rejectValue: FetchTodosError }>(
   },
 );
 
-export default getOrganizations;
+export default getNotesWithoutActs;

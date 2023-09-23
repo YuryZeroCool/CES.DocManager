@@ -22,12 +22,12 @@ namespace Ces.DocManager.AppAndroid.ViewModels
         {
             if (NoteDetail.Id > 0)
             {
-                if (NoteDetail.Description != null && NoteDetail.Description.Trim() != "")
+                if (NoteDetail.Comment != null && NoteDetail.Comment.Trim() != "")
                 {
-                    await _noteService.UpdateNoteAsync(new NoteModel()
+                    await _noteService.UpdateNoteInFile(new NoteModel()
                     {
                         Id = NoteDetail.Id,
-                        Description = NoteDetail.Description.Trim(),
+                        Comment = NoteDetail.Comment.Trim(),
                         Date = new DateTime(
                         NoteDetail.Date.Year,
                         NoteDetail.Date.Month,
@@ -44,11 +44,11 @@ namespace Ces.DocManager.AppAndroid.ViewModels
             if (NoteDetail == null) return;
             if (NoteDetail.Id == 0)
             {
-                if (NoteDetail.Description != null && NoteDetail.Description.Trim() != "")
+                if (NoteDetail.Comment != null && NoteDetail.Comment.Trim() != "")
                 {
-                    await _noteService.InsertAsync(new NoteModel()
+                    await _noteService.InsertNoteToFile(new NoteModel()
                     {
-                        Description = NoteDetail.Description.Trim(),
+                        Comment = NoteDetail.Comment.Trim(),
                         Date = new DateTime(
                         NoteDetail.Date.Year,
                         NoteDetail.Date.Month,

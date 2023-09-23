@@ -1,4 +1,6 @@
-﻿namespace CES.Infra.Models.Mes
+﻿using System.Text.Json.Serialization;
+
+namespace CES.Infra.Models.Mes
 {
     public class NoteEntity
     {
@@ -10,8 +12,14 @@
 
         public DateTime Date { get; set; }
 
+        public int? Meters { get; set; }
+
         public string? Comment { get; set; }
 
         public bool IsChecked { get; set; }
+
+        public int? ActId { get; set; }
+        [JsonIgnore]
+        public ActEntity? Act { get; set; }
     }
 }

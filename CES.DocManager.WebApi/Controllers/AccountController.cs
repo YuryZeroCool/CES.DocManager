@@ -47,7 +47,7 @@ namespace CES.DocManager.WebApi.Controllers
                     Expires = DateTimeOffset.Now.AddDays(LifeTimeToken),
                     HttpOnly = true,
                     Secure = true,
-                    Domain = "ces-docmanager.site",
+                    Domain = "ces-docmanager.ru",
                     Path = "/account/"
                 });
                 return _mapper.Map<LoginResponse, LoginViewModel>(result);
@@ -76,7 +76,7 @@ namespace CES.DocManager.WebApi.Controllers
         JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost("updateTokenPair")]
         [Produces(typeof(string))]
-        public async Task<object> UpdateTokenPairAsync([FromBody] string email)
+        public async Task<object> UpdateTokenPair([FromBody] string email)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace CES.DocManager.WebApi.Controllers
                         Expires = DateTimeOffset.Now.AddDays(LifeTimeToken),
                         HttpOnly = true,
                         Secure = true,
-                        Domain = "ces-docmanager.site",
+                        Domain = "ces-docmanager.ru",
                         Path = "/account/"
                     });
                 return result.AccessToken;
@@ -143,7 +143,7 @@ namespace CES.DocManager.WebApi.Controllers
                 await _mediator.Send(model);
                 HttpContext.Response.Cookies.Delete("refreshToken", new CookieOptions
                 {
-                    Domain = "ces-docmanager.site",
+                    Domain = "ces-docmanager.ru",
                     Path = "/account/"
                 });
                 HttpContext.Response.StatusCode = 200;

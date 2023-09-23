@@ -9,6 +9,7 @@ namespace Ces.DocManager.AppAndroid
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>

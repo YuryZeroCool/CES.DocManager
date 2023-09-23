@@ -32,7 +32,7 @@ namespace Ces.DocManager.AppAndroid.ViewModels
                 NotesList.Add(new()
                 {
                     Id = note.Id,
-                    Description = note.Description,
+                    Comment = note.Comment,
                     Date = note.Date,
                     IsChecked = note.IsChecked,
                     Counter = index++,
@@ -45,12 +45,12 @@ namespace Ces.DocManager.AppAndroid.ViewModels
             return new NoteModel()
             {
                 Id = note.Id,
-                Description = note.Description,
+                Comment = note.Comment,
                 Date = note.Date,
                 IsChecked = note.IsChecked,
             };
         }
-
+   
         [RelayCommand]
         public async Task SearchNotes()
         {
@@ -66,7 +66,7 @@ namespace Ces.DocManager.AppAndroid.ViewModels
         public async Task GetNoteList()
         {
             NotesList.Clear();
-            MapNoteList(await _noteService.GetNotesListAsync());
+            MapNoteList(await _noteService.GetNotesFromFile());
         }
 
         [RelayCommand]
@@ -96,7 +96,7 @@ namespace Ces.DocManager.AppAndroid.ViewModels
             switch (action)
             {
                 case "Копировать":
-                    await Clipboard.Default.SetTextAsync(noteModel.Description);
+                    await Clipboard.Default.SetTextAsync(noteModel.Comment);
                     await Application.Current.MainPage.DisplayAlert("Уведомление", "Скопировано успешно", "ОK");
                     break;
                 case "Редактировать":
@@ -104,7 +104,7 @@ namespace Ces.DocManager.AppAndroid.ViewModels
                     navParam.Add("NoteDetail", new CreateNoteModel()
                     {
                         Id = noteModel.Id,
-                        Description = noteModel.Description,
+                        Comment = noteModel.Comment,
                         Date = noteModel.Date,
                         Time = TimeSpan.Parse(noteModel.Date.ToLongTimeString().Split(" ")[0])
                     });
@@ -114,7 +114,7 @@ namespace Ces.DocManager.AppAndroid.ViewModels
                     try
                     {
                         IsSpinnerRunning = !IsSpinnerRunning;
-                        await _noteService.AddNoteAsync(noteModel);
+                        await _noteService.SendNoteToDb(noteModel);
                         NotesList.Clear();
                         MapNoteList(_noteService.GetNotes());
                         IsSpinnerRunning = !IsSpinnerRunning;
@@ -131,7 +131,7 @@ namespace Ces.DocManager.AppAndroid.ViewModels
                     }
                     break;
                 case "Удалить":
-                    await _noteService.DeleteNoteAsync(MapNote(noteModel));
+                    await _noteService.DeleteNoteFromFile(MapNote(noteModel));
                     NotesList.Clear();
                     MapNoteList(_noteService.GetNotes());
                     break;

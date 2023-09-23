@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const API_URL = 'https://ces-docmanager.site';
-
+export const API_URL = 'https://ces-docmanager.ru';
+// export const API_URL = 'http://localhost:7788';
 const $api = axios.create({
   headers: {
     Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,

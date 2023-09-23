@@ -1,4 +1,5 @@
-﻿using Ces.DocManager.AppAndroid.Models;
+﻿using AutoMapper;
+using Ces.DocManager.AppAndroid.Models;
 using Ces.DocManager.AppAndroid.Models.ViewModels;
 using Microsoft.AspNetCore.JsonPatch;
 using Newtonsoft.Json;
@@ -16,16 +17,23 @@ namespace Ces.DocManager.AppAndroid.Services
 
         private HttpClient _httpClient;
 
+
+        private readonly IMapper _mapper;   
+        public NoteService(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
         public async Task<NoteModel> EditNote(EditModel edit)
         {
             var jsonDocument = new JsonPatchDocument<EditModel>();
-            if(edit.Description != null) jsonDocument.Replace(p => p.Description, edit.Description);
+            if(edit.Comment != null) jsonDocument.Replace(p => p.Comment, edit.Comment);
             if (edit.Date != default(DateTime)) jsonDocument.Replace(p => p.Date, edit.Date);
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(10);
             var content = new StringContent(JsonConvert.SerializeObject(jsonDocument), Encoding.UTF8, "application/json-patch+json");
 
-            var response = await _httpClient.PatchAsync($"https://ces-docmanager.site/men/editNote?id={edit.Id}", content);
+            var response = await _httpClient.PatchAsync($"https://ces-docmanager.ru/mes/editNote?id={edit.Id}", content);
             if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new Exception("Не удалось отправить на сервер");
             var json = await response.Content.ReadAsStringAsync();
@@ -33,49 +41,60 @@ namespace Ces.DocManager.AppAndroid.Services
             return obj as NoteModel;
         }
 
-        public async Task DeleteNoteAsync(NoteModel note)
+        public async Task DeleteNoteFromFile(NoteModel note)
         {
-            _notes = await ReadFileAsync();
+            _notes = await ReadFile();
             var res = _notes.Remove(_notes.AsParallel().FirstOrDefault(p => p.Id == note.Id
-            && p.Description == note.Description && p.Date == note.Date));
-            if (res) await SaveFileAsync();
+            && p.Comment == note.Comment && p.Date == note.Date));
+            if (res) await SaveFile();
+        }
+
+        public async Task DeleteNoteFromDb(NoteModel note)
+        {
+            _httpClient = new HttpClient();
+            _httpClient.Timeout = TimeSpan.FromSeconds(10);
+            var response = await _httpClient.DeleteAsync($"https://ces-docmanager.ru/mes/deleteNote?id={note.Id}");
+            if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)
+                throw new Exception("Не удалось отправить на сервер");
+            var res = _notes.Remove(_notes.AsParallel().FirstOrDefault(p => p.Id == note.Id
+            && p.Comment == note.Comment && p.Date == note.Date));
         }
 
         public async Task SaveCompletedNote(NoteModel note)
         {
-            _notes = await ReadFileAsync();
+            _notes = await ReadFile();
             foreach (var item in _notes.AsParallel().Where(p => p.Id == note.Id
-            && p.Description == note.Description && p.Date == note.Date))
+            && p.Comment == note.Comment && p.Date == note.Date))
             item.IsChecked = !item.IsChecked;
-            await SaveFileAsync();
+            await SaveFile();
         }
     
-        public async Task AddNoteAsync(NoteModel note)
+        public async Task SendNoteToDb(NoteModel note)
         {
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(10);
-            var response = await _httpClient.PostAsync("https://ces-docmanager.site/men/noteCreate", JsonContent.Create(note));
+            var response = await _httpClient.PostAsync("https://ces-docmanager.ru/mes/noteCreate", JsonContent.Create(note));
             if (response == null || response.StatusCode != System.Net.HttpStatusCode.Created ) throw new Exception("Не удалось отправить на сервер");
-            await RemoveAsync(note);
+            await RemoveNoteFromFile(note);
         }
 
-        public async Task<List<NoteModel>> GetNotesListAsync() 
+        public async Task<List<NoteModel>> GetNotesFromFile() 
         {
-           return await ReadFileAsync();
+           return await ReadFile();
         }
 
-        public async Task UpdateNoteAsync(NoteModel note)
+        public async Task UpdateNoteInFile(NoteModel note)
         {
-            _notes = await ReadFileAsync();
+            _notes = await ReadFile();
             foreach (var item in _notes.AsParallel().Where(p => p.Id == note.Id))
             {
                 item.Date = note.Date;
-                item.Description = note.Description;
+                item.Comment = note.Comment;
             }
-             await SaveFileAsync();
+             await SaveFile();
         }
 
-        public async Task<List<NoteModel>> ReadFileAsync()
+        public async Task<List<NoteModel>> ReadFile()
         {
             var path = Path.Combine(FileSystem.AppDataDirectory, "note.json");
             if(System.IO.File.Exists(path))
@@ -91,35 +110,36 @@ namespace Ces.DocManager.AppAndroid.Services
             return await Task.FromResult(_notes);
         }
 
-        public async Task SaveFileAsync()
+        public async Task SaveFile()
         {
             await File.WriteAllTextAsync(Path.Combine(FileSystem.AppDataDirectory, "note.json"),
             JsonConvert.SerializeObject(_notes, JsonSerializerSettings()));
         }
-        public async Task RemoveAsync(NoteModel note)
+
+        public async Task RemoveNoteFromFile(NoteModel note)
         {
             if (_notes == null || _notes.Count == 0) throw new Exception("Ошибка при удалении файла");
             if (_notes.RemoveAll(x => x.Id == note.Id) == 0) throw new Exception("Ошибка при удалении файла");
-            await SaveFileAsync();
+            await SaveFile();
         }
 
         public List<NoteModel> GetNotes() => _notes;
-        public async Task InsertAsync(NoteModel note)
+
+        public async Task InsertNoteToFile(NoteModel note)
         {
-            _notes = await ReadFileAsync();
+            _notes = await ReadFile();
             note.Id = _notes.Count == 0 ? 1 : _notes.AsParallel().Max(x => x.Id) + 1;
             _notes.Add(note);
-            await SaveFileAsync();
-           // if ( _notes != null) await Task.FromResult(note.Id);
+            await SaveFile();
         }
 
         public async Task<List<NoteModel>> GetAllNotes(SearchModel note)
         {
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(10);
-            var response = await _httpClient.GetAsync($"https://ces-docmanager.site/men/getAllNotes?text={note.Description}" +
-                $"&min={note.MinDate.ToString("yyyy/MM/dd")}" +
-                $"&max={note.MaxDate.ToString("yyyy/MM/dd")}");
+            var response = await _httpClient.GetAsync($"https://ces-docmanager.ru/mes/getSortedNotes?text={note.Comment}" +
+                $"&min={note.MinDate:yyyy/MM/dd}" +
+                $"&max={note.MaxDate:yyyy/MM/dd}");
             if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new Exception("Не удалось отправить на сервер");
             var json = await response.Content.ReadAsStringAsync();
@@ -127,7 +147,9 @@ namespace Ces.DocManager.AppAndroid.Services
             _notes.Clear();
             if (obj != null)  ((IEnumerable)obj).Cast<object>().ToList().ForEach(x =>
             {
-                _notes.Add(JsonConvert.DeserializeObject<NoteModel>(x.ToString()));
+                var res = JsonConvert.DeserializeObject<NoteBase>(x.ToString());
+                if (res == null) throw new Exception("Error");
+                _notes.Add(_mapper.Map<NoteModel>(res));
             }) ;
             return _notes;
         }

@@ -19,7 +19,7 @@ namespace Ces.DocManager.AppAndroid.ViewModels
         public EditNoteViewModel(INoteService noteService)
         {
             _noteService = noteService;
-            _note.Description = noteDetail.Description;
+            _note.Comment = noteDetail.Comment;
             _note.IsChecked = noteDetail.IsChecked;
             _note.Date = noteDetail.Date;
         }
@@ -27,7 +27,7 @@ namespace Ces.DocManager.AppAndroid.ViewModels
         [RelayCommand]
         public async Task EditNote()
         {
-            if (NoteDetail.Description != null && NoteDetail.Description.Trim() != "")
+            if (NoteDetail.Comment != null && NoteDetail.Comment.Trim() != "")
             {
                 if (_note.Date == NoteDetail.Date )
                 {
@@ -44,13 +44,13 @@ namespace Ces.DocManager.AppAndroid.ViewModels
                     );
                 };
 
-                if (_note.Description == NoteDetail.Description)
+                if (_note.Comment == NoteDetail.Comment)
                 {
-                    NoteDetail.Description = null;
+                    NoteDetail.Comment = null;
                 }
                 else
                 {
-                    NoteDetail.Description = NoteDetail.Description.Trim();
+                    NoteDetail.Comment = NoteDetail.Comment.Trim();
                 };
 
                 await _noteService.EditNote(NoteDetail);

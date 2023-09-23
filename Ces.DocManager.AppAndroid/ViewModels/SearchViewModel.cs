@@ -26,7 +26,7 @@ namespace Ces.DocManager.AppAndroid.ViewModels
             _noteService = noteService;
         }
         [RelayCommand]
-        public async Task GetAllNoteAsync()
+        public async Task GetAllNote()
         {
             try
             {
@@ -58,14 +58,14 @@ namespace Ces.DocManager.AppAndroid.ViewModels
                     navParam.Add("NoteDetail", new EditModel()
                     {
                         Id = noteModel.Id,
-                        Description = noteModel.Description,
+                        Comment = noteModel.Comment,
                         Date = noteModel.Date,
                         Time = TimeSpan.Parse(noteModel.Date.ToLongTimeString().Split(" ")[0])
                     });
                     await Shell.Current.GoToAsync(nameof(EditNote), navParam);
                     break;
                 case "Удалить":
-                    await _noteService.DeleteNoteAsync(MapNote(noteModel));
+                    await _noteService.DeleteNoteFromDb(MapNote(noteModel));
                     NotesList.Clear();
                     MapNoteList(_noteService.GetNotes());
                     break;
@@ -81,7 +81,7 @@ namespace Ces.DocManager.AppAndroid.ViewModels
                 NotesList.Add(new()
                 {
                     Id = note.Id,
-                    Description = note.Description,
+                    Comment = note.Comment,
                     Date = note.Date,
                     IsChecked = note.IsChecked,
                     Counter = index++,
@@ -93,7 +93,7 @@ namespace Ces.DocManager.AppAndroid.ViewModels
             return new NoteModel()
             {
                 Id = note.Id,
-                Description = note.Description,
+                Comment = note.Comment,
                 Date = note.Date,
                 IsChecked = note.IsChecked,
             };

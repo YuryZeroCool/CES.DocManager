@@ -7,23 +7,25 @@ namespace Ces.DocManager.AppAndroid.Services
     {
         public Task<NoteModel> EditNote(EditModel edit);
 
-        public Task DeleteNoteAsync(NoteModel note);
+        public Task DeleteNoteFromFile(NoteModel note);
+
+        public Task DeleteNoteFromDb(NoteModel note);
 
         public Task SaveCompletedNote(NoteModel note);
 
-        public Task AddNoteAsync(NoteModel note);
+        public Task SendNoteToDb(NoteModel note);
 
-        public Task<List<NoteModel>> GetNotesListAsync();
+        public Task<List<NoteModel>> GetNotesFromFile();
 
-        public Task UpdateNoteAsync(NoteModel note);
+        public Task UpdateNoteInFile(NoteModel note);
 
-        public Task<List<NoteModel>> ReadFileAsync();
+        public Task<List<NoteModel>> ReadFile();
 
-        public Task SaveFileAsync();
+        public Task SaveFile();
 
-        public  Task RemoveAsync(NoteModel note);
+        public  Task RemoveNoteFromFile(NoteModel note);
 
-        public Task InsertAsync(NoteModel note);
+        public Task InsertNoteToFile(NoteModel note);
 
         public List<NoteModel> GetNotes();
 

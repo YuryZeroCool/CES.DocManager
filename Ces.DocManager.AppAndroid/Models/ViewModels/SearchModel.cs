@@ -2,7 +2,7 @@
 {
     public class SearchModel
     {
-        public string Description { get; set; }
+        public string Comment { get; set; }
 
         public DateTime MinDate { get; set; }
 

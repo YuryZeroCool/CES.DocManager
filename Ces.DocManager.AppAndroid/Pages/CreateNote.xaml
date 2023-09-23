@@ -14,7 +14,7 @@
                 IsTextPredictionEnabled="True"
                 SelectionLength="100"
                 BackgroundColor="Gray"
-                Text="{Binding NoteDetail.Description}"
+                Text="{Binding NoteDetail.Comment}"
             />
         <DatePicker Format="D" Date="{Binding NoteDetail.Date}"></DatePicker>
         <TimePicker  Time="{Binding NoteDetail.Time}"></TimePicker>
@@ -32,7 +32,7 @@
                 Grid.Row="0" 
                 Grid.Column="0"
                 Command="{Binding CreateCommand}"
-                  CommandParameter="{Binding NoteDetail.Description}"
+                  CommandParameter="{Binding NoteDetail.Comment}"
                 Text="Сохранить"/>
             <Button 
                 Grid.Row="0" 

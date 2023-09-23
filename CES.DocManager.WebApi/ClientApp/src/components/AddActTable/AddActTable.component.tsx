@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {
   Paper,
   styled,
@@ -10,6 +10,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import SearchInput from '../SearchOrganization/SearchInput.container';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -104,6 +105,7 @@ export default function AddActTableComponent() {
           </Table>
         </TableContainer>
       </Paper>
+      <SearchInput />
     </div>
   );
 }

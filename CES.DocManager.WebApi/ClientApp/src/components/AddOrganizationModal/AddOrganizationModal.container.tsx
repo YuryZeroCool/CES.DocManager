@@ -52,7 +52,9 @@ function AddOrganizationModalContainer() {
 
   useEffect(() => {
     if (selectedOrganizationId !== 0) {
-      const elem = allOrganizations.filter((el) => el.id === selectedOrganizationId)[0];
+      const elem = allOrganizations.organizations.filter(
+        (el) => el.id === selectedOrganizationId,
+      )[0];
       setValue('name', elem.name);
       setValue('address', elem.address);
       setValue('payerAccountNumber', elem.payerAccountNumber);

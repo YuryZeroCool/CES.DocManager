@@ -64,7 +64,7 @@ function OrganizationsTableContainer(props: Props) {
 
   return (
     <OrganizationsTableComponent
-      allOrganizations={allOrganizations}
+      allOrganizations={allOrganizations.organizations}
       mesError={mesError}
       requestStatus={requestStatus}
       handleEditIconClick={handleEditIconClick}

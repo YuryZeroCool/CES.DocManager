@@ -25,14 +25,14 @@ namespace CES.Domain.Handlers.MaterialReport
             var limit = 200;
             var page = 0;
 
-             var TotalCount = _ctx.DecommissionedMaterials.Count();
+            var TotalCount = _ctx.DecommissionedMaterials.Count();
             var chunkLength = (int)Math.Ceiling(TotalCount / (double)limit);
 
             if (chunkLength < page || page < 0 ) throw new System.Exception("This page does not exist");
 
             List<DecommissionedMaterialEntity> materials;
 
-            if (chunkLength - page == 0)
+            if (chunkLength - page == 0) //last page
             {
                 var el = (chunkLength  - 1) * limit;
                  materials = await _ctx.DecommissionedMaterials
@@ -58,7 +58,6 @@ namespace CES.Domain.Handlers.MaterialReport
 
                 if (decommissionedMaterials == null) throw new System.Exception("Error");
 
-
                 if (item.CarMechanic == null) throw new System.Exception("Error");
 
                 _materialsResponses.Add(new GetAllDecommissionedMaterialsResponse()
@@ -67,8 +66,7 @@ namespace CES.Domain.Handlers.MaterialReport
                     CarMechanic = item.CarMechanic.FIO,
                     CurrentDate = item.CurrentDate,
                     Materials = decommissionedMaterials
-                });
-                             
+                });           
             }
             return await Task.FromResult(_materialsResponses);
 

@@ -73,7 +73,7 @@
                                     Grid.Column="1"
                                     HorizontalOptions="Start"
                                     VerticalOptions="Center">
-                                    <Label Text="{Binding Description}" FontAttributes="Bold" />
+                                    <Label Text="{Binding Comment}" FontAttributes="Bold" />
                                     <Label Text="{ Binding Date}" FontAttributes="Bold" />
                                 </VerticalStackLayout>
 

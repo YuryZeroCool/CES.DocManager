@@ -56,7 +56,7 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPatch("editMaterial/{id:int}")]
         [Produces(typeof(EditMaterialResponse))]
-        public async Task<object> EditMaterialAsync([FromRoute] int id, [FromBody] JsonPatchDocument editedMaterial)
+        public async Task<object> EditMaterial([FromRoute] int id, [FromBody] JsonPatchDocument editedMaterial)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace CES.DocManager.WebApi.Controllers
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost("materialReport")]
-        public async Task<string> UploadingMaterialReportAsync(IFormFile uploadedFile)
+        public async Task<string> UploadingMaterialReport(IFormFile uploadedFile)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace CES.DocManager.WebApi.Controllers
             catch (Exception)
             {
                 HttpContext.Response.StatusCode = 500;
-                return await Task.FromResult("Произошка ошибка при запими файла");
+                return await Task.FromResult("Произашка ошибка при записи файла");
             }
 
         }
@@ -124,7 +124,7 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("getAllEnshrinedMaterial")]
         [Produces(typeof(List<GetAllEnshrinedMaterialResponse>))]
-        public async Task<object> GetAllEnshrinedMaterialAsync()
+        public async Task<object> GetAllEnshrinedMaterial()
         {
             try
             {
@@ -141,7 +141,7 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost("addEnshrinedMaterial")]
         [Produces(typeof(AddEnshrinedMaterialResponse))]
-        public async Task<object> AAddEnshrinedMaterialAsync(AddEnshrinedMaterialRequest material)
+        public async Task<object> AAddEnshrinedMaterial(AddEnshrinedMaterialRequest material)
         {
             try
             {
@@ -161,7 +161,7 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPatch("editEnshrinedMaterial/{id:int}")]
         [Produces(typeof(EditEnshrinedMaterialResponse))]
-        public async Task<object> EditEnshrinedMaterialAsync([FromRoute] int id, [FromBody] JsonPatchDocument enshrinedMaterial)
+        public async Task<object> EditEnshrinedMaterial([FromRoute] int id, [FromBody] JsonPatchDocument enshrinedMaterial)
         {
             try
             {
