@@ -12,6 +12,13 @@
 
         public string? Email { get; set; }
         
-        public string? Phone { get; set; }  
+        public string? Phone { get; set; }
+
+        public ICollection<ActEntity>? Acts { get; set; }
+
+        public OrganizationEntity() 
+        {
+            Acts = new List<ActEntity>();
+        }
     }
 }

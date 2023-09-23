@@ -20,23 +20,36 @@ namespace CES.Domain.Handlers.Mes
         }
 
         public async Task<CreateOrganizationResponse> Handle(CreateOrganizationRequest request, CancellationToken cancellationToken)
-        {       
-            if (request is not null)
+        {
+            if (request is null)
             {
-                if (request.Name is not null && request.Name.Trim() == "") throw new System.Exception("Заполните имя организации");
-
-                var PayerAccountNumber = await _ctx.OrganizationEntities.FirstOrDefaultAsync(x => x.PayerAccountNumber == request.PayerAccountNumber, cancellationToken);
-                if (PayerAccountNumber != null) throw new System.Exception("Такой УНП Существует в базе");
-
-                var name = await _ctx.OrganizationEntities.FirstOrDefaultAsync(x => x.Name == request.Name, cancellationToken);
-                if (name != null) throw new System.Exception("Такая организация существует в базе");
-
-                var organization = await _ctx.OrganizationEntities.AddAsync(_mapper.Map<OrganizationEntity>(request), cancellationToken);
-                await _ctx.SaveChangesAsync(cancellationToken);
-                return await Task.FromResult(_mapper.Map<CreateOrganizationResponse>(organization.Entity));
+                throw new System.Exception("Запрос не может быть пустым");
             }
 
-            throw new System.Exception();
+            if (string.IsNullOrWhiteSpace(request.Name))
+            {
+                throw new System.Exception("Заполните имя организации");
+            }
+
+            var existingName = await _ctx.OrganizationEntities.FirstOrDefaultAsync(x => x.Name == request.Name, cancellationToken);
+            if (existingName != null)
+            {
+                throw new System.Exception("Такая организация уже существует");
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.PayerAccountNumber))
+            {
+                var existingPayerAccountNumber = await _ctx.OrganizationEntities.FirstOrDefaultAsync(x => x.PayerAccountNumber == request.PayerAccountNumber, cancellationToken);
+                if (existingPayerAccountNumber != null)
+                {
+                    throw new System.Exception("Такой УНП уже существует");
+                }
+            }
+
+            var organization = _mapper.Map<OrganizationEntity>(request);
+            var addedOrganization = await _ctx.OrganizationEntities.AddAsync(organization, cancellationToken);
+            await _ctx.SaveChangesAsync(cancellationToken);
+            return _mapper.Map<CreateOrganizationResponse>(addedOrganization.Entity);
         }
     }
 }

@@ -14,54 +14,63 @@ namespace CES.Infra
     public class DocMangerContext : DbContext
     {
         //dotnet ef migrations add InitialCreate --context BlogContext --output-dir Migrations/SqlServerMigrations
-        //Add-Migration  DecommissionedMaterialTablePeriodToCurrentDate  -context DocMangerContext
-        //  update-database -context DocMangerContext
+        //Add-Migration AddСolumnЬetersToTableNoteEntity -context DocMangerContext
+        //update-database -context DocMangerContext   PriceOfWorkInActEntityWorkNameInActEntity
+        // Remove-migration -context DocMangerContext
 
         public DocMangerContext(DbContextOptions<DocMangerContext> options)
             : base(options)
         { }
 
-        public virtual DbSet<EmployeeEntity> Employees { get; set; }
+        public virtual DbSet<EmployeeEntity>? Employees { get; set; }
 
-        public virtual DbSet<DriverLicenseEntity> DriverLicenses { get; set; }
+        public virtual DbSet<DriverLicenseEntity>? DriverLicenses { get; set; }
 
-        public virtual DbSet<DivisionEntity> Divisions { get; set; }
+        public virtual DbSet<DivisionEntity>? Divisions { get; set; }
 
-        public virtual DbSet<DriverMedicalCertificateEntity> DriverMedicalCertificate { get; set; }
+        public virtual DbSet<DriverMedicalCertificateEntity>? DriverMedicalCertificate { get; set; }
 
-        public virtual DbSet<VehicleBrandEntity> VehicleBrands { get; set; }
+        public virtual DbSet<VehicleBrandEntity>? VehicleBrands { get; set; }
 
-        public virtual DbSet<VehicleModelEntity> VehicleModels { get; set; }
+        public virtual DbSet<VehicleModelEntity>? VehicleModels { get; set; }
 
-        public virtual DbSet<PartyEntity> Parties { get; set; }
+        public virtual DbSet<PartyEntity>? Parties { get; set; }
 
-        public virtual DbSet<ProductEntity> Products { get; set; }
+        public virtual DbSet<ProductEntity>? Products { get; set; }
 
-        public virtual DbSet<ProductGroupAccountEntity> ProductsGroupAccount { get; set; }
+        public virtual DbSet<ProductGroupAccountEntity>? ProductsGroupAccount { get; set; }
 
-        public virtual DbSet<UnitEntity> Units { get; set; }
+        public virtual DbSet<UnitEntity>? Units { get; set; }
 
-        public virtual  DbSet<NumberPlateOfCarEntity> NumberPlateOfCar { get; set; }
+        public virtual DbSet<NumberPlateOfCarEntity>? NumberPlateOfCar { get; set; }
 
-        public virtual DbSet<FuelWorkCardEntity> FuelWorkCards { get; set; }
+        public virtual DbSet<FuelWorkCardEntity>? FuelWorkCards { get; set; }
 
-        public virtual DbSet<WorkCardDivisionsEntity> WorkCardDivisions { get; set; }
+        public virtual DbSet<WorkCardDivisionsEntity>? WorkCardDivisions { get; set; }
 
-        public virtual DbSet<FuelEntity> Fuels { get; set; }
-        
-        public virtual DbSet<PriceEntity> Prices { get; set; }
+        public virtual DbSet<FuelEntity>? Fuels { get; set; }
 
-        public virtual DbSet <EnshrinedMaterialEntity> EnshrinedMaterial { get; set; }
+        public virtual DbSet<PriceEntity>? Prices { get; set; }
 
-        public virtual DbSet<DecommissionedMaterialEntity> DecommissionedMaterials { get; set; }
+        public virtual DbSet<EnshrinedMaterialEntity>? EnshrinedMaterial { get; set; }
 
-        public virtual DbSet<CarMechanicEntity> CarMechanics { get; set; }
+        public virtual DbSet<DecommissionedMaterialEntity>? DecommissionedMaterials { get; set; }
 
-        public virtual DbSet<UsedMaterialEntity> UsedMaterials { get; set; }
+        public virtual DbSet<CarMechanicEntity>? CarMechanics { get; set; }
 
-        public virtual DbSet<NoteEntity> NoteEntities { get; set; }
+        public virtual DbSet<UsedMaterialEntity>? UsedMaterials { get; set; }
 
-        public virtual DbSet<OrganizationEntity> OrganizationEntities { get; set; }
+        public virtual DbSet<NoteEntity>? NoteEntities { get; set; }
+
+        public virtual DbSet<OrganizationEntity>? OrganizationEntities { get; set; }
+
+        public virtual DbSet<ActEntity>? Act { get; set; }
+
+        public virtual DbSet<ActTypeEntity>? ActTypes { get; set; }
+
+        public virtual DbSet<WorkNameInActEntity>? WorkNameInAct { get; set; }
+
+        public virtual DbSet<PriceOfWorkInActEntity>? PricesOfWorkInAct { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -86,6 +95,11 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new UsedMaterialConf());
             modelBuilder.ApplyConfiguration(new NoteConfig());
             modelBuilder.ApplyConfiguration(new OrganizationConfig());
+            modelBuilder.ApplyConfiguration(new OrganizationConfig());
+            modelBuilder.ApplyConfiguration(new ActConfig());
+            modelBuilder.ApplyConfiguration(new ActTypeConfig());
+            modelBuilder.ApplyConfiguration(new WorkNameInActConfig());
+            modelBuilder.ApplyConfiguration(new PriceOfWorkInActConfig());
         }
     }
 }
