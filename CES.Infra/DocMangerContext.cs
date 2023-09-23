@@ -72,6 +72,8 @@ namespace CES.Infra
 
         public virtual DbSet<PriceOfWorkInActEntity>? PricesOfWorkInAct { get; set; }
 
+        public virtual DbSet<StreetEntity>? Streets { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfig());
