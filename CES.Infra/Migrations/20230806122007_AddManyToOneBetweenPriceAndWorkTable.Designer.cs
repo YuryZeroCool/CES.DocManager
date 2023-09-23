@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20230806122007_AddManyToOneBetweenPriceAndWorkTable")]
+    partial class AddManyToOneBetweenPriceAndWorkTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace CES.Infra.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("ActTypeEntityWorkNameInActEntity", b =>
-                {
-                    b.Property<int>("ActTypesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkNameInActEntitiesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ActTypesId", "WorkNameInActEntitiesId");
-
-                    b.HasIndex("WorkNameInActEntitiesId");
-
-                    b.ToTable("ActTypeEntityWorkNameInActEntity");
-                });
 
             modelBuilder.Entity("CES.Infra.Models.CarMechanicEntity", b =>
                 {
@@ -517,9 +504,6 @@ namespace CES.Infra.Migrations
                     b.Property<bool>("IsChecked")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("Meters")
-                        .HasColumnType("int");
-
                     b.Property<string>("Tel")
                         .HasColumnType("nvarchar(max)");
 
@@ -573,7 +557,12 @@ namespace CES.Infra.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<int?>("WorkNameInActEntityId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("WorkNameInActEntityId");
 
                     b.ToTable("PricesOfWorkInAct");
                 });
@@ -698,36 +687,6 @@ namespace CES.Infra.Migrations
                     b.HasIndex("NumberPlateOfCarsId");
 
                     b.ToTable("DivisionEntityNumberPlateOfCarEntity");
-                });
-
-            modelBuilder.Entity("PriceOfWorkInActEntityWorkNameInActEntity", b =>
-                {
-                    b.Property<int>("PricesOfWorkInActId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorksNamesInActEntityId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PricesOfWorkInActId", "WorksNamesInActEntityId");
-
-                    b.HasIndex("WorksNamesInActEntityId");
-
-                    b.ToTable("PriceOfWorkInActEntityWorkNameInActEntity");
-                });
-
-            modelBuilder.Entity("ActTypeEntityWorkNameInActEntity", b =>
-                {
-                    b.HasOne("CES.Infra.Models.Mes.ActTypeEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ActTypesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CES.Infra.Models.Mes.WorkNameInActEntity", null)
-                        .WithMany()
-                        .HasForeignKey("WorkNameInActEntitiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Drivers.DriverLicenseEntity", b =>
@@ -856,6 +815,13 @@ namespace CES.Infra.Migrations
                     b.Navigation("Act");
                 });
 
+            modelBuilder.Entity("CES.Infra.Models.Mes.PriceOfWorkInActEntity", b =>
+                {
+                    b.HasOne("CES.Infra.Models.Mes.WorkNameInActEntity", null)
+                        .WithMany("PricesOfWorkInAct")
+                        .HasForeignKey("WorkNameInActEntityId");
+                });
+
             modelBuilder.Entity("CES.Infra.Models.NumberPlateOfCarEntity", b =>
                 {
                     b.HasOne("CES.Infra.Models.VehicleModelEntity", "VehicleModel")
@@ -889,21 +855,6 @@ namespace CES.Infra.Migrations
                     b.HasOne("CES.Infra.Models.NumberPlateOfCarEntity", null)
                         .WithMany()
                         .HasForeignKey("NumberPlateOfCarsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("PriceOfWorkInActEntityWorkNameInActEntity", b =>
-                {
-                    b.HasOne("CES.Infra.Models.Mes.PriceOfWorkInActEntity", null)
-                        .WithMany()
-                        .HasForeignKey("PricesOfWorkInActId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CES.Infra.Models.Mes.WorkNameInActEntity", null)
-                        .WithMany()
-                        .HasForeignKey("WorksNamesInActEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -953,6 +904,11 @@ namespace CES.Infra.Migrations
             modelBuilder.Entity("CES.Infra.Models.Mes.OrganizationEntity", b =>
                 {
                     b.Navigation("Acts");
+                });
+
+            modelBuilder.Entity("CES.Infra.Models.Mes.WorkNameInActEntity", b =>
+                {
+                    b.Navigation("PricesOfWorkInAct");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.NumberPlateOfCarEntity", b =>

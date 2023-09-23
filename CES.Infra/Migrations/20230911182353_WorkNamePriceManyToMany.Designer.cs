@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20230911182353_WorkNamePriceManyToMany")]
+    partial class WorkNamePriceManyToMany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace CES.Infra.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("ActTypeEntityWorkNameInActEntity", b =>
-                {
-                    b.Property<int>("ActTypesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkNameInActEntitiesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ActTypesId", "WorkNameInActEntitiesId");
-
-                    b.HasIndex("WorkNameInActEntitiesId");
-
-                    b.ToTable("ActTypeEntityWorkNameInActEntity");
-                });
 
             modelBuilder.Entity("CES.Infra.Models.CarMechanicEntity", b =>
                 {
@@ -713,21 +700,6 @@ namespace CES.Infra.Migrations
                     b.HasIndex("WorksNamesInActEntityId");
 
                     b.ToTable("PriceOfWorkInActEntityWorkNameInActEntity");
-                });
-
-            modelBuilder.Entity("ActTypeEntityWorkNameInActEntity", b =>
-                {
-                    b.HasOne("CES.Infra.Models.Mes.ActTypeEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ActTypesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CES.Infra.Models.Mes.WorkNameInActEntity", null)
-                        .WithMany()
-                        .HasForeignKey("WorkNameInActEntitiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Drivers.DriverLicenseEntity", b =>
