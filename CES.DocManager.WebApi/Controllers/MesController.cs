@@ -7,11 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared.Messaging;
-using NPOI.OpenXmlFormats.Wordprocessing;
-using System.Linq;
 using System.Net;
-using System.Security.Policy;
 
 namespace CES.DocManager.WebApi.Controllers
 {
@@ -168,12 +164,130 @@ namespace CES.DocManager.WebApi.Controllers
             catch (Exception e )
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                if( e.Message == "Такой УНП Существует в базе" 
-                    || e.Message == "Такая организация существует в базе" 
+                if( e.Message == "Такой УНП существует" 
+                    || e.Message == "Такая организация существует" 
                     || e.Message == "Заполните имя организации") return new { e.Message };
                 return new { Message = "Упс! Что-то пошло не так" };
             }
             
+        }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpDelete("deleteOrganization")]
+        [Produces(typeof(int))]
+        public async Task<object> DeleteOrganization(int id)
+        {
+            try
+            {
+                return await _mediator.Send(new DeleteOrganizationRequest()
+                {
+                    Id = id
+                });
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    e.Message
+                };
+            }
+        }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("getOrganizations")]
+        [Produces(typeof(List<GetOrganizationsResponse>))]
+        public async Task<object> GetOrganizations()
+        {
+            try
+            {
+                return await _mediator.Send(new GetOrganizationsRequest());
+            }
+            catch (Exception)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new object();
+            }
+        }
+
+        [HttpGet("searchOrganizations")]
+        [Produces(typeof(SearchOrganizationRequest))]
+        public async Task<object> SearchOrganizations(string? title = default, int limit = 10, int page = 1 )
+        {
+            try
+            {
+                return await _mediator.Send(new SearchOrganizationRequest() { 
+                    Title = title,
+                    Limit = limit,
+                    Page = page
+                });
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    e.Message
+                };
+            }
+        }
+
+        [HttpGet("notesWithoutAct")]
+        [Produces(typeof(List<NotesWithoutActResponse>))]
+        public async Task<object> NotesWithoutAct()
+        {
+            try
+            {
+                return await _mediator.Send(new NotesWithoutActRequest());
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    e.Message
+                };
+            }
+        }
+        
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpPut("editOrganization")]
+        [Produces(typeof(EditOrganizationResponse))]
+        public async Task<object> EditOrganization([FromBody] OrganizationViewModel model)
+        {
+            try
+            {
+                var id = await _mediator.Send(_mapper.Map<EditOrganizationRequest>(model));
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
+                return id;
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new { e.Message };
+            }
+        }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpPost("createAct")]
+        [Produces(typeof(AddNoteRequest))]
+        public async Task<object> CreateAct([FromBody] NoteViewModel note)
+        {
+            try
+            {
+                var res = await _mediator.Send(_mapper.Map<AddNoteRequest>(note));
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
+                return res;
+            }
+            catch (Exception)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return new { };
+            }
         }
     }
 }
