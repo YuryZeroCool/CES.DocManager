@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20230923180256_AddEntranceTable")]
+    partial class AddEntranceTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -510,23 +512,6 @@ namespace CES.Infra.Migrations
                     b.ToTable("Entrances");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.Mes.HouseNumberEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Number")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(64)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("HouseNumbers");
-                });
-
             modelBuilder.Entity("CES.Infra.Models.Mes.NoteEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -621,12 +606,9 @@ namespace CES.Infra.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("Streets");
                 });
@@ -751,21 +733,6 @@ namespace CES.Infra.Migrations
                     b.HasIndex("NumberPlateOfCarsId");
 
                     b.ToTable("DivisionEntityNumberPlateOfCarEntity");
-                });
-
-            modelBuilder.Entity("HouseNumberEntityStreetEntity", b =>
-                {
-                    b.Property<int>("HouseNumbersId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StreetsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("HouseNumbersId", "StreetsId");
-
-                    b.HasIndex("StreetsId");
-
-                    b.ToTable("HouseNumberEntityStreetEntity");
                 });
 
             modelBuilder.Entity("PriceOfWorkInActEntityWorkNameInActEntity", b =>
@@ -957,21 +924,6 @@ namespace CES.Infra.Migrations
                     b.HasOne("CES.Infra.Models.NumberPlateOfCarEntity", null)
                         .WithMany()
                         .HasForeignKey("NumberPlateOfCarsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("HouseNumberEntityStreetEntity", b =>
-                {
-                    b.HasOne("CES.Infra.Models.Mes.HouseNumberEntity", null)
-                        .WithMany()
-                        .HasForeignKey("HouseNumbersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CES.Infra.Models.Mes.StreetEntity", null)
-                        .WithMany()
-                        .HasForeignKey("StreetsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

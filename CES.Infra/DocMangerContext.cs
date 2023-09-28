@@ -14,7 +14,7 @@ namespace CES.Infra
     public class DocMangerContext : DbContext
     {
         //dotnet ef migrations add InitialCreate --context BlogContext --output-dir Migrations/SqlServerMigrations
-        //Add-Migration AddСolumnЬetersToTableNoteEntity -context DocMangerContext
+        //Add-Migration AddOneToManyHouseNumberStreetTables -context DocMangerContext
         //update-database -context DocMangerContext   PriceOfWorkInActEntityWorkNameInActEntity
         // Remove-migration -context DocMangerContext
 
@@ -74,6 +74,10 @@ namespace CES.Infra
 
         public virtual DbSet<StreetEntity>? Streets { get; set; }
 
+        public virtual DbSet<EntranceEntity>? Entrances { get; set; }
+
+        public virtual DbSet<HouseNumberEntity>? HouseNumbers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfig());
@@ -102,6 +106,8 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new ActTypeConfig());
             modelBuilder.ApplyConfiguration(new WorkNameInActConfig());
             modelBuilder.ApplyConfiguration(new PriceOfWorkInActConfig());
+            modelBuilder.ApplyConfiguration(new HouseNumberConfig());
+            modelBuilder.ApplyConfiguration(new StreetConfig());
         }
     }
 }
