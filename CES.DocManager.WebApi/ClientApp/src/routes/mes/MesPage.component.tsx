@@ -11,12 +11,12 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import AddActModal from '../../components/AddActModal/AddActModal.container';
 import EditNoteModal from '../../components/EditNoteModal/EditNoteModal.container';
-import AddOrganizationModal from '../../components/AddOrganizationModal/AddOrganizationModal.container';
 import NotesTable from '../../components/NotesTable/NotesTable.container';
+import AddOrganizationModal from '../../components/AddOrganizationModal/AddOrganizationModal.container';
 import OrganizationsTable from '../../components/OrganizationsTable/OrganizationsTable.container';
 import Pagination from '../../components/Pagination/Pagination.container';
 import NotesWithoutActsTableContainer from '../../components/NotesWithoutActsTable/NotesWithoutActsTable.container';
-import { ActDataFromFileResponse, ActTypesFromFileResponse } from '../../types/MesTypes';
+import { Act, ActDataFromFileResponse, ActTypesFromFileResponse } from '../../types/MesTypes';
 import './MesPage.style.scss';
 
 interface Props {
@@ -33,8 +33,9 @@ interface Props {
   actTypesFromFile: ActTypesFromFileResponse[];
   actTypeSelectValue: string;
   actDataFromFile: ActDataFromFileResponse;
+  currentActData: Act;
 
-  handleAddActBtnClick: () => void;
+  handleAddActBtnClick: (value: string) => void;
   handleAddOrganizationBtnClick: () => void;
   handleChangeMesPageType: (value: string) => void;
   handleChangeErrorMessage: (value: string) => void;
@@ -43,6 +44,7 @@ interface Props {
   handleCurrentPageChange: (event: React.ChangeEvent<unknown>, value: number) => void;
   handleSelectNote: (newValue: number[]) => void;
   handleActTypeSelectChange: (value: string) => void;
+  resetCurrentActData: () => void;
 }
 
 export default function MesPageComponent(props: Props) {
@@ -60,6 +62,7 @@ export default function MesPageComponent(props: Props) {
     actTypesFromFile,
     actTypeSelectValue,
     actDataFromFile,
+    currentActData,
 
     handleAddActBtnClick,
     handleAddOrganizationBtnClick,
@@ -70,6 +73,7 @@ export default function MesPageComponent(props: Props) {
     handleCurrentPageChange,
     handleSelectNote,
     handleActTypeSelectChange,
+    resetCurrentActData,
   } = props;
 
   const renderMesPageNavigation = () => (
@@ -109,7 +113,7 @@ export default function MesPageComponent(props: Props) {
           onChange={(event) => handleActTypeSelectChange(event.target.value)}
           className="table-header-select"
         >
-          {actTypesFromFile.map((el, index) => (
+          {actTypesFromFile.map((el) => (
             <MenuItem key={el.fileName} value={`${el.actType} (${el.season.toLocaleLowerCase()})`}>
               {el.actType}
               &nbsp;
@@ -123,7 +127,7 @@ export default function MesPageComponent(props: Props) {
 
   const renderActsButtons = () => (
     actDataFromFile.act.length !== 0 && actDataFromFile.act.map((act) => (
-      <Button variant="contained" onClick={handleAddActBtnClick} key={act.type}>
+      <Button variant="contained" onClick={() => handleAddActBtnClick(act.type)} key={act.type}>
         {act.type}
       </Button>
     ))
@@ -162,7 +166,10 @@ export default function MesPageComponent(props: Props) {
   );
 
   const renderNotesTable = () => (
-    <NotesTable mesError={mesError} />
+    <NotesTable
+      mesError={mesError}
+      handleChangeErrorMessage={handleChangeErrorMessage}
+    />
   );
 
   const renderOrganizationsTable = () => (
@@ -194,7 +201,13 @@ export default function MesPageComponent(props: Props) {
       {mesPageType === 'Организации' && renderOrganizationsTable()}
       {mesPageType === 'Организации' && renderPagination()}
       {mesPageType === 'Заявки без актов' && renderNotesWithoutActsTable()}
-      {isAddActModalOpen && <AddActModal selectedNotesId={selectedNotesId} />}
+      {isAddActModalOpen && (
+        <AddActModal
+          selectedNotesId={selectedNotesId}
+          currentActData={currentActData}
+          resetCurrentActData={resetCurrentActData}
+        />
+      )}
       {isEditNoteModalOpen && <EditNoteModal />}
       {(isAddOrganizationModalOpen || isEditOrganizationModalOpen) && <AddOrganizationModal />}
     </section>

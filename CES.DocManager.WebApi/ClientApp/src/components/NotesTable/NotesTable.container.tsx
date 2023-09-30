@@ -11,14 +11,19 @@ import deleteNote from '../../redux/actions/mes/deleteNote';
 
 interface Props {
   mesError: string;
+  handleChangeErrorMessage: (value: string) => void;
 }
 
 function NotesTableContainer(props: Props) {
-  const { mesError } = props;
+  const { mesError, handleChangeErrorMessage } = props;
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const {
     allNotes,
     requestStatus,
+    selectedNoteId,
   } = useSelector<RootState, INotesState>(
     (state) => state.mes,
   );
@@ -31,11 +36,19 @@ function NotesTableContainer(props: Props) {
   };
 
   const handleDeleteIconClick = (id: number) => {
-    dispatch(deleteNote(id))
-      .then(() => dispatch(editNotesAfterDelete(id)))
+    handleOpen();
+    dispatch(changeSelectedNoteId(id));
+  };
+
+  const cofirmAction = () => {
+    dispatch(deleteNote(selectedNoteId))
+      .then(() => {
+        dispatch(editNotesAfterDelete(selectedNoteId));
+        handleClose();
+      })
       .catch((error) => {
         if (error instanceof Error || error instanceof AxiosError) {
-          // handleChangeErrorMessage(error.message);
+          handleChangeErrorMessage(error.message);
         }
       });
   };
@@ -45,8 +58,11 @@ function NotesTableContainer(props: Props) {
       allNotes={allNotes}
       mesError={mesError}
       requestStatus={requestStatus}
+      open={open}
       handleEditIconClick={handleEditIconClick}
       handleDeleteIconClick={handleDeleteIconClick}
+      handleClose={handleClose}
+      cofirmAction={cofirmAction}
     />
   );
 }

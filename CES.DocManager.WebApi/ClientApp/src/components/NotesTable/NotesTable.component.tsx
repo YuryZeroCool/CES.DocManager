@@ -17,13 +17,17 @@ import { ReactComponent as EditIcon } from '../../assets/icons/edit-icon.svg';
 import { ReactComponent as DeleteIcon } from '../../assets/icons/delete-icon.svg';
 import { headCells, style } from './NotesTable.config';
 import { INote } from '../../types/MesTypes';
+import WarningModalContainer from '../WarningModal/WarningModal.container';
 
 export interface Props {
   allNotes: INote[];
   mesError: string;
   requestStatus: string;
+  open: boolean;
   handleEditIconClick: (id: number) => void;
   handleDeleteIconClick: (id: number) => void;
+  handleClose: () => void;
+  cofirmAction: () => void;
 }
 
 export default function NotesTableComponent(props: Props) {
@@ -31,8 +35,11 @@ export default function NotesTableComponent(props: Props) {
     allNotes,
     mesError,
     requestStatus,
+    open,
     handleEditIconClick,
     handleDeleteIconClick,
+    handleClose,
+    cofirmAction,
   } = props;
 
   const renderError = () => (
@@ -143,6 +150,11 @@ export default function NotesTableComponent(props: Props) {
     <div className="notes-table">
       {renderError()}
       {renderTable()}
+      <WarningModalContainer
+        open={open}
+        handleClose={handleClose}
+        cofirmAction={cofirmAction}
+      />
       {allNotes.length === 0 && requestStatus !== 'fulfilled' && renderLoaderModal()}
     </div>
   );
