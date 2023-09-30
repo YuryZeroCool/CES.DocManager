@@ -1,11 +1,13 @@
 import React from 'react';
+import { AxiosError } from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleEditNoteModal } from '../../redux/reducers/modals/modalsReducer';
 import NotesTableComponent from './NotesTable.component';
 import { IAuthResponseType } from '../../redux/store/configureStore';
-import { changeSelectedNoteId } from '../../redux/reducers/mes/mesReducer';
+import { changeSelectedNoteId, editNotesAfterDelete } from '../../redux/reducers/mes/mesReducer';
 import { INotesState } from '../../types/MesTypes';
+import deleteNote from '../../redux/actions/mes/deleteNote';
 
 interface Props {
   mesError: string;
@@ -28,12 +30,23 @@ function NotesTableContainer(props: Props) {
     dispatch(toggleEditNoteModal(true));
   };
 
+  const handleDeleteIconClick = (id: number) => {
+    dispatch(deleteNote(id))
+      .then(() => dispatch(editNotesAfterDelete(id)))
+      .catch((error) => {
+        if (error instanceof Error || error instanceof AxiosError) {
+          // handleChangeErrorMessage(error.message);
+        }
+      });
+  };
+
   return (
     <NotesTableComponent
       allNotes={allNotes}
       mesError={mesError}
       requestStatus={requestStatus}
       handleEditIconClick={handleEditIconClick}
+      handleDeleteIconClick={handleDeleteIconClick}
     />
   );
 }

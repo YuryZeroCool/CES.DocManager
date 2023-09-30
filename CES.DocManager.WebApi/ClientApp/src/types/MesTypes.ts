@@ -53,9 +53,10 @@ export interface INotesState {
   editedOrganization: OrganizationResponse;
   selectedOrganizationId: number;
   mesPageType: string;
-  notesWithoutAct: IFullNoteData[],
-  actTypesFromFile: ActTypesFromFileResponse[],
-  actDataFromFile: ActDataFromFileResponse,
+  notesWithoutAct: IFullNoteData[];
+  actTypesFromFile: ActTypesFromFileResponse[];
+  actDataFromFile: ActDataFromFileResponse;
+  deletedNoteId: number;
 }
 
 export interface SearchOrganization {

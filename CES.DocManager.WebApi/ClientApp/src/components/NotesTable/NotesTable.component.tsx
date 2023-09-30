@@ -14,43 +14,16 @@ import {
 } from '@mui/material';
 import { RotatingLines } from 'react-loader-spinner';
 import { ReactComponent as EditIcon } from '../../assets/icons/edit-icon.svg';
+import { ReactComponent as DeleteIcon } from '../../assets/icons/delete-icon.svg';
+import { headCells, style } from './NotesTable.config';
 import { INote } from '../../types/MesTypes';
 
-interface HeadCell {
-  id: number;
-  label: string;
-  numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: 1,
-    numeric: false,
-    label: 'Комментарий',
-  },
-  {
-    id: 2,
-    numeric: true,
-    label: 'Дата создания',
-  },
-];
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 80,
-  bgcolor: 'transparent',
-  border: 'none',
-  outline: 'none',
-};
-
-interface Props {
+export interface Props {
   allNotes: INote[];
   mesError: string;
   requestStatus: string;
   handleEditIconClick: (id: number) => void;
+  handleDeleteIconClick: (id: number) => void;
 }
 
 export default function NotesTableComponent(props: Props) {
@@ -59,6 +32,7 @@ export default function NotesTableComponent(props: Props) {
     mesError,
     requestStatus,
     handleEditIconClick,
+    handleDeleteIconClick,
   } = props;
 
   const renderError = () => (
@@ -115,6 +89,13 @@ export default function NotesTableComponent(props: Props) {
               width={20}
               height={20}
               onClick={() => handleEditIconClick(row.id)}
+            />
+          </TableCell>
+          <TableCell width="30px">
+            <DeleteIcon
+              width={20}
+              height={20}
+              onClick={() => handleDeleteIconClick(row.id)}
             />
           </TableCell>
         </TableRow>

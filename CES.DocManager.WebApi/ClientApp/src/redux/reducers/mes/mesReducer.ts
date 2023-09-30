@@ -15,6 +15,7 @@ import searchOrganizations from '../../actions/mes/searchOrganizations';
 import getNotesWithoutActs from '../../actions/mes/getNotesWithoutActs';
 import getActTypesFromFile from '../../actions/mes/getActTypesFromFile';
 import getActDataFromFile from '../../actions/mes/getActDataFromFile';
+import deleteNote from '../../actions/mes/deleteNote';
 
 const organizationDefault = {
   id: 0,
@@ -51,6 +52,7 @@ const initial: INotesState = {
   notesWithoutAct: [],
   actTypesFromFile: [],
   actDataFromFile: actDataFromFileDefault,
+  deletedNoteId: 0,
 };
 
 const mesReducer = createSlice({
@@ -73,6 +75,14 @@ const mesReducer = createSlice({
       return stateCopy;
     },
     editAllNotes: (state, action: PayloadAction<number>) => {
+      let stateCopy: INotesState = state;
+      stateCopy = {
+        ...stateCopy,
+        allNotes: [...stateCopy.allNotes.filter((el) => el.id !== action.payload)],
+      };
+      return stateCopy;
+    },
+    editNotesAfterDelete: (state, action: PayloadAction<number>) => {
       let stateCopy: INotesState = state;
       stateCopy = {
         ...stateCopy,
@@ -290,6 +300,27 @@ const mesReducer = createSlice({
     builder.addCase(getActDataFromFile.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
+
+    builder.addCase(deleteNote.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        requestStatus: 'pending',
+      };
+      return stateCopy;
+    });
+    builder.addCase(deleteNote.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        deletedNoteId: action.payload,
+        requestStatus: 'fulfilled',
+      };
+      return stateCopy;
+    });
+    builder.addCase(deleteNote.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
   },
 });
 
@@ -297,6 +328,7 @@ export const {
   changeSelectedNoteId,
   changeSelectedOrganizationId,
   editAllNotes,
+  editNotesAfterDelete,
   changeMesPageType,
   editOrganizationsAfterDelete,
   editOrganizationsAfterAdd,
