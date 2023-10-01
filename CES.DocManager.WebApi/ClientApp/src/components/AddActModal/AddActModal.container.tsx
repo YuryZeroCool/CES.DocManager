@@ -3,16 +3,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleAddActModal } from '../../redux/reducers/modals/modalsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
-import { IModal } from '../../types/type';
 import AddActModalComponent from './AddActModal.component';
-import { IFullNoteData, INotesState } from '../../types/MesTypes';
+import { IModal } from '../../types/type';
+import { Act, IFullNoteData, INotesState } from '../../types/MesTypes';
 
 interface Props {
   selectedNotesId: number[];
+  currentActData: Act;
+  type: string;
+  resetCurrentActData: () => void;
+  changeType: (value: string) => void;
 }
 
 function AddActModalContainer(props: Props) {
-  const { selectedNotesId } = props;
+  const {
+    selectedNotesId,
+    currentActData,
+    type,
+    resetCurrentActData,
+    changeType,
+  } = props;
 
   const [selectedNotes, setSelectedNotes] = useState<IFullNoteData[]>([]);
 
@@ -36,12 +46,16 @@ function AddActModalContainer(props: Props) {
   const dispatch: IAuthResponseType = useDispatch();
 
   const handleClose = () => {
+    changeType('');
+    resetCurrentActData();
     dispatch(toggleAddActModal(false));
   };
 
   return (
     <AddActModalComponent
+      currentActData={currentActData}
       isAddActModalOpen={isAddActModalOpen}
+      type={type}
       handleClose={handleClose}
     />
   );

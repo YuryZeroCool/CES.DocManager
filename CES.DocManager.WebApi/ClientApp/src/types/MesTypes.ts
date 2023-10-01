@@ -56,7 +56,9 @@ export interface INotesState {
   notesWithoutAct: IFullNoteData[];
   actTypesFromFile: ActTypesFromFileResponse[];
   actDataFromFile: ActDataFromFileResponse;
+  totalActSumm: number;
   deletedNoteId: number;
+  vat: number;
 }
 
 export interface SearchOrganization {
@@ -96,4 +98,12 @@ export interface Work {
   name: string;
   unit: string;
   price: number;
+  count: number;
+  totalSumm: number;
+}
+
+export interface UpdateActDataFromFileReq {
+  workName: string;
+  value: string;
+  type: string;
 }

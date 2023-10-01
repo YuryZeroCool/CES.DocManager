@@ -5,7 +5,7 @@ import { RootState } from '../../redux/reducers/combineReducers';
 import { toggleAddActModal, toggleAddOrganizationModal } from '../../redux/reducers/modals/modalsReducer';
 import getAllNotes from '../../redux/actions/mes/getAllNotes';
 import { IAuthResponseType } from '../../redux/store/configureStore';
-import { changeMesPageType } from '../../redux/reducers/mes/mesReducer';
+import { changeMesPageType, resetTotalActSummVat } from '../../redux/reducers/mes/mesReducer';
 import searchOrganizations from '../../redux/actions/mes/searchOrganizations';
 import getNotesWithoutActs from '../../redux/actions/mes/getNotesWithoutActs';
 import { Act, INotesState, SearchOrganization } from '../../types/MesTypes';
@@ -111,17 +111,29 @@ function MesPageContainer() {
       const res = actDataFromFile.act.filter((el) => el.type === type)[0];
       setCurrentActData(res);
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
+
+  useEffect(() => {
+    if (type) {
+      const res = actDataFromFile.act.filter((el) => el.type === type)[0];
+      setCurrentActData(res);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actDataFromFile.act]);
 
   const handleCurrentPageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
     getOgranizations(value);
   };
 
-  const handleAddActBtnClick = (value: string) => {
+  const changeType = (value: string) => {
     setType(value);
+  }
+
+  const handleAddActBtnClick = (value: string) => {
+    dispatch(resetTotalActSummVat());
+    changeType(value);
     dispatch(toggleAddActModal(true));
   };
 
@@ -175,6 +187,7 @@ function MesPageContainer() {
       actTypeSelectValue={actTypeSelectValue}
       actDataFromFile={actDataFromFile}
       currentActData={currentActData}
+      type={type}
       handleAddActBtnClick={handleAddActBtnClick}
       handleAddOrganizationBtnClick={handleAddOrganizationBtnClick}
       handleChangeMesPageType={handleChangeMesPageType}
@@ -185,6 +198,7 @@ function MesPageContainer() {
       handleSelectNote={handleSelectNote}
       handleActTypeSelectChange={handleActTypeSelectChange}
       resetCurrentActData={resetCurrentActData}
+      changeType={changeType}
     />
   );
 }

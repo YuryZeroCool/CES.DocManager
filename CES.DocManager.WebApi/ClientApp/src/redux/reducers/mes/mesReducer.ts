@@ -6,6 +6,7 @@ import {
   INotesState,
   ISearchOrganization,
   OrganizationResponse,
+  UpdateActDataFromFileReq,
 } from '../../../types/MesTypes';
 import editExistedNote from '../../actions/mes/editExistedNote';
 import createOrganization from '../../actions/mes/createOrganization';
@@ -53,6 +54,8 @@ const initial: INotesState = {
   actTypesFromFile: [],
   actDataFromFile: actDataFromFileDefault,
   deletedNoteId: 0,
+  totalActSumm: 0,
+  vat: 0,
 };
 
 const mesReducer = createSlice({
@@ -62,6 +65,11 @@ const mesReducer = createSlice({
     changeMesPageType: (state, action: PayloadAction<string>) => {
       let stateCopy: INotesState = state;
       stateCopy = { ...stateCopy, mesPageType: action.payload };
+      return stateCopy;
+    },
+    resetTotalActSummVat: (state) => {
+      let stateCopy: INotesState = state;
+      stateCopy = { ...stateCopy, totalActSumm: 0, vat: 0 };
       return stateCopy;
     },
     changeSelectedNoteId: (state, action: PayloadAction<number>) => {
@@ -123,6 +131,35 @@ const mesReducer = createSlice({
         stateCopy.allOrganizations.organizations[currentElIndex] = { ...action.payload };
       }
       return stateCopy;
+    },
+    updateActDataFromFile: (state, action: PayloadAction<UpdateActDataFromFileReq>) => {
+      const newState: INotesState = JSON.parse(JSON.stringify(state));
+      const { actDataFromFile } = newState;
+      const { type, workName, value } = action.payload;
+
+      const actIndex = actDataFromFile.act.findIndex((el) => el.type === type);
+
+      if (actIndex !== -1) {
+        const workIndex = actDataFromFile.act[actIndex]
+          .works.findIndex((work) => work.name === workName);
+
+        if (workIndex !== -1) {
+          const currentWork = actDataFromFile.act[actIndex].works[workIndex];
+          currentWork.count = Number(value);
+          currentWork.totalSumm = +(currentWork.price * Number(value)).toFixed(2);
+        }
+      }
+
+      const totalSumm = actDataFromFile.act.reduce((sum, act) => sum + act.works
+        .reduce((workSum, work) => workSum + (work.totalSumm || 0), 0), 0);
+
+      newState.totalActSumm = +totalSumm.toFixed(2);
+
+      if (type !== 'Для жилых помещений') {
+        newState.vat = +(newState.totalActSumm / 6).toFixed(2);
+      }
+
+      return newState;
     },
   },
   extraReducers: (builder) => {
@@ -291,10 +328,12 @@ const mesReducer = createSlice({
 
     builder.addCase(getActDataFromFile.fulfilled, (state, action) => {
       let stateCopy = state;
+
       stateCopy = {
         ...stateCopy,
-        actDataFromFile: { ...action.payload },
+        actDataFromFile: action.payload,
       };
+
       return stateCopy;
     });
     builder.addCase(getActDataFromFile.rejected, (state, action) => {
@@ -333,6 +372,8 @@ export const {
   editOrganizationsAfterDelete,
   editOrganizationsAfterAdd,
   editOrganizationsAfterEdit,
+  updateActDataFromFile,
+  resetTotalActSummVat,
 } = mesReducer.actions;
 
 export default mesReducer.reducer;

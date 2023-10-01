@@ -34,6 +34,7 @@ interface Props {
   actTypeSelectValue: string;
   actDataFromFile: ActDataFromFileResponse;
   currentActData: Act;
+  type: string;
 
   handleAddActBtnClick: (value: string) => void;
   handleAddOrganizationBtnClick: () => void;
@@ -45,6 +46,7 @@ interface Props {
   handleSelectNote: (newValue: number[]) => void;
   handleActTypeSelectChange: (value: string) => void;
   resetCurrentActData: () => void;
+  changeType: (value: string) => void;
 }
 
 export default function MesPageComponent(props: Props) {
@@ -63,6 +65,7 @@ export default function MesPageComponent(props: Props) {
     actTypeSelectValue,
     actDataFromFile,
     currentActData,
+    type,
 
     handleAddActBtnClick,
     handleAddOrganizationBtnClick,
@@ -74,6 +77,7 @@ export default function MesPageComponent(props: Props) {
     handleSelectNote,
     handleActTypeSelectChange,
     resetCurrentActData,
+    changeType,
   } = props;
 
   const renderMesPageNavigation = () => (
@@ -173,7 +177,10 @@ export default function MesPageComponent(props: Props) {
   );
 
   const renderOrganizationsTable = () => (
-    <OrganizationsTable mesError={mesError} handleChangeErrorMessage={handleChangeErrorMessage} />
+    <OrganizationsTable
+      mesError={mesError}
+      handleChangeErrorMessage={handleChangeErrorMessage}
+    />
   );
 
   const renderPagination = () => (
@@ -205,7 +212,9 @@ export default function MesPageComponent(props: Props) {
         <AddActModal
           selectedNotesId={selectedNotesId}
           currentActData={currentActData}
+          type={type}
           resetCurrentActData={resetCurrentActData}
+          changeType={changeType}
         />
       )}
       {isEditNoteModalOpen && <EditNoteModal />}

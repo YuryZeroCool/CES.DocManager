@@ -10,6 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import AddActTable from '../AddActTable/AddActTable.container';
+import { Act } from '../../types/MesTypes';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -56,10 +57,17 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
 interface Props {
   handleClose: () => void;
   isAddActModalOpen: boolean;
+  currentActData: Act;
+  type: string;
 }
 
 export default function AddActModalComponent(props: Props) {
-  const { handleClose, isAddActModalOpen } = props;
+  const {
+    handleClose,
+    isAddActModalOpen,
+    currentActData,
+    type,
+  } = props;
 
   return (
     <div>
@@ -72,8 +80,9 @@ export default function AddActModalComponent(props: Props) {
           Добавление акта
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          {/* <TextField inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} /> */}
-          <AddActTable />
+          {currentActData.works.length !== 0 && (
+            <AddActTable currentActData={currentActData} type={type} />
+          )}
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClose}>

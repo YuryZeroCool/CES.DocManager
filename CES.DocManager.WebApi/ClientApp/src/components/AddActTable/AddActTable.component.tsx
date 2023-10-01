@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Paper,
+  Stack,
   styled,
   Table,
   TableBody,
@@ -9,8 +10,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
+  Typography,
 } from '@mui/material';
-import SearchInput from '../SearchOrganization/SearchInput.container';
+import { Act } from '../../types/MesTypes';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -33,7 +36,21 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function AddActTableComponent() {
+interface Props {
+  currentActData: Act;
+  totalActSumm: number;
+  vat: number;
+  handleInputNumberChange: (workName: string, value: string) => void;
+}
+
+export default function AddActTableComponent(props: Props) {
+  const {
+    currentActData,
+    totalActSumm,
+    vat,
+    handleInputNumberChange,
+  } = props;
+
   return (
     <div className="material-table">
       <Paper sx={{ width: '100%' }}>
@@ -42,70 +59,62 @@ export default function AddActTableComponent() {
             <TableHead>
               <TableRow>
                 <StyledTableCell>Наименование работ</StyledTableCell>
-                <StyledTableCell align="left">Ед. изм.</StyledTableCell>
+                <StyledTableCell align="left">Един. изм.</StyledTableCell>
                 <StyledTableCell align="left">Кол-во</StyledTableCell>
                 <StyledTableCell align="left">Отпускная цена, руб (с НДС)</StyledTableCell>
                 <StyledTableCell align="left">Всего к оплате, руб.</StyledTableCell>
-                <StyledTableCell align="left">Кол-во</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
+              {currentActData.works.map((work) => (
+                <StyledTableRow key={work.name}>
+                  <StyledTableCell align="left">{work.name}</StyledTableCell>
+                  <StyledTableCell align="left">{work.unit}</StyledTableCell>
+                  <StyledTableCell align="left">
+                    <TextField
+                      onChange={(e) => handleInputNumberChange(work.name, e.target.value)}
+                      label=""
+                      variant="outlined"
+                    />
+                  </StyledTableCell>
+                  <StyledTableCell align="left">{work.price}</StyledTableCell>
+                  <StyledTableCell align="left">{work.totalSumm}</StyledTableCell>
+                </StyledTableRow>
+              ))}
               <StyledTableRow>
-                <StyledTableCell align="center"> Заправка воды</StyledTableCell>
-                <StyledTableCell align="left">sss</StyledTableCell>
-              </StyledTableRow>
-              <StyledTableRow>
-                <StyledTableCell component="th" scope="row">
-                  Прочистка сетей водоотведение(канализации)
-                  высоким
-                  <span> давлением* до &Oslash; 100 мм</span>
+                <StyledTableCell align="left" colSpan={4}>
+                  <Stack direction="row" alignItems="center">
+                    <Typography variant="h6" component="h6" sx={{ fontWeight: '600' }}>
+                      Итого
+                      &nbsp;
+                    </Typography>
+                    <Typography variant="h6" sx={{ fontSize: '16px' }}>
+                      к оплате
+                      &nbsp;
+                    </Typography>
+                    {currentActData.type === 'Для жилых помещений' && (
+                      <Typography variant="h6" sx={{ fontSize: '16px' }}>
+                        (Без учета НДС)
+                      </Typography>
+                    )}
+                  </Stack>
                 </StyledTableCell>
+                <StyledTableCell align="left">{totalActSumm}</StyledTableCell>
               </StyledTableRow>
-              <StyledTableRow>
-                <StyledTableCell component="th" scope="row">
-                  до &Oslash; 150 мм
-                </StyledTableCell>
-              </StyledTableRow>
-              <StyledTableRow>
-                <StyledTableCell component="th" scope="row">
-                  до &Oslash; 200 мм
-                </StyledTableCell>
-              </StyledTableRow>
-              <StyledTableRow>
-                <StyledTableCell component="th" scope="row">
-                  до &Oslash; 300 мм
-                </StyledTableCell>
-              </StyledTableRow>
-              <StyledTableRow>
-                <StyledTableCell component="th" scope="row">
-                  Ликвидация случайного засорения
-                </StyledTableCell>
-              </StyledTableRow>
-              <StyledTableRow>
-                <StyledTableCell component="th" scope="row">
-                  Работа установки КО-514
-                </StyledTableCell>
-              </StyledTableRow>
-              <StyledTableRow>
-                <StyledTableCell component="th" scope="row">
-                  Пробег, вкл. АЗС и запрвку водой
-                </StyledTableCell>
-              </StyledTableRow>
-              <StyledTableRow>
-                <StyledTableCell component="th" scope="row">
-                  ИТОГО к оплате
-                </StyledTableCell>
-              </StyledTableRow>
-              <StyledTableRow>
-                <StyledTableCell component="th" scope="row">
-                  В том числе НДС
-                </StyledTableCell>
-              </StyledTableRow>
+              {currentActData.type !== 'Для жилых помещений' && (
+                <>
+                  <StyledTableCell align="left" colSpan={4}>
+                    <Typography variant="h6" sx={{ fontSize: '14px', fontStyle: 'italic' }}>
+                      В том числе НДС
+                    </Typography>
+                  </StyledTableCell>
+                  <StyledTableCell align="left">{vat}</StyledTableCell>
+                </>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
       </Paper>
-      <SearchInput />
     </div>
   );
 }
