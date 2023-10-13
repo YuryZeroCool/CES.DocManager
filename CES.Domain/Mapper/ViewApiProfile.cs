@@ -168,6 +168,10 @@ namespace CES.Domain.Mapper
 
             CreateMap<NoteEntity, NotesWithoutActResponse>();
 
+            CreateMap<OrganizationEntity, OrganizationsBySearchResponse>();
+
+            
+
             //CreateMap<WorkNameInActEntity, CreateWorkNameInActResponse>()
             //    .ForMember(dest => dest.CreatedAct, opt => opt.MapFrom(src => src.DateOfCreation));
             //   // .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PriceOfWorkInActId.Price));

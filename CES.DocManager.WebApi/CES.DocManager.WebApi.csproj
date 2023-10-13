@@ -80,10 +80,10 @@
     
   <ItemGroup>
     <Reference Include="Spire.Pdf">
-      <HintPath>..\CES.Domain\Spire.Pdf.dll</HintPath>
+      <HintPath>..\Spire.Pdf.dll</HintPath>
     </Reference>
     <Reference Include="Spire.XLS">
-      <HintPath>..\CES.Domain\Spire.XLS.dll</HintPath>
+      <HintPath>..\Spire.XLS.dll</HintPath>
     </Reference>
   </ItemGroup>
     

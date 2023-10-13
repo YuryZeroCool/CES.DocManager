@@ -234,6 +234,27 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        [HttpGet("organizationsBySearch")]
+        [Produces(typeof(SearchOrganizationRequest))]
+        public async Task<object> OrganizationsBySearch(string? title = default)
+        {
+            try
+            {
+                return await _mediator.Send(new OrganizationsBySearchRequest()
+                {
+                    Title = title,
+                });
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    e.Message
+                };
+            }
+        }
+
         [HttpGet("notesWithoutAct")]
         [Produces(typeof(List<NotesWithoutActResponse>))]
         public async Task<object> NotesWithoutAct()
