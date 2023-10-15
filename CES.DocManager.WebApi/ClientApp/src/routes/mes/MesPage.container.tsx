@@ -129,7 +129,7 @@ function MesPageContainer() {
 
   const changeType = (value: string) => {
     setType(value);
-  }
+  };
 
   const handleAddActBtnClick = (value: string) => {
     dispatch(resetTotalActSummVat());

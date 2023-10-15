@@ -7,14 +7,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
 import AddActTable from '../AddActTable/AddActTable.container';
+import CustomDataListContainer from '../CustomDataList/CustomDataList.container';
 import { Act } from '../../types/MesTypes';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  zIndex: 10,
   '& .MuiDialogContent-root': {
-    padding: theme.spacing(8),
+    padding: theme.spacing(2),
   },
   '& .MuiDialogActions-root': {
     padding: theme.spacing(2),
@@ -22,6 +22,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '.MuiDialog-paper': {
     maxWidth: '100%',
     width: '100%',
+    padding: theme.spacing(2),
   },
 }));
 
@@ -80,6 +81,7 @@ export default function AddActModalComponent(props: Props) {
           Добавление акта
         </BootstrapDialogTitle>
         <DialogContent dividers>
+          <CustomDataListContainer />
           {currentActData.works.length !== 0 && (
             <AddActTable currentActData={currentActData} type={type} />
           )}

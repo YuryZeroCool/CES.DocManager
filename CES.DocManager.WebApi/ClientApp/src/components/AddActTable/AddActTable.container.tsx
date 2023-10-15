@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import AddActTableComponent from './AddActTable.component';
 import { Act, INotesState } from '../../types/MesTypes';
 import { IAuthResponseType } from '../../redux/store/configureStore';
-import { updateActDataFromFile } from '../../redux/reducers/mes/mesReducer';
 import { RootState } from '../../redux/reducers/combineReducers';
+import { updateActDataFromFile } from '../../redux/reducers/mes/mesReducer';
 
 interface Props {
   currentActData: Act;

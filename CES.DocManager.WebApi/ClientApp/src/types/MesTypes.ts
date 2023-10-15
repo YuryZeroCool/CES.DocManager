@@ -49,6 +49,7 @@ export interface INotesState {
   requestStatus: string;
   createdOrganization: OrganizationResponse;
   allOrganizations: ISearchOrganization;
+  allOrganizationsBySearch: string[],
   deletedOrganizationId: number;
   editedOrganization: OrganizationResponse;
   selectedOrganizationId: number;

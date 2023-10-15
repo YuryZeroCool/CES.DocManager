@@ -1,6 +1,4 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import getAllNotes from '../../actions/mes/getAllNotes';
-import getAllFullNoteData from '../../actions/mes/getAllFullNoteData';
 import {
   ActDataFromFileResponse,
   INotesState,
@@ -8,6 +6,8 @@ import {
   OrganizationResponse,
   UpdateActDataFromFileReq,
 } from '../../../types/MesTypes';
+import getAllNotes from '../../actions/mes/getAllNotes';
+import getAllFullNoteData from '../../actions/mes/getAllFullNoteData';
 import editExistedNote from '../../actions/mes/editExistedNote';
 import createOrganization from '../../actions/mes/createOrganization';
 import deleteOrganization from '../../actions/mes/deleteOrganization';
@@ -17,6 +17,7 @@ import getNotesWithoutActs from '../../actions/mes/getNotesWithoutActs';
 import getActTypesFromFile from '../../actions/mes/getActTypesFromFile';
 import getActDataFromFile from '../../actions/mes/getActDataFromFile';
 import deleteNote from '../../actions/mes/deleteNote';
+import organizationsBySearch from '../../actions/mes/organizationsBySearch';
 
 const organizationDefault = {
   id: 0,
@@ -46,6 +47,7 @@ const initial: INotesState = {
   requestStatus: '',
   createdOrganization: organizationDefault,
   allOrganizations: searchOrganizationsDefault,
+  allOrganizationsBySearch: [],
   selectedOrganizationId: 0,
   editedOrganization: organizationDefault,
   deletedOrganizationId: 0,
@@ -133,7 +135,9 @@ const mesReducer = createSlice({
       return stateCopy;
     },
     updateActDataFromFile: (state, action: PayloadAction<UpdateActDataFromFileReq>) => {
-      const newState: INotesState = JSON.parse(JSON.stringify(state));
+      // const newState: INotesState = JSON.parse(JSON.stringify(state));
+      const newState: INotesState = { ...state };
+
       const { actDataFromFile } = newState;
       const { type, workName, value } = action.payload;
 
@@ -248,6 +252,27 @@ const mesReducer = createSlice({
       return stateCopy;
     });
     builder.addCase(searchOrganizations.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(organizationsBySearch.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        requestStatus: 'pending',
+      };
+      return stateCopy;
+    });
+    builder.addCase(organizationsBySearch.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        allOrganizationsBySearch: [...action.payload],
+        requestStatus: 'fulfilled',
+      };
+      return stateCopy;
+    });
+    builder.addCase(organizationsBySearch.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
 
