@@ -24,7 +24,6 @@ namespace CES.DocManager.WebApi.Controllers
             _mapper = mapper;
         }
 
-
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost()]

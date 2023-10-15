@@ -2,7 +2,9 @@
 using CES.DocManager.WebApi.Models;
 using CES.DocManager.WebApi.Models.Mes;
 using CES.Domain.Models.Request.Mes;
+using CES.Domain.Models.Request.Mes.Street;
 using CES.Domain.Models.Response.Mes;
+using CES.Domain.Models.Response.Mes.Street;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.JsonPatch;
@@ -308,6 +310,24 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return new { };
+            }
+        }
+
+        [HttpGet("street")]
+        [Produces(typeof(GetStreetsResponse))]
+        public async Task<object> GetStreets(string street)
+        {
+            try
+            {
+                return await _mediator.Send(new GetStreetsRequest() { Street = street});
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    e.Message
+                };
             }
         }
     }

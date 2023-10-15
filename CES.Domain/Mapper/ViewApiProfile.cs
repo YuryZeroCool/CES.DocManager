@@ -12,6 +12,7 @@ using CES.Domain.Models.Response.Employees;
 using CES.Domain.Models.Response.MaterialReport;
 using CES.Domain.Models.Response.Mes;
 using CES.Domain.Models.Response.Mes.Acts;
+using CES.Domain.Models.Response.Mes.Street;
 using CES.Domain.Models.Response.Report;
 using CES.Domain.Models.Response.Vehicle;
 using CES.Domain.Security.Registration;
@@ -169,14 +170,15 @@ namespace CES.Domain.Mapper
             CreateMap<NoteEntity, NotesWithoutActResponse>();
 
             CreateMap<OrganizationEntity, string>();
-              
 
-            
+            CreateMap<StreetEntity, GetStreetsResponse>()
+                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Name));
 
-            //CreateMap<WorkNameInActEntity, CreateWorkNameInActResponse>()
-            //    .ForMember(dest => dest.CreatedAct, opt => opt.MapFrom(src => src.DateOfCreation));
-            //   // .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PriceOfWorkInActId.Price));
-            ;
+          //CreateMap<WorkNameInActEntity, CreateWorkNameInActResponse>()
+          //    .ForMember(dest => dest.CreatedAct, opt => opt.MapFrom(src => src.DateOfCreation));
+          //   // .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PriceOfWorkInActId.Price));
+          ;
 
         }
     }
