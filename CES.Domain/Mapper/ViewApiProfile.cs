@@ -168,7 +168,8 @@ namespace CES.Domain.Mapper
 
             CreateMap<NoteEntity, NotesWithoutActResponse>();
 
-            CreateMap<OrganizationEntity, OrganizationsBySearchResponse>();
+            CreateMap<OrganizationEntity, string>();
+              
 
             
 
