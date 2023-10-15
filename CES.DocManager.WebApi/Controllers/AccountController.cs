@@ -80,10 +80,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                var token = HttpContext.Request.Cookies["refreshToken"];
-
-                if (token == null) throw new TokenException(HttpStatusCode.ServiceUnavailable, "Токен не передан");
-
+                var token = HttpContext.Request.Cookies["refreshToken"] ?? throw new TokenException(HttpStatusCode.ServiceUnavailable, "Токен не передан");
                 var result = await _mediator.Send(new UpDateTokenRequest()
                 {
                     EmailAddress = email,
@@ -133,9 +130,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                var token = HttpContext.Request.Cookies["refreshToken"];
-                if (token == null) throw new RestException(HttpStatusCode.Unauthorized);
-
+                var token = HttpContext.Request.Cookies["refreshToken"] ?? throw new RestException(HttpStatusCode.Unauthorized);
                 var model = new LogoutRequest
                 {
                     EmailAddress = email,

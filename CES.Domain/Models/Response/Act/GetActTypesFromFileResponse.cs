@@ -2,10 +2,10 @@
 {
     public class GetActTypesFromFileResponse
     {
-        public string ActType { get; set; }
+        public string? ActType { get; set; }
 
-        public string Season { get; set; }
+        public string? Season { get; set; }
 
-        public string FileName { get; set; }
+        public string? FileName { get; set; }
     }
 }

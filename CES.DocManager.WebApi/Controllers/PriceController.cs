@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using CES.DocManager.WebApi.Models.Mes;
-using CES.Domain.Models.Request.Mes.Acts;
-using CES.Domain.Models.Request.Mes.Price;
+﻿using CES.Domain.Models.Request.Mes.Price;
 using CES.Domain.Models.Response.Mes;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
@@ -16,12 +13,9 @@ namespace CES.DocManager.WebApi.Controllers
     {
         private readonly IMediator _mediator;
 
-        private readonly IMapper _mapper;
-
-        public PriceController(IMediator mediator, IMapper mapper)
+        public PriceController(IMediator mediator)
         { 
             _mediator = mediator;
-            _mapper = mapper;
         }
 
         // [Authorize(AuthenticationSchemes =

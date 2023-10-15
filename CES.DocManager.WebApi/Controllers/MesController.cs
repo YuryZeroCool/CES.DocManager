@@ -330,5 +330,22 @@ namespace CES.DocManager.WebApi.Controllers
                 };
             }
         }
+
+        [HttpPost("street")]
+        [Produces(typeof(CreateStreetResponse))]
+        public async Task<object> CreateStreet([FromBody] string street)
+        {
+            try
+            {
+                var res = await _mediator.Send(new CreateStreetRequest() { Street = street });
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
+                return res;
+            }
+            catch(Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return new { e.Message };
+            }
+        }
     }
 }

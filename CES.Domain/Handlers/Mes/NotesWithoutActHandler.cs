@@ -12,7 +12,7 @@ namespace CES.Domain.Handlers.Mes
     {
         private readonly IMapper _mapper;
 
-        private DocMangerContext _ctx;
+        private readonly DocMangerContext _ctx;
 
         public NoteWithoutActHandler (IMapper mapper, DocMangerContext ctx)
         {
@@ -22,6 +22,10 @@ namespace CES.Domain.Handlers.Mes
 
         public async Task<IEnumerable<NotesWithoutActResponse>> Handle(NotesWithoutActRequest request, CancellationToken cancellationToken)
         {
+            if (_ctx.NoteEntities == null)
+            {
+                throw new System.Exception("Контекст заякок не инициализирован.");
+            }
             var comparer = new DateComparer();
             var notes =  
                 _ctx.NoteEntities

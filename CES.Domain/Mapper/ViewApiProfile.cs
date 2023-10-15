@@ -175,10 +175,14 @@ namespace CES.Domain.Mapper
                  .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Name));
 
-          //CreateMap<WorkNameInActEntity, CreateWorkNameInActResponse>()
-          //    .ForMember(dest => dest.CreatedAct, opt => opt.MapFrom(src => src.DateOfCreation));
-          //   // .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PriceOfWorkInActId.Price));
-          ;
+            CreateMap<StreetEntity, CreateStreetResponse>()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+              .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Name));
+
+//CreateMap<WorkNameInActEntity, CreateWorkNameInActResponse>()
+//    .ForMember(dest => dest.CreatedAct, opt => opt.MapFrom(src => src.DateOfCreation));
+//   // .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.PriceOfWorkInActId.Price));
+;
 
         }
     }
