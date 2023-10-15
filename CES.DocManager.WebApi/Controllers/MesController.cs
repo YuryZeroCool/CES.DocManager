@@ -235,7 +235,7 @@ namespace CES.DocManager.WebApi.Controllers
         }
 
         [HttpGet("organizationsBySearch")]
-        [Produces(typeof(SearchOrganizationRequest))]
+        [Produces(typeof(List<string>))]
         public async Task<object> OrganizationsBySearch(string? title = default)
         {
             try
