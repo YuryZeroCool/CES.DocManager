@@ -17,16 +17,19 @@ import { ReactComponent as EditIcon } from '../../assets/icons/edit-icon.svg';
 import { ReactComponent as DeleteIcon } from '../../assets/icons/delete-icon.svg';
 import { headCells, style } from './NotesTable.config';
 import { INote } from '../../types/MesTypes';
-import WarningModalContainer from '../WarningModal/WarningModal.container';
+import WarningModal from '../WarningModal/WarningModal.container';
+import EditNoteModal from '../EditNoteModal/EditNoteModal.container';
 
 export interface Props {
   allNotes: INote[];
   mesError: string;
   requestStatus: string;
-  open: boolean;
+  warningModalOpened: boolean;
+  editNoteModalOpened: boolean;
   handleEditIconClick: (id: number) => void;
   handleDeleteIconClick: (id: number) => void;
-  handleClose: () => void;
+  warningModalClose: () => void;
+  editNoteModalClose: () => void;
   cofirmAction: () => void;
 }
 
@@ -35,10 +38,12 @@ export default function NotesTableComponent(props: Props) {
     allNotes,
     mesError,
     requestStatus,
-    open,
+    warningModalOpened,
+    editNoteModalOpened,
     handleEditIconClick,
     handleDeleteIconClick,
-    handleClose,
+    warningModalClose,
+    editNoteModalClose,
     cofirmAction,
   } = props;
 
@@ -150,10 +155,14 @@ export default function NotesTableComponent(props: Props) {
     <div className="notes-table">
       {renderError()}
       {renderTable()}
-      <WarningModalContainer
-        open={open}
-        handleClose={handleClose}
+      <WarningModal
+        warningModalOpened={warningModalOpened}
+        warningModalClose={warningModalClose}
         cofirmAction={cofirmAction}
+      />
+      <EditNoteModal
+        editNoteModalOpened={editNoteModalOpened}
+        editNoteModalClose={editNoteModalClose}
       />
       {allNotes.length === 0 && requestStatus !== 'fulfilled' && renderLoaderModal()}
     </div>

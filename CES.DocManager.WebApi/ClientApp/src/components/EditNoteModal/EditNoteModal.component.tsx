@@ -1,69 +1,23 @@
 import React from 'react';
 import {
-  Box,
+  ActionIcon,
   Button,
-  Fab,
+  Flex,
   Modal,
-  TextField,
-  Typography,
-  styled,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import TextareaAutosize from '@mui/base/TextareaAutosize';
-import { blue, grey } from './EditNoteModal.config';
-import './EditNoteModal.style.scss';
+  Stack,
+  TextInput,
+  Textarea,
+} from '@mantine/core';
+import { IconTrash, IconPlus } from '@tabler/icons-react';
 import { EditNoteRequest } from '../../types/MesTypes';
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 800,
-  bgcolor: 'background.paper',
-  borderRadius: '10px',
-  border: 'none',
-  outline: 'none',
-  boxShadow: 24,
-  padding: '20px 32px',
-};
-
-const StyledTextarea = styled(TextareaAutosize)(
-  () => `
-  width: 100%;
-  font-family: IBM Plex Sans, sans-serif;
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.5;
-  padding: 12px;
-  border-radius: 12px 12px 0 12px;
-  color: ${grey[900]};
-  background: ${'#fff'};
-  border: 1px solid ${grey[200]};
-  box-shadow: 0px 2px 2px ${grey[50]};
-  margin-bottom: 10px;
-
-  &:hover {
-    border-color: ${blue[400]};
-  }
-
-  &:focus {
-    border-color: ${blue[400]};
-    box-shadow: 0 0 0 3px ${blue[200]};
-  }
-
-  &:focus-visible {
-    outline: 0;
-  }
-`,
-);
-
 interface Props {
-  isEditNoteModalOpen: boolean;
+  editNoteModalOpened: boolean;
   formState: EditNoteRequest;
   handleTextAreaChange: (value: string) => void;
-  handleAddressChange: (value: string, index: number) => void;
+  handleStreetChange: (value: string, index: number) => void;
+  handleEntranceChange: (value: string, index: number) => void;
+  handleHouseNumberChange: (value: string, index: number) => void;
   handleTelChange: (value: string, index: number) => void;
   handleClose: () => void;
   handleAddButtonClick: () => void;
@@ -73,10 +27,12 @@ interface Props {
 
 export default function EditNoteModalComponent(props: Props) {
   const {
-    isEditNoteModalOpen,
+    editNoteModalOpened,
     formState,
     handleTextAreaChange,
-    handleAddressChange,
+    handleStreetChange,
+    handleEntranceChange,
+    handleHouseNumberChange,
     handleTelChange,
     handleClose,
     handleAddButtonClick,
@@ -84,97 +40,101 @@ export default function EditNoteModalComponent(props: Props) {
     onSubmit,
   } = props;
 
-  const renderTitle = (
-    <Typography id="modal-modal-title" variant="h6" component="h2" className="modal-title">
-      Отредактируйте заявку
-    </Typography>
-  );
-
   const renderTextArea = (
-    <StyledTextarea
+    <Textarea
       value={formState.comment}
+      autosize
+      minRows={2}
       onChange={(event) => handleTextAreaChange(event.target.value)}
     />
   );
 
   const renderNoteContactsInfo = (
     formState.noteContactsInfo.map((el, index) => (
-      <div className="note-contacts-info-block" key={el.id}>
-        <TextField
-          id="outlined-controlled"
-          variant="outlined"
-          label="Адрес"
-          sx={{ width: '60%' }}
-          size="small"
-          value={el.address}
-          onChange={(event) => handleAddressChange(event.target.value, index)}
-        />
-        <TextField
-          id="outlined-controlled"
-          label="Телефон"
-          variant="outlined"
-          size="small"
-          sx={{ width: '26%' }}
-          value={el.tel}
-          onChange={(event) => handleTelChange(event.target.value, index)}
-        />
-        <Fab
-          disabled={el.address !== '' || el.tel !== '' || formState.noteContactsInfo.length === 1}
-          color="primary"
-          aria-label="add"
-          sx={{ width: '4%', height: '30px', minHeight: '30px' }}
+      <Flex key={el.id} align="start" gap="2%" p={10} style={{ borderBottom: '1px solid gray' }}>
+        <Stack gap={10}>
+          <Flex gap={10}>
+            <TextInput
+              label="Улица"
+              w={380}
+              value={el.street}
+              onChange={(event) => handleStreetChange(event.target.value, index)}
+            />
+            <TextInput
+              label="Подъезд"
+              w={120}
+              value={el.entrance}
+              onChange={(event) => handleEntranceChange(event.target.value, index)}
+            />
+            <TextInput
+              label="Дом"
+              w={120}
+              value={el.houseNumber}
+              onChange={(event) => handleHouseNumberChange(event.target.value, index)}
+            />
+          </Flex>
+
+          <Flex>
+            <TextInput
+              label="Телефон"
+              w="40%"
+              value={el.tel}
+              onChange={(event) => handleTelChange(event.target.value, index)}
+            />
+          </Flex>
+        </Stack>
+
+        <ActionIcon
+          disabled={formState.noteContactsInfo.length === 1}
           onClick={() => handleDeleteButtonClick(el.id)}
         >
-          <DeleteIcon sx={{ width: '20px', height: '20px' }} />
-        </Fab>
+          <IconTrash style={{ width: '20px', height: '20px' }} />
+        </ActionIcon>
         {index === formState.noteContactsInfo.length - 1 && (
-          <Fab
-            color="primary"
-            aria-label="add"
-            sx={{ width: '4%', height: '30px', minHeight: '30px' }}
+          <ActionIcon
             onClick={handleAddButtonClick}
           >
-            <AddIcon sx={{ width: '20px', height: '20px' }} />
-          </Fab>
+            <IconPlus style={{ width: '20px', height: '20px' }} />
+          </ActionIcon>
         )}
-      </div>
+      </Flex>
     ))
   );
 
   return (
     <Modal
-      open={isEditNoteModalOpen}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      opened={editNoteModalOpened}
+      onClose={handleClose}
+      withCloseButton
+      centered
+      closeOnClickOutside={false}
+      title="Отредактируйте заявку"
+      size="xl"
     >
-      <Box sx={style}>
+      <Stack>
         <form onSubmit={(event) => onSubmit(event)}>
-          {renderTitle}
-          {renderTextArea}
-          {renderNoteContactsInfo}
-          <div className="modal-button-container">
-            <Button
-              disabled={formState.noteContactsInfo.filter((el) => el.address !== '').length === 0}
-              className="modal-button"
-              variant="contained"
-              type="submit"
-              size="small"
-            >
-              Сохранить
-            </Button>
-            <Button
-              className="modal-button"
-              variant="contained"
-              size="small"
-              onClick={() => {
-                handleClose();
-              }}
-            >
-              Отмена
-            </Button>
-          </div>
+          <Stack gap={15}>
+            {renderTextArea}
+            {renderNoteContactsInfo}
+            <Flex gap="2%" mt={20} justify="end">
+              <Button
+                className="modal-button"
+                onClick={handleClose}
+                variant="outline"
+              >
+                Отмена
+              </Button>
+              <Button
+                disabled={formState.noteContactsInfo.filter((el) => el.street !== '').length === 0}
+                className="modal-button"
+                type="submit"
+              >
+                Сохранить
+              </Button>
+            </Flex>
+          </Stack>
         </form>
-      </Box>
+      </Stack>
     </Modal>
   );
 }

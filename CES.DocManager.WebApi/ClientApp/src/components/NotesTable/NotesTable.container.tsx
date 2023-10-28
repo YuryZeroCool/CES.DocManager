@@ -1,8 +1,8 @@
 import React from 'react';
 import { AxiosError } from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDisclosure } from '@mantine/hooks';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { toggleEditNoteModal } from '../../redux/reducers/modals/modalsReducer';
 import NotesTableComponent from './NotesTable.component';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { changeSelectedNoteId, editNotesAfterDelete } from '../../redux/reducers/mes/mesReducer';
@@ -16,9 +16,15 @@ interface Props {
 
 function NotesTableContainer(props: Props) {
   const { mesError, handleChangeErrorMessage } = props;
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [
+    warningModalOpened,
+    { open: warningModalOpen, close: warningModalClose },
+  ] = useDisclosure(false);
+
+  const [
+    editNoteModalOpened,
+    { open: editNoteModalOpen, close: editNoteModalClose },
+  ] = useDisclosure(false);
 
   const {
     allNotes,
@@ -32,11 +38,11 @@ function NotesTableContainer(props: Props) {
 
   const handleEditIconClick = (id: number) => {
     dispatch(changeSelectedNoteId(id));
-    dispatch(toggleEditNoteModal(true));
+    editNoteModalOpen();
   };
 
   const handleDeleteIconClick = (id: number) => {
-    handleOpen();
+    warningModalOpen();
     dispatch(changeSelectedNoteId(id));
   };
 
@@ -44,7 +50,7 @@ function NotesTableContainer(props: Props) {
     dispatch(deleteNote(selectedNoteId))
       .then(() => {
         dispatch(editNotesAfterDelete(selectedNoteId));
-        handleClose();
+        warningModalClose();
       })
       .catch((error) => {
         if (error instanceof Error || error instanceof AxiosError) {
@@ -58,10 +64,12 @@ function NotesTableContainer(props: Props) {
       allNotes={allNotes}
       mesError={mesError}
       requestStatus={requestStatus}
-      open={open}
+      warningModalOpened={warningModalOpened}
+      editNoteModalOpened={editNoteModalOpened}
       handleEditIconClick={handleEditIconClick}
       handleDeleteIconClick={handleDeleteIconClick}
-      handleClose={handleClose}
+      warningModalClose={warningModalClose}
+      editNoteModalClose={editNoteModalClose}
       cofirmAction={cofirmAction}
     />
   );

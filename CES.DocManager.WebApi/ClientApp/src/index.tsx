@@ -1,8 +1,8 @@
 import React from 'react';
-import { MantineProvider, createTheme } from '@mantine/core';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { MantineProvider, createTheme } from '@mantine/core';
 import store from './redux/store/configureStore';
 import Layout from './components/Layout/Layout.component';
 import HomePage from './routes/home/HomePage.container';

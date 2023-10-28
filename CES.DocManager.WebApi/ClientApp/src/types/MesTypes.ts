@@ -7,7 +7,9 @@ export interface INote {
 
 export interface ContactInfo {
   id: number;
-  address: string;
+  street: string;
+  entrance: string;
+  houseNumber: string;
   tel: string;
 }
 

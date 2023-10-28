@@ -1,65 +1,53 @@
 import React from 'react';
 import {
-  Box,
   Button,
+  Flex,
   Modal,
   Stack,
-  Typography,
-} from '@mui/material';
+  Title,
+} from '@mantine/core';
 
 interface WarningModalComponentProps {
-  open: boolean;
-  handleClose: () => void;
+  warningModalOpened: boolean;
+  warningModalClose: () => void;
   cofirmAction: () => void;
 }
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 470,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  borderRadius: 5,
-  p: 3,
-};
-
 export default function WarningModalComponent(props: WarningModalComponentProps) {
   const {
-    open,
-    handleClose,
+    warningModalOpened,
+    warningModalClose,
     cofirmAction,
   } = props;
 
   return (
     <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      opened={warningModalOpened}
+      onClose={warningModalClose}
+      centered
+      withCloseButton
     >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2" mb={3}>
+      <Stack>
+        <Title variant="h6" order={2} mb={3}>
           Вы уверены, что хотите удалить эту запись?
-        </Typography>
-        <Stack gap={3} direction="row" justifyContent="space-evenly">
+        </Title>
+        <Flex gap={3} direction="row" justify="space-evenly">
           <Button
-            onClick={handleClose}
+            onClick={warningModalClose}
             variant="outlined"
-            sx={{ width: '150px' }}
+            w={150}
           >
             Отменить
           </Button>
           <Button
             onClick={cofirmAction}
             variant="contained"
-            sx={{ width: '150px' }}
+            w={150}
           >
             Удалить
           </Button>
-        </Stack>
-      </Box>
+        </Flex>
+      </Stack>
     </Modal>
   );
 }

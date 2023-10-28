@@ -5,10 +5,8 @@ import EditNoteModalComponent from './EditNoteModal.component';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { changeSelectedNoteId, editAllNotes } from '../../redux/reducers/mes/mesReducer';
-import { toggleEditNoteModal } from '../../redux/reducers/modals/modalsReducer';
-import { IModal } from '../../types/type';
-import { EditNoteRequest, INotesState } from '../../types/MesTypes';
 import editExistedNote from '../../redux/actions/mes/editExistedNote';
+import { EditNoteRequest, INotesState } from '../../types/MesTypes';
 
 const defaultFormValues: EditNoteRequest = {
   id: 0,
@@ -18,16 +16,17 @@ const defaultFormValues: EditNoteRequest = {
   noteContactsInfo: [],
 };
 
-function EditNoteModalContainer() {
+interface EditNoteModalContainerProps {
+  editNoteModalOpened: boolean;
+  editNoteModalClose: () => void;
+}
+
+function EditNoteModalContainer(props: EditNoteModalContainerProps) {
+  const { editNoteModalOpened, editNoteModalClose } = props;
+
   const [formState, setFormState] = useState<EditNoteRequest>(defaultFormValues);
   const [counter, setCounter] = useState<number>(1);
   const [modalError, setModalError] = useState<string>('');
-
-  const {
-    isEditNoteModalOpen,
-  } = useSelector<RootState, IModal>(
-    (state) => state.modals,
-  );
 
   const {
     allNotes,
@@ -40,26 +39,30 @@ function EditNoteModalContainer() {
   const dispatch: IAuthResponseType = useDispatch();
 
   useEffect(() => {
-    const elem = allNotes.filter((el) => el.id === selectedNoteId)[0];
-    setFormState({
-      id: elem.id,
-      date: elem.date,
-      comment: elem.comment,
-      isChecked: elem.isChecked,
-      noteContactsInfo: [
-        {
-          id: counter,
-          address: '',
-          tel: '',
-        },
-      ],
-    });
-    setCounter((prevCounter) => (prevCounter + 1));
+    if (allNotes.length !== 0 && editNoteModalOpened) {
+      const elem = allNotes.filter((el) => el.id === selectedNoteId)[0];
+      setFormState({
+        id: elem.id,
+        date: elem.date,
+        comment: elem.comment,
+        isChecked: elem.isChecked,
+        noteContactsInfo: [
+          {
+            id: counter,
+            street: '',
+            entrance: '',
+            houseNumber: '',
+            tel: '',
+          },
+        ],
+      });
+      setCounter((prevCounter) => (prevCounter + 1));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [editNoteModalOpened]);
 
   const handleClose = () => {
-    dispatch(toggleEditNoteModal(false));
+    editNoteModalClose();
     dispatch(changeSelectedNoteId(0));
   };
 
@@ -74,12 +77,44 @@ function EditNoteModalContainer() {
     setFormState((prevFormState) => ({ ...prevFormState, comment: value }));
   };
 
-  const handleAddressChange = (value: string, index: number) => {
+  const handleStreetChange = (value: string, index: number) => {
     const stateCopy = formState;
     const newArr = stateCopy.noteContactsInfo.map((el, i) => {
       if (i === index) {
         const elem = el;
-        elem.address = value;
+        elem.street = value;
+        return elem;
+      }
+      return el;
+    });
+    setFormState((prevFormState) => ({
+      ...prevFormState,
+      noteContactsInfo: [...newArr],
+    }));
+  };
+
+  const handleEntranceChange = (value: string, index: number) => {
+    const stateCopy = formState;
+    const newArr = stateCopy.noteContactsInfo.map((el, i) => {
+      if (i === index) {
+        const elem = el;
+        elem.entrance = value;
+        return elem;
+      }
+      return el;
+    });
+    setFormState((prevFormState) => ({
+      ...prevFormState,
+      noteContactsInfo: [...newArr],
+    }));
+  };
+
+  const handleHouseNumberChange = (value: string, index: number) => {
+    const stateCopy = formState;
+    const newArr = stateCopy.noteContactsInfo.map((el, i) => {
+      if (i === index) {
+        const elem = el;
+        elem.houseNumber = value;
         return elem;
       }
       return el;
@@ -110,7 +145,7 @@ function EditNoteModalContainer() {
     event.preventDefault();
 
     const stateCopy = formState;
-    stateCopy.noteContactsInfo = stateCopy.noteContactsInfo.filter((el) => el.address !== '');
+    stateCopy.noteContactsInfo = stateCopy.noteContactsInfo.filter((el) => el.street !== '');
     dispatch(editExistedNote(stateCopy))
       .then(() => handleClose())
       .catch((error) => {
@@ -127,7 +162,9 @@ function EditNoteModalContainer() {
         ...prevFormState.noteContactsInfo,
         {
           id: counter,
-          address: '',
+          street: '',
+          entrance: '',
+          houseNumber: '',
           tel: '',
         },
       ],
@@ -148,10 +185,12 @@ function EditNoteModalContainer() {
 
   return (
     <EditNoteModalComponent
-      isEditNoteModalOpen={isEditNoteModalOpen}
+      editNoteModalOpened={editNoteModalOpened}
       formState={formState}
       handleTextAreaChange={handleTextAreaChange}
-      handleAddressChange={handleAddressChange}
+      handleStreetChange={handleStreetChange}
+      handleEntranceChange={handleEntranceChange}
+      handleHouseNumberChange={handleHouseNumberChange}
       handleTelChange={handleTelChange}
       handleClose={handleClose}
       handleAddButtonClick={handleAddButtonClick}

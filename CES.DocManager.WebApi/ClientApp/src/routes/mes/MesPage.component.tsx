@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AddActModal from '../../components/AddActModal/AddActModal.container';
-import EditNoteModal from '../../components/EditNoteModal/EditNoteModal.container';
 import NotesTable from '../../components/NotesTable/NotesTable.container';
 import AddOrganizationModal from '../../components/AddOrganizationModal/AddOrganizationModal.container';
 import OrganizationsTable from '../../components/OrganizationsTable/OrganizationsTable.container';
@@ -21,7 +20,6 @@ import './MesPage.style.scss';
 
 interface Props {
   isAddActModalOpen: boolean;
-  isEditNoteModalOpen: boolean;
   isAddOrganizationModalOpen: boolean;
   isEditOrganizationModalOpen: boolean;
   mesError: string;
@@ -52,7 +50,6 @@ interface Props {
 export default function MesPageComponent(props: Props) {
   const {
     isAddActModalOpen,
-    isEditNoteModalOpen,
     isAddOrganizationModalOpen,
     isEditOrganizationModalOpen,
     mesError,
@@ -217,7 +214,6 @@ export default function MesPageComponent(props: Props) {
           changeType={changeType}
         />
       )}
-      {isEditNoteModalOpen && <EditNoteModal />}
       {(isAddOrganizationModalOpen || isEditOrganizationModalOpen) && <AddOrganizationModal />}
     </section>
   );

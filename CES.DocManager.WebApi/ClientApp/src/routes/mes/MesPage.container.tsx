@@ -26,7 +26,7 @@ function MesPageContainer() {
 
   const {
     isAddActModalOpen,
-    isEditNoteModalOpen,
+    // isEditNoteModalOpen,
     isAddOrganizationModalOpen,
     isEditOrganizationModalOpen,
   } = useSelector<RootState, IModal>(
@@ -174,7 +174,7 @@ function MesPageContainer() {
   return (
     <MesPageComponent
       isAddActModalOpen={isAddActModalOpen}
-      isEditNoteModalOpen={isEditNoteModalOpen}
+      // isEditNoteModalOpen={isEditNoteModalOpen}
       isAddOrganizationModalOpen={isAddOrganizationModalOpen}
       isEditOrganizationModalOpen={isEditOrganizationModalOpen}
       mesError={mesError}

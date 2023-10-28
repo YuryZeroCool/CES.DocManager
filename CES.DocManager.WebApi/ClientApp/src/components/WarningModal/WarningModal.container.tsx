@@ -2,18 +2,18 @@ import React from 'react';
 import WarningModalComponent from './WarningModal.component';
 
 interface WarningModalContainerProps {
-  open: boolean;
+  warningModalOpened: boolean;
   cofirmAction: () => void;
-  handleClose: () => void;
+  warningModalClose: () => void;
 }
 
 function WarningModalContainer(props: WarningModalContainerProps) {
-  const { open, handleClose, cofirmAction } = props;
+  const { warningModalOpened, warningModalClose, cofirmAction } = props;
 
   return (
     <WarningModalComponent
-      open={open}
-      handleClose={handleClose}
+      warningModalOpened={warningModalOpened}
+      warningModalClose={warningModalClose}
       cofirmAction={cofirmAction}
     />
   );
