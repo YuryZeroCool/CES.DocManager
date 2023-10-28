@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20231027182025_DeletePriceOfWorkInActEntityWorkNameInActEntityTables")]
+    partial class DeletePriceOfWorkInActEntityWorkNameInActEntityTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +42,7 @@ namespace CES.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CarMechanics", (string)null);
+                    b.ToTable("CarMechanics");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.DivisionEntity", b =>
@@ -57,7 +59,7 @@ namespace CES.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Divisions", (string)null);
+                    b.ToTable("Divisions");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Drivers.DriverLicenseEntity", b =>
@@ -92,7 +94,7 @@ namespace CES.Infra.Migrations
                         .IsUnique()
                         .HasFilter("[SerialNumber] IS NOT NULL");
 
-                    b.ToTable("DriverLicenses", (string)null);
+                    b.ToTable("DriverLicenses");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Drivers.DriverMedicalCertificateEntity", b =>
@@ -124,7 +126,7 @@ namespace CES.Infra.Migrations
                     b.HasIndex("SerialNumber")
                         .IsUnique();
 
-                    b.ToTable("DriverMedicalCertificate", (string)null);
+                    b.ToTable("DriverMedicalCertificate");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.EmployeeEntity", b =>
@@ -164,7 +166,7 @@ namespace CES.Infra.Migrations
                     b.HasIndex("PersonnelNumber")
                         .IsUnique();
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Fuel.FuelEntity", b =>
@@ -181,7 +183,7 @@ namespace CES.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Fuels", (string)null);
+                    b.ToTable("Fuels");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Fuel.PriceEntity", b =>
@@ -208,7 +210,7 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("FuelEntityId");
 
-                    b.ToTable("Prices", (string)null);
+                    b.ToTable("Prices");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.FuelWorkCardEntity", b =>
@@ -233,7 +235,7 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("NumberPlateCarId");
 
-                    b.ToTable("FuelWorkCards", (string)null);
+                    b.ToTable("FuelWorkCards");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.DecommissionedMaterialEntity", b =>
@@ -262,7 +264,7 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("NumberPlateOfCarId");
 
-                    b.ToTable("DecommissionedMaterials", (string)null);
+                    b.ToTable("DecommissionedMaterials");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.EnshrinedMaterialEntity", b =>
@@ -311,7 +313,7 @@ namespace CES.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EnshrinedMaterial", (string)null);
+                    b.ToTable("EnshrinedMaterial");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.PartyEntity", b =>
@@ -349,7 +351,7 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Parties", (string)null);
+                    b.ToTable("Parties");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.ProductEntity", b =>
@@ -377,7 +379,7 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.ProductGroupAccountEntity", b =>
@@ -395,7 +397,7 @@ namespace CES.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductsGroupAccount", (string)null);
+                    b.ToTable("ProductsGroupAccount");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.UnitEntity", b =>
@@ -413,7 +415,7 @@ namespace CES.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Units", (string)null);
+                    b.ToTable("Units");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.UsedMaterialEntity", b =>
@@ -432,7 +434,7 @@ namespace CES.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UsedMaterials", (string)null);
+                    b.ToTable("UsedMaterials");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.ActEntity", b =>
@@ -452,14 +454,11 @@ namespace CES.Infra.Migrations
                     b.Property<int>("OrganizationId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizationId");
 
-                    b.ToTable("Act", (string)null);
+                    b.ToTable("Act");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.ActTypeEntity", b =>
@@ -479,7 +478,7 @@ namespace CES.Infra.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("ActTypes", (string)null);
+                    b.ToTable("ActTypes");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.EntranceEntity", b =>
@@ -495,7 +494,7 @@ namespace CES.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Entrances", (string)null);
+                    b.ToTable("Entrances");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.HouseNumberEntity", b =>
@@ -515,7 +514,7 @@ namespace CES.Infra.Migrations
                     b.HasIndex("Number")
                         .IsUnique();
 
-                    b.ToTable("HouseNumbers", (string)null);
+                    b.ToTable("HouseNumbers");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.NoteEntity", b =>
@@ -561,7 +560,7 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("StreetId");
 
-                    b.ToTable("NoteEntities", (string)null);
+                    b.ToTable("NoteEntities");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.OrganizationEntity", b =>
@@ -593,7 +592,7 @@ namespace CES.Infra.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("OrganizationEntities", (string)null);
+                    b.ToTable("OrganizationEntities");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.PriceOfWorkInActEntity", b =>
@@ -609,7 +608,7 @@ namespace CES.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PricesOfWorkInAct", (string)null);
+                    b.ToTable("PricesOfWorkInAct");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.StreetEntity", b =>
@@ -629,7 +628,7 @@ namespace CES.Infra.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Streets", (string)null);
+                    b.ToTable("Streets");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.WorkNameInActEntity", b =>
@@ -640,6 +639,9 @@ namespace CES.Infra.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int?>("ActTypeEntityId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DateOfCreation")
                         .HasColumnType("DATETIME");
 
@@ -649,36 +651,9 @@ namespace CES.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("WorkNameInAct", (string)null);
-                });
+                    b.HasIndex("ActTypeEntityId");
 
-            modelBuilder.Entity("CES.Infra.Models.Mes.WorkPerformActEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("ActId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Count")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("NameId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PriceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActId");
-
-                    b.HasIndex("NameId");
-
-                    b.HasIndex("PriceId");
-
-                    b.ToTable("WorkPerformsAct", (string)null);
+                    b.ToTable("WorkNameInAct");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.NumberPlateOfCarEntity", b =>
@@ -703,7 +678,7 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("VehicleModelId");
 
-                    b.ToTable("NumberPlateOfCar", (string)null);
+                    b.ToTable("NumberPlateOfCar");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.VehicleBrandEntity", b =>
@@ -720,7 +695,7 @@ namespace CES.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("VehicleBrands", (string)null);
+                    b.ToTable("VehicleBrands");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.VehicleModelEntity", b =>
@@ -742,7 +717,7 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("VehicleBrandId");
 
-                    b.ToTable("VehicleModels", (string)null);
+                    b.ToTable("VehicleModels");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.WorkCardDivisionsEntity", b =>
@@ -765,7 +740,7 @@ namespace CES.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("WorkCardDivisions", (string)null);
+                    b.ToTable("WorkCardDivisions");
                 });
 
             modelBuilder.Entity("DivisionEntityNumberPlateOfCarEntity", b =>
@@ -780,7 +755,7 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("NumberPlateOfCarsId");
 
-                    b.ToTable("DivisionEntityNumberPlateOfCarEntity", (string)null);
+                    b.ToTable("DivisionEntityNumberPlateOfCarEntity");
                 });
 
             modelBuilder.Entity("HouseNumberEntityStreetEntity", b =>
@@ -795,7 +770,7 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("StreetsId");
 
-                    b.ToTable("HouseNumberEntityStreetEntity", (string)null);
+                    b.ToTable("HouseNumberEntityStreetEntity");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Drivers.DriverLicenseEntity", b =>
@@ -936,31 +911,11 @@ namespace CES.Infra.Migrations
                     b.Navigation("Street");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.Mes.WorkPerformActEntity", b =>
+            modelBuilder.Entity("CES.Infra.Models.Mes.WorkNameInActEntity", b =>
                 {
-                    b.HasOne("CES.Infra.Models.Mes.ActEntity", "Act")
-                        .WithMany()
-                        .HasForeignKey("ActId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CES.Infra.Models.Mes.WorkNameInActEntity", "Name")
-                        .WithMany()
-                        .HasForeignKey("NameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CES.Infra.Models.Mes.PriceOfWorkInActEntity", "Price")
-                        .WithMany()
-                        .HasForeignKey("PriceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Act");
-
-                    b.Navigation("Name");
-
-                    b.Navigation("Price");
+                    b.HasOne("CES.Infra.Models.Mes.ActTypeEntity", null)
+                        .WithMany("WorkNameInActEntities")
+                        .HasForeignKey("ActTypeEntityId");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.NumberPlateOfCarEntity", b =>
@@ -1055,6 +1010,11 @@ namespace CES.Infra.Migrations
             modelBuilder.Entity("CES.Infra.Models.Mes.ActEntity", b =>
                 {
                     b.Navigation("Notes");
+                });
+
+            modelBuilder.Entity("CES.Infra.Models.Mes.ActTypeEntity", b =>
+                {
+                    b.Navigation("WorkNameInActEntities");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.OrganizationEntity", b =>

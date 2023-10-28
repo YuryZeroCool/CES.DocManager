@@ -8,9 +8,9 @@
 
         public DateTime DateOfCreation { get; set; }
 
-        public List<PriceOfWorkInActEntity> PricesOfWorkInAct { get; set; } = new();
+        // public List<PriceOfWorkInActEntity> PricesOfWorkInAct { get; set; } = new();
 
-        public List<ActTypeEntity> ActTypes { get; set; } = new();
+        //public List<ActTypeEntity> ActTypes { get; set; } = new();
 
     }
 }

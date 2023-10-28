@@ -30,13 +30,13 @@ namespace CES.Domain.Handlers.CommonInfo
                      .ThenInclude(c => c.DriverLicense)
                      .Include(x => x.EmployeeEntities)
                      .ThenInclude(c => c.MedicalCertificates)
-                     .Include(c => c.NumberPlateOfCars)
+                     //.Include(c => c.NumberPlateOfCars)
                      .FirstOrDefaultAsync(x => x.Name == division.Name, cancellationToken);
                 var info = new List<GetCommonInfoResponse>();
 
-                if (data == null || data.NumberPlateOfCars == null) throw new System.Exception("Error");
+                //if (data == null || data.NumberPlateOfCars == null) throw new System.Exception("Error");
 
-                foreach (var item in data.NumberPlateOfCars)
+                /*foreach (var item in data.NumberPlateOfCars)
                 {
                     var carModel = cars
                         .Select(x => x.VehiclesModels
@@ -49,7 +49,7 @@ namespace CES.Domain.Handlers.CommonInfo
                         NumberPlateOfCar = item.Number,
                         VehicleModel = carModel?.VehicleBrand?.Name + " " + carModel?.Name
                     });
-                }
+                }*/
 
                 foreach (var item in data.EmployeeEntities)
                 {

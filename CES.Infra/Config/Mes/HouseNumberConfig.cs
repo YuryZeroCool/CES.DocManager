@@ -8,8 +8,7 @@ namespace CES.Infra.Config.Mes
     {
         public void Configure(EntityTypeBuilder<HouseNumberEntity> builder)
         {
-            builder.Property(x => x.Number)
-                .HasColumnType("nvarchar");
+            builder.HasIndex(x => x.Number).IsUnique(true);
         }
     }
 }

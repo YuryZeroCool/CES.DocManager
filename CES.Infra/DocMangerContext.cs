@@ -78,6 +78,8 @@ namespace CES.Infra
 
         public virtual DbSet<HouseNumberEntity>? HouseNumbers { get; set; }
 
+        public virtual DbSet<WorkPerformActEntity>? WorkPerformsAct { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfig());

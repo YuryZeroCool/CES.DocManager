@@ -5,7 +5,8 @@
         public int Id { get; set; }
 
         public string Name { get; set; } = "";
-        public List<WorkNameInActEntity> WorkNameInActEntities { get; set; } = new();
+        
+        //public List<WorkNameInActEntity> WorkNameInActEntities { get; set; } = new();
 
     }
 }

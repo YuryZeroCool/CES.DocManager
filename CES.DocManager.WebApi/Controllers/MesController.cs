@@ -2,8 +2,10 @@
 using CES.DocManager.WebApi.Models;
 using CES.DocManager.WebApi.Models.Mes;
 using CES.Domain.Models.Request.Mes;
+using CES.Domain.Models.Request.Mes.HouseNumbers;
 using CES.Domain.Models.Request.Mes.Street;
 using CES.Domain.Models.Response.Mes;
+using CES.Domain.Models.Response.Mes.HouseNumbers;
 using CES.Domain.Models.Response.Mes.Street;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
@@ -342,6 +344,23 @@ namespace CES.DocManager.WebApi.Controllers
                 return res;
             }
             catch(Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return new { e.Message };
+            }
+        }
+
+        [HttpPost("houseNumber")]
+        [Produces(typeof(CreateHouseNumberResponse))]
+        public async Task<object> CreateHouseNumber([FromBody] string houseNumber)
+        {
+            try
+            {
+                var res = await _mediator.Send(new CreateHouseNumberRequest() { HouseNumber = houseNumber });
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
+                return res;
+            }
+            catch (Exception e)
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return new { e.Message };

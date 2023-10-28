@@ -112,10 +112,11 @@ namespace CES.DocManager.WebApi.Controllers
 
                 return await Task.FromResult("Файл успешно записан");
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 HttpContext.Response.StatusCode = 500;
-                return await Task.FromResult("Произашка ошибка при записи файла");
+                //return await Task.FromResult("Произашка ошибка при записи файла");
+                return e.Message;
             }
 
         }
