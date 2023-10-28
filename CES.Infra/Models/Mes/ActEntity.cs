@@ -8,6 +8,8 @@
 
         public DateTime DateOfWorkCompletion { get; set; }
 
+        public decimal Total { get; set; }
+
         public int OrganizationId { get; set; }
 
         public OrganizationEntity Organization { get; set; }
