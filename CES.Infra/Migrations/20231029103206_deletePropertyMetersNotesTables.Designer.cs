@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20231029103206_deletePropertyMetersNotesTables")]
+    partial class deletePropertyMetersNotesTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -889,7 +891,7 @@ namespace CES.Infra.Migrations
             modelBuilder.Entity("CES.Infra.Models.Mes.ActEntity", b =>
                 {
                     b.HasOne("CES.Infra.Models.Mes.OrganizationEntity", "Organization")
-                        .WithMany()
+                        .WithMany("Acts")
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1022,6 +1024,11 @@ namespace CES.Infra.Migrations
             modelBuilder.Entity("CES.Infra.Models.Mes.ActEntity", b =>
                 {
                     b.Navigation("Notes");
+                });
+
+            modelBuilder.Entity("CES.Infra.Models.Mes.OrganizationEntity", b =>
+                {
+                    b.Navigation("Acts");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.NumberPlateOfCarEntity", b =>
