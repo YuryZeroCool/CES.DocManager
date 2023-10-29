@@ -12,8 +12,6 @@ namespace CES.Infra.Models.Mes
 
         public DateTime Date { get; set; }
 
-        public int? Meters { get; set; }
-
         public string? Comment { get; set; }
 
         public bool IsChecked { get; set; }
