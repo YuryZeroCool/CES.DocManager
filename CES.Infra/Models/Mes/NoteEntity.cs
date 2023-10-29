@@ -27,5 +27,9 @@ namespace CES.Infra.Models.Mes
         public int? HouseNumberId { get; set; }
 
         public HouseNumberEntity? HouseNumber { get; set; }
+
+        public int? EntranceId { get; set; }
+
+        public EntranceEntity? Entrance { get; set; }
     }
 }
