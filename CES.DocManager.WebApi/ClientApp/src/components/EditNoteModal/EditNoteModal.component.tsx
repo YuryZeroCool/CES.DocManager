@@ -136,6 +136,7 @@ export default function EditNoteModalComponent(props: Props) {
               placeholder="Адрес"
               w="100%"
               value={address || ''}
+              readOnly
             />
             {renderNoteContactsInfo}
             <Flex gap="2%" mt={20} justify="end">

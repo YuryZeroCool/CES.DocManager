@@ -28,6 +28,7 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
   const [formState, setFormState] = useState<EditNoteRequest>(defaultFormValues);
   const [counter, setCounter] = useState<number>(1);
   const [modalError, setModalError] = useState<string>('');
+  const [address, setAddress] = useState<string | null>(null); // remove in the future
 
   const {
     allNotes,
@@ -43,6 +44,7 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
   useEffect(() => {
     if (allNotes.length !== 0 && editNoteModalOpened) {
       const elem = allNotes.filter((el) => el.id === selectedNoteId)[0];
+      setAddress(elem.address); // remove later
       setFormState({
         id: elem.id,
         date: elem.date,
@@ -200,9 +202,7 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
       editNoteModalOpened={editNoteModalOpened}
       formState={formState}
       streetsBySearch={streetsBySearch}
-      address={allNotes.length !== 0 && selectedNoteId !== 0
-        ? allNotes.filter((el) => el.id === selectedNoteId)[0].address
-        : ''} // remove in the future
+      address={address} // remove in the future
       handleTextAreaChange={handleTextAreaChange}
       handleStreetSearchChange={handleStreetSearchChange}
       handleEntranceChange={handleEntranceChange}
