@@ -2,7 +2,7 @@ export interface INote {
   id: number;
   date: string;
   comment: string;
-  address: string; // remove in the future
+  address: string | null; // remove in the future
   isChecked: boolean;
 }
 

@@ -17,7 +17,7 @@ interface Props {
   editNoteModalOpened: boolean;
   formState: EditNoteRequest;
   streetsBySearch: string[];
-  address: string; // remove in the future
+  address: string | null; // remove in the future
   handleTextAreaChange: (value: string) => void;
   handleStreetSearchChange: (value: string, index: number) => void;
   handleEntranceChange: (value: string, index: number) => void;
@@ -135,7 +135,7 @@ export default function EditNoteModalComponent(props: Props) {
               label="Адрес"
               placeholder="Адрес"
               w="100%"
-              value={address}
+              value={address || ''}
             />
             {renderNoteContactsInfo}
             <Flex gap="2%" mt={20} justify="end">

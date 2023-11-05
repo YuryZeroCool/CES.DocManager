@@ -200,7 +200,9 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
       editNoteModalOpened={editNoteModalOpened}
       formState={formState}
       streetsBySearch={streetsBySearch}
-      address={allNotes.filter((el) => el.id === selectedNoteId)[0].address} // remove in the future
+      address={allNotes.length !== 0 && selectedNoteId !== 0
+        ? allNotes.filter((el) => el.id === selectedNoteId)[0].address
+        : ''} // remove in the future
       handleTextAreaChange={handleTextAreaChange}
       handleStreetSearchChange={handleStreetSearchChange}
       handleEntranceChange={handleEntranceChange}
