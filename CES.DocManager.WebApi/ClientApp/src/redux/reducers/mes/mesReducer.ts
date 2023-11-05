@@ -18,6 +18,7 @@ import getActTypesFromFile from '../../actions/mes/getActTypesFromFile';
 import getActDataFromFile from '../../actions/mes/getActDataFromFile';
 import deleteNote from '../../actions/mes/deleteNote';
 import organizationsBySearch from '../../actions/mes/organizationsBySearch';
+import streetsBySearch from '../../actions/mes/getStreetsBySearch';
 
 const organizationDefault = {
   id: 0,
@@ -58,6 +59,7 @@ const initial: INotesState = {
   deletedNoteId: 0,
   totalActSumm: 0,
   vat: 0,
+  streetsBySearch: [],
 };
 
 const mesReducer = createSlice({
@@ -135,7 +137,6 @@ const mesReducer = createSlice({
       return stateCopy;
     },
     updateActDataFromFile: (state, action: PayloadAction<UpdateActDataFromFileReq>) => {
-      // const newState: INotesState = JSON.parse(JSON.stringify(state));
       const newState: INotesState = { ...state };
 
       const { actDataFromFile } = newState;
@@ -383,6 +384,27 @@ const mesReducer = createSlice({
       return stateCopy;
     });
     builder.addCase(deleteNote.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(streetsBySearch.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        requestStatus: 'pending',
+      };
+      return stateCopy;
+    });
+    builder.addCase(streetsBySearch.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        streetsBySearch: [...action.payload],
+        requestStatus: 'fulfilled',
+      };
+      return stateCopy;
+    });
+    builder.addCase(streetsBySearch.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
   },

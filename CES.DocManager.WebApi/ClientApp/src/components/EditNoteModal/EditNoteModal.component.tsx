@@ -4,18 +4,22 @@ import {
   Button,
   Flex,
   Modal,
+  Select,
   Stack,
   TextInput,
   Textarea,
 } from '@mantine/core';
 import { IconTrash, IconPlus } from '@tabler/icons-react';
 import { EditNoteRequest } from '../../types/MesTypes';
+import classes from './EditNoteModal.module.scss';
 
 interface Props {
   editNoteModalOpened: boolean;
   formState: EditNoteRequest;
+  streetsBySearch: string[];
+  address: string; // remove in the future
   handleTextAreaChange: (value: string) => void;
-  handleStreetChange: (value: string, index: number) => void;
+  handleStreetSearchChange: (value: string, index: number) => void;
   handleEntranceChange: (value: string, index: number) => void;
   handleHouseNumberChange: (value: string, index: number) => void;
   handleTelChange: (value: string, index: number) => void;
@@ -29,8 +33,10 @@ export default function EditNoteModalComponent(props: Props) {
   const {
     editNoteModalOpened,
     formState,
+    streetsBySearch,
+    address,
     handleTextAreaChange,
-    handleStreetChange,
+    handleStreetSearchChange,
     handleEntranceChange,
     handleHouseNumberChange,
     handleTelChange,
@@ -54,20 +60,30 @@ export default function EditNoteModalComponent(props: Props) {
       <Flex key={el.id} align="start" gap="2%" p={10} style={{ borderBottom: '1px solid gray' }}>
         <Stack gap={10}>
           <Flex gap={10}>
-            <TextInput
-              label="Улица"
+            <Select
+              classNames={{
+                dropdown: classes.selectDropdown,
+              }}
               w={380}
+              label="Улица"
+              placeholder="Введите значение"
+              data={streetsBySearch}
+              searchable
+              onSearchChange={(value) => handleStreetSearchChange(value, index)}
               value={el.street}
-              onChange={(event) => handleStreetChange(event.target.value, index)}
             />
+
             <TextInput
               label="Подъезд"
+              placeholder="Подъезд"
               w={120}
               value={el.entrance}
               onChange={(event) => handleEntranceChange(event.target.value, index)}
             />
+
             <TextInput
-              label="Дом"
+              label="Номер дома"
+              placeholder="Номер дома"
               w={120}
               value={el.houseNumber}
               onChange={(event) => handleHouseNumberChange(event.target.value, index)}
@@ -115,6 +131,12 @@ export default function EditNoteModalComponent(props: Props) {
         <form onSubmit={(event) => onSubmit(event)}>
           <Stack gap={15}>
             {renderTextArea}
+            <TextInput
+              label="Адрес"
+              placeholder="Адрес"
+              w="100%"
+              value={address}
+            />
             {renderNoteContactsInfo}
             <Flex gap="2%" mt={20} justify="end">
               <Button

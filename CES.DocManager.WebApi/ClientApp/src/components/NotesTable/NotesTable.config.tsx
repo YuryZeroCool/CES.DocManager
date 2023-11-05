@@ -1,5 +1,3 @@
-import { INote } from '../../types/MesTypes';
-
 interface HeadCell {
   id: number;
   label: string;

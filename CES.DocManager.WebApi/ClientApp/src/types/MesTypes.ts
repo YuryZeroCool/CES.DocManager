@@ -2,6 +2,7 @@ export interface INote {
   id: number;
   date: string;
   comment: string;
+  address: string; // remove in the future
   isChecked: boolean;
 }
 
@@ -62,6 +63,7 @@ export interface INotesState {
   totalActSumm: number;
   deletedNoteId: number;
   vat: number;
+  streetsBySearch: string[];
 }
 
 export interface SearchOrganization {

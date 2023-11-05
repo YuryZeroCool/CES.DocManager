@@ -6,6 +6,7 @@ import { RootState } from '../../redux/reducers/combineReducers';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { changeSelectedNoteId, editAllNotes } from '../../redux/reducers/mes/mesReducer';
 import editExistedNote from '../../redux/actions/mes/editExistedNote';
+import getStreetsBySearch from '../../redux/actions/mes/getStreetsBySearch';
 import { EditNoteRequest, INotesState } from '../../types/MesTypes';
 
 const defaultFormValues: EditNoteRequest = {
@@ -32,6 +33,7 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
     allNotes,
     selectedNoteId,
     editedNoteId,
+    streetsBySearch,
   } = useSelector<RootState, INotesState>(
     (state) => state.mes,
   );
@@ -77,20 +79,30 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
     setFormState((prevFormState) => ({ ...prevFormState, comment: value }));
   };
 
-  const handleStreetChange = (value: string, index: number) => {
-    const stateCopy = formState;
-    const newArr = stateCopy.noteContactsInfo.map((el, i) => {
-      if (i === index) {
-        const elem = el;
-        elem.street = value;
-        return elem;
-      }
-      return el;
-    });
-    setFormState((prevFormState) => ({
-      ...prevFormState,
-      noteContactsInfo: [...newArr],
-    }));
+  const handleStreetSearchChange = (value: string, index: number) => {
+    if (formState.noteContactsInfo[index].street !== value) {
+      dispatch(getStreetsBySearch(value))
+        .then(() => {
+          setFormState((prevFormState) => {
+            const updatedContacts = formState.noteContactsInfo.map((el, i) => {
+              if (i === index) {
+                return { ...el, street: value };
+              }
+              return el;
+            });
+
+            return {
+              ...prevFormState,
+              noteContactsInfo: updatedContacts,
+            };
+          });
+        })
+        .catch((error) => {
+          if (error instanceof Error || error instanceof AxiosError) {
+            setModalError(error.message);
+          }
+        });
+    }
   };
 
   const handleEntranceChange = (value: string, index: number) => {
@@ -187,8 +199,10 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
     <EditNoteModalComponent
       editNoteModalOpened={editNoteModalOpened}
       formState={formState}
+      streetsBySearch={streetsBySearch}
+      address={allNotes.filter((el) => el.id === selectedNoteId)[0].address} // remove in the future
       handleTextAreaChange={handleTextAreaChange}
-      handleStreetChange={handleStreetChange}
+      handleStreetSearchChange={handleStreetSearchChange}
       handleEntranceChange={handleEntranceChange}
       handleHouseNumberChange={handleHouseNumberChange}
       handleTelChange={handleTelChange}
