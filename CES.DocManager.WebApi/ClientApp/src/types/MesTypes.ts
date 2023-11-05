@@ -4,6 +4,7 @@ export interface INote {
   comment: string;
   address: string | null; // remove in the future
   isChecked: boolean;
+  tel: string | null;
 }
 
 export interface ContactInfo {

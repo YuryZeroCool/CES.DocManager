@@ -74,19 +74,19 @@ export default function EditNoteModalComponent(props: Props) {
             />
 
             <TextInput
-              label="Подъезд"
-              placeholder="Подъезд"
-              w={120}
-              value={el.entrance}
-              onChange={(event) => handleEntranceChange(event.target.value, index)}
-            />
-
-            <TextInput
               label="Номер дома"
               placeholder="Номер дома"
               w={120}
               value={el.houseNumber}
               onChange={(event) => handleHouseNumberChange(event.target.value, index)}
+            />
+
+            <TextInput
+              label="Подъезд"
+              placeholder="Подъезд"
+              w={120}
+              value={el.entrance}
+              onChange={(event) => handleEntranceChange(event.target.value, index)}
             />
           </Flex>
 

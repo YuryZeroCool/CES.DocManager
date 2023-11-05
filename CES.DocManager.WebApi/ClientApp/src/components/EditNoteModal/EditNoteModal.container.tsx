@@ -56,7 +56,7 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
             street: '',
             entrance: '',
             houseNumber: '',
-            tel: '',
+            tel: elem.tel ?? '',
           },
         ],
       });
