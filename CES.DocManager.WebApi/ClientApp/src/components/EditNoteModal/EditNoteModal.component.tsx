@@ -17,7 +17,6 @@ interface Props {
   editNoteModalOpened: boolean;
   formState: EditNoteRequest;
   streetsBySearch: string[];
-  address: string | null; // remove in the future
   handleTextAreaChange: (value: string) => void;
   handleStreetSearchChange: (value: string, index: number) => void;
   handleEntranceChange: (value: string, index: number) => void;
@@ -34,7 +33,6 @@ export default function EditNoteModalComponent(props: Props) {
     editNoteModalOpened,
     formState,
     streetsBySearch,
-    address,
     handleTextAreaChange,
     handleStreetSearchChange,
     handleEntranceChange,
@@ -131,13 +129,6 @@ export default function EditNoteModalComponent(props: Props) {
         <form onSubmit={(event) => onSubmit(event)}>
           <Stack gap={15}>
             {renderTextArea}
-            <TextInput
-              label="Адрес"
-              placeholder="Адрес"
-              w="100%"
-              value={address || ''}
-              readOnly
-            />
             {renderNoteContactsInfo}
             <Flex gap="2%" mt={20} justify="end">
               <Button

@@ -2,9 +2,7 @@ export interface INote {
   id: number;
   date: string;
   comment: string;
-  address: string | null; // remove in the future
   isChecked: boolean;
-  tel: string | null;
 }
 
 export interface ContactInfo {
@@ -24,7 +22,9 @@ export interface EditNoteRequest {
 }
 
 export interface IFullNoteData extends INote {
-  address: string;
+  street: string;
+  entrance: string;
+  houseNumber: string;
   tel: string;
 }
 
