@@ -38,8 +38,8 @@ function NotesWithoutActsTableContainer(props: Props) {
     if (currentSearchIndex !== -1) {
       if (searchValues[currentSearchIndex].id === 'address') {
         arr = notesWithoutAct.filter(
-          (el) => el.address
-            && el.address.toLowerCase().includes(searchValues[currentSearchIndex].value),
+          (el) => el.street
+            && el.street.toLowerCase().includes(searchValues[currentSearchIndex].value),
         );
       }
 

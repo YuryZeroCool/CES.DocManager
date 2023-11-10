@@ -136,7 +136,11 @@ export default function NotesWithoutActsTableComponent(props: Props) {
                 }}
               />
             </TableCell>
-            <TableCell align="left">{row.address}</TableCell>
+            <TableCell align="left">
+              {row.street}
+              {row.houseNumber}
+              {row.entrance}
+            </TableCell>
             <TableCell sx={{ minWidth: 200 }} align="center">{row.date.replace('T', ' ')}</TableCell>
             <TableCell align="center">{row.tel}</TableCell>
             <TableCell align="left">{row.comment}</TableCell>
