@@ -138,8 +138,16 @@ export default function NotesWithoutActsTableComponent(props: Props) {
             </TableCell>
             <TableCell align="left">
               {row.street}
+              ,&nbsp;
+              д.&nbsp;
               {row.houseNumber}
-              {row.entrance}
+              {row.entrance !== 0 && (
+                <>
+                  ,&nbsp;
+                  п.&nbsp;
+                  {row.entrance}
+                </>
+              )}
             </TableCell>
             <TableCell sx={{ minWidth: 200 }} align="center">{row.date.replace('T', ' ')}</TableCell>
             <TableCell align="center">{row.tel}</TableCell>
