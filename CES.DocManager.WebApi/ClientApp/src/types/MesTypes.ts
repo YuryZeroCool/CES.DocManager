@@ -24,7 +24,7 @@ export interface EditNoteRequest {
 export interface IFullNoteData extends INote {
   street: string;
   entrance: string;
-  houseNumber: string;
+  houseNumber: number;
   tel: string;
 }
 
