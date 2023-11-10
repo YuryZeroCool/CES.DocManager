@@ -107,6 +107,8 @@ export default function EditNoteModalComponent(props: Props) {
         {index === formState.noteContactsInfo.length - 1 && (
           <ActionIcon
             onClick={handleAddButtonClick}
+            variant="gradient"
+            gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
           >
             <IconPlus style={{ width: '20px', height: '20px' }} />
           </ActionIcon>
@@ -124,6 +126,9 @@ export default function EditNoteModalComponent(props: Props) {
       closeOnClickOutside={false}
       title="Отредактируйте заявку"
       size="xl"
+      classNames={{
+        title: classes.modalTitle,
+      }}
     >
       <Stack>
         <form onSubmit={(event) => onSubmit(event)}>
@@ -142,6 +147,8 @@ export default function EditNoteModalComponent(props: Props) {
                 disabled={formState.noteContactsInfo.filter((el) => el.street !== '').length === 0}
                 className="modal-button"
                 type="submit"
+                variant="gradient"
+                gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
               >
                 Сохранить
               </Button>
