@@ -137,10 +137,18 @@ export default function NotesWithoutActsTableComponent(props: Props) {
               />
             </TableCell>
             <TableCell align="left">
-              {row.street}
-              ,&nbsp;
-              д.&nbsp;
-              {row.houseNumber}
+              {row.street && (
+                <>
+                  {row.street}
+                  ,&nbsp;
+                </>
+              )}
+              {row.houseNumber && (
+                <>
+                  д.&nbsp;
+                  {row.houseNumber}
+                </>
+              )}
               {row.entrance !== 0 && (
                 <>
                   ,&nbsp;
