@@ -65,6 +65,7 @@ export interface INotesState {
   deletedNoteId: number;
   vat: number;
   streetsBySearch: string[];
+  createdActId: number;
 }
 
 export interface SearchOrganization {
@@ -104,7 +105,7 @@ export interface Work {
   name: string;
   unit: string;
   price: number;
-  count: number;
+  count: string;
   totalSumm: number;
 }
 
@@ -112,4 +113,16 @@ export interface UpdateActDataFromFileReq {
   workName: string;
   value: string;
   type: string;
+}
+
+export interface AddNewActReq {
+  organization: string;
+  vehicle: string;
+  driver: string;
+  actAdditionDate: Date;
+  actType: string;
+  completedWorks: Work[];
+  notesWithoutAct: IFullNoteData[];
+  totalActSumm: number;
+  vat: number;
 }

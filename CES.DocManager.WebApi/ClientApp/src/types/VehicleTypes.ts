@@ -15,4 +15,5 @@ export type INumbersPlateOfCarResponse = INumberPlateOfCar[];
 export interface IVehicleResponse {
   allBrands: IAllBrandsResponse;
   numbersPlateOfCar: INumbersPlateOfCarResponse;
+  carsByCarNumber: string[];
 }

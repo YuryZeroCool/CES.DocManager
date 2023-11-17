@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AxiosError } from 'axios';
+import { useDisclosure } from '@mantine/hooks';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { toggleAddActModal, toggleAddOrganizationModal } from '../../redux/reducers/modals/modalsReducer';
+import { toggleAddOrganizationModal } from '../../redux/reducers/modals/modalsReducer';
 import getAllNotes from '../../redux/actions/mes/getAllNotes';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { changeMesPageType, resetTotalActSummVat } from '../../redux/reducers/mes/mesReducer';
@@ -24,9 +25,12 @@ function MesPageContainer() {
   const [actTypeSelectValue, setActTypeSelectValue] = useState<string>('');
   const [currentActData, setCurrentActData] = useState<Act>({ type: '', works: [] });
 
+  const [
+    addActModalOpened,
+    { open: addActModalOpen, close: addActModalClose },
+  ] = useDisclosure(false);
+
   const {
-    isAddActModalOpen,
-    // isEditNoteModalOpen,
     isAddOrganizationModalOpen,
     isEditOrganizationModalOpen,
   } = useSelector<RootState, IModal>(
@@ -134,7 +138,7 @@ function MesPageContainer() {
   const handleAddActBtnClick = (value: string) => {
     dispatch(resetTotalActSummVat());
     changeType(value);
-    dispatch(toggleAddActModal(true));
+    addActModalOpen();
   };
 
   const handleAddOrganizationBtnClick = () => {
@@ -173,8 +177,6 @@ function MesPageContainer() {
 
   return (
     <MesPageComponent
-      isAddActModalOpen={isAddActModalOpen}
-      // isEditNoteModalOpen={isEditNoteModalOpen}
       isAddOrganizationModalOpen={isAddOrganizationModalOpen}
       isEditOrganizationModalOpen={isEditOrganizationModalOpen}
       mesError={mesError}
@@ -188,6 +190,8 @@ function MesPageContainer() {
       actDataFromFile={actDataFromFile}
       currentActData={currentActData}
       type={type}
+      addActModalOpened={addActModalOpened}
+      addActModalClose={addActModalClose}
       handleAddActBtnClick={handleAddActBtnClick}
       handleAddOrganizationBtnClick={handleAddOrganizationBtnClick}
       handleChangeMesPageType={handleChangeMesPageType}

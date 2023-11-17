@@ -1,11 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { IVehicleResponse } from '../../../types/VehicleTypes';
 import getAllBrands from '../../actions/vehicle/getAllBrands';
 import getNumbersPlateOfCar from '../../actions/vehicle/getNumbersPlateOfCar';
+import getCarByCarNumber from '../../actions/vehicle/getCarByCarNumber';
+import { IVehicleResponse } from '../../../types/VehicleTypes';
 
 const initial: IVehicleResponse = {
   allBrands: [],
   numbersPlateOfCar: [],
+  carsByCarNumber: [],
 };
 
 const vehicleReducer = createSlice({
@@ -21,12 +23,22 @@ const vehicleReducer = createSlice({
     builder.addCase(getAllBrands.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
+
     builder.addCase(getNumbersPlateOfCar.fulfilled, (state, action) => {
       let stateCopy = state;
       stateCopy = { ...stateCopy, numbersPlateOfCar: [...action.payload] };
       return stateCopy;
     });
     builder.addCase(getNumbersPlateOfCar.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(getCarByCarNumber.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, carsByCarNumber: [...action.payload] };
+      return stateCopy;
+    });
+    builder.addCase(getCarByCarNumber.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
   },

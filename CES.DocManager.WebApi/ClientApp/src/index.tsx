@@ -17,6 +17,7 @@ import RequireAuth from './hoc/RequireAuth';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/index.scss';
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 
 const root = createRoot(document.getElementById('root') as Element);
 const theme = createTheme({

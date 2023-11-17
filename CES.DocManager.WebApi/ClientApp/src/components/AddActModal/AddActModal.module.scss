@@ -1,0 +1,14 @@
+.selectDropdown {
+  z-index: 1000;
+}
+
+.modalTitle {
+  font-size: 26px !important;
+  font-weight: 600 !important;
+  width: 100%;
+  text-align: center;
+}
+
+.day[data-selected] {
+  background-color: var(--mantine-color-cyan-filled);
+}

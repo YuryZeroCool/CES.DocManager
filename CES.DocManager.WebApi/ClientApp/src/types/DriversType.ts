@@ -21,4 +21,5 @@ export interface ICreateDriverResponse extends ICreateDriverRequest {
 export interface IDriverResponse {
   createdDriver: ICreateDriverResponse;
   isPersonnelNumberExist: boolean;
+  driversByCarNumber: string[];
 }

@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { IDriverResponse } from '../../../types/DriversType';
 import createDriver from '../../actions/drivers/createDriver';
 import getIsPersonnelNumberExist from '../../actions/drivers/getIsPersonnelNumberExist';
+import getDriverByCarNumber from '../../actions/drivers/getDriversByCarNumber';
+import { IDriverResponse } from '../../../types/DriversType';
 
 const initial: IDriverResponse = {
   createdDriver: {
@@ -13,12 +14,23 @@ const initial: IDriverResponse = {
     personnelNumber: 0,
   },
   isPersonnelNumberExist: false,
+  driversByCarNumber: [],
 };
 
 const driversReducer = createSlice({
   name: 'drivers',
   initialState: initial,
-  reducers: {},
+  reducers: {
+    resetDriversByCar: (state) => {
+      let stateCopy: IDriverResponse = state;
+
+      stateCopy = {
+        ...stateCopy,
+        driversByCarNumber: [],
+      };
+      return stateCopy;
+    },
+  },
   extraReducers: (builder) => {
     // create driver
     builder.addCase(createDriver.fulfilled, (state, action) => {
@@ -39,7 +51,19 @@ const driversReducer = createSlice({
     builder.addCase(getIsPersonnelNumberExist.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
+
+    builder.addCase(getDriverByCarNumber.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, driversByCarNumber: action.payload };
+      return stateCopy;
+    });
+    builder.addCase(getDriverByCarNumber.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
   },
 });
 
+export const {
+  resetDriversByCar,
+} = driversReducer.actions;
 export default driversReducer.reducer;

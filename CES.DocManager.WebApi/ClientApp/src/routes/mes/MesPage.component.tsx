@@ -19,7 +19,6 @@ import { Act, ActDataFromFileResponse, ActTypesFromFileResponse } from '../../ty
 import './MesPage.style.scss';
 
 interface Props {
-  isAddActModalOpen: boolean;
   isAddOrganizationModalOpen: boolean;
   isEditOrganizationModalOpen: boolean;
   mesError: string;
@@ -33,7 +32,9 @@ interface Props {
   actDataFromFile: ActDataFromFileResponse;
   currentActData: Act;
   type: string;
+  addActModalOpened: boolean;
 
+  addActModalClose: () => void;
   handleAddActBtnClick: (value: string) => void;
   handleAddOrganizationBtnClick: () => void;
   handleChangeMesPageType: (value: string) => void;
@@ -49,7 +50,6 @@ interface Props {
 
 export default function MesPageComponent(props: Props) {
   const {
-    isAddActModalOpen,
     isAddOrganizationModalOpen,
     isEditOrganizationModalOpen,
     mesError,
@@ -63,7 +63,9 @@ export default function MesPageComponent(props: Props) {
     actDataFromFile,
     currentActData,
     type,
+    addActModalOpened,
 
+    addActModalClose,
     handleAddActBtnClick,
     handleAddOrganizationBtnClick,
     handleChangeMesPageType,
@@ -205,15 +207,15 @@ export default function MesPageComponent(props: Props) {
       {mesPageType === 'Организации' && renderOrganizationsTable()}
       {mesPageType === 'Организации' && renderPagination()}
       {mesPageType === 'Заявки без актов' && renderNotesWithoutActsTable()}
-      {isAddActModalOpen && (
-        <AddActModal
-          selectedNotesId={selectedNotesId}
-          currentActData={currentActData}
-          type={type}
-          resetCurrentActData={resetCurrentActData}
-          changeType={changeType}
-        />
-      )}
+      <AddActModal
+        selectedNotesId={selectedNotesId}
+        currentActData={currentActData}
+        type={type}
+        addActModalOpened={addActModalOpened}
+        addActModalClose={addActModalClose}
+        resetCurrentActData={resetCurrentActData}
+        changeType={changeType}
+      />
       {(isAddOrganizationModalOpen || isEditOrganizationModalOpen) && <AddOrganizationModal />}
     </section>
   );

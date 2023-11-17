@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AddActTableComponent from './AddActTable.component';
 import { Act, INotesState } from '../../types/MesTypes';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { updateActDataFromFile } from '../../redux/reducers/mes/mesReducer';
+import { updateActDataFromFile, updateActTotalSumm } from '../../redux/reducers/mes/mesReducer';
 
 interface Props {
   currentActData: Act;
@@ -25,6 +25,7 @@ function AddActTableContainer(props: Props) {
 
   const handleInputNumberChange = (workName: string, value: string) => {
     dispatch(updateActDataFromFile({ type, workName, value }));
+    dispatch(updateActTotalSumm(type));
   };
 
   return (
