@@ -1,25 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AxiosError } from 'axios';
 import { useDisclosure } from '@mantine/hooks';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { toggleAddOrganizationModal } from '../../redux/reducers/modals/modalsReducer';
 import getAllNotes from '../../redux/actions/mes/getAllNotes';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { changeMesPageType, resetTotalActSummVat } from '../../redux/reducers/mes/mesReducer';
 import searchOrganizations from '../../redux/actions/mes/searchOrganizations';
 import getNotesWithoutActs from '../../redux/actions/mes/getNotesWithoutActs';
 import { Act, INotesState, SearchOrganization } from '../../types/MesTypes';
-import { IModal } from '../../types/type';
 import MesPageComponent from './MesPage.component';
 import LIMIT from './MesPage.config';
 import getActTypesFromFile from '../../redux/actions/mes/getActTypesFromFile';
 import getActDataFromFile from '../../redux/actions/mes/getActDataFromFile';
+import handleError from '../../utils';
 
 function MesPageContainer() {
   const [mesError, setMesError] = useState<string>('');
   const [search, setSearchValue] = useState<string>('');
-  const [page, setPage] = useState<number>(1);
+  const [activePage, setPage] = useState(1);
   const [selected, setSelected] = useState<number[]>([]);
   const [type, setType] = useState<string>('');
   const [actTypeSelectValue, setActTypeSelectValue] = useState<string>('');
@@ -30,12 +28,15 @@ function MesPageContainer() {
     { open: addActModalOpen, close: addActModalClose },
   ] = useDisclosure(false);
 
-  const {
-    isAddOrganizationModalOpen,
-    isEditOrganizationModalOpen,
-  } = useSelector<RootState, IModal>(
-    (state) => state.modals,
-  );
+  const [
+    addOrganizationModalOpened,
+    { open: addOrganizationModalOpen, close: addOrganizationModalClose },
+  ] = useDisclosure(false);
+
+  const [
+    editOrganizationModalOpened,
+    { open: editOrganizationModalOpen, close: editOrganizationModalClose },
+  ] = useDisclosure(false);
 
   const {
     mesPageType,
@@ -57,9 +58,7 @@ function MesPageContainer() {
     };
     dispatch(searchOrganizations(seachOrganization))
       .catch((error) => {
-        if (error instanceof Error || error instanceof AxiosError) {
-          setMesError(error.message);
-        }
+        handleError(error, setMesError);
       });
   };
 
@@ -68,26 +67,20 @@ function MesPageContainer() {
       setMesError('');
       dispatch(getAllNotes())
         .catch((error) => {
-          if (error instanceof Error || error instanceof AxiosError) {
-            setMesError(error.message);
-          }
+          handleError(error, setMesError);
         });
     }
     if (mesPageType === 'Организации') {
-      getOgranizations(page);
+      getOgranizations(activePage);
     }
     if (mesPageType === 'Заявки без актов') {
       dispatch(getActTypesFromFile())
         .catch((error) => {
-          if (error instanceof Error || error instanceof AxiosError) {
-            setMesError(error.message);
-          }
+          handleError(error, setMesError);
         });
       dispatch(getNotesWithoutActs())
         .catch((error) => {
-          if (error instanceof Error || error instanceof AxiosError) {
-            setMesError(error.message);
-          }
+          handleError(error, setMesError);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,9 +94,7 @@ function MesPageContainer() {
 
       dispatch(getActDataFromFile(fileName))
         .catch((error) => {
-          if (error instanceof Error || error instanceof AxiosError) {
-            setMesError(error.message);
-          }
+          handleError(error, setMesError);
         });
     }
 
@@ -126,7 +117,7 @@ function MesPageContainer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actDataFromFile.act]);
 
-  const handleCurrentPageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  const handleCurrentPageChange = (value: number) => {
     setPage(value);
     getOgranizations(value);
   };
@@ -142,7 +133,7 @@ function MesPageContainer() {
   };
 
   const handleAddOrganizationBtnClick = () => {
-    dispatch(toggleAddOrganizationModal(true));
+    addOrganizationModalOpen();
   };
 
   const handleChangeMesPageType = (value: string) => {
@@ -160,7 +151,7 @@ function MesPageContainer() {
 
   const handleSearchButtonClick = () => {
     setPage(1);
-    getOgranizations(page);
+    getOgranizations(activePage);
   };
 
   const handleSelectNote = (newValue: number[]) => {
@@ -177,12 +168,10 @@ function MesPageContainer() {
 
   return (
     <MesPageComponent
-      isAddOrganizationModalOpen={isAddOrganizationModalOpen}
-      isEditOrganizationModalOpen={isEditOrganizationModalOpen}
       mesError={mesError}
       mesPageType={mesPageType}
       search={search}
-      page={page}
+      page={activePage}
       totalPage={allOrganizations.totalPage}
       selectedNotesId={selected}
       actTypesFromFile={actTypesFromFile}
@@ -191,7 +180,12 @@ function MesPageContainer() {
       currentActData={currentActData}
       type={type}
       addActModalOpened={addActModalOpened}
+      addOrganizationModalOpened={addOrganizationModalOpened}
+      editOrganizationModalOpened={editOrganizationModalOpened}
+      editOrganizationModalOpen={editOrganizationModalOpen}
+      editOrganizationModalClose={editOrganizationModalClose}
       addActModalClose={addActModalClose}
+      addOrganizationModalClose={addOrganizationModalClose}
       handleAddActBtnClick={handleAddActBtnClick}
       handleAddOrganizationBtnClick={handleAddOrganizationBtnClick}
       handleChangeMesPageType={handleChangeMesPageType}

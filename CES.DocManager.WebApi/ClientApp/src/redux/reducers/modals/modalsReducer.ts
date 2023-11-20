@@ -12,8 +12,6 @@ const initial: IModal = {
   isAddUsedMaterialModalOpen: false,
   isLoaderModalOpen: false,
   isEditAttachedMaterialModalOpen: false,
-  isAddOrganizationModalOpen: false,
-  isEditOrganizationModalOpen: false,
 };
 
 const modalsReducer = createSlice({
@@ -70,16 +68,6 @@ const modalsReducer = createSlice({
       stateCopy = { ...stateCopy, isEditAttachedMaterialModalOpen: action.payload };
       return stateCopy;
     },
-    toggleAddOrganizationModal: (state, action: PayloadAction<boolean>) => {
-      let stateCopy: IModal = state;
-      stateCopy = { ...stateCopy, isAddOrganizationModalOpen: action.payload };
-      return stateCopy;
-    },
-    toggleEditOrganizationModal: (state, action: PayloadAction<boolean>) => {
-      let stateCopy: IModal = state;
-      stateCopy = { ...stateCopy, isEditOrganizationModalOpen: action.payload };
-      return stateCopy;
-    },
   },
   extraReducers: () => {},
 });
@@ -95,7 +83,5 @@ export const {
   toggleAddUsedMaterialModal,
   toggleLoaderModal,
   toggleEditAttachedMaterialModal,
-  toggleAddOrganizationModal,
-  toggleEditOrganizationModal,
 } = modalsReducer.actions;
 export default modalsReducer.reducer;

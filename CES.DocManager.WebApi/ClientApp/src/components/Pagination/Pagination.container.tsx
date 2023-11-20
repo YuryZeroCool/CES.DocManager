@@ -4,7 +4,7 @@ import PaginationComponent from './Pagination.component';
 interface PaginationProps {
   page: number;
   totalPage: number;
-  handleCurrentPageChange: (event: React.ChangeEvent<unknown>, value: number) => void;
+  handleCurrentPageChange: (value: number) => void;
 }
 
 function PaginationContainer(props: PaginationProps) {

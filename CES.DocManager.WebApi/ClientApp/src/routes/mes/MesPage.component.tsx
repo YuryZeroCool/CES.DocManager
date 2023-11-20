@@ -1,14 +1,23 @@
 import React from 'react';
 import {
-  TextField,
+  ActionIcon,
   Button,
-  IconButton,
-  Box,
-  FormControl,
-  Select,
-  MenuItem,
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+  Combobox,
+  Flex,
+  Input,
+  InputBase,
+  Stack,
+  Tabs,
+  TextInput,
+  rem,
+  useCombobox,
+} from '@mantine/core';
+import {
+  IconNote,
+  IconNoteOff,
+  IconComet,
+  IconSearch,
+} from '@tabler/icons-react';
 import AddActModal from '../../components/AddActModal/AddActModal.container';
 import NotesTable from '../../components/NotesTable/NotesTable.container';
 import AddOrganizationModal from '../../components/AddOrganizationModal/AddOrganizationModal.container';
@@ -16,11 +25,9 @@ import OrganizationsTable from '../../components/OrganizationsTable/Organization
 import Pagination from '../../components/Pagination/Pagination.container';
 import NotesWithoutActsTableContainer from '../../components/NotesWithoutActsTable/NotesWithoutActsTable.container';
 import { Act, ActDataFromFileResponse, ActTypesFromFileResponse } from '../../types/MesTypes';
-import './MesPage.style.scss';
+import classes from './MesPage.module.scss';
 
 interface Props {
-  isAddOrganizationModalOpen: boolean;
-  isEditOrganizationModalOpen: boolean;
   mesError: string;
   mesPageType: string;
   search: string;
@@ -33,15 +40,20 @@ interface Props {
   currentActData: Act;
   type: string;
   addActModalOpened: boolean;
+  addOrganizationModalOpened: boolean;
+  editOrganizationModalOpened: boolean;
 
+  editOrganizationModalOpen: () => void;
+  editOrganizationModalClose: () => void;
   addActModalClose: () => void;
+  addOrganizationModalClose: () => void;
   handleAddActBtnClick: (value: string) => void;
   handleAddOrganizationBtnClick: () => void;
   handleChangeMesPageType: (value: string) => void;
   handleChangeErrorMessage: (value: string) => void;
   handleSearchChange: (value: string) => void;
   handleSearchButtonClick: () => void;
-  handleCurrentPageChange: (event: React.ChangeEvent<unknown>, value: number) => void;
+  handleCurrentPageChange: (value: number) => void;
   handleSelectNote: (newValue: number[]) => void;
   handleActTypeSelectChange: (value: string) => void;
   resetCurrentActData: () => void;
@@ -50,8 +62,6 @@ interface Props {
 
 export default function MesPageComponent(props: Props) {
   const {
-    isAddOrganizationModalOpen,
-    isEditOrganizationModalOpen,
     mesError,
     mesPageType,
     search,
@@ -64,8 +74,13 @@ export default function MesPageComponent(props: Props) {
     currentActData,
     type,
     addActModalOpened,
+    addOrganizationModalOpened,
+    editOrganizationModalOpened,
 
+    editOrganizationModalOpen,
+    editOrganizationModalClose,
     addActModalClose,
+    addOrganizationModalClose,
     handleAddActBtnClick,
     handleAddOrganizationBtnClick,
     handleChangeMesPageType,
@@ -79,93 +94,116 @@ export default function MesPageComponent(props: Props) {
     changeType,
   } = props;
 
+  const iconStyle = { width: rem(20), height: rem(20) };
+
+  const combobox = useCombobox({
+    onDropdownClose: () => combobox.resetSelectedOption(),
+  });
+
+  const options = actTypesFromFile.map((item) => (
+    <Combobox.Option value={`${item.actType} (${item.season.toLocaleLowerCase()})`} key={item.fileName}>
+      {item.actType}
+      &nbsp;
+      {`(${item.season.toLocaleLowerCase()})`}
+    </Combobox.Option>
+  ));
+
   const renderMesPageNavigation = () => (
-    <div className="report-page-navigation">
-      <Button
-        sx={{ margin: '0 8px', minWidth: 120, height: '30px' }}
-        variant="contained"
-        size="small"
-        onClick={() => handleChangeMesPageType('Заявки')}
+    <Flex h={50} gap={10} pl={10} align="center">
+      <Tabs
+        value={mesPageType}
+        onChange={(value) => handleChangeMesPageType(value ?? '')}
+        classNames={{
+          tabLabel: classes.tabLabel,
+          tab: classes.tab,
+        }}
+        w="100%"
       >
-        Заявки
-      </Button>
-      <Button
-        sx={{ margin: '0 8px', minWidth: 120, height: '30px' }}
-        variant="contained"
-        size="small"
-        onClick={() => handleChangeMesPageType('Организации')}
-      >
-        Организации
-      </Button>
-      <Button
-        sx={{ margin: '0 8px', minWidth: 120, height: '30px' }}
-        variant="contained"
-        size="small"
-        onClick={() => handleChangeMesPageType('Заявки без актов')}
-      >
-        Заявки без актов
-      </Button>
-    </div>
+        <Tabs.List>
+          <Tabs.Tab value="Заявки" leftSection={<IconNote style={iconStyle} />}>
+            Заявки
+          </Tabs.Tab>
+          <Tabs.Tab value="Организации" leftSection={<IconComet style={iconStyle} />}>
+            Организации
+          </Tabs.Tab>
+          <Tabs.Tab value="Заявки без актов" leftSection={<IconNoteOff style={iconStyle} />}>
+            Заявки без актов
+          </Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+    </Flex>
   );
 
   const renderActTypesSelect = () => (
-    <Box sx={{ m: 1, minWidth: 240 }}>
-      <FormControl fullWidth size="small">
-        <Select
-          value={actTypeSelectValue}
-          onChange={(event) => handleActTypeSelectChange(event.target.value)}
-          className="table-header-select"
+    <Combobox
+      store={combobox}
+      onOptionSubmit={(val) => {
+        handleActTypeSelectChange(val);
+        combobox.closeDropdown();
+      }}
+    >
+      <Combobox.Target>
+        <InputBase
+          component="button"
+          pointer
+          rightSection={<Combobox.Chevron />}
+          rightSectionPointerEvents="none"
+          onClick={() => combobox.toggleDropdown()}
+          styles={{
+            root: { minWidth: 250 },
+          }}
         >
-          {actTypesFromFile.map((el) => (
-            <MenuItem key={el.fileName} value={`${el.actType} (${el.season.toLocaleLowerCase()})`}>
-              {el.actType}
-              &nbsp;
-              {`(${el.season.toLocaleLowerCase()})`}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Box>
+          {actTypeSelectValue || <Input.Placeholder>Выберите тип акта</Input.Placeholder>}
+        </InputBase>
+      </Combobox.Target>
+
+      <Combobox.Dropdown>
+        <Combobox.Options>{options}</Combobox.Options>
+      </Combobox.Dropdown>
+    </Combobox>
   );
 
   const renderActsButtons = () => (
     actDataFromFile.act.length !== 0 && actDataFromFile.act.map((act) => (
-      <Button variant="contained" onClick={() => handleAddActBtnClick(act.type)} key={act.type}>
+      <Button
+        variant="gradient"
+        gradient={{ from: 'violet', to: 'blue', deg: 90 }}
+        onClick={() => handleAddActBtnClick(act.type)}
+      >
         {act.type}
       </Button>
     ))
   );
 
   const renderTableHeader = () => (
-    <div className="table-header">
-      <div className="table-header-wrapper">
-        {mesPageType === 'Организации' && (
-          <>
-            <Button variant="contained" onClick={handleAddOrganizationBtnClick}>
-              Добавить организацию
-            </Button>
-            <TextField
-              id="outlined-basic"
-              value={search}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              label="Поиск"
-              variant="outlined"
-              size="small"
-              sx={{ width: '500px' }}
-            />
-            <IconButton aria-label="search" className="icon-search" onClick={handleSearchButtonClick}>
-              <SearchIcon />
-            </IconButton>
-          </>
-        )}
-        {mesPageType === 'Заявки без актов' && (
-          <>
-            {renderActTypesSelect()}
-            {renderActsButtons()}
-          </>
-        )}
-      </div>
-    </div>
+    <Flex align="center" gap={15} h="9vh">
+      {mesPageType === 'Организации' && (
+        <>
+          <Button
+            variant="gradient"
+            gradient={{ from: 'violet', to: 'blue', deg: 90 }}
+            onClick={handleAddOrganizationBtnClick}
+          >
+            Добавить организацию
+          </Button>
+          <TextInput
+            value={search}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            placeholder="Поиск организации"
+            w={500}
+          />
+          <ActionIcon variant="transparent" onClick={handleSearchButtonClick}>
+            <IconSearch />
+          </ActionIcon>
+        </>
+      )}
+      {mesPageType === 'Заявки без актов' && (
+        <>
+          {renderActTypesSelect()}
+          {renderActsButtons()}
+        </>
+      )}
+    </Flex>
   );
 
   const renderNotesTable = () => (
@@ -178,6 +216,7 @@ export default function MesPageComponent(props: Props) {
   const renderOrganizationsTable = () => (
     <OrganizationsTable
       mesError={mesError}
+      editOrganizationModalOpen={editOrganizationModalOpen}
       handleChangeErrorMessage={handleChangeErrorMessage}
     />
   );
@@ -200,9 +239,9 @@ export default function MesPageComponent(props: Props) {
   );
 
   return (
-    <section className="mes-page-section">
+    <Stack className={classes.mesPageSection}>
       {renderMesPageNavigation()}
-      {renderTableHeader()}
+      {mesPageType !== 'Заявки' && renderTableHeader()}
       {mesPageType === 'Заявки' && renderNotesTable()}
       {mesPageType === 'Организации' && renderOrganizationsTable()}
       {mesPageType === 'Организации' && renderPagination()}
@@ -216,7 +255,12 @@ export default function MesPageComponent(props: Props) {
         resetCurrentActData={resetCurrentActData}
         changeType={changeType}
       />
-      {(isAddOrganizationModalOpen || isEditOrganizationModalOpen) && <AddOrganizationModal />}
-    </section>
+      <AddOrganizationModal
+        addOrganizationModalOpened={addOrganizationModalOpened}
+        editOrganizationModalOpened={editOrganizationModalOpened}
+        editOrganizationModalClose={editOrganizationModalClose}
+        addOrganizationModalClose={addOrganizationModalClose}
+      />
+    </Stack>
   );
 }

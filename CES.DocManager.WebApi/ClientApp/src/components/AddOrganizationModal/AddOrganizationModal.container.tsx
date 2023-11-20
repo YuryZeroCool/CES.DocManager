@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { AxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { toggleAddOrganizationModal, toggleEditOrganizationModal } from '../../redux/reducers/modals/modalsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
-import { IModal } from '../../types/type';
-import AddOrganizationModalComponent from './AddOrganizationModal.component';
 import createOrganization from '../../redux/actions/mes/createOrganization';
 import { changeSelectedOrganizationId } from '../../redux/reducers/mes/mesReducer';
 import editOrganization from '../../redux/actions/mes/editOrganization';
+import AddOrganizationModalComponent from './AddOrganizationModal.component';
 import { INotesState, Organization, OrganizationResponse } from '../../types/MesTypes';
+import handleError from '../../utils';
 
 const organizationDefaultValues = {
   name: '',
@@ -20,7 +18,20 @@ const organizationDefaultValues = {
   phone: '',
 };
 
-function AddOrganizationModalContainer() {
+interface AddOrganizationModalContainerProps {
+  addOrganizationModalOpened: boolean;
+  editOrganizationModalOpened: boolean;
+  addOrganizationModalClose: () => void;
+  editOrganizationModalClose: () => void;
+}
+
+function AddOrganizationModalContainer(props: AddOrganizationModalContainerProps) {
+  const {
+    addOrganizationModalOpened,
+    editOrganizationModalOpened,
+    addOrganizationModalClose,
+    editOrganizationModalClose,
+  } = props;
   const [organizationError, setOrganizationError] = useState<string>('');
 
   const {
@@ -41,17 +52,11 @@ function AddOrganizationModalContainer() {
     (state) => state.mes,
   );
 
-  const {
-    isAddOrganizationModalOpen,
-    isEditOrganizationModalOpen,
-  } = useSelector<RootState, IModal>(
-    (state) => state.modals,
-  );
-
   const dispatch: IAuthResponseType = useDispatch();
 
   useEffect(() => {
     if (selectedOrganizationId !== 0) {
+      setOrganizationError('');
       const elem = allOrganizations.organizations.filter(
         (el) => el.id === selectedOrganizationId,
       )[0];
@@ -65,43 +70,43 @@ function AddOrganizationModalContainer() {
       dispatch(changeSelectedOrganizationId(0));
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [selectedOrganizationId]);
 
   const handleClose = () => {
-    if (isAddOrganizationModalOpen) {
-      dispatch(toggleAddOrganizationModal(false));
+    if (addOrganizationModalOpened) {
+      addOrganizationModalClose();
     }
-    if (isEditOrganizationModalOpen) {
-      dispatch(toggleEditOrganizationModal(false));
+    if (editOrganizationModalOpened) {
+      editOrganizationModalClose();
     }
     reset();
   };
 
-  const onSubmit = async (data: Organization) => {
-    try {
-      if (isAddOrganizationModalOpen) {
-        await dispatch(createOrganization(data));
-        handleClose();
-      }
-      if (isEditOrganizationModalOpen) {
-        const newData: OrganizationResponse = {
-          id: selectedOrganizationId,
-          ...data,
-        };
-        await dispatch(editOrganization(newData));
-        handleClose();
-      }
-    } catch (error) {
-      if (error instanceof Error || error instanceof AxiosError) {
-        setOrganizationError(error.message);
-      }
+  const onSubmit = (data: Organization) => {
+    if (addOrganizationModalOpened) {
+      dispatch(createOrganization(data))
+        .then(() => handleClose())
+        .catch((error) => {
+          handleError(error, setOrganizationError);
+        });
+    }
+    if (editOrganizationModalOpened) {
+      const newData: OrganizationResponse = {
+        id: selectedOrganizationId,
+        ...data,
+      };
+      dispatch(editOrganization(newData))
+        .then(() => handleClose())
+        .catch((error) => {
+          handleError(error, setOrganizationError);
+        });
     }
   };
 
   return (
     <AddOrganizationModalComponent
-      isAddOrganizationModalOpen={isAddOrganizationModalOpen}
-      isEditOrganizationModalOpen={isEditOrganizationModalOpen}
+      isAddOrganizationModalOpen={addOrganizationModalOpened}
+      isEditOrganizationModalOpen={editOrganizationModalOpened}
       control={control}
       formState={formState}
       organizationError={organizationError}

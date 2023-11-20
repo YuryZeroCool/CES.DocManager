@@ -1,9 +1,12 @@
 import React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
+import {
+  Group,
+  Modal,
+  Button,
+  Flex,
+  Title,
+  TextInput,
+} from '@mantine/core';
 import {
   Control,
   Controller,
@@ -11,21 +14,7 @@ import {
   UseFormHandleSubmit,
 } from 'react-hook-form';
 import { Organization } from '../../types/MesTypes';
-import './AddOrganizationModal.style.scss';
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 800,
-  bgcolor: 'background.paper',
-  borderRadius: '10px',
-  border: 'none',
-  outline: 'none',
-  boxShadow: 24,
-  padding: '20px 32px',
-};
+import classes from './AddOrganizationModal.module.scss';
 
 interface Props {
   isAddOrganizationModalOpen: boolean;
@@ -35,7 +24,7 @@ interface Props {
   organizationError: string;
   handleSubmit: UseFormHandleSubmit<Organization>;
   handleClose: () => void;
-  onSubmit: (data: Organization) => Promise<void>;
+  onSubmit: (data: Organization) => void;
 }
 
 export default function AddOrganizationModalComponent(props: Props) {
@@ -51,16 +40,16 @@ export default function AddOrganizationModalComponent(props: Props) {
   } = props;
 
   const renderTitle = () => (
-    <Typography id="modal-modal-title" variant="h6" component="h2" className="modal-title">
+    <Title size="h6" order={2} className={classes.modalTitle}>
       {isAddOrganizationModalOpen && 'Добавить организацию'}
       {isEditOrganizationModalOpen && 'Редактировать организацию'}
-    </Typography>
+    </Title>
   );
 
   const renderError = () => (
-    <Typography component="h4" className="modal-error-message">
+    <Title size="h4" className={classes.modalErrorMessage}>
       {organizationError}
-    </Typography>
+    </Title>
   );
 
   const renderOrganizationName = () => (
@@ -75,17 +64,12 @@ export default function AddOrganizationModalComponent(props: Props) {
         },
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <TextField
-          margin="dense"
-          size="small"
+        <TextInput
           label="Название организации"
-          type="text"
-          fullWidth
-          variant="outlined"
+          w="100%"
           onChange={onChange}
           value={value}
           error={!!error?.message}
-          helperText={error?.message}
         />
       )}
     />
@@ -96,13 +80,9 @@ export default function AddOrganizationModalComponent(props: Props) {
       name="address"
       control={control}
       render={({ field: { onChange, value } }) => (
-        <TextField
-          margin="dense"
-          size="small"
+        <TextInput
           label="Адрес"
-          type="text"
-          fullWidth
-          variant="outlined"
+          w="100%"
           onChange={onChange}
           value={value}
         />
@@ -115,13 +95,9 @@ export default function AddOrganizationModalComponent(props: Props) {
       name="payerAccountNumber"
       control={control}
       render={({ field: { onChange, value } }) => (
-        <TextField
-          margin="dense"
-          size="small"
+        <TextInput
           label="УНП"
-          type="text"
-          sx={{ width: '32%' }}
-          variant="outlined"
+          w="32%"
           onChange={onChange}
           value={value}
         />
@@ -140,17 +116,13 @@ export default function AddOrganizationModalComponent(props: Props) {
         },
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <TextField
-          margin="dense"
-          size="small"
+        <TextInput
           label="Email"
           type="email"
-          sx={{ width: '32%' }}
-          variant="outlined"
+          w="32%"
           onChange={onChange}
           value={value}
           error={!!error?.message}
-          helperText={error?.message}
         />
       )}
     />
@@ -167,17 +139,13 @@ export default function AddOrganizationModalComponent(props: Props) {
         },
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <TextField
-          margin="dense"
-          size="small"
+        <TextInput
           label="Телефон"
           type="tel"
-          sx={{ width: '32%' }}
-          variant="outlined"
+          w="32%"
           onChange={onChange}
           value={value}
           error={!!error?.message}
-          helperText={error?.message}
         />
       )}
     />
@@ -185,43 +153,45 @@ export default function AddOrganizationModalComponent(props: Props) {
 
   return (
     <Modal
-      open={isAddOrganizationModalOpen || isEditOrganizationModalOpen}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      opened={isAddOrganizationModalOpen || isEditOrganizationModalOpen}
+      onClose={handleClose}
+      withCloseButton
+      centered
+      closeOnClickOutside={false}
+      title={renderTitle()}
+      styles={{
+        content: { flex: '0 0 600px', borderRadius: 10 },
+      }}
     >
-      <Box sx={style}>
+      <Group w="100%">
         {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {renderTitle()}
+        <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
           {organizationError !== '' && renderError()}
           {renderOrganizationName()}
           {renderOrganizationAddress()}
-          <div className="inputs-container">
+          <Flex gap="2%" mb={10}>
             {renderEmail()}
             {renderPhone()}
             {renderPayerAccountNumber()}
-          </div>
-          <div className="modal-button-container">
+          </Flex>
+          <Flex justify="flex-end" gap={10}>
             <Button
+              variant="outline"
+              onClick={() => handleClose()}
+            >
+              Отменить
+            </Button>
+            <Button
+              variant="gradient"
+              gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
               disabled={!formState.isValid}
-              className="modal-button"
-              variant="contained"
               type="submit"
-              size="small"
             >
               Сохранить
             </Button>
-            <Button
-              className="modal-button"
-              variant="contained"
-              size="small"
-              onClick={() => handleClose()}
-            >
-              Отмена
-            </Button>
-          </div>
+          </Flex>
         </form>
-      </Box>
+      </Group>
     </Modal>
   );
 }

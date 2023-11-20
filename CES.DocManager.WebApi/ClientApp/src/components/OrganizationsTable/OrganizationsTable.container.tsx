@@ -12,15 +12,15 @@ import {
 } from '../../redux/reducers/mes/mesReducer';
 import { INotesState } from '../../types/MesTypes';
 import deleteOrganization from '../../redux/actions/mes/deleteOrganization';
-import { toggleEditOrganizationModal } from '../../redux/reducers/modals/modalsReducer';
 
 interface Props {
   mesError: string;
+  editOrganizationModalOpen: () => void;
   handleChangeErrorMessage: (value: string) => void;
 }
 
 function OrganizationsTableContainer(props: Props) {
-  const { mesError, handleChangeErrorMessage } = props;
+  const { mesError, handleChangeErrorMessage, editOrganizationModalOpen } = props;
 
   const {
     allOrganizations,
@@ -49,7 +49,7 @@ function OrganizationsTableContainer(props: Props) {
 
   const handleEditIconClick = (id: number) => {
     dispatch(changeSelectedOrganizationId(id));
-    dispatch(toggleEditOrganizationModal(true));
+    editOrganizationModalOpen();
   };
 
   const handleDeleteIconClick = (id: number) => {

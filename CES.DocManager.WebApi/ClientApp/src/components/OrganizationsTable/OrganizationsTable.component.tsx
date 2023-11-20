@@ -1,65 +1,51 @@
 import * as React from 'react';
-import TableRow from '@mui/material/TableRow';
 import {
-  Box,
-  Modal,
-  Paper,
+  Flex,
+  Group,
+  LoadingOverlay,
   Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableSortLabel,
-} from '@mui/material';
+} from '@mantine/core';
 import { RotatingLines } from 'react-loader-spinner';
 import { ReactComponent as EditIcon } from '../../assets/icons/edit-icon.svg';
 import { ReactComponent as DeleteIcon } from '../../assets/icons/delete-icon.svg';
 import { OrganizationResponse } from '../../types/MesTypes';
+import classes from './OrganizationsTable.module.scss';
 
 interface HeadCell {
   id: number;
   label: string;
-  numeric: boolean;
 }
 
 const headCells: readonly HeadCell[] = [
   {
     id: 1,
-    numeric: false,
     label: 'Название организации',
   },
   {
     id: 2,
-    numeric: true,
     label: 'Адрес',
   },
   {
     id: 3,
-    numeric: true,
     label: 'Email',
   },
   {
     id: 4,
-    numeric: true,
     label: 'Телефон',
   },
   {
     id: 5,
-    numeric: true,
     label: 'УНП',
   },
+  {
+    id: 6,
+    label: '',
+  },
+  {
+    id: 7,
+    label: '',
+  },
 ];
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 80,
-  bgcolor: 'transparent',
-  border: 'none',
-  outline: 'none',
-};
 
 interface Props {
   allOrganizations: OrganizationResponse[];
@@ -85,104 +71,85 @@ export default function OrganizationsTableComponent(props: Props) {
   );
 
   const renderTableHead = () => (
-    <TableHead>
-      <TableRow>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align="left"
-            padding="normal"
-            sx={{ border: '1px solid rgb(224, 224, 224)', fontWeight: '700', fontSize: '16px' }}
-          >
-            <TableSortLabel>
-              {headCell.label}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-        <TableCell padding="checkbox" />
-      </TableRow>
-    </TableHead>
+    <Table.Tr>
+      {headCells.map((headCell) => (
+        <Table.Th key={headCell.id}>{headCell.label}</Table.Th>
+      ))}
+    </Table.Tr>
   );
 
   const renderTableBody = () => (
-    <TableBody>
-      {allOrganizations.map((row) => (
-        <TableRow
-          hover
-          tabIndex={-1}
-          key={row.id}
-          sx={{ cursor: 'pointer' }}
-        >
-          <TableCell
-            component="th"
-            scope="row"
-          >
-            {row.name}
-          </TableCell>
-          <TableCell>{row.address}</TableCell>
-          <TableCell>{row.email}</TableCell>
-          <TableCell>{row.phone}</TableCell>
-          <TableCell>{row.payerAccountNumber}</TableCell>
-          <TableCell width="30px">
+    <>
+      {allOrganizations.map((organization) => (
+        <Table.Tr key={organization.id}>
+          <Table.Td w="30%">{organization.name}</Table.Td>
+          <Table.Td w="30%">{organization.address}</Table.Td>
+          <Table.Td w="10%">{organization.email}</Table.Td>
+          <Table.Td w="10%">{organization.phone}</Table.Td>
+          <Table.Td w="10%">{organization.payerAccountNumber}</Table.Td>
+          <Table.Td w="5%">
             <EditIcon
               width={20}
               height={20}
-              onClick={() => handleEditIconClick(row.id)}
+              onClick={() => handleEditIconClick(organization.id)}
             />
-          </TableCell>
-          <TableCell width="30px">
+          </Table.Td>
+          <Table.Td w="5%">
             <DeleteIcon
               width={20}
               height={20}
-              onClick={() => handleDeleteIconClick(row.id)}
+              onClick={() => handleDeleteIconClick(organization.id)}
             />
-          </TableCell>
-        </TableRow>
+          </Table.Td>
+        </Table.Tr>
       ))}
-    </TableBody>
+    </>
   );
 
   const renderLoaderModal = () => (
-    <Modal
-      open
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <RotatingLines
-          strokeColor="white"
-          strokeWidth="5"
-          animationDuration="0.5"
-          width="80"
-          visible
-        />
-      </Box>
-    </Modal>
+    <LoadingOverlay
+      visible
+      loaderProps={{
+        children: (
+          <RotatingLines
+            strokeColor="white"
+            strokeWidth="5"
+            animationDuration="0.5"
+            width="80"
+            visible
+          />
+        ),
+      }}
+    />
   );
 
   const renderTable = () => (
     allOrganizations.length !== 0 && (
-      <Box sx={{ width: '100%' }}>
-        <Paper sx={{ width: '100%', mb: 2 }}>
-          <TableContainer>
-            <Table
-              sx={{ width: '100%' }}
-              aria-labelledby="tableTitle"
-            >
-              {renderTableHead()}
-              {renderTableBody()}
-            </Table>
-          </TableContainer>
-        </Paper>
-      </Box>
+      <Group w="100%">
+        <Table
+          striped
+          highlightOnHover
+          withTableBorder
+          classNames={{
+            th: classes.tableHeadCell,
+            td: classes.tableBodyCell,
+            thead: classes.thead,
+          }}
+        >
+          <Table.Thead>{renderTableHead()}</Table.Thead>
+          <Table.Tbody>
+            {renderTableBody()}
+          </Table.Tbody>
+        </Table>
+      </Group>
     )
   );
 
   return (
-    <div className="notes-table">
+    <Flex className="notes-table">
       {renderError()}
       {renderTable()}
       {allOrganizations.length === 0 && requestStatus !== 'fulfilled' && mesError === '' && renderLoaderModal()}
-    </div>
+    </Flex>
   );
 }

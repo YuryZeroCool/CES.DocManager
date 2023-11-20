@@ -1,10 +1,11 @@
-import { Container, Pagination } from '@mui/material';
+import { Flex, Pagination } from '@mantine/core';
 import React from 'react';
+import classes from './Pagination.module.scss';
 
 interface Props {
   page: number;
   totalPage: number;
-  handleCurrentPageChange: (event: React.ChangeEvent<unknown>, value: number) => void;
+  handleCurrentPageChange: (value: number) => void;
 }
 
 export default function PaginationComponent(props: Props) {
@@ -15,8 +16,15 @@ export default function PaginationComponent(props: Props) {
   } = props;
 
   return (
-    <Container sx={{ display: 'flex', justifyContent: 'center' }}>
-      <Pagination count={totalPage} page={page} onChange={handleCurrentPageChange} shape="rounded" />
-    </Container>
+    <Flex justify="center">
+      <Pagination
+        value={page}
+        total={totalPage}
+        classNames={{
+          control: classes.control,
+        }}
+        onChange={handleCurrentPageChange}
+      />
+    </Flex>
   );
 }

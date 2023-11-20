@@ -1,0 +1,20 @@
+.mesPageSection {
+  position: relative;
+  min-height: 90vh;
+  background-color: #FFFFFF;
+  padding: 1vh 1vw;
+}
+
+.tab {
+  min-width: 150px;
+}
+
+.tab[data-active] {
+  border-bottom: 3px solid #228be6;
+  border-image: linear-gradient(90deg, #7950f2 0%, #228be6 100%);
+  border-image-slice: 1;
+}
+
+.tabLabel {
+  font-size: 18px;
+}
