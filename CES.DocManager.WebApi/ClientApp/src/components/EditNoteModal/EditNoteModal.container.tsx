@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AxiosError } from 'axios';
 import EditNoteModalComponent from './EditNoteModal.component';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { IAuthResponseType } from '../../redux/store/configureStore';
@@ -8,6 +7,7 @@ import { changeSelectedNoteId, editAllNotes } from '../../redux/reducers/mes/mes
 import editExistedNote from '../../redux/actions/mes/editExistedNote';
 import getStreetsBySearch from '../../redux/actions/mes/getStreetsBySearch';
 import { EditNoteRequest, INotesState } from '../../types/MesTypes';
+import handleError from '../../utils';
 
 const defaultFormValues: EditNoteRequest = {
   id: 0,
@@ -98,9 +98,7 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
           });
         })
         .catch((error) => {
-          if (error instanceof Error || error instanceof AxiosError) {
-            setModalError(error.message);
-          }
+          handleError(error, setModalError);
         });
     }
   };
@@ -161,9 +159,7 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
     dispatch(editExistedNote(stateCopy))
       .then(() => handleClose())
       .catch((error) => {
-        if (error instanceof Error || error instanceof AxiosError) {
-          setModalError(error.message);
-        }
+        handleError(error, setModalError);
       });
   };
 

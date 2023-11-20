@@ -106,6 +106,7 @@ function AddDriverModalContainer() {
       handleClose={handleClose}
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       onSubmit={onSubmit}
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       handleBlur={handleBlur}
       handleSubmit={handleSubmit}
       reset={reset}

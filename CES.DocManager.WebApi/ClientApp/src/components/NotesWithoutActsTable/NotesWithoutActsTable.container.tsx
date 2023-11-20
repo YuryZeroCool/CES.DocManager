@@ -8,7 +8,6 @@ import { defaultSearchValues } from './NotesWithoutActsTable.config';
 interface Props {
   mesError: string;
   selectedNotesId: number[];
-  handleChangeErrorMessage: (value: string) => void;
   handleSelectNote: (newValue: number[]) => void;
 }
 
@@ -16,7 +15,6 @@ function NotesWithoutActsTableContainer(props: Props) {
   const {
     mesError,
     selectedNotesId,
-    handleChangeErrorMessage,
     handleSelectNote,
   } = props;
 
@@ -81,22 +79,10 @@ function NotesWithoutActsTableContainer(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValues]);
 
-  const handleClick = (id: number) => {
-    const selectedIndex = selectedNotesId.indexOf(id);
-    let newSelected: number[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selectedNotesId, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selectedNotesId.slice(1));
-    } else if (selectedIndex === selectedNotesId.length - 1) {
-      newSelected = newSelected.concat(selectedNotesId.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selectedNotesId.slice(0, selectedIndex),
-        selectedNotesId.slice(selectedIndex + 1),
-      );
-    }
+  const handleClick = (id: number, isChecked: boolean) => {
+    const newSelected = isChecked
+      ? [...selectedNotesId, id]
+      : selectedNotesId.filter((el) => el !== id);
 
     handleSelectNote(newSelected);
   };

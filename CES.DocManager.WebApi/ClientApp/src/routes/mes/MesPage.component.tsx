@@ -233,7 +233,6 @@ export default function MesPageComponent(props: Props) {
     <NotesWithoutActsTableContainer
       mesError={mesError}
       selectedNotesId={selectedNotesId}
-      handleChangeErrorMessage={handleChangeErrorMessage}
       handleSelectNote={handleSelectNote}
     />
   );

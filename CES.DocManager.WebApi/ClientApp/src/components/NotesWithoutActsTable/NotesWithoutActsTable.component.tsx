@@ -1,22 +1,16 @@
 import * as React from 'react';
 import {
-  Box,
   Checkbox,
-  InputAdornment,
-  Modal,
-  Paper,
+  Group,
+  LoadingOverlay,
   Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-} from '@mui/material';
+  TextInput,
+} from '@mantine/core';
 import { Search } from '@mui/icons-material';
 import { RotatingLines } from 'react-loader-spinner';
-import { HeadSearchCell, IFullNoteData, SearchValueType } from '../../types/MesTypes';
-import { headCells, headSearchCells, styles } from './NotesWithoutActsTable.config';
+import { IFullNoteData, SearchValueType } from '../../types/MesTypes';
+import { headCells, headSearchCells } from './NotesWithoutActsTable.config';
+import classes from './NotesWithoutActsTable.module.scss';
 
 interface Props {
   notesWithoutAct: IFullNoteData[];
@@ -26,7 +20,7 @@ interface Props {
   searchValues: SearchValueType[];
   isSearch: boolean;
   isSelected: (id: number) => boolean;
-  handleClick: (id: number) => void;
+  handleClick: (id: number, isChecked: boolean) => void;
   handleChangeSearch: (id: string, value: string) => void;
 }
 
@@ -59,146 +53,118 @@ export default function NotesWithoutActsTableComponent(props: Props) {
   );
 
   const renderRowWithSearch = () => (
-    <TableRow>
-      <TableCell padding="checkbox" />
-      {headSearchCells.map((headSearchCell: HeadSearchCell, index) => (
-        <TableCell
-          key={headSearchCell.id}
-          align="center"
-          padding="normal"
-          sx={{ border: '1px solid rgb(224, 224, 224)', fontWeight: '700', fontSize: '16px' }}
-        >
+    <Table.Tr>
+      <Table.Td />
+      {headSearchCells.map((headSearchCell, index) => (
+        <Table.Td key={headSearchCell.id}>
           {searchValues.length !== 0 && (
-            <TextField
-              id="outlined-basic"
+            <TextInput
+              mt="md"
+              rightSectionPointerEvents="none"
+              rightSection={<Search />}
+              label="Поиск"
               value={searchValues[index].value}
               onChange={(ev) => handleChangeSearch(headSearchCell.id, ev.target.value)}
-              size="small"
-              variant="outlined"
-              label="Поиск"
-              name={headSearchCell.name}
-              sx={{ width: '100%' }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Search />
-                  </InputAdornment>
-                ),
-              }}
             />
           )}
-        </TableCell>
+        </Table.Td>
       ))}
-    </TableRow>
+    </Table.Tr>
   );
 
   const renderTableHead = () => (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox" />
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align="center"
-            padding="normal"
-            sx={{ border: '1px solid rgb(224, 224, 224)', fontWeight: '700', fontSize: '16px' }}
-          >
-            {headCell.label}
-          </TableCell>
-        ))}
-      </TableRow>
-      {renderRowWithSearch()}
-    </TableHead>
+    <Table.Tr>
+      {headCells.map((headCell) => (
+        <Table.Th key={headCell.id}>{headCell.label}</Table.Th>
+      ))}
+    </Table.Tr>
   );
 
   const renderTableBody = () => (
-    <TableBody>
-      {notesWithoutAct.length !== 0 && notesWithoutAct.map((row, index) => {
-        const isItemSelected = isSelected(row.id);
-        const labelId = `enhanced-table-checkbox-${index}`;
-        return (
-          <TableRow
-            hover
-            tabIndex={-1}
-            key={row.id}
-            sx={{ cursor: 'pointer' }}
-            onClick={() => handleClick(row.id)}
-            role="checkbox"
-            aria-checked={isItemSelected}
-            selected={isItemSelected}
-          >
-            <TableCell padding="checkbox">
-              <Checkbox
-                color="primary"
-                checked={isItemSelected}
-                inputProps={{
-                  'aria-labelledby': labelId,
-                }}
-              />
-            </TableCell>
-            <TableCell align="left">
-              {row.street && (
-                <>
-                  {row.street}
-                  ,&nbsp;
-                </>
-              )}
-              {row.houseNumber && (
-                <>
-                  д.&nbsp;
-                  {row.houseNumber}
-                </>
-              )}
-              {row.entrance !== 0 && (
-                <>
-                  ,&nbsp;
-                  п.&nbsp;
-                  {row.entrance}
-                </>
-              )}
-            </TableCell>
-            <TableCell sx={{ minWidth: 200 }} align="center">{row.date.replace('T', ' ')}</TableCell>
-            <TableCell align="center">{row.tel}</TableCell>
-            <TableCell align="left">{row.comment}</TableCell>
-          </TableRow>
-        );
-      })}
-    </TableBody>
+    notesWithoutAct.length !== 0 && notesWithoutAct.map((row) => {
+      const isItemSelected = isSelected(row.id);
+      return (
+        <Table.Tr
+          key={row.id}
+          bg={isItemSelected ? 'var(--mantine-color-blue-light)' : undefined}
+        >
+          <Table.Td>
+            <Checkbox
+              checked={isItemSelected}
+              onChange={(event) => handleClick(row.id, event.currentTarget.checked)}
+            />
+          </Table.Td>
+          <Table.Td>
+            {row.street && (
+              <>
+                {row.street}
+                ,&nbsp;
+              </>
+            )}
+            {row.houseNumber && (
+              <>
+                д.&nbsp;
+                {row.houseNumber}
+              </>
+            )}
+            {row.entrance !== 0 && (
+              <>
+                ,&nbsp;
+                п.&nbsp;
+                {row.entrance}
+              </>
+            )}
+          </Table.Td>
+          <Table.Td miw={200}>{row.date.replace('T', ' ')}</Table.Td>
+          <Table.Td>{row.tel}</Table.Td>
+          <Table.Td>{row.comment}</Table.Td>
+        </Table.Tr>
+      );
+    })
   );
 
   const renderTable = () => (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <TableContainer>
-          <Table
-            sx={{ width: '100%' }}
-            aria-labelledby="tableTitle"
-          >
+    notesWithoutAct.length !== 0 && (
+      <Group w="100%">
+        <Table
+          striped
+          highlightOnHover
+          withTableBorder
+          classNames={{
+            th: classes.tableHeadCell,
+            td: classes.tableBodyCell,
+            tr: classes.tableRow,
+          }}
+        >
+          <Table.Thead>
             {renderTableHead()}
+          </Table.Thead>
+          <Table.Tbody>
+            {renderRowWithSearch()}
             {renderTableBody()}
-          </Table>
-          {renderSearchNotesError()}
-        </TableContainer>
-      </Paper>
-    </Box>
+          </Table.Tbody>
+        </Table>
+
+        {renderSearchNotesError()}
+      </Group>
+    )
   );
 
   const renderLoaderModal = () => (
-    <Modal
-      open
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={styles}>
-        <RotatingLines
-          strokeColor="white"
-          strokeWidth="5"
-          animationDuration="0.5"
-          width="80"
-          visible
-        />
-      </Box>
-    </Modal>
+    <LoadingOverlay
+      visible
+      loaderProps={{
+        children: (
+          <RotatingLines
+            strokeColor="white"
+            strokeWidth="5"
+            animationDuration="0.5"
+            width="80"
+            visible
+          />
+        ),
+      }}
+    />
   );
 
   return (

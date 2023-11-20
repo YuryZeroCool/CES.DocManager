@@ -112,7 +112,6 @@ function AddOrganizationModalContainer(props: AddOrganizationModalContainerProps
       organizationError={organizationError}
       handleSubmit={handleSubmit}
       handleClose={handleClose}
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       onSubmit={onSubmit}
     />
   );

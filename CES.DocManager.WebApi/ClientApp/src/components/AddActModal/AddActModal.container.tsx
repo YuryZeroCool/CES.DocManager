@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AxiosError } from 'axios';
 import { useCombobox } from '@mantine/core';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { resetDriversByCar } from '../../redux/reducers/drivers/driversReducer';
@@ -19,6 +18,7 @@ import {
 import { IVehicleResponse } from '../../types/VehicleTypes';
 import { IDriverResponse } from '../../types/DriversType';
 import AddActModalComponent from './AddActModal.component';
+import handleError from '../../utils';
 
 interface Props {
   selectedNotesId: number[];
@@ -91,9 +91,7 @@ function AddActModalContainer(props: Props) {
       const carNumber = car.split('(');
       dispatch(getDriversByCarNumber(carNumber[1].replace(')', '')))
         .catch((error) => {
-          if (error instanceof Error || error instanceof AxiosError) {
-            setModalError(error.message);
-          }
+          handleError(error, setModalError);
         });
     } else {
       setDriver(null);
@@ -122,9 +120,7 @@ function AddActModalContainer(props: Props) {
           setOrganization(value);
         })
         .catch((error) => {
-          if (error instanceof Error || error instanceof AxiosError) {
-            setModalError(error.message);
-          }
+          handleError(error, setModalError);
         });
     }
   };
@@ -142,9 +138,7 @@ function AddActModalContainer(props: Props) {
         combobox.updateSelectedOptionIndex();
       })
       .catch((error) => {
-        if (error instanceof Error || error instanceof AxiosError) {
-          console.log(error.message);
-        }
+        handleError(error, setModalError);
       });
   };
 
@@ -173,9 +167,7 @@ function AddActModalContainer(props: Props) {
       dispatch(createNewAct(request))
         .then(() => handleClose())
         .catch((error) => {
-          if (error instanceof Error || error instanceof AxiosError) {
-            setModalError(error.message);
-          }
+          handleError(error, setModalError);
         });
     }
   };
