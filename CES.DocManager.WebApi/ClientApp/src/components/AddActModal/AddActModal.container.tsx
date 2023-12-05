@@ -187,6 +187,7 @@ function AddActModalContainer(props: Props) {
       driver={driver}
       actAdditionDate={actAdditionDate}
       modalError={modalError}
+      selectedNotesId={selectedNotesId}
       handleClose={handleClose}
       handleOrganizationsInputChange={handleOrganizationsInputChange}
       handleCarInputChange={handleCarInputChange}

@@ -38,6 +38,7 @@ interface Props {
   driver: string | null;
   actAdditionDate: Date | null;
   modalError: string;
+  selectedNotesId: number[];
 }
 
 export default function AddActModalComponent(props: Props) {
@@ -62,6 +63,7 @@ export default function AddActModalComponent(props: Props) {
     driver,
     actAdditionDate,
     modalError,
+    selectedNotesId,
   } = props;
 
   return (
@@ -143,7 +145,7 @@ export default function AddActModalComponent(props: Props) {
           cancelBtnTitle="Отменить"
           handleCancel={handleClose}
           handleConfirm={handleAddActSubmit}
-          disabled={!(organization && driver && car && actAdditionDate)}
+          disabled={!(organization && driver && car && actAdditionDate && selectedNotesId.length)}
         />
       </Stack>
     </Modal>

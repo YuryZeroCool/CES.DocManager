@@ -164,7 +164,7 @@ const mesReducer = createSlice({
 
         if (workIndex !== -1) {
           const currentWork = actDataFromFile.act[actIndex].works[workIndex];
-          const regexp = /^[0-9]{0,}(,[0-9]{0,3})?$/g;
+          const regexp = /^[0-9]{0,}(\.[0-9]{0,3})?$/g;
 
           if (value.match(regexp)) {
             currentWork.count = value;
