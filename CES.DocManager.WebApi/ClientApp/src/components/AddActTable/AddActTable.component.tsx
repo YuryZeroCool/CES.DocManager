@@ -40,7 +40,12 @@ export default function AddActTableComponent(props: Props) {
       <Table.Td>
         <TextInput
           placeholder="0"
-          value={work.count !== '0' ? work.count : ''}
+          onFocus={() => {
+            if (work.count === '0') {
+              handleInputNumberChange(work.name, '');
+            }
+          }}
+          value={work.count}
           onChange={(e) => handleInputNumberChange(work.name, e.target.value)}
           variant="unstyled"
         />
