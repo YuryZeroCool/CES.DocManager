@@ -9,21 +9,21 @@
           "name": "Очистка канализационного колодца (до 2 м)",
           "unit": "м. куб.",
           "price": 11.19,
-          "count": 0,
+          "count": "0",
           "totalSumm": 0
         },
         {
           "name": "Работа установки КО-524",
           "unit": "маш/час",
           "price": 31.65,
-          "count": 0,
+          "count": "0",
           "totalSumm": 0
         },
         {
           "name": "Пробег",
           "unit": "",
           "price": 0.87,
-          "count": 0,
+          "count": "0",
           "totalSumm": 0
         }
       ]
@@ -35,21 +35,21 @@
           "name": "Очистка канализационного колодца (до 2 м)",
           "unit": "м. куб.",
           "price": 13.43,
-          "count": 0,
+          "count": "0",
           "totalSumm": 0
         },
         {
           "name": "Работа установки КО-524",
           "unit": "маш/час",
           "price": 37.98,
-          "count": 0,
+          "count": "0",
           "totalSumm": 0
         },
         {
           "name": "Пробег",
           "unit": "км.",
           "price": 1.09,
-          "count": 0,
+          "count": "0",
           "totalSumm": 0
         }
       ]
@@ -61,21 +61,21 @@
           "name": "Очистка канализационного колодца (до 2 м)",
           "unit": "м. куб.",
           "price": 15.18,
-          "count": 0,
+          "count": "0",
           "totalSumm": 0
         },
         {
           "name": "Работа установки КО-524",
           "unit": "маш/час",
           "price": 42.93,
-          "count": 0,
+          "count": "0",
           "totalSumm": 0
         },
         {
           "name": "Пробег",
           "unit": "км.",
           "price": 1.19,
-          "count": 0,
+          "count": "0",
           "totalSumm": 0
         }
       ]

@@ -6,6 +6,7 @@ using CES.InfraSecurity.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -19,7 +20,7 @@ builder.Services.AddTransient<JwtGeneratorAccessToken>();
 builder.Services.AddTransient<JwtGeneratorRefreshToken>();
 
 
-var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(x => x.FullName.Contains("CES")).ToArray();
+var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(x => x.FullName!.Contains("CES")).ToArray();
 builder.Services.AddAutoMapper(assemblies);
 
 
