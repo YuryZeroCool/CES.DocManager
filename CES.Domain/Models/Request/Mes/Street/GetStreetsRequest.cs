@@ -3,8 +3,8 @@ using MediatR;
 
 namespace CES.Domain.Models.Request.Mes.Street
 {
-    public class GetStreetsRequest : IRequest <GetStreetsResponse>
+    public class GetStreetsRequest : IRequest <List<string>>
     {
-        public string Street { get; set; }
+        public string Value { get; set; }
     }
 }
