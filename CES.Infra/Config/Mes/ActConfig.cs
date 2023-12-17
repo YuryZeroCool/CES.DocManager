@@ -1,6 +1,8 @@
 ﻿using CES.Infra.Models.Mes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
+using System.Reflection.Metadata;
 
 namespace CES.Infra.Config.Mes
 {
@@ -8,17 +10,6 @@ namespace CES.Infra.Config.Mes
     {
         public void Configure(EntityTypeBuilder<ActEntity> builder)
         {
-            //builder
-            //    .HasMany(e => e.Notes)
-            //    .WithOne(e => e.Act)
-            //    .HasForeignKey(e => e.ActId)
-            //    .IsRequired();
-
-            //builder.HasOne(e => e.Organization)
-            //.WithMany(e => e.Acts)
-            //.HasForeignKey(e => e.OrganizationId)
-            //.IsRequired();
-
             builder.Property(x => x.DateOfWorkCompletion)
                      .HasColumnType("DATETIME");
 
