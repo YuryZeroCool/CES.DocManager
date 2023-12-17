@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20231106192113_removAddressFieldFromNoteTable")]
+    partial class removAddressFieldFromNoteTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace CES.Infra.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("ActEntityWorkPerformActEntity", b =>
-                {
-                    b.Property<int>("ActsId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("WorkPerformActId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ActsId", "WorkPerformActId");
-
-                    b.HasIndex("WorkPerformActId");
-
-                    b.ToTable("ActEntityWorkPerformActEntity");
-                });
 
             modelBuilder.Entity("CES.Infra.Models.CarMechanicEntity", b =>
                 {
@@ -461,14 +448,8 @@ namespace CES.Infra.Migrations
                     b.Property<DateTime>("ActDateOfCreation")
                         .HasColumnType("DATETIME");
 
-                    b.Property<int>("ActTypeEntityId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DateOfWorkCompletion")
                         .HasColumnType("DATETIME");
-
-                    b.Property<int>("NumberPlateOfCarId")
-                        .HasColumnType("int");
 
                     b.Property<int>("OrganizationId")
                         .HasColumnType("int");
@@ -476,14 +457,7 @@ namespace CES.Infra.Migrations
                     b.Property<decimal>("Total")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("Vat")
-                        .HasColumnType("decimal(18,2)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ActTypeEntityId");
-
-                    b.HasIndex("NumberPlateOfCarId");
 
                     b.HasIndex("OrganizationId");
 
@@ -674,12 +648,7 @@ namespace CES.Infra.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UnitId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UnitId");
 
                     b.ToTable("WorkNameInAct");
                 });
@@ -689,6 +658,9 @@ namespace CES.Infra.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ActId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Count")
                         .HasColumnType("decimal(18,2)");
@@ -700,6 +672,8 @@ namespace CES.Infra.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ActId");
 
                     b.HasIndex("NameId");
 
@@ -718,9 +692,6 @@ namespace CES.Infra.Migrations
 
                     b.Property<int>("GarageNumber")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Number")
                         .HasMaxLength(100)
@@ -811,21 +782,6 @@ namespace CES.Infra.Migrations
                     b.HasIndex("NumberPlateOfCarsId");
 
                     b.ToTable("DivisionEntityNumberPlateOfCarEntity");
-                });
-
-            modelBuilder.Entity("ActEntityWorkPerformActEntity", b =>
-                {
-                    b.HasOne("CES.Infra.Models.Mes.ActEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ActsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CES.Infra.Models.Mes.WorkPerformActEntity", null)
-                        .WithMany()
-                        .HasForeignKey("WorkPerformActId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Drivers.DriverLicenseEntity", b =>
@@ -936,27 +892,11 @@ namespace CES.Infra.Migrations
 
             modelBuilder.Entity("CES.Infra.Models.Mes.ActEntity", b =>
                 {
-                    b.HasOne("CES.Infra.Models.Mes.ActTypeEntity", "ActType")
-                        .WithMany()
-                        .HasForeignKey("ActTypeEntityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CES.Infra.Models.NumberPlateOfCarEntity", "NumberPlateOfCar")
-                        .WithMany()
-                        .HasForeignKey("NumberPlateOfCarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CES.Infra.Models.Mes.OrganizationEntity", "Organization")
                         .WithMany()
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ActType");
-
-                    b.Navigation("NumberPlateOfCar");
 
                     b.Navigation("Organization");
                 });
@@ -988,17 +928,14 @@ namespace CES.Infra.Migrations
                     b.Navigation("Street");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.Mes.WorkNameInActEntity", b =>
-                {
-                    b.HasOne("CES.Infra.Models.MaterialReport.UnitEntity", "Unit")
-                        .WithMany()
-                        .HasForeignKey("UnitId");
-
-                    b.Navigation("Unit");
-                });
-
             modelBuilder.Entity("CES.Infra.Models.Mes.WorkPerformActEntity", b =>
                 {
+                    b.HasOne("CES.Infra.Models.Mes.ActEntity", "Act")
+                        .WithMany()
+                        .HasForeignKey("ActId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CES.Infra.Models.Mes.WorkNameInActEntity", "Name")
                         .WithMany()
                         .HasForeignKey("NameId")
@@ -1010,6 +947,8 @@ namespace CES.Infra.Migrations
                         .HasForeignKey("PriceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Act");
 
                     b.Navigation("Name");
 

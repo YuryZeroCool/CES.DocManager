@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20231206180251_addPropertyActTypeToTableAct")]
+    partial class addPropertyActTypeToTableAct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -674,12 +676,7 @@ namespace CES.Infra.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UnitId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UnitId");
 
                     b.ToTable("WorkNameInAct");
                 });
@@ -986,15 +983,6 @@ namespace CES.Infra.Migrations
                     b.Navigation("HouseNumber");
 
                     b.Navigation("Street");
-                });
-
-            modelBuilder.Entity("CES.Infra.Models.Mes.WorkNameInActEntity", b =>
-                {
-                    b.HasOne("CES.Infra.Models.MaterialReport.UnitEntity", "Unit")
-                        .WithMany()
-                        .HasForeignKey("UnitId");
-
-                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.WorkPerformActEntity", b =>
