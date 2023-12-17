@@ -20,13 +20,9 @@ namespace CES.Domain.Handlers.Employees
         public async Task<IEnumerable<GetEmployeesByDivisionResponse>> Handle(GetEmployeesByDivisionRequest request, CancellationToken cancellationToken)
         {
 
-            if (request.divisionNumber == null) throw new RestException(HttpStatusCode.BadRequest, "Неверный запрос");
-            var division = _mangerContext.Divisions.FirstOrDefault(x => x.Name == request.divisionNumber);
-
-            if (division == null)
-                throw new RestException(HttpStatusCode.NotFound, "Не существует такого подразделения");
-
-            var emp = _mangerContext.Employees.Where(x => x.DivisionNumber == division).ToList();
+            if (request.DivisionNumber == null) throw new RestException(HttpStatusCode.BadRequest, "Неверный запрос");
+            var division = _mangerContext!.Divisions!.FirstOrDefault(x => x.Name == request.DivisionNumber) ?? throw new RestException(HttpStatusCode.NotFound, "Не существует такого подразделения");
+            var emp = _mangerContext.Employees!.Where(x => x.DivisionNumber == division).ToList();
 
             if (emp.Count == 0) throw new RestException(HttpStatusCode.NotFound, "Нет сотрудников");
             return await Task.FromResult(emp.Select(x => new GetEmployeesByDivisionResponse
