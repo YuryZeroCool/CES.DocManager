@@ -1,16 +1,10 @@
 ﻿using AutoMapper;
 using CES.Domain.Models.Request.Mes.HouseNumbers;
 using CES.Domain.Models.Response.Mes.HouseNumbers;
-using CES.Domain.Models.Response.Mes.Street;
 using CES.Infra;
 using CES.Infra.Models.Mes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CES.Domain.Handlers.Mes.HouseNumbers
 {
