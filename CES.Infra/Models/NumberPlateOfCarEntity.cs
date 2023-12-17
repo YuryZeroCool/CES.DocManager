@@ -1,4 +1,5 @@
 ﻿using CES.Infra.Models.MaterialReport;
+using CES.Infra.Models.Mes;
 using System.Text.Json.Serialization;
 
 namespace CES.Infra.Models
@@ -15,6 +16,8 @@ namespace CES.Infra.Models
 
         [JsonIgnore]
         public VehicleModelEntity? VehicleModel { get; set; }
+
+        public bool IsActive { get; set; }
 
         public ICollection<FuelWorkCardEntity>? FuelWorkCards { get; set; }
 
