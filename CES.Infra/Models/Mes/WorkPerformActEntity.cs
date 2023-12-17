@@ -10,6 +10,6 @@
 
         public decimal Count { get; set; }
 
-        public ActEntity Act { get; set; }
+        public List<ActEntity> Acts { get; set; } = new();
     }
 }
