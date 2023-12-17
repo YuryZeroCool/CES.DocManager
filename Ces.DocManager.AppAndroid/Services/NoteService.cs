@@ -13,8 +13,8 @@ namespace Ces.DocManager.AppAndroid.Services
     {
         private List<NoteModel> _notes;
 
-        private readonly string path = "http://localhost:7788"; //
-
+        //private readonly string url = "http://localhost:7788/mes/noteCreate"; 
+        private string url = "https://ces-docmanager.ru/mes/noteCreate";
         private HttpClient _httpClient;
 
 
@@ -71,9 +71,12 @@ namespace Ces.DocManager.AppAndroid.Services
     
         public async Task SendNoteToDb(NoteModel note)
         {
-            _httpClient = new HttpClient();
-            _httpClient.Timeout = TimeSpan.FromSeconds(10);
-            var response = await _httpClient.PostAsync("https://ces-docmanager.ru/mes/noteCreate", JsonContent.Create(note));
+            _httpClient = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(10)
+            };
+            var d = JsonContent.Create(note);
+            var response = await _httpClient.PostAsync(url, JsonContent.Create(note));
             if (response == null || response.StatusCode != System.Net.HttpStatusCode.Created ) throw new Exception("Не удалось отправить на сервер");
             await RemoveNoteFromFile(note);
         }

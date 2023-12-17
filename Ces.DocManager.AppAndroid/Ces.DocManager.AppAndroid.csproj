@@ -48,6 +48,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Pages\Templates\**" />
+	  <EmbeddedResource Remove="Pages\Templates\**" />
+	  <MauiCss Remove="Pages\Templates\**" />
+	  <MauiXaml Remove="Pages\Templates\**" />
+	  <None Remove="Pages\Templates\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Resources\Images\check_icon.svg" />
 	  <None Remove="Resources\Images\close.svg" />
 	  <None Remove="Resources\Images\search.svg" />
@@ -88,10 +96,6 @@
 	  <MauiXaml Update="Pages\CreateNote.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Pages\Templates\" />
 	</ItemGroup>
 
 </Project>
