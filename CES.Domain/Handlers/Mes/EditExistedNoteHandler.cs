@@ -1,10 +1,9 @@
-﻿
-using CES.Domain.Models.Request.Mes;
+﻿using CES.Domain.Models.Request.Mes;
 using CES.Infra;
 using CES.Infra.Models.Mes;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using NPOI.SS.Formula.Functions;
 
 namespace CES.Domain.Handlers.Mes
 {
@@ -18,43 +17,80 @@ namespace CES.Domain.Handlers.Mes
         }
         public async Task<int> Handle(EditExistedNoteRequest request, CancellationToken cancellationToken)
         {
-            if (!_ctx.NoteEntities.Any(p => p.Id == request.Id)) throw new System.Exception("Error");
-
-            if (request is not null
-                 && request.NoteContactsInfo is not null
-                 && request.NoteContactsInfo[0] is not null
-                 && request.NoteContactsInfo[0].Address is not null)
+            if (_ctx.NoteEntities is not null
+                && request is not null
+                && request.NoteContactsInfo is not null
+                && request.NoteContactsInfo.Length > 0
+                && _ctx.Streets is not null
+                && _ctx.HouseNumbers is not null
+                && _ctx.Entrances is not null)
             {
+                if (!_ctx.NoteEntities.Any(p => p.Id == request.Id)) throw new System.Exception("Error");
 
-                EntityEntry? note = null;
+                    EntityEntry? note = null;
+
                 for (int i = 0; i < request.NoteContactsInfo.Length; i++)
                 {
-                    if (i == 0)
+                    if (request.NoteContactsInfo[i] is not null
+                        && !string.IsNullOrEmpty(request.NoteContactsInfo[i].Street)
+                        && !string.IsNullOrEmpty(request.NoteContactsInfo[i].HouseNumber))
                     {
-                        note = _ctx.NoteEntities.Update(new NoteEntity()
+                        if (!_ctx.Streets.Any(x => x.Name == request.NoteContactsInfo[i].Street!.Trim()))
                         {
-                            Id = request.Id,
+                            await _ctx.Streets.AddAsync(new StreetEntity()
+                            {
+                                Name = request.NoteContactsInfo[i].Street!.Trim(),
+                            }, cancellationToken);
+                            await _ctx.SaveChangesAsync(cancellationToken);
+                        }
+                        if (!_ctx.HouseNumbers.Any(p => p.Number == request.NoteContactsInfo[i].HouseNumber!.Trim()))
+                        {
+                            await _ctx.HouseNumbers.AddAsync(new HouseNumberEntity()
+                            {
+                                Number = request.NoteContactsInfo[i].HouseNumber!.Trim()
+                            }, cancellationToken);
+                            await _ctx.SaveChangesAsync(cancellationToken);
+                        }
+                        if (request.NoteContactsInfo[i].Entrance is not null
+                            && !_ctx.Entrances.Any(p => p.Number == request.NoteContactsInfo[i].Entrance))
+                        {
+                            await _ctx.Entrances.AddAsync(new EntranceEntity()
+                            {
+                                Number = (int)request.NoteContactsInfo[i].Entrance!
+                            }, cancellationToken);
+                            await _ctx.SaveChangesAsync(cancellationToken);
+                        }
+
+                        var date = new NoteEntity()
+                        {
                             Comment = request.Comment,
                             Date = request.Date,
                             IsChecked = request.IsChecked,
-                            Tel = request.NoteContactsInfo[0].Tel,
-                            Address = request.NoteContactsInfo[0].Address,
-                        });
-                        continue;
+                            Street = await _ctx.Streets
+                                 .FirstOrDefaultAsync(x => x.Name ==
+                                     request.NoteContactsInfo[i].Street!.Trim(), cancellationToken),
+                            HouseNumber = await _ctx.HouseNumbers
+                                 .FirstOrDefaultAsync(x => x.Number ==
+                                     request.NoteContactsInfo[i].HouseNumber!.Trim(), cancellationToken),
+                            Entrance = request.NoteContactsInfo[i].Entrance == null
+                                 ? null
+                                 : await _ctx.Entrances.FirstOrDefaultAsync(x =>
+                                     x.Number == (int) request.NoteContactsInfo[i].Entrance!, cancellationToken),
+                            Tel = request.NoteContactsInfo[i].Tel,
+                        };
+
+                        if (i == 0)
+                        {
+                            date.Id = request.Id;
+                            note = _ctx.NoteEntities.Update(date);
+                            continue;
+                        }
+                        await _ctx.NoteEntities.AddAsync(date, cancellationToken);
                     }
-                    note= _ctx.NoteEntities.Add(new NoteEntity()
-                    {
-                        Comment = request.Comment,
-                        Date = request.Date,
-                        IsChecked = request.IsChecked,
-                        Tel = request.NoteContactsInfo[i].Tel,
-                        Address = request.NoteContactsInfo[i].Address
-                    });   
                 }
                 await _ctx.SaveChangesAsync(cancellationToken);
-                if (note == null) throw new System.Exception("Error");
                 return await Task.FromResult(request.Id);
-            }
+                }
             throw new System.Exception("Error");
         }
     }

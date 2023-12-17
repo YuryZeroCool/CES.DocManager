@@ -5,6 +5,7 @@ using CES.Domain.Models.Response.Mes;
 using CES.Infra;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace CES.Domain.Handlers.Mes
 {
@@ -27,13 +28,14 @@ namespace CES.Domain.Handlers.Mes
                 throw new System.Exception("Контекст заякок не инициализирован.");
             }
             var comparer = new DateComparer();
-            var notes =  
-                _ctx.NoteEntities
-                .AsEnumerable()
+            var notes = await _ctx.NoteEntities
+                .Include(x => x.Street)
+                .Include(x => x.HouseNumber)
+                .Include(x => x.Entrance)
                 .Where(x => x.ActId == null)
-                .OrderByDescending(p => p, comparer)
-               .ToList(); ;
-
+                .ToListAsync(cancellationToken);
+                notes.OrderByDescending(p => p, comparer);
+           
            if (notes.Count == 0) return  await Task.FromResult(new List<NotesWithoutActResponse>());
             return await Task.FromResult(_mapper.Map<List<NotesWithoutActResponse>>( notes));
         }

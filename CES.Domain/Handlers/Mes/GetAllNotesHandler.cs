@@ -20,16 +20,16 @@ namespace CES.Domain.Handlers.Mes
         public async Task<List<GetAllNotesResponse>> Handle(GetAllNotesRequest request, CancellationToken cancellationToken)
         {
             var comparer = new DateComparer();
-
-            var res = _ctx.NoteEntities
+            if(_ctx.NoteEntities != null)
+            {
+                var res = _ctx.NoteEntities!
                .AsEnumerable()
-               .Where(x => x.Address == null)
+               .Where(x => x.StreetId == null)
                .OrderByDescending(p => p, comparer)
                .ToList();
-
-            return res == null
-                ? throw new System.Exception("Error")
-                : await Task.FromResult(res.Select(p => _mapper.Map<GetAllNotesResponse>(p)).ToList());
-        }
+                return await Task.FromResult(res.Select(p => _mapper.Map<GetAllNotesResponse>(p)).ToList());
+            }
+            throw new System.Exception("Error");
+        }         
     }
 }
