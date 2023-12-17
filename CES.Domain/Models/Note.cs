@@ -10,8 +10,12 @@
 
         public bool IsChecked { get; set; }
 
-       public string? Address { get; set; }
+        public string Street { get; set; } = string.Empty;
 
-        public string? Tel { get; set; }
+        public string HouseNumber { get; set; } = string.Empty;
+
+        public int Entrance { get; set; }
+
+        public string Tel { get; set; } = string.Empty;
     }
 }
