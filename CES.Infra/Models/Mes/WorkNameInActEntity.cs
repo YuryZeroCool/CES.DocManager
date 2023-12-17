@@ -1,16 +1,15 @@
-﻿namespace CES.Infra.Models.Mes
+﻿using CES.Infra.Models.MaterialReport;
+
+namespace CES.Infra.Models.Mes
 {
     public class WorkNameInActEntity
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public DateTime DateOfCreation { get; set; }
 
-        // public List<PriceOfWorkInActEntity> PricesOfWorkInAct { get; set; } = new();
-
-        //public List<ActTypeEntity> ActTypes { get; set; } = new();
-
+        public UnitEntity? Unit { get; set; }
     }
 }
