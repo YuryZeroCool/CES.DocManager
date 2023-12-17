@@ -5,6 +5,6 @@ namespace CES.Domain.Models.Request.Employee
 {
     public class GetEmployeesByDivisionRequest : IRequest<IEnumerable<GetEmployeesByDivisionResponse>>
     {
-        public string? divisionNumber { get; set; }
+        public string DivisionNumber { get; set; } = string.Empty;
     }
 }

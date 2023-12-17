@@ -2,6 +2,7 @@
 using CES.DocManager.WebApi.Models;
 using CES.Domain.Exception;
 using CES.Domain.Models.Request.Employee;
+using CES.Domain.Models.Request.Mes;
 using CES.Domain.Models.Response.Employees;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
@@ -78,7 +79,7 @@ namespace CES.DocManager.WebApi.Controllers
             try
             {
                 var response = await _mediator.Send(new GetEmployeesByDivisionRequest()
-                    {divisionNumber = divisionNumber});
+                    {DivisionNumber = divisionNumber});
                 return _mapper.Map<IEnumerable<GetEmployeesByDivisionResponse>>(response);
             }
             catch (RestException e)
@@ -194,6 +195,30 @@ namespace CES.DocManager.WebApi.Controllers
             catch (Exception)
             {
                 return new { };
+            }
+        }
+
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("getEmployeeByCarNumber")]
+        [Produces(typeof(List<string>))]
+        public async Task<object> getEmployeeByCarNumber(string? carNumber = default)
+        {
+            try
+            {
+                return await _mediator.Send(new GetEmployeeByCarNumberRequest()
+                {
+                    CarNumber = carNumber,
+                });
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    e.Message
+                };
             }
         }
     }
