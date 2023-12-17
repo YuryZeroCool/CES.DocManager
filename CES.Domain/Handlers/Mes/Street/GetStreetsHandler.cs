@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using CES.Domain.Models.Request.Mes.Street;
-using CES.Domain.Models.Response.Mes.Street;
 using CES.Infra;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace CES.Domain.Handlers.Mes.Street
 {
-    public class GetStreetsHandler : IRequestHandler<GetStreetsRequest, GetStreetsResponse>
+    public class GetStreetsHandler : IRequestHandler<GetStreetsRequest, List<string>>
     {
         private readonly DocMangerContext _ctx;
 
@@ -18,27 +17,29 @@ namespace CES.Domain.Handlers.Mes.Street
             _ctx = ctx;
             _mapper = mapper;
         }
-        public async Task<GetStreetsResponse> Handle(GetStreetsRequest request, CancellationToken cancellationToken)
+        public async Task<List<string>> Handle(GetStreetsRequest request, CancellationToken cancellationToken)
         {
             if (_ctx.Streets != null)
             {
-                if(!string.IsNullOrEmpty(request.Street))
+                if(!string.IsNullOrEmpty(request.Value))
                 {
                     if (await _ctx.Streets.CountAsync(cancellationToken) == 0)
                         throw new System.Exception("Улицы не найдены");
-                    var res = await _ctx.Streets
-                        .FirstOrDefaultAsync(x => x.Name
+                    var data = await _ctx.Streets
+                        .Where(x => x.Name
                             .ToUpper()
                             .Trim()
-                            .TrimEnd()
-                            .Contains(request.Street
+                            .Contains(request.Value
                                 .ToUpper()
-                                .Trim()
-                                .TrimEnd()
-                                )
-                            );
-                    return res is null ? throw new System.Exception("Улица не найдена")
-                        : await Task.FromResult(_mapper.Map<GetStreetsResponse>(res));
+                                .Trim())
+                            )
+                        .ToListAsync(cancellationToken);
+                    return data is null ? throw new System.Exception("Улица не найдена")
+                        : await Task.FromResult(data.Select(p=>p.Name).ToList());
+                }
+                else
+                {
+                    return new List<string>();
                 }
             }
             throw new NotImplementedException();
