@@ -35,7 +35,6 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-
         [HttpGet("getNumbersPlateOfCar")]
         [Produces(typeof(IEnumerator<GetAllNumbersPlateResponse>))]
         public async Task<object> GetNumbersPlateOfCarAsync(string brand)
@@ -53,7 +52,6 @@ namespace CES.DocManager.WebApi.Controllers
                 return new object();
             }
         }
-
 
         [HttpPost("vehicleCreateBrand")]
         [Produces(typeof(GetVehicleBrandResponse))]
@@ -110,6 +108,30 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return new { };
+            }
+        }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("getCarByCarNumber")]
+        [Produces(typeof(List<string>))]
+        public async Task<object> GetCarByCarNumber(string? carNumber = default)
+        {
+            try
+            {
+                if(string.IsNullOrEmpty(carNumber))  return new List<string>();
+                return await _mediator.Send(new GetCarByCarNumberRequest()
+                {
+                    CarNumber = carNumber,
+                });
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    e.Message
+                };
             }
         }
     }
