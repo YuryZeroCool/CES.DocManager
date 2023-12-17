@@ -102,7 +102,7 @@ namespace CES.DocManager.WebApi.Controllers
             catch (Exception e)
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new {e.Message} ;
+                return new {e.Message};
             }
         }
 
@@ -216,6 +216,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("searchOrganizations")]
         [Produces(typeof(SearchOrganizationRequest))]
         public async Task<object> SearchOrganizations(string? title = default, int limit = 10, int page = 1 )
@@ -238,6 +240,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("organizationsBySearch")]
         [Produces(typeof(List<string>))]
         public async Task<object> OrganizationsBySearch(string? title = default)
@@ -259,6 +263,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("notesWithoutAct")]
         [Produces(typeof(List<NotesWithoutActResponse>))]
         public async Task<object> NotesWithoutAct()
@@ -315,13 +321,25 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-        [HttpGet("street")]
-        [Produces(typeof(GetStreetsResponse))]
-        public async Task<object> GetStreets(string street)
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("streetsBySearch")]
+        [Produces(typeof(List<string>))]
+        public async Task<object> GetStreets(string value)
         {
             try
             {
-                return await _mediator.Send(new GetStreetsRequest() { Street = street});
+                var data = await _mediator.Send(new GetStreetsRequest() { Value = value});
+                if (data != null)
+                {
+                    if (data.Count == 0)
+                    {
+                        HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                        return data;
+                    }
+                    return data;
+                }
+                throw new Exception("Error");
             }
             catch (Exception e)
             {
@@ -333,6 +351,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost("street")]
         [Produces(typeof(CreateStreetResponse))]
         public async Task<object> CreateStreet([FromBody] string street)
@@ -350,6 +370,27 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("houseNumbersBySearch")]
+        [Produces(typeof(List<GetHouseNumbersResponse>))]
+        public async Task<object> GetHouseNumbers(string value)
+        {
+            try
+            {
+                var res = await _mediator.Send(new GetHouseNumbersRequest() { Value = value });
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
+                return res;
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new { e.Message };
+            }
+        }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost("houseNumber")]
         [Produces(typeof(CreateHouseNumberResponse))]
         public async Task<object> CreateHouseNumber([FromBody] string houseNumber)
@@ -362,7 +403,7 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new { e.Message };
             }
         }

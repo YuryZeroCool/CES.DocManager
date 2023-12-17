@@ -14,7 +14,7 @@ namespace CES.DocManager.WebApi.Controllers
 {
 
     [EnableCors("MyPolicy")]
-    [Route("mes/act")]
+    [Route("mes/act/")]
     [ApiController]
     public class ActController : ControllerBase
     {
@@ -31,12 +31,16 @@ namespace CES.DocManager.WebApi.Controllers
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet()]
-        [Produces(typeof(List<GetAllNotesResponse>))]
-        public async Task<object> Acts()
+        [Produces(typeof(List<GetActsResponse>))]
+        public async Task<object> GetActs(DateTime min, DateTime max)
         {
             try
             {
-                return await _mediator.Send(new GetAllNotesRequest());
+                return await _mediator.Send(new GetActsRequest()
+                {
+                    Min = min,
+                    Max = max
+                });
             }
             catch (Exception)
             {
@@ -47,7 +51,7 @@ namespace CES.DocManager.WebApi.Controllers
 
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        [HttpPost()]
+        [HttpPost("workInAct")]
         [Produces(typeof(CreateOrganizationResponse))]
         public async Task<object> CreateWorkNameInAct([FromBody] WorkNameInActViewModel workName)
         {
@@ -113,6 +117,25 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new object();
+            }
+        }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpPost()]
+        [Produces(typeof(CreateActResponse))]
+        public async Task<object> CreateAct([FromBody] ActViewModel act)
+        {
+            try
+            {
+                var res = await _mediator.Send(_mapper.Map<CreateActRequest>(act));
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
+                return res;
+            }
+            catch
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return new { Message = "Упс! Что-то пошло не так" };
             }
         }
     }
