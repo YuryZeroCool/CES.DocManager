@@ -2,7 +2,7 @@
 {
     public class PriceActViewModel
     {
-        public int WorkNameInActId { get; set; }
+        public int WorkNameInAct { get; set; }
 
         public double Price { get; set; }
     }

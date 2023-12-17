@@ -6,6 +6,7 @@ using CES.Domain.Models.Request.DriverMedicalCertificate;
 using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Request.Mes;
+using CES.Domain.Models.Request.Mes.Acts;
 using CES.Domain.Models.Response.CarMechanic;
 using CES.Domain.Models.Response.Division;
 using CES.Domain.Models.Response.MaterialReport;
@@ -66,11 +67,11 @@ namespace CES.DocManager.WebApi.Mapper
              .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))
              .ForMember(dest => dest.NameParty, opt => opt.MapFrom(src => src.NameParty));
 
-             CreateMap<NoteViewModel, AddNoteRequest>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
-                .ForMember(dest => dest.IsChecked, opt => opt.MapFrom(src => src.IsChecked));
+            CreateMap<NoteViewModel, AddNoteRequest>()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+               .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
+               .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
+               .ForMember(dest => dest.IsChecked, opt => opt.MapFrom(src => src.IsChecked));
 
 
             CreateMap<EditExistedNoteViewModel, EditExistedNoteRequest>()
@@ -79,11 +80,14 @@ namespace CES.DocManager.WebApi.Mapper
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
                 .ForMember(dest => dest.IsChecked, opt => opt.MapFrom(src => src.IsChecked));
 
-                CreateMap<ContactInfoViewModel, ContactInfoModel>();
+            CreateMap<ContactInfoViewModel, ContactInfoModel>();
 
-                CreateMap<OrganizationViewModel, CreateOrganizationRequest>();
-                CreateMap<OrganizationViewModel, EditOrganizationRequest>();
+            CreateMap<OrganizationViewModel, CreateOrganizationRequest>();
+            CreateMap<OrganizationViewModel, EditOrganizationRequest>();
+
+            CreateMap<ActViewModel, CreateActRequest>();
+            CreateMap<Models.Mes.Work, Domain.Models.Request.Mes.Acts.Work>();
+            CreateMap<Models.Mes.FullNoteData, Domain.Models.Request.Mes.Acts.FullNoteData>();
         }
     }
-
 }
