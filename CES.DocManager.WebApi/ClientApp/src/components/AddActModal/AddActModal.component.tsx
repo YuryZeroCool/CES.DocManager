@@ -14,7 +14,8 @@ import AddActTable from '../AddActTable/AddActTable.container';
 import ModalButtons from '../ModalButtons/ModalButtons.container';
 import SearchableSelect from '../SearchableSelect/SearchableSelect.container';
 import DriverComboBox from '../DriverComboBox/DriverComboBox.container';
-import { Act } from '../../types/MesTypes';
+import NoteContactsInfo from '../NoteContactsInfo/NoteContactsInfo.container';
+import { Act, IFullNoteData } from '../../types/MesTypes';
 import classes from './AddActModal.module.scss';
 
 interface Props {
@@ -25,6 +26,12 @@ interface Props {
   handleDriverSelectChange: (value: string) => void;
   handleActAdditionDateChange: (value: Date | null) => void;
   handleAddActSubmit: () => void;
+  handleStreetSearchChange: (value: string, index: number) => void;
+  handleEntranceChange: (value: string, index: number) => void;
+  handleHouseNumberChange: (value: string, index: number) => void;
+  handleTelChange: (value: string, index: number) => void;
+  handleAddButtonClick: () => void;
+  handleDeleteButtonClick: (id: number) => void;
   isAddActModalOpen: boolean;
   allOrganizationsBySearch: string[];
   organization: string;
@@ -39,6 +46,8 @@ interface Props {
   actAdditionDate: Date | null;
   modalError: string;
   selectedNotesId: number[];
+  selectedNotes: IFullNoteData[];
+  streetsBySearch: string[];
 }
 
 export default function AddActModalComponent(props: Props) {
@@ -50,6 +59,12 @@ export default function AddActModalComponent(props: Props) {
     handleDriverSelectChange,
     handleActAdditionDateChange,
     handleAddActSubmit,
+    handleStreetSearchChange,
+    handleEntranceChange,
+    handleHouseNumberChange,
+    handleTelChange,
+    handleAddButtonClick,
+    handleDeleteButtonClick,
     isAddActModalOpen,
     allOrganizationsBySearch,
     organization,
@@ -64,6 +79,8 @@ export default function AddActModalComponent(props: Props) {
     actAdditionDate,
     modalError,
     selectedNotesId,
+    selectedNotes,
+    streetsBySearch,
   } = props;
 
   return (
@@ -132,6 +149,18 @@ export default function AddActModalComponent(props: Props) {
             maxDate={new Date()}
           />
         </DatesProvider>
+        {selectedNotesId.length === 0 && (
+          <NoteContactsInfo
+            noteContactsInfo={selectedNotes}
+            streetsBySearch={streetsBySearch}
+            handleAddButtonClick={handleAddButtonClick}
+            handleDeleteButtonClick={handleDeleteButtonClick}
+            handleEntranceChange={handleEntranceChange}
+            handleHouseNumberChange={handleHouseNumberChange}
+            handleStreetSearchChange={handleStreetSearchChange}
+            handleTelChange={handleTelChange}
+          />
+        )}
         {currentActData.works.length !== 0 && (
           <AddActTable currentActData={currentActData} type={type} />
         )}
