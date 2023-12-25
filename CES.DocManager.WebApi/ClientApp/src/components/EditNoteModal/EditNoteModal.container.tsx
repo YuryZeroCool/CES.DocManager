@@ -104,12 +104,9 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
   };
 
   const handleEntranceChange = (value: string, index: number) => {
-    const stateCopy = formState;
-    const newArr = stateCopy.noteContactsInfo.map((el, i) => {
+    const newArr = formState.noteContactsInfo.map((el, i) => {
       if (i === index) {
-        const elem = el;
-        elem.entrance = value;
-        return elem;
+        return { ...el, entrance: value };
       }
       return el;
     });
@@ -120,12 +117,9 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
   };
 
   const handleHouseNumberChange = (value: string, index: number) => {
-    const stateCopy = formState;
-    const newArr = stateCopy.noteContactsInfo.map((el, i) => {
+    const newArr = formState.noteContactsInfo.map((el, i) => {
       if (i === index) {
-        const elem = el;
-        elem.houseNumber = value;
-        return elem;
+        return { ...el, houseNumber: value };
       }
       return el;
     });
@@ -136,12 +130,9 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
   };
 
   const handleTelChange = (value: string, index: number) => {
-    const stateCopy = formState;
-    const newArr = stateCopy.noteContactsInfo.map((el, i) => {
+    const newArr = formState.noteContactsInfo.map((el, i) => {
       if (i === index) {
-        const elem = el;
-        elem.tel = value;
-        return elem;
+        return { ...el, tel: value };
       }
       return el;
     });
