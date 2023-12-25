@@ -1,16 +1,13 @@
 import React from 'react';
 import {
-  ActionIcon,
   Button,
   Flex,
   Modal,
-  Select,
   Stack,
-  TextInput,
   Textarea,
 } from '@mantine/core';
-import { IconTrash, IconPlus } from '@tabler/icons-react';
 import { EditNoteRequest } from '../../types/MesTypes';
+import NoteContactsInfo from '../NoteContactsInfo/NoteContactsInfo.container';
 import classes from './EditNoteModal.module.scss';
 
 interface Props {
@@ -53,70 +50,6 @@ export default function EditNoteModalComponent(props: Props) {
     />
   );
 
-  const renderNoteContactsInfo = (
-    formState.noteContactsInfo.map((el, index) => (
-      <Flex key={el.id} align="start" gap="2%" p={10} style={{ borderBottom: '1px solid gray' }}>
-        <Stack gap={10}>
-          <Flex gap={10}>
-            <Select
-              classNames={{
-                dropdown: classes.selectDropdown,
-              }}
-              w={380}
-              label="Улица"
-              placeholder="Введите значение"
-              data={streetsBySearch}
-              searchable
-              onSearchChange={(value) => handleStreetSearchChange(value, index)}
-              value={el.street}
-            />
-
-            <TextInput
-              label="Номер дома"
-              placeholder="Номер дома"
-              w={120}
-              value={el.houseNumber}
-              onChange={(event) => handleHouseNumberChange(event.target.value, index)}
-            />
-
-            <TextInput
-              label="Подъезд"
-              placeholder="Подъезд"
-              w={120}
-              value={el.entrance}
-              onChange={(event) => handleEntranceChange(event.target.value, index)}
-            />
-          </Flex>
-
-          <Flex>
-            <TextInput
-              label="Телефон"
-              w="40%"
-              value={el.tel}
-              onChange={(event) => handleTelChange(event.target.value, index)}
-            />
-          </Flex>
-        </Stack>
-
-        <ActionIcon
-          disabled={formState.noteContactsInfo.length === 1}
-          onClick={() => handleDeleteButtonClick(el.id)}
-        >
-          <IconTrash style={{ width: '20px', height: '20px' }} />
-        </ActionIcon>
-        {index === formState.noteContactsInfo.length - 1 && (
-          <ActionIcon
-            onClick={handleAddButtonClick}
-            variant="gradient"
-            gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
-          >
-            <IconPlus style={{ width: '20px', height: '20px' }} />
-          </ActionIcon>
-        )}
-      </Flex>
-    ))
-  );
-
   return (
     <Modal
       opened={editNoteModalOpened}
@@ -134,7 +67,16 @@ export default function EditNoteModalComponent(props: Props) {
         <form onSubmit={(event) => onSubmit(event)}>
           <Stack gap={15}>
             {renderTextArea}
-            {renderNoteContactsInfo}
+            <NoteContactsInfo
+              noteContactsInfo={formState.noteContactsInfo}
+              streetsBySearch={streetsBySearch}
+              handleAddButtonClick={handleAddButtonClick}
+              handleDeleteButtonClick={handleDeleteButtonClick}
+              handleEntranceChange={handleEntranceChange}
+              handleHouseNumberChange={handleHouseNumberChange}
+              handleStreetSearchChange={handleStreetSearchChange}
+              handleTelChange={handleTelChange}
+            />
             <Flex gap="2%" mt={20} justify="end">
               <Button
                 className="modal-button"
