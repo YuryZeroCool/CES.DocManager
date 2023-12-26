@@ -1,3 +1,7 @@
 const LIMIT = 10;
+const ACTS_LIMIT = 20;
 
-export default LIMIT;
+export {
+  LIMIT,
+  ACTS_LIMIT,
+};

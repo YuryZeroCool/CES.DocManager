@@ -18,3 +18,7 @@
 .tabLabel {
   font-size: 18px;
 }
+
+.day[data-selected] {
+  background-color: var(--mantine-color-cyan-filled);
+}

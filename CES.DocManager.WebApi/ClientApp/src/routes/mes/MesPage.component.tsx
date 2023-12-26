@@ -4,6 +4,7 @@ import {
   Button,
   Combobox,
   Flex,
+  Group,
   Input,
   InputBase,
   Stack,
@@ -12,11 +13,14 @@ import {
   rem,
   useCombobox,
 } from '@mantine/core';
+import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import {
   IconNote,
   IconNoteOff,
   IconComet,
   IconSearch,
+  IconClipboardList,
+  IconCalendar,
 } from '@tabler/icons-react';
 import AddActModal from '../../components/AddActModal/AddActModal.container';
 import NotesTable from '../../components/NotesTable/NotesTable.container';
@@ -24,7 +28,13 @@ import AddOrganizationModal from '../../components/AddOrganizationModal/AddOrgan
 import OrganizationsTable from '../../components/OrganizationsTable/OrganizationsTable.container';
 import Pagination from '../../components/Pagination/Pagination.container';
 import NotesWithoutActsTableContainer from '../../components/NotesWithoutActsTable/NotesWithoutActsTable.container';
-import { Act, ActDataFromFileResponse, ActTypesFromFileResponse } from '../../types/MesTypes';
+import ActsListTable from '../../components/ActsListTable/ActsListTable.container';
+import {
+  Act,
+  ActDataFromFileResponse,
+  ActTypesFromFileResponse,
+  ActsList,
+} from '../../types/MesTypes';
 import classes from './MesPage.module.scss';
 
 interface Props {
@@ -40,12 +50,21 @@ interface Props {
   currentActData: Act;
   type: string;
   addActModalOpened: boolean;
+  editActModalOpened: boolean;
   addOrganizationModalOpened: boolean;
   editOrganizationModalOpened: boolean;
+  actsList: ActsList[];
+  actsListPage: number;
+  totalActsListPages: number;
+  minActDate: Date;
+  maxActDate: Date;
+  requestStatus: string;
 
   editOrganizationModalOpen: () => void;
   editOrganizationModalClose: () => void;
   addActModalClose: () => void;
+  editActModalOpen: () => void;
+  editActModalClose: () => void;
   addOrganizationModalClose: () => void;
   handleAddActBtnClick: (value: string) => void;
   handleAddOrganizationBtnClick: () => void;
@@ -58,6 +77,11 @@ interface Props {
   handleActTypeSelectChange: (value: string) => void;
   resetCurrentActData: () => void;
   changeType: (value: string) => void;
+  handleCurrentActsListPageChange: (value: number) => void;
+  handleMinActDateChange: (value: Date | null) => void;
+  handleMaxActDateChange: (value: Date | null) => void;
+  handleGetActsListBtnClick: () => void;
+  setMesError: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function MesPageComponent(props: Props) {
@@ -74,12 +98,21 @@ export default function MesPageComponent(props: Props) {
     currentActData,
     type,
     addActModalOpened,
+    editActModalOpened,
     addOrganizationModalOpened,
     editOrganizationModalOpened,
+    actsList,
+    actsListPage,
+    totalActsListPages,
+    minActDate,
+    maxActDate,
+    requestStatus,
 
     editOrganizationModalOpen,
     editOrganizationModalClose,
     addActModalClose,
+    editActModalOpen,
+    editActModalClose,
     addOrganizationModalClose,
     handleAddActBtnClick,
     handleAddOrganizationBtnClick,
@@ -92,6 +125,11 @@ export default function MesPageComponent(props: Props) {
     handleActTypeSelectChange,
     resetCurrentActData,
     changeType,
+    handleCurrentActsListPageChange,
+    handleMinActDateChange,
+    handleMaxActDateChange,
+    handleGetActsListBtnClick,
+    setMesError,
   } = props;
 
   const iconStyle = { width: rem(20), height: rem(20) };
@@ -128,6 +166,9 @@ export default function MesPageComponent(props: Props) {
           </Tabs.Tab>
           <Tabs.Tab value="Заявки без актов" leftSection={<IconNoteOff style={iconStyle} />}>
             Заявки без актов
+          </Tabs.Tab>
+          <Tabs.Tab value="История актов" leftSection={<IconClipboardList style={iconStyle} />}>
+            История актов
           </Tabs.Tab>
         </Tabs.List>
       </Tabs>
@@ -175,6 +216,68 @@ export default function MesPageComponent(props: Props) {
     ))
   );
 
+  const renderActsListHeader = () => (
+    <Group w="100%" align="end">
+      <Group w={400}>
+        <DatesProvider
+          settings={{
+            locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'UTC',
+          }}
+        >
+          <DatePickerInput
+            leftSection={<IconCalendar size="1.1rem" stroke={1.5} />}
+            label="От"
+            placeholder="От"
+            value={minActDate}
+            onChange={(value: Date | null) => {
+              handleMinActDateChange(value);
+            }}
+            classNames={{
+              day: classes.day,
+            }}
+            w="100%"
+            clearable
+            leftSectionPointerEvents="none"
+            maxDate={new Date()}
+          />
+        </DatesProvider>
+      </Group>
+
+      <Group w={400}>
+        <DatesProvider
+          settings={{
+            locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'UTC',
+          }}
+        >
+          <DatePickerInput
+            leftSection={<IconCalendar size="1.1rem" stroke={1.5} />}
+            label="До"
+            placeholder="До"
+            value={maxActDate}
+            onChange={(value: Date | null) => {
+              handleMaxActDateChange(value);
+            }}
+            classNames={{
+              day: classes.day,
+            }}
+            w="100%"
+            clearable
+            leftSectionPointerEvents="none"
+            maxDate={new Date()}
+          />
+        </DatesProvider>
+      </Group>
+
+      <Button
+        variant="gradient"
+        gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
+        onClick={handleGetActsListBtnClick}
+      >
+        Получить акты
+      </Button>
+    </Group>
+  );
+
   const renderTableHeader = () => (
     <Flex align="center" gap={15} h="9vh">
       {mesPageType === 'Организации' && (
@@ -197,12 +300,15 @@ export default function MesPageComponent(props: Props) {
           </ActionIcon>
         </>
       )}
+
       {mesPageType === 'Заявки без актов' && (
         <>
           {renderActTypesSelect()}
           {renderActsButtons()}
         </>
       )}
+
+      {mesPageType === 'История актов' && renderActsListHeader()}
     </Flex>
   );
 
@@ -229,6 +335,24 @@ export default function MesPageComponent(props: Props) {
     />
   );
 
+  const renderActsListTable = () => (
+    <ActsListTable
+      mesError={mesError}
+      actsList={actsList}
+      requestStatus={requestStatus}
+      setMesError={setMesError}
+      editActModalOpen={editActModalOpen}
+    />
+  );
+
+  const renderActsListPagination = () => (
+    <Pagination
+      page={actsListPage}
+      totalPage={totalActsListPages}
+      handleCurrentPageChange={handleCurrentActsListPageChange}
+    />
+  );
+
   const renderNotesWithoutActsTable = () => (
     <NotesWithoutActsTableContainer
       mesError={mesError}
@@ -245,12 +369,16 @@ export default function MesPageComponent(props: Props) {
       {mesPageType === 'Организации' && renderOrganizationsTable()}
       {mesPageType === 'Организации' && renderPagination()}
       {mesPageType === 'Заявки без актов' && renderNotesWithoutActsTable()}
+      {mesPageType === 'История актов' && renderActsListTable()}
+      {mesPageType === 'История актов' && renderActsListPagination()}
       <AddActModal
         selectedNotesId={selectedNotesId}
         currentActData={currentActData}
         type={type}
         addActModalOpened={addActModalOpened}
+        editActModalOpened={editActModalOpened}
         addActModalClose={addActModalClose}
+        editActModalClose={editActModalClose}
         resetCurrentActData={resetCurrentActData}
         changeType={changeType}
       />

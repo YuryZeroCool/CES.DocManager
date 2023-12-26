@@ -13,6 +13,14 @@ export interface ContactInfo {
   tel: string;
 }
 
+export interface INoteContactInfo {
+  id: number;
+  street: string;
+  entrance: number;
+  houseNumber: string;
+  tel: string;
+}
+
 export interface EditNoteRequest {
   id: number;
   date: string;
@@ -66,6 +74,9 @@ export interface INotesState {
   vat: number;
   streetsBySearch: string[];
   createdActId: number;
+  actsList: ActsList[];
+  totalActsListCount: number;
+  deletedActId: number;
 }
 
 export interface SearchOrganization {
@@ -125,4 +136,30 @@ export interface AddNewActReq {
   notesWithoutAct: IFullNoteData[];
   totalActSumm: number;
   vat: number;
+}
+
+export interface GetActsListReq {
+  min: string;
+  max: string;
+  page: number;
+  limit: number;
+}
+
+export interface ActsList {
+  id: number;
+  actDateOfCreation: string;
+  dateOfWorkCompletion: string;
+  organization: string;
+  total: number;
+  vat: number;
+  driver: string;
+  numberPlateOfCar: string;
+  actType: string;
+  works: Work[];
+  notesWithoutAct: INoteContactInfo[];
+}
+
+export interface ActsListRes {
+  actsList: ActsList[];
+  totalActsListPagesCount: number;
 }

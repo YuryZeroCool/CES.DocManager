@@ -20,6 +20,8 @@ import deleteNote from '../../actions/mes/deleteNote';
 import organizationsBySearch from '../../actions/mes/organizationsBySearch';
 import streetsBySearch from '../../actions/mes/getStreetsBySearch';
 import createNewAct from '../../actions/mes/createNewAct';
+import getActsList from '../../actions/mes/getActsList';
+import deleteAct from '../../actions/mes/deleteAct';
 
 const organizationDefault = {
   id: 0,
@@ -62,6 +64,9 @@ const initial: INotesState = {
   vat: 0,
   streetsBySearch: [],
   createdActId: 0,
+  actsList: [],
+  totalActsListCount: 0,
+  deletedActId: 0,
 };
 
 const mesReducer = createSlice({
@@ -198,6 +203,16 @@ const mesReducer = createSlice({
         totalActSumm: 0,
         vat: 0,
       };
+    },
+    editActsListAfterDelete: (state, action: PayloadAction<number>) => {
+      let stateCopy: INotesState = state;
+      stateCopy = {
+        ...stateCopy,
+        actsList: [
+          ...stateCopy.actsList.filter((el) => el.id !== action.payload),
+        ],
+      };
+      return stateCopy;
     },
   },
   extraReducers: (builder) => {
@@ -461,6 +476,49 @@ const mesReducer = createSlice({
     builder.addCase(createNewAct.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
+
+    builder.addCase(getActsList.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        requestStatus: 'pending',
+      };
+      return stateCopy;
+    });
+    builder.addCase(getActsList.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        actsList: action.payload.actsList,
+        totalActsListCount: action.payload.totalActsListPagesCount,
+        requestStatus: 'fulfilled',
+      };
+      return stateCopy;
+    });
+    builder.addCase(getActsList.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(deleteAct.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        requestStatus: 'pending',
+      };
+      return stateCopy;
+    });
+    builder.addCase(deleteAct.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        deletedActId: action.payload,
+        requestStatus: 'fulfilled',
+      };
+      return stateCopy;
+    });
+    builder.addCase(deleteAct.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
   },
 });
 
@@ -477,6 +535,7 @@ export const {
   resetTotalActSummVat,
   updateActTotalSumm,
   resetActData,
+  editActsListAfterDelete,
 } = mesReducer.actions;
 
 export default mesReducer.reducer;

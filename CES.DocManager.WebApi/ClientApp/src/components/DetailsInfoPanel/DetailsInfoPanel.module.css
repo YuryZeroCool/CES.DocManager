@@ -1,0 +1,25 @@
+.detailedInfoTitle {
+  color: var(--mantine-color-gray-8) !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  line-height: 20px;
+}
+
+.detailedInfoValue {
+  color: var(--mantine-color-gray-7) !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  line-height: 20px !important;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.tableHeadCell {
+  padding: 15px !important;
+  background-color: var(--mantine-color-cyan-filled) !important;
+  color: var(--mantine-color-body);
+}
+
+.tableBodyCell {
+  padding: 15px !important;
+}

@@ -1,31 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDisclosure } from '@mantine/hooks';
-import { RootState } from '../../redux/reducers/combineReducers';
-import getAllNotes from '../../redux/actions/mes/getAllNotes';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { changeMesPageType, resetTotalActSummVat } from '../../redux/reducers/mes/mesReducer';
+import { RootState } from '../../redux/reducers/combineReducers';
+import getAllNotes from '../../redux/actions/mes/getAllNotes';
 import searchOrganizations from '../../redux/actions/mes/searchOrganizations';
 import getNotesWithoutActs from '../../redux/actions/mes/getNotesWithoutActs';
-import { Act, INotesState, SearchOrganization } from '../../types/MesTypes';
-import MesPageComponent from './MesPage.component';
-import LIMIT from './MesPage.config';
 import getActTypesFromFile from '../../redux/actions/mes/getActTypesFromFile';
 import getActDataFromFile from '../../redux/actions/mes/getActDataFromFile';
+import getActsList from '../../redux/actions/mes/getActsList';
 import handleError from '../../utils';
+import {
+  Act,
+  GetActsListReq,
+  INotesState,
+  SearchOrganization,
+} from '../../types/MesTypes';
+import MesPageComponent from './MesPage.component';
+import { ACTS_LIMIT, LIMIT } from './MesPage.config';
 
 function MesPageContainer() {
   const [mesError, setMesError] = useState<string>('');
   const [search, setSearchValue] = useState<string>('');
   const [activePage, setPage] = useState(1);
+  const [activeActsListPage, setActiveActsListPage] = useState(1);
   const [selected, setSelected] = useState<number[]>([]);
   const [type, setType] = useState<string>('');
   const [actTypeSelectValue, setActTypeSelectValue] = useState<string>('');
   const [currentActData, setCurrentActData] = useState<Act>({ type: '', works: [] });
 
+  const minDate = new Date();
+  minDate.setDate(1);
+  const [minActDate, setMinActDate] = useState<Date>(minDate);
+
+  const maxDate = new Date();
+  maxDate.setDate(31);
+  const [maxActDate, setMaxActDate] = useState<Date>(maxDate);
+
   const [
     addActModalOpened,
     { open: addActModalOpen, close: addActModalClose },
+  ] = useDisclosure(false);
+
+  const [
+    editActModalOpened,
+    { open: editActModalOpen, close: editActModalClose },
   ] = useDisclosure(false);
 
   const [
@@ -43,6 +63,9 @@ function MesPageContainer() {
     allOrganizations,
     actTypesFromFile,
     actDataFromFile,
+    actsList,
+    totalActsListCount,
+    requestStatus,
   } = useSelector<RootState, INotesState>(
     (state) => state.mes,
   );
@@ -57,6 +80,21 @@ function MesPageContainer() {
       title: search,
     };
     dispatch(searchOrganizations(seachOrganization))
+      .catch((error) => {
+        handleError(error, setMesError);
+      });
+  };
+
+  const getActsListReq = (currentPage: number) => {
+    setMesError('');
+
+    const params: GetActsListReq = {
+      limit: ACTS_LIMIT,
+      page: currentPage,
+      min: minActDate.toISOString(),
+      max: maxActDate.toISOString(),
+    };
+    dispatch(getActsList(params))
       .catch((error) => {
         handleError(error, setMesError);
       });
@@ -82,6 +120,9 @@ function MesPageContainer() {
         .catch((error) => {
           handleError(error, setMesError);
         });
+    }
+    if (mesPageType === 'История актов') {
+      getActsListReq(activeActsListPage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mesPageType]);
@@ -120,6 +161,11 @@ function MesPageContainer() {
   const handleCurrentPageChange = (value: number) => {
     setPage(value);
     getOgranizations(value);
+  };
+
+  const handleCurrentActsListPageChange = (value: number) => {
+    setActiveActsListPage(value);
+    getActsListReq(value);
   };
 
   const changeType = (value: string) => {
@@ -166,12 +212,30 @@ function MesPageContainer() {
     setCurrentActData({ type: '', works: [] });
   };
 
+  const handleMinActDateChange = (value: Date | null) => {
+    if (value) {
+      setMinActDate(value);
+    }
+  };
+
+  const handleMaxActDateChange = (value: Date | null) => {
+    if (value) {
+      setMaxActDate(value);
+    }
+  };
+
+  const handleGetActsListBtnClick = () => {
+    getActsListReq(activeActsListPage);
+  };
+
   return (
     <MesPageComponent
       mesError={mesError}
       mesPageType={mesPageType}
       search={search}
       page={activePage}
+      actsListPage={activeActsListPage}
+      totalActsListPages={totalActsListCount}
       totalPage={allOrganizations.totalPage}
       selectedNotesId={selected}
       actTypesFromFile={actTypesFromFile}
@@ -180,11 +244,18 @@ function MesPageContainer() {
       currentActData={currentActData}
       type={type}
       addActModalOpened={addActModalOpened}
+      editActModalOpened={editActModalOpened}
       addOrganizationModalOpened={addOrganizationModalOpened}
       editOrganizationModalOpened={editOrganizationModalOpened}
+      actsList={actsList}
+      minActDate={minActDate}
+      maxActDate={maxActDate}
+      requestStatus={requestStatus}
       editOrganizationModalOpen={editOrganizationModalOpen}
       editOrganizationModalClose={editOrganizationModalClose}
       addActModalClose={addActModalClose}
+      editActModalOpen={editActModalOpen}
+      editActModalClose={editActModalClose}
       addOrganizationModalClose={addOrganizationModalClose}
       handleAddActBtnClick={handleAddActBtnClick}
       handleAddOrganizationBtnClick={handleAddOrganizationBtnClick}
@@ -197,6 +268,11 @@ function MesPageContainer() {
       handleActTypeSelectChange={handleActTypeSelectChange}
       resetCurrentActData={resetCurrentActData}
       changeType={changeType}
+      handleCurrentActsListPageChange={handleCurrentActsListPageChange}
+      handleMinActDateChange={handleMinActDateChange}
+      handleMaxActDateChange={handleMaxActDateChange}
+      handleGetActsListBtnClick={handleGetActsListBtnClick}
+      setMesError={setMesError}
     />
   );
 }
