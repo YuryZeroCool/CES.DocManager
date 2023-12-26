@@ -33,9 +33,27 @@ export default function AddActTableComponent(props: Props) {
     </Table.Tr>
   );
 
+  const renderWorkName = (name: string) => {
+    if (name.includes('&Oslash;')) {
+      const strArr = name.split('&Oslash;');
+      return (
+        <Text>
+          {strArr[0]}
+          &Oslash;
+          {strArr[1]}
+        </Text>
+      );
+    }
+    return (
+      <Text>
+        {name}
+      </Text>
+    );
+  };
+
   const rows = currentActData.works.map((work) => (
     <Table.Tr key={work.name}>
-      <Table.Td>{work.name}</Table.Td>
+      <Table.Td>{renderWorkName(work.name)}</Table.Td>
       <Table.Td>{work.unit}</Table.Td>
       <Table.Td>
         <TextInput
