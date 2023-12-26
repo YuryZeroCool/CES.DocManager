@@ -26,7 +26,9 @@ interface Props {
   currentActData: Act;
   type: string;
   addActModalOpened: boolean;
+  editActModalOpened: boolean;
   addActModalClose: () => void;
+  editActModalClose: () => void;
   resetCurrentActData: () => void;
   changeType: (value: string) => void;
 }
@@ -37,6 +39,8 @@ function AddActModalContainer(props: Props) {
     currentActData,
     type,
     addActModalOpened,
+    editActModalOpened,
+    editActModalClose,
     addActModalClose,
     resetCurrentActData,
     changeType,
@@ -136,7 +140,12 @@ function AddActModalContainer(props: Props) {
       setSelectedNotes([]);
       setCounter(1);
     }
-    addActModalClose();
+    if (addActModalOpened) {
+      addActModalClose();
+    }
+    if (editActModalOpened) {
+      editActModalClose();
+    }
   };
 
   const handleOrganizationsInputChange = (value: string) => {
@@ -276,6 +285,7 @@ function AddActModalContainer(props: Props) {
     <AddActModalComponent
       currentActData={currentActData}
       isAddActModalOpen={addActModalOpened}
+      isEditActModalOpen={editActModalOpened}
       type={type}
       organization={organization}
       allOrganizationsBySearch={allOrganizationsBySearch}

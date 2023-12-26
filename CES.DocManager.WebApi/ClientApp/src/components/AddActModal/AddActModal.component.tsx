@@ -7,6 +7,7 @@ import {
   Select,
   Stack,
   Text,
+  Title,
 } from '@mantine/core';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import { IconCalendar } from '@tabler/icons-react';
@@ -33,6 +34,7 @@ interface Props {
   handleAddButtonClick: () => void;
   handleDeleteButtonClick: (id: number) => void;
   isAddActModalOpen: boolean;
+  isEditActModalOpen: boolean;
   allOrganizationsBySearch: string[];
   organization: string;
   currentActData: Act;
@@ -66,6 +68,7 @@ export default function AddActModalComponent(props: Props) {
     handleAddButtonClick,
     handleDeleteButtonClick,
     isAddActModalOpen,
+    isEditActModalOpen,
     allOrganizationsBySearch,
     organization,
     currentActData,
@@ -83,14 +86,21 @@ export default function AddActModalComponent(props: Props) {
     streetsBySearch,
   } = props;
 
+  const renderTitle = () => (
+    <Title size="h6" order={2} className={classes.modalTitle}>
+      {isAddActModalOpen && 'Добавление акта'}
+      {isEditActModalOpen && 'Редактирование акта'}
+    </Title>
+  );
+
   return (
     <Modal
-      opened={isAddActModalOpen}
+      opened={isAddActModalOpen || isEditActModalOpen}
       onClose={handleClose}
       withCloseButton
       centered
       closeOnClickOutside={false}
-      title="Добавление акта"
+      title={renderTitle()}
       size="xxl"
       classNames={{
         title: classes.modalTitle,
