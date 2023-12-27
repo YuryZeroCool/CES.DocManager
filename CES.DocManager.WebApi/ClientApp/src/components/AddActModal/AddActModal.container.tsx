@@ -8,7 +8,7 @@ import organizationsBySearch from '../../redux/actions/mes/organizationsBySearch
 import getCarByCarNumber from '../../redux/actions/vehicle/getCarByCarNumber';
 import getDriversByCarNumber from '../../redux/actions/drivers/getDriversByCarNumber';
 import createNewAct from '../../redux/actions/mes/createNewAct';
-import { resetActData } from '../../redux/reducers/mes/mesReducer';
+import { editNotesWithoutActAfterAddAct, resetActData } from '../../redux/reducers/mes/mesReducer';
 import {
   Act,
   AddNewActReq,
@@ -277,7 +277,10 @@ function AddActModalContainer(props: Props) {
       };
 
       dispatch(createNewAct(request))
-        .then(() => handleClose())
+        .then(() => {
+          dispatch(editNotesWithoutActAfterAddAct(selectedNotesId));
+          handleClose();
+        })
         .catch((error) => {
           handleError(error, setModalError);
         });

@@ -107,6 +107,17 @@ const mesReducer = createSlice({
       };
       return stateCopy;
     },
+    editNotesWithoutActAfterAddAct: (state, action: PayloadAction<number[]>) => {
+      let stateCopy: INotesState = state;
+      const filteredArray = stateCopy.notesWithoutAct.filter(
+        (obj) => !action.payload.includes(obj.id),
+      );
+      stateCopy = {
+        ...stateCopy,
+        notesWithoutAct: [...filteredArray],
+      };
+      return stateCopy;
+    },
     editNotesAfterDelete: (state, action: PayloadAction<number>) => {
       let stateCopy: INotesState = state;
       stateCopy = {
@@ -543,6 +554,7 @@ export const {
   updateActTotalSumm,
   resetActData,
   editActsListAfterDelete,
+  editNotesWithoutActAfterAddAct,
 } = mesReducer.actions;
 
 export default mesReducer.reducer;
