@@ -422,6 +422,7 @@ export default function MesPageComponent(props: Props) {
         editActModalClose={editActModalClose}
         resetCurrentActData={resetCurrentActData}
         changeType={changeType}
+        handleSelectNote={handleSelectNote}
       />
       <AddOrganizationModal
         addOrganizationModalOpened={addOrganizationModalOpened}

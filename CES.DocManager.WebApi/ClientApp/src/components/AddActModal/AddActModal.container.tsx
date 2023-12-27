@@ -31,6 +31,7 @@ interface Props {
   editActModalClose: () => void;
   resetCurrentActData: () => void;
   changeType: (value: string) => void;
+  handleSelectNote: (newValue: number[]) => void;
 }
 
 function AddActModalContainer(props: Props) {
@@ -44,6 +45,7 @@ function AddActModalContainer(props: Props) {
     addActModalClose,
     resetCurrentActData,
     changeType,
+    handleSelectNote,
   } = props;
 
   const [selectedNotes, setSelectedNotes] = useState<IFullNoteData[]>([]);
@@ -136,6 +138,7 @@ function AddActModalContainer(props: Props) {
     dispatch(resetDriversByCar());
     dispatch(resetActData(type));
     setModalError('');
+    handleSelectNote([]);
     if (selectedNotesId.length === 0) {
       setSelectedNotes([]);
       setCounter(1);
