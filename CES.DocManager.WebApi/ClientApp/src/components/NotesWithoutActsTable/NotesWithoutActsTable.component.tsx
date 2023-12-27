@@ -3,7 +3,9 @@ import {
   Checkbox,
   Group,
   LoadingOverlay,
+  Stack,
   Table,
+  Text,
   TextInput,
 } from '@mantine/core';
 import { Search } from '@mui/icons-material';
@@ -42,13 +44,21 @@ export default function NotesWithoutActsTableComponent(props: Props) {
       && requestStatus === 'fulfilled'
       && isSearch
       && notesWithoutAct.length !== baseNotesWithoutAct.length && (
-        <p className="error-message">Совпадений не найдено</p>
+        <Stack align="center" justify="center" w="100%">
+          <Text style={{ fontSize: 18, color: 'red' }}>
+            Совпадений не найдено
+          </Text>
+        </Stack>
     )
   );
 
   const renderError = () => (
     mesError !== '' && (
-      <p className="error-message">{mesError}</p>
+      <Stack align="center" justify="center" w="100%">
+        <Text style={{ fontSize: 18, color: 'red' }}>
+          {mesError}
+        </Text>
+      </Stack>
     )
   );
 
@@ -124,30 +134,31 @@ export default function NotesWithoutActsTableComponent(props: Props) {
   );
 
   const renderTable = () => (
-    notesWithoutAct.length !== 0 && (
-      <Group w="100%">
-        <Table
-          striped
-          highlightOnHover
-          withTableBorder
-          classNames={{
-            th: classes.tableHeadCell,
-            td: classes.tableBodyCell,
-            tr: classes.tableRow,
-          }}
-        >
-          <Table.Thead>
-            {renderTableHead()}
-          </Table.Thead>
-          <Table.Tbody>
-            {renderRowWithSearch()}
-            {renderTableBody()}
-          </Table.Tbody>
-        </Table>
+    <Group w="100%">
+      <Table
+        striped
+        highlightOnHover
+        withTableBorder
+        classNames={{
+          th: classes.tableHeadCell,
+          td: classes.tableBodyCell,
+          tr: classes.tableRow,
+        }}
+      >
+        <Table.Thead>
+          {renderTableHead()}
+        </Table.Thead>
+        <Table.Tbody>
+          {renderRowWithSearch()}
+          {notesWithoutAct.length !== 0 && (
+            renderTableBody()
+          )}
+        </Table.Tbody>
+      </Table>
 
-        {renderSearchNotesError()}
-      </Group>
-    )
+      {renderError()}
+      {renderSearchNotesError()}
+    </Group>
   );
 
   const renderLoaderModal = () => (
@@ -169,7 +180,6 @@ export default function NotesWithoutActsTableComponent(props: Props) {
 
   return (
     <div className="notes-table">
-      {renderError()}
       {renderTable()}
       {notesWithoutAct.length === 0 && requestStatus !== 'fulfilled' && mesError === '' && !isSearch && renderLoaderModal()}
     </div>
