@@ -18,7 +18,7 @@ import {
   SearchOrganization,
 } from '../../types/MesTypes';
 import MesPageComponent from './MesPage.component';
-import { LIMIT } from './MesPage.config';
+import LIMIT from './MesPage.config';
 
 function MesPageContainer() {
   const [mesError, setMesError] = useState<string>('');
