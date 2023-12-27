@@ -76,6 +76,7 @@ export interface INotesState {
   createdActId: number;
   actsList: ActsList[];
   totalActsListCount: number;
+  selectedActId: number;
   deletedActId: number;
 }
 

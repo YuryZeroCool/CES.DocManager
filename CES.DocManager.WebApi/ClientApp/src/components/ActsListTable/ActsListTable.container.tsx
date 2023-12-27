@@ -6,7 +6,7 @@ import { ActsList } from '../../types/MesTypes';
 import ActsListTableComponent from './ActsListTable.component';
 import deleteAct from '../../redux/actions/mes/deleteAct';
 import handleError from '../../utils';
-import { editActsListAfterDelete } from '../../redux/reducers/mes/mesReducer';
+import { changeSelectedActId, editActsListAfterDelete } from '../../redux/reducers/mes/mesReducer';
 
 interface ActsListTableContainerProps {
   mesError: string;
@@ -42,6 +42,7 @@ function ActsListTableContainer(props: ActsListTableContainerProps) {
   };
 
   const handleEditIconClick = (id: number) => {
+    dispatch(changeSelectedActId(id));
     editActModalOpen();
   };
 

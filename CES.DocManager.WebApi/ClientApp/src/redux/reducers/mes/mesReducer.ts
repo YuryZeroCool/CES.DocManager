@@ -66,6 +66,7 @@ const initial: INotesState = {
   createdActId: 0,
   actsList: [],
   totalActsListCount: 0,
+  selectedActId: 0,
   deletedActId: 0,
 };
 
@@ -91,6 +92,11 @@ const mesReducer = createSlice({
     changeSelectedOrganizationId: (state, action: PayloadAction<number>) => {
       let stateCopy: INotesState = state;
       stateCopy = { ...stateCopy, selectedOrganizationId: action.payload };
+      return stateCopy;
+    },
+    changeSelectedActId: (state, action: PayloadAction<number>) => {
+      let stateCopy: INotesState = state;
+      stateCopy = { ...stateCopy, selectedActId: action.payload };
       return stateCopy;
     },
     editAllNotes: (state, action: PayloadAction<number>) => {
@@ -525,6 +531,7 @@ const mesReducer = createSlice({
 export const {
   changeSelectedNoteId,
   changeSelectedOrganizationId,
+  changeSelectedActId,
   editAllNotes,
   editNotesAfterDelete,
   changeMesPageType,
