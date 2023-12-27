@@ -9,6 +9,7 @@ import {
   InputBase,
   Stack,
   Tabs,
+  Text,
   TextInput,
   rem,
   useCombobox,
@@ -59,6 +60,7 @@ interface Props {
   minActDate: Date;
   maxActDate: Date;
   requestStatus: string;
+  itemsPerPage: number;
 
   editOrganizationModalOpen: () => void;
   editOrganizationModalClose: () => void;
@@ -82,6 +84,7 @@ interface Props {
   handleMaxActDateChange: (value: Date | null) => void;
   handleGetActsListBtnClick: () => void;
   setMesError: React.Dispatch<React.SetStateAction<string>>;
+  changeItemsPerPage: (value: number) => void;
 }
 
 export default function MesPageComponent(props: Props) {
@@ -107,6 +110,7 @@ export default function MesPageComponent(props: Props) {
     minActDate,
     maxActDate,
     requestStatus,
+    itemsPerPage,
 
     editOrganizationModalOpen,
     editOrganizationModalClose,
@@ -130,6 +134,7 @@ export default function MesPageComponent(props: Props) {
     handleMaxActDateChange,
     handleGetActsListBtnClick,
     setMesError,
+    changeItemsPerPage,
   } = props;
 
   const iconStyle = { width: rem(20), height: rem(20) };
@@ -330,6 +335,8 @@ export default function MesPageComponent(props: Props) {
   const renderPagination = () => (
     <Pagination
       page={page}
+      width="100%"
+      justify="center"
       totalPage={totalPage}
       handleCurrentPageChange={handleCurrentPageChange}
     />
@@ -347,10 +354,44 @@ export default function MesPageComponent(props: Props) {
 
   const renderActsListPagination = () => (
     <Pagination
+      width="45%"
+      justify="end"
       page={actsListPage}
       totalPage={totalActsListPages}
       handleCurrentPageChange={handleCurrentActsListPageChange}
     />
+  );
+
+  const renderCounPerPageButtons = () => (
+    <Group my={20}>
+      <Group w="45%">
+        <Text size="lg">
+          Количество отображаемых актов:
+        </Text>
+        <Button
+          onClick={() => changeItemsPerPage(25)}
+          variant={itemsPerPage === 25 ? 'gradient' : 'outline'}
+          gradient={itemsPerPage === 25 ? { from: 'violet', to: 'cyan', deg: 90 } : undefined}
+        >
+          25
+        </Button>
+        <Button
+          onClick={() => changeItemsPerPage(50)}
+          variant={itemsPerPage === 50 ? 'gradient' : 'outline'}
+          gradient={itemsPerPage === 50 ? { from: 'violet', to: 'cyan', deg: 90 } : undefined}
+        >
+          50
+        </Button>
+        <Button
+          onClick={() => changeItemsPerPage(100)}
+          variant={itemsPerPage === 100 ? 'gradient' : 'outline'}
+          gradient={itemsPerPage === 100 ? { from: 'violet', to: 'cyan', deg: 90 } : undefined}
+        >
+          100
+        </Button>
+      </Group>
+      {renderActsListPagination()}
+    </Group>
   );
 
   const renderNotesWithoutActsTable = () => (
@@ -370,7 +411,7 @@ export default function MesPageComponent(props: Props) {
       {mesPageType === 'Организации' && renderPagination()}
       {mesPageType === 'Заявки без актов' && renderNotesWithoutActsTable()}
       {mesPageType === 'История актов' && renderActsListTable()}
-      {mesPageType === 'История актов' && renderActsListPagination()}
+      {mesPageType === 'История актов' && renderCounPerPageButtons()}
       <AddActModal
         selectedNotesId={selectedNotesId}
         currentActData={currentActData}

@@ -18,13 +18,14 @@ import {
   SearchOrganization,
 } from '../../types/MesTypes';
 import MesPageComponent from './MesPage.component';
-import { ACTS_LIMIT, LIMIT } from './MesPage.config';
+import { LIMIT } from './MesPage.config';
 
 function MesPageContainer() {
   const [mesError, setMesError] = useState<string>('');
   const [search, setSearchValue] = useState<string>('');
   const [activePage, setPage] = useState(1);
   const [activeActsListPage, setActiveActsListPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(25);
   const [selected, setSelected] = useState<number[]>([]);
   const [type, setType] = useState<string>('');
   const [actTypeSelectValue, setActTypeSelectValue] = useState<string>('');
@@ -85,12 +86,12 @@ function MesPageContainer() {
       });
   };
 
-  const getActsListReq = (currentPage: number) => {
+  const getActsListReq = () => {
     setMesError('');
 
     const params: GetActsListReq = {
-      limit: ACTS_LIMIT,
-      page: currentPage,
+      limit: itemsPerPage,
+      page: activeActsListPage,
       min: minActDate.toISOString(),
       max: maxActDate.toISOString(),
     };
@@ -122,7 +123,7 @@ function MesPageContainer() {
         });
     }
     if (mesPageType === 'История актов') {
-      getActsListReq(activeActsListPage);
+      getActsListReq();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mesPageType]);
@@ -158,6 +159,11 @@ function MesPageContainer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actDataFromFile.act]);
 
+  useEffect(() => {
+    getActsListReq();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeActsListPage]);
+
   const handleCurrentPageChange = (value: number) => {
     setPage(value);
     getOgranizations(value);
@@ -165,7 +171,6 @@ function MesPageContainer() {
 
   const handleCurrentActsListPageChange = (value: number) => {
     setActiveActsListPage(value);
-    getActsListReq(value);
   };
 
   const changeType = (value: string) => {
@@ -225,7 +230,16 @@ function MesPageContainer() {
   };
 
   const handleGetActsListBtnClick = () => {
-    getActsListReq(activeActsListPage);
+    getActsListReq();
+  };
+
+  const handleItemsPerPageChange = (value: number) => {
+    setItemsPerPage(value);
+    setActiveActsListPage(1);
+  };
+
+  const changeItemsPerPage = (value: number) => {
+    handleItemsPerPageChange(value);
   };
 
   return (
@@ -251,6 +265,7 @@ function MesPageContainer() {
       minActDate={minActDate}
       maxActDate={maxActDate}
       requestStatus={requestStatus}
+      itemsPerPage={itemsPerPage}
       editOrganizationModalOpen={editOrganizationModalOpen}
       editOrganizationModalClose={editOrganizationModalClose}
       addActModalClose={addActModalClose}
@@ -273,6 +288,7 @@ function MesPageContainer() {
       handleMaxActDateChange={handleMaxActDateChange}
       handleGetActsListBtnClick={handleGetActsListBtnClick}
       setMesError={setMesError}
+      changeItemsPerPage={changeItemsPerPage}
     />
   );
 }
