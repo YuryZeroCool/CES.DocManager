@@ -90,6 +90,7 @@ function NotesWithoutActsTableContainer(props: Props) {
   const isSelected = (id: number) => selectedNotesId.indexOf(id) !== -1;
 
   const handleChangeSearch = (id: string, value: string) => {
+    handleSelectNote([]);
     const newSearchValues = searchValues.map((el: SearchValueType) => {
       const newSearchValue: SearchValueType = { ...el };
       if (el.id === id) {
