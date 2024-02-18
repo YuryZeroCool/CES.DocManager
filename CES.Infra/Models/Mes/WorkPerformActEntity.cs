@@ -7,7 +7,5 @@
         public WorkNameInActEntity Name { get; set; }
 
         public decimal Count { get; set; }
-
-        public List<ActEntity> Acts { get; set; } = new();
     }
 }
