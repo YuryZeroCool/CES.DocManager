@@ -70,8 +70,6 @@ namespace CES.Infra
 
         public virtual DbSet<WorkNameInActEntity>? WorkNameInAct { get; set; }
 
-        public virtual DbSet<PriceOfWorkInActEntity>? PricesOfWorkInAct { get; set; }
-
         public virtual DbSet<StreetEntity>? Streets { get; set; }
 
         public virtual DbSet<EntranceEntity>? Entrances { get; set; }
@@ -107,7 +105,6 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new ActConfig());
             modelBuilder.ApplyConfiguration(new ActTypeConfig());
             modelBuilder.ApplyConfiguration(new WorkNameInActConfig());
-            modelBuilder.ApplyConfiguration(new PriceOfWorkInActConfig());
             modelBuilder.ApplyConfiguration(new HouseNumberConfig());
             modelBuilder.ApplyConfiguration(new StreetConfig());
         }
