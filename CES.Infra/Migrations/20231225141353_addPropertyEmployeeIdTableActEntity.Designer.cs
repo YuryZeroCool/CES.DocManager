@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20231225141353_addPropertyEmployeeIdTableActEntity")]
+    partial class addPropertyEmployeeIdTableActEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -470,9 +472,6 @@ namespace CES.Infra.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("NumberPlateOfCarId")
-                        .HasColumnType("int");
-
                     b.Property<int>("OrganizationId")
                         .HasColumnType("int");
 
@@ -487,8 +486,6 @@ namespace CES.Infra.Migrations
                     b.HasIndex("ActTypeEntityId");
 
                     b.HasIndex("EmployeeId");
-
-                    b.HasIndex("NumberPlateOfCarId");
 
                     b.HasIndex("OrganizationId");
 
@@ -953,12 +950,6 @@ namespace CES.Infra.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CES.Infra.Models.NumberPlateOfCarEntity", "NumberPlateOfCar")
-                        .WithMany()
-                        .HasForeignKey("NumberPlateOfCarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CES.Infra.Models.Mes.OrganizationEntity", "Organization")
                         .WithMany()
                         .HasForeignKey("OrganizationId")
@@ -968,8 +959,6 @@ namespace CES.Infra.Migrations
                     b.Navigation("ActType");
 
                     b.Navigation("Employee");
-
-                    b.Navigation("NumberPlateOfCar");
 
                     b.Navigation("Organization");
                 });

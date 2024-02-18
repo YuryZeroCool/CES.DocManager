@@ -97,7 +97,7 @@ namespace CES.DocManager.WebApi.Controllers
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost("materialReport")]
-        public async Task<string> UploadingMaterialReport(IFormFile uploadedFile)
+        public async Task<string> UploadingMaterialReport(IFormFile uploadedFile) 
         {
             try
             {

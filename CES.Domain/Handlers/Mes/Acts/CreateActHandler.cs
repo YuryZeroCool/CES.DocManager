@@ -33,7 +33,8 @@ namespace CES.Domain.Handlers.Mes.Acts
                 && request.NotesWithoutAct is not null
                 && _ctx.NoteEntities is not null
                 && request.ActType is not null
-                && _ctx.ActTypes is not null)
+                && _ctx.ActTypes is not null
+                && _ctx.Employees is not null)
             {
                 foreach (var completedWork in request.CompletedWorks)
                 {
@@ -90,31 +91,30 @@ namespace CES.Domain.Handlers.Mes.Acts
                             }
                         }
                     }
-                }
+                };
 
-                var numbercar = await _ctx.NumberPlateOfCar
-                    .FirstOrDefaultAsync(x => request.Vehicle.Trim().Contains(x!.Number), cancellationToken);
-                var organization = await _ctx.OrganizationEntities
-                    .FirstOrDefaultAsync(x => x.Name == request.Organization.Trim(), cancellationToken);
-
-                if (numbercar is not null && organization is not null)
+                var entityAct = await _ctx.Act.AddAsync(new ActEntity()
                 {
-                    var entityAct = await _ctx.Act.AddAsync(new ActEntity()
-                    {
-                        ActDateOfCreation = DateTime.Now,
-                        DateOfWorkCompletion = request.ActAdditionDate,
-                        NumberPlateOfCar = numbercar,
-                        Organization = organization,
-                        Total = request.TotalActSumm,
-                        Vat = request.Vat == 0 ? null : request.Vat,
-                        ActType = await _ctx.ActTypes
-                        .FirstOrDefaultAsync(x =>x.Name == request.ActType.Trim(),cancellationToken)
-                        ?? throw new System.Exception("Error"),
-                    }, cancellationToken);
+                    ActDateOfCreation = DateTime.Now,
+                    DateOfWorkCompletion = request.ActAdditionDate,
+                    Employee = await _ctx.Employees
+                    .FirstOrDefaultAsync(x => x.LastName+" "+x.FirstName == request.Driver, cancellationToken)
+                    ?? throw new System.Exception("Error"),
+                    Organization = await _ctx.OrganizationEntities
+                    .FirstOrDefaultAsync(x => x.Name == request.Organization.Trim(), cancellationToken)
+                    ?? throw new System.Exception("Error"),
+                    NumberPlateOfCar = await _ctx.NumberPlateOfCar
+                    .FirstOrDefaultAsync(x => request.Vehicle.Trim().Contains(x!.Number!),cancellationToken)
+                    ?? throw new System.Exception("Error"),
+                    Total = request.TotalActSumm,
+                    Vat = request.Vat == 0 ? null : request.Vat,
+                    ActType = await _ctx.ActTypes
+                    .FirstOrDefaultAsync(x =>x.Name == request.ActType.Trim(),cancellationToken)
+                    ?? throw new System.Exception("Error"),
+                }, cancellationToken);
 
-                    await _ctx.SaveChangesAsync(cancellationToken);
-                    _id = entityAct.Entity.Id;
-                }
+                await _ctx.SaveChangesAsync(cancellationToken);
+                _id = entityAct.Entity.Id;
 
                 foreach (var completedWork in request.CompletedWorks)
                 {

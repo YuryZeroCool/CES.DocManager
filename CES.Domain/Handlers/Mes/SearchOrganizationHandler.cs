@@ -48,7 +48,7 @@ namespace CES.Domain.Handlers.Mes
                 result = await _ctx.OrganizationEntities
                    .Skip(offset)
                    .Take(request.Limit)
-                   .ToListAsync();
+                   .ToListAsync(cancellationToken);
             }
             else
             {
@@ -56,7 +56,7 @@ namespace CES.Domain.Handlers.Mes
                      .Where(x => x.Name.Contains(request.Title))
                      .Skip(offset)
                      .Take(request.Limit)
-                     .ToListAsync();
+                     .ToListAsync(cancellationToken);
             }
             return await Task.FromResult(new SearchOrganizationResponse()
             {

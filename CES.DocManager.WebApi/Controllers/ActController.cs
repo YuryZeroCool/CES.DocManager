@@ -32,14 +32,16 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet()]
         [Produces(typeof(List<GetActsResponse>))]
-        public async Task<object> GetActs(DateTime min, DateTime max)
+        public async Task<object> GetActs(DateTime min, DateTime max, int page, int limit)
         {
             try
             {
                 return await _mediator.Send(new GetActsRequest()
                 {
                     Min = min,
-                    Max = max
+                    Max = max,
+                    Page = page,
+                    Limit = limit,
                 });
             }
             catch (Exception)
