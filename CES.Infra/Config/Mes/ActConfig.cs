@@ -6,9 +6,9 @@ using System.Reflection.Metadata;
 
 namespace CES.Infra.Config.Mes
 {
-    public class ActConfig : IEntityTypeConfiguration<ActEntity>
+    public class ActKO514Config : IEntityTypeConfiguration<ActKO514Entity>
     {
-        public void Configure(EntityTypeBuilder<ActEntity> builder)
+        public void Configure(EntityTypeBuilder<ActKO514Entity> builder)
         {
             builder.Property(x => x.DateOfWorkCompletion)
                      .HasColumnType("DATETIME");

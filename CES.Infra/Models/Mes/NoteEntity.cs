@@ -14,11 +14,6 @@ namespace CES.Infra.Models.Mes
 
         public string? Tel { get; set; }
 
-        public int? ActId { get; set; }
-
-        [JsonIgnore]
-        public ActEntity? Act { get; set; }
-
         public int? StreetId { get; set; }
 
         public StreetEntity? Street { get; set; }

@@ -64,7 +64,7 @@ namespace CES.Infra
 
         public virtual DbSet<OrganizationEntity>? OrganizationEntities { get; set; }
 
-        public virtual DbSet<ActEntity>? Act { get; set; }
+        public virtual DbSet<ActKO514Entity>? ActKO514 { get; set; }
 
         public virtual DbSet<ActTypeEntity>? ActTypes { get; set; }
 
@@ -102,7 +102,7 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new NoteConfig());
             modelBuilder.ApplyConfiguration(new OrganizationConfig());
             modelBuilder.ApplyConfiguration(new OrganizationConfig());
-            modelBuilder.ApplyConfiguration(new ActConfig());
+            modelBuilder.ApplyConfiguration(new ActKO514Config());
             modelBuilder.ApplyConfiguration(new ActTypeConfig());
             modelBuilder.ApplyConfiguration(new WorkNameInActConfig());
             modelBuilder.ApplyConfiguration(new HouseNumberConfig());

@@ -1,6 +1,6 @@
 ﻿namespace CES.Infra.Models.Mes
 {
-    public class ActEntity
+    public class ActKO514Entity
     {
         public int Id { get; set; }
 
@@ -24,17 +24,8 @@
 
         public EmployeeEntity Employee { get; set; }
 
-        public ICollection<NoteEntity> Notes { get; set; }
-
-        public List<WorkPerformActEntity> WorkPerformAct { get; set; } = new();
-
         public int ActTypeEntityId { get; set; }
 
         public ActTypeEntity ActType { get; set; }
-
-        public ActEntity()
-        {
-            Notes = new List<NoteEntity>();
-        }
     }
 }
