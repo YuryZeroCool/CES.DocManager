@@ -201,7 +201,7 @@ namespace CES.Domain.Mapper
               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
              .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.Number));
 
-            CreateMap<ActEntity, Models.Response.Act.Act>()
+            CreateMap<ActKO514Entity, Models.Response.Act.Act>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.ActDateOfCreation, opt => opt.MapFrom(src => src.ActDateOfCreation))
                 .ForMember(dest => dest.DateOfWorkCompletion, opt => opt.MapFrom(src => src.DateOfWorkCompletion))
@@ -214,7 +214,7 @@ namespace CES.Domain.Mapper
 
             CreateMap<WorkPerformActEntity, Work>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Name))
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price.Price))
+               // .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price.Price))
                 .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Name!.Unit!.Name))
                 .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count.ToString()));
                                 //.ToString(CultureInfo.CreateSpecificCulture("en-GB"))));

@@ -1,4 +1,6 @@
-﻿namespace CES.Infra.Models.Mes
+﻿using System.Diagnostics.Metrics;
+
+namespace CES.Infra.Models.Mes
 {
     public class ActKO514Entity
     {
@@ -27,5 +29,15 @@
         public int ActTypeEntityId { get; set; }
 
         public ActTypeEntity ActType { get; set; }
+
+        public WorkPerformActEntity? WaterRefillId { get; set; }
+
+        public WorkPerformActEntity? PipeDiameter100 { get; set; }
+
+        public WorkPerformActEntity? PipeDiameter150 { get; set; }
+
+        public WorkPerformActEntity? PipeDiameter200 { get; set; }
+
+        public WorkPerformActEntity? PipeDiameter300 { get; set; }
     }
 }

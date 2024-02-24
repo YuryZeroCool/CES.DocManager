@@ -10,11 +10,9 @@
     },
     "IIS Express": {
       "commandName": "IISExpress",
+      "workingDirectory": "D:\\Projects\\CES.DocManager\\CES.DocManager.WebApi\\bin\\Debug",
       "launchBrowser": true,
-      "launchUrl": "swagger",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      "launchUrl": "s"
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",
