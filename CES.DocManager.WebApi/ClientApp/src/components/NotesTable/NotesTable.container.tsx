@@ -12,18 +12,21 @@ import deleteNote from '../../redux/actions/mes/deleteNote';
 interface Props {
   mesError: string;
   handleChangeErrorMessage: (value: string) => void;
+  noteModalOpen: () => void;
+  changeIsEditModal: (value: boolean) => void;
 }
 
 function NotesTableContainer(props: Props) {
-  const { mesError, handleChangeErrorMessage } = props;
+  const {
+    mesError,
+    handleChangeErrorMessage,
+    noteModalOpen,
+    changeIsEditModal,
+  } = props;
+
   const [
     warningModalOpened,
     { open: warningModalOpen, close: warningModalClose },
-  ] = useDisclosure(false);
-
-  const [
-    editNoteModalOpened,
-    { open: editNoteModalOpen, close: editNoteModalClose },
   ] = useDisclosure(false);
 
   const {
@@ -38,7 +41,8 @@ function NotesTableContainer(props: Props) {
 
   const handleEditIconClick = (id: number) => {
     dispatch(changeSelectedNoteId(id));
-    editNoteModalOpen();
+    noteModalOpen();
+    changeIsEditModal(true);
   };
 
   const handleDeleteIconClick = (id: number) => {
@@ -65,11 +69,9 @@ function NotesTableContainer(props: Props) {
       mesError={mesError}
       requestStatus={requestStatus}
       warningModalOpened={warningModalOpened}
-      editNoteModalOpened={editNoteModalOpened}
       handleEditIconClick={handleEditIconClick}
       handleDeleteIconClick={handleDeleteIconClick}
       warningModalClose={warningModalClose}
-      editNoteModalClose={editNoteModalClose}
       cofirmAction={cofirmAction}
     />
   );

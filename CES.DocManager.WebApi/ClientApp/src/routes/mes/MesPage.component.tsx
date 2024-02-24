@@ -30,6 +30,8 @@ import OrganizationsTable from '../../components/OrganizationsTable/Organization
 import Pagination from '../../components/Pagination/Pagination.container';
 import NotesWithoutActsTableContainer from '../../components/NotesWithoutActsTable/NotesWithoutActsTable.container';
 import ActsListTable from '../../components/ActsListTable/ActsListTable.container';
+import EditNoteModal from '../../components/EditNoteModal/EditNoteModal.container';
+
 import {
   Act,
   ActDataFromFileResponse,
@@ -61,6 +63,8 @@ interface Props {
   maxActDate: Date;
   requestStatus: string;
   itemsPerPage: number;
+  noteModalOpened: boolean;
+  isEditModal: boolean;
 
   editOrganizationModalOpen: () => void;
   editOrganizationModalClose: () => void;
@@ -85,6 +89,10 @@ interface Props {
   handleGetActsListBtnClick: () => void;
   setMesError: React.Dispatch<React.SetStateAction<string>>;
   changeItemsPerPage: (value: number) => void;
+  handleAddNoteBtnClick: () => void;
+  noteModalOpen: () => void;
+  noteModalClose: () => void;
+  changeIsEditModal: (value: boolean) => void;
 }
 
 export default function MesPageComponent(props: Props) {
@@ -111,6 +119,8 @@ export default function MesPageComponent(props: Props) {
     maxActDate,
     requestStatus,
     itemsPerPage,
+    noteModalOpened,
+    isEditModal,
 
     editOrganizationModalOpen,
     editOrganizationModalClose,
@@ -135,6 +145,10 @@ export default function MesPageComponent(props: Props) {
     handleGetActsListBtnClick,
     setMesError,
     changeItemsPerPage,
+    handleAddNoteBtnClick,
+    noteModalOpen,
+    noteModalClose,
+    changeIsEditModal,
   } = props;
 
   const iconStyle = { width: rem(20), height: rem(20) };
@@ -314,12 +328,24 @@ export default function MesPageComponent(props: Props) {
       )}
 
       {mesPageType === 'История актов' && renderActsListHeader()}
+
+      {mesPageType === 'Заявки' && (
+        <Button
+          variant="gradient"
+          gradient={{ from: 'violet', to: 'blue', deg: 90 }}
+          onClick={handleAddNoteBtnClick}
+        >
+          Добавить заявку
+        </Button>
+      )}
     </Flex>
   );
 
   const renderNotesTable = () => (
     <NotesTable
       mesError={mesError}
+      noteModalOpen={noteModalOpen}
+      changeIsEditModal={changeIsEditModal}
       handleChangeErrorMessage={handleChangeErrorMessage}
     />
   );
@@ -405,13 +431,13 @@ export default function MesPageComponent(props: Props) {
   return (
     <Stack className={classes.mesPageSection}>
       {renderMesPageNavigation()}
-      {mesPageType !== 'Заявки' && renderTableHeader()}
+      {renderTableHeader()}
       {mesPageType === 'Заявки' && renderNotesTable()}
       {mesPageType === 'Организации' && renderOrganizationsTable()}
       {mesPageType === 'Организации' && renderPagination()}
       {mesPageType === 'Заявки без актов' && renderNotesWithoutActsTable()}
       {mesPageType === 'История актов' && renderActsListTable()}
-      {mesPageType === 'История актов' && renderCounPerPageButtons()}
+      {mesPageType === 'История актов' && mesError === '' && renderCounPerPageButtons()}
       <AddActModal
         selectedNotesId={selectedNotesId}
         currentActData={currentActData}
@@ -430,6 +456,13 @@ export default function MesPageComponent(props: Props) {
         editOrganizationModalClose={editOrganizationModalClose}
         addOrganizationModalClose={addOrganizationModalClose}
       />
+      {mesPageType === 'Заявки' && (
+        <EditNoteModal
+          noteModalOpened={noteModalOpened}
+          isEditModal={isEditModal}
+          noteModalClose={noteModalClose}
+        />
+      )}
     </Stack>
   );
 }

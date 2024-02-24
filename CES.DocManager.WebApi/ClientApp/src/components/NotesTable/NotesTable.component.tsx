@@ -18,18 +18,15 @@ import { ReactComponent as DeleteIcon } from '../../assets/icons/delete-icon.svg
 import { headCells, style } from './NotesTable.config';
 import { INote } from '../../types/MesTypes';
 import WarningModal from '../WarningModal/WarningModal.container';
-import EditNoteModal from '../EditNoteModal/EditNoteModal.container';
 
 export interface Props {
   allNotes: INote[];
   mesError: string;
   requestStatus: string;
   warningModalOpened: boolean;
-  editNoteModalOpened: boolean;
   handleEditIconClick: (id: number) => void;
   handleDeleteIconClick: (id: number) => void;
   warningModalClose: () => void;
-  editNoteModalClose: () => void;
   cofirmAction: () => void;
 }
 
@@ -39,11 +36,9 @@ export default function NotesTableComponent(props: Props) {
     mesError,
     requestStatus,
     warningModalOpened,
-    editNoteModalOpened,
     handleEditIconClick,
     handleDeleteIconClick,
     warningModalClose,
-    editNoteModalClose,
     cofirmAction,
   } = props;
 
@@ -159,10 +154,6 @@ export default function NotesTableComponent(props: Props) {
         warningModalOpened={warningModalOpened}
         warningModalClose={warningModalClose}
         cofirmAction={cofirmAction}
-      />
-      <EditNoteModal
-        editNoteModalOpened={editNoteModalOpened}
-        editNoteModalClose={editNoteModalClose}
       />
       {allNotes.length === 0 && requestStatus !== 'fulfilled' && renderLoaderModal()}
     </div>

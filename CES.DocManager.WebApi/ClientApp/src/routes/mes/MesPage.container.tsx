@@ -30,6 +30,7 @@ function MesPageContainer() {
   const [type, setType] = useState<string>('');
   const [actTypeSelectValue, setActTypeSelectValue] = useState<string>('');
   const [currentActData, setCurrentActData] = useState<Act>({ type: '', works: [] });
+  const [isEditModal, setIsEditModal] = useState<boolean>(false);
 
   const minDate = new Date();
   minDate.setDate(1);
@@ -57,6 +58,11 @@ function MesPageContainer() {
   const [
     editOrganizationModalOpened,
     { open: editOrganizationModalOpen, close: editOrganizationModalClose },
+  ] = useDisclosure(false);
+
+  const [
+    noteModalOpened,
+    { open: noteModalOpen, close: noteModalClose },
   ] = useDisclosure(false);
 
   const {
@@ -160,7 +166,9 @@ function MesPageContainer() {
   }, [actDataFromFile.act]);
 
   useEffect(() => {
-    getActsListReq();
+    if (mesPageType === 'История актов') {
+      getActsListReq();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeActsListPage]);
 
@@ -242,6 +250,15 @@ function MesPageContainer() {
     handleItemsPerPageChange(value);
   };
 
+  const changeIsEditModal = (value: boolean) => {
+    setIsEditModal(value);
+  };
+
+  const handleAddNoteBtnClick = () => {
+    noteModalOpen();
+    changeIsEditModal(false);
+  };
+
   return (
     <MesPageComponent
       mesError={mesError}
@@ -266,6 +283,8 @@ function MesPageContainer() {
       maxActDate={maxActDate}
       requestStatus={requestStatus}
       itemsPerPage={itemsPerPage}
+      noteModalOpened={noteModalOpened}
+      isEditModal={isEditModal}
       editOrganizationModalOpen={editOrganizationModalOpen}
       editOrganizationModalClose={editOrganizationModalClose}
       addActModalClose={addActModalClose}
@@ -289,6 +308,10 @@ function MesPageContainer() {
       handleGetActsListBtnClick={handleGetActsListBtnClick}
       setMesError={setMesError}
       changeItemsPerPage={changeItemsPerPage}
+      handleAddNoteBtnClick={handleAddNoteBtnClick}
+      noteModalClose={noteModalClose}
+      noteModalOpen={noteModalOpen}
+      changeIsEditModal={changeIsEditModal}
     />
   );
 }

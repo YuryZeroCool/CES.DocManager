@@ -78,6 +78,7 @@ export interface INotesState {
   totalActsListCount: number;
   selectedActId: number;
   deletedActId: number;
+  createdNoteId: number;
 }
 
 export interface SearchOrganization {

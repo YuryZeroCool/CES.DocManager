@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-export const API_URL = 'https://ces-docmanager.ru';
-// export const API_URL = 'http://localhost:7788';
 const $api = axios.create({
   headers: {
     Authorization: `Bearer ${localStorage.getItem('accessToken') || ''}`,
@@ -10,7 +8,7 @@ const $api = axios.create({
     'access-control-allow-headers': 'X-Custom-Header',
     'X-Requested-With': 'XMLHttpRequest',
   },
-  baseURL: API_URL,
+  baseURL: process.env.REACT_APP_API_URL,
 });
 
 export default $api;
