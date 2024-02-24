@@ -11,9 +11,10 @@ import NoteContactsInfo from '../NoteContactsInfo/NoteContactsInfo.container';
 import classes from './EditNoteModal.module.scss';
 
 interface Props {
-  editNoteModalOpened: boolean;
+  noteModalOpened: boolean;
   formState: EditNoteRequest;
   streetsBySearch: string[];
+  isEditModal: boolean;
   handleTextAreaChange: (value: string) => void;
   handleStreetSearchChange: (value: string, index: number) => void;
   handleEntranceChange: (value: string, index: number) => void;
@@ -27,9 +28,10 @@ interface Props {
 
 export default function EditNoteModalComponent(props: Props) {
   const {
-    editNoteModalOpened,
+    noteModalOpened,
     formState,
     streetsBySearch,
+    isEditModal,
     handleTextAreaChange,
     handleStreetSearchChange,
     handleEntranceChange,
@@ -52,12 +54,12 @@ export default function EditNoteModalComponent(props: Props) {
 
   return (
     <Modal
-      opened={editNoteModalOpened}
+      opened={noteModalOpened}
       onClose={handleClose}
       withCloseButton
       centered
       closeOnClickOutside={false}
-      title="Отредактируйте заявку"
+      title={isEditModal ? 'Отредактировать заявку' : 'Добавить заявку'}
       size="xl"
       classNames={{
         title: classes.modalTitle,

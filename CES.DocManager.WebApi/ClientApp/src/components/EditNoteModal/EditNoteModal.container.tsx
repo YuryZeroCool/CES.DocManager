@@ -18,12 +18,13 @@ const defaultFormValues: EditNoteRequest = {
 };
 
 interface EditNoteModalContainerProps {
-  editNoteModalOpened: boolean;
-  editNoteModalClose: () => void;
+  noteModalOpened: boolean;
+  isEditModal: boolean;
+  noteModalClose: () => void;
 }
 
 function EditNoteModalContainer(props: EditNoteModalContainerProps) {
-  const { editNoteModalOpened, editNoteModalClose } = props;
+  const { noteModalOpened, isEditModal, noteModalClose } = props;
 
   const [formState, setFormState] = useState<EditNoteRequest>(defaultFormValues);
   const [counter, setCounter] = useState<number>(1);
@@ -40,8 +41,25 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
 
   const dispatch: IAuthResponseType = useDispatch();
 
+  const addEmptyContactsInfoBlock = () => {
+    setFormState((prevFormState) => ({
+      ...prevFormState,
+      noteContactsInfo: [
+        ...prevFormState.noteContactsInfo,
+        {
+          id: counter,
+          street: '',
+          entrance: '',
+          houseNumber: '',
+          tel: '',
+        },
+      ],
+    }));
+    setCounter((prevCounter) => (prevCounter + 1));
+  };
+
   useEffect(() => {
-    if (allNotes.length !== 0 && editNoteModalOpened) {
+    if (isEditModal && allNotes.length !== 0 && noteModalOpened) {
       const elem = allNotes.filter((el) => el.id === selectedNoteId)[0];
       setFormState({
         id: elem.id,
@@ -60,12 +78,18 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
       });
       setCounter((prevCounter) => (prevCounter + 1));
     }
+
+    if (!isEditModal && noteModalOpened) {
+      addEmptyContactsInfoBlock();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editNoteModalOpened]);
+  }, [noteModalOpened]);
 
   const handleClose = () => {
-    editNoteModalClose();
+    noteModalClose();
     dispatch(changeSelectedNoteId(0));
+    setFormState(defaultFormValues);
+    setCounter(1);
   };
 
   useEffect(() => {
@@ -155,20 +179,7 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
   };
 
   const handleAddButtonClick = () => {
-    setFormState((prevFormState) => ({
-      ...prevFormState,
-      noteContactsInfo: [
-        ...prevFormState.noteContactsInfo,
-        {
-          id: counter,
-          street: '',
-          entrance: '',
-          houseNumber: '',
-          tel: '',
-        },
-      ],
-    }));
-    setCounter((prevCounter) => (prevCounter + 1));
+    addEmptyContactsInfoBlock();
   };
 
   const handleDeleteButtonClick = (id: number) => {
@@ -184,9 +195,10 @@ function EditNoteModalContainer(props: EditNoteModalContainerProps) {
 
   return (
     <EditNoteModalComponent
-      editNoteModalOpened={editNoteModalOpened}
+      noteModalOpened={noteModalOpened}
       formState={formState}
       streetsBySearch={streetsBySearch}
+      isEditModal={isEditModal}
       handleTextAreaChange={handleTextAreaChange}
       handleStreetSearchChange={handleStreetSearchChange}
       handleEntranceChange={handleEntranceChange}
