@@ -32,12 +32,12 @@ namespace CES.Domain.Handlers.Mes
                 .Include(x => x.Street)
                 .Include(x => x.HouseNumber)
                 .Include(x => x.Entrance)
-                .Where(x => x.ActId == null)
                 .ToListAsync(cancellationToken);
-                notes.OrderByDescending(p => p, comparer);
-           
-           if (notes.Count == 0) return  await Task.FromResult(new List<NotesWithoutActResponse>());
-            return await Task.FromResult(_mapper.Map<List<NotesWithoutActResponse>>( notes));
+            notes.OrderByDescending(p => p, comparer);
+
+            if (notes.Count == 0) return await Task.FromResult(new List<NotesWithoutActResponse>());
+            return await Task.FromResult(_mapper.Map<List<NotesWithoutActResponse>>(notes));
+            throw new NotImplementedException();
         }
     }
 }

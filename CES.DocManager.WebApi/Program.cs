@@ -87,7 +87,7 @@ builder.Services.AddMediatR(typeof(GetIsPersonalNumberHandler));
 
 //// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 //builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 builder.Services.Configure<CookieAuthenticationOptions>(x => x.ExpireTimeSpan = TimeSpan.FromDays(2));
 builder.Services.AddControllers()
     .AddNewtonsoftJson();

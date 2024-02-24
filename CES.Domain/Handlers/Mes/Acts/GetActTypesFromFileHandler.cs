@@ -27,13 +27,25 @@ namespace CES.Domain.Handlers.Mes.Acts
                 {
                     if(item is not null) 
                     {
-                       var json = JsonConvert.DeserializeObject<GetActTypesFromFileResponse>(await File.ReadAllTextAsync(item, cancellationToken));
-
-                        if (json is not null)
+                        var json = JsonConvert.DeserializeObject<GetActTypesFromFileResponse>(await File.ReadAllTextAsync(item, cancellationToken));
+                        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                         {
-                            json.FileName = item.Split("/").Last().Split(".").First();
-                            _actNames.Add(json);
+                            // мы под windows
+                            if (json is not null)
+                            {
+                                json.FileName = item.Split("\\").Last().Split(".").First();
+                                _actNames.Add(json);
+                            }
                         }
+                        else
+                        {
+                            // мы под Linux
+                            if (json is not null)
+                            {
+                                json.FileName = item.Split("/").Last().Split(".").First();
+                                _actNames.Add(json);
+                            }
+                        }  
                     }              
                 }
                 return await Task.FromResult(_actNames);
