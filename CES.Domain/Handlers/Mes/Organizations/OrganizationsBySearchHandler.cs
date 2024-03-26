@@ -1,18 +1,18 @@
 ﻿using AutoMapper;
-using CES.Domain.Models.Request.Mes;
+using CES.Domain.Models.Request.Mes.Organization;
 using CES.Infra;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace CES.Domain.Handlers.Mes
+namespace CES.Domain.Handlers.Mes.Organizations
 {
-    public class OrganizationsBySearchHandler : IRequestHandler<OrganizationsBySearchRequest,List<string>>
+    public class OrganizationsBySearchHandler : IRequestHandler<OrganizationsBySearchRequest, List<string>>
     {
         private readonly DocMangerContext _ctx;
 
         private readonly IMapper _mapper;
 
-        public OrganizationsBySearchHandler(IMapper mapper, DocMangerContext ctx) 
+        public OrganizationsBySearchHandler(IMapper mapper, DocMangerContext ctx)
         {
             _ctx = ctx;
             _mapper = mapper;
@@ -36,7 +36,7 @@ namespace CES.Domain.Handlers.Mes
                                     .Contains(request.Title.ToUpper().Trim().TrimEnd()))
                         .ToListAsync(cancellationToken);
                     if (res.Count == 0) return new List<string>();
-                    return await Task.FromResult(_mapper.Map<List<string>>(res.Select(p=>p.Name)));
+                    return await Task.FromResult(_mapper.Map<List<string>>(res.Select(p => p.Name)));
                 }
             }
             throw new NotImplementedException();

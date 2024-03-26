@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using CES.Domain.Models.Request.Mes;
-using CES.Domain.Models.Response.Mes;
+using CES.Domain.Models.Request.Mes.Organization;
+using CES.Domain.Models.Response.Mes.Organizations;
 using CES.Infra;
 using CES.Infra.Models.Mes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace CES.Domain.Handlers.Mes
+namespace CES.Domain.Handlers.Mes.Organizations
 {
     public class SearchOrganizationHandler : IRequestHandler<SearchOrganizationRequest, SearchOrganizationResponse>
     {
@@ -27,7 +27,7 @@ namespace CES.Domain.Handlers.Mes
             if (request.Page <= 0) throw new System.Exception("Error");
             int totalCount = 0;
             var offset = (request.Page - 1) * request.Limit;
-           
+
             if (string.IsNullOrEmpty(request.Title))
             {
                 totalCount = await _ctx.OrganizationEntities.CountAsync();
