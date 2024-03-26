@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
-using CES.Domain.Models.Request.Mes;
+using CES.Domain.Models.Request.Mes.Notes;
 using CES.Infra;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace CES.Domain.Handlers.Mes
+namespace CES.Domain.Handlers.Mes.Notes
 {
     public class DeleteNoteHandler : IRequestHandler<DeleteNoteRequest, int>
     {
         private readonly DocMangerContext _ctx;
 
-        public DeleteNoteHandler (DocMangerContext ctx)
+        public DeleteNoteHandler(DocMangerContext ctx)
         {
             _ctx = ctx;
         }
