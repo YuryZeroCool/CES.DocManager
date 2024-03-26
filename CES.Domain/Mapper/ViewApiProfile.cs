@@ -5,15 +5,15 @@ using CES.Domain.Models.Request.DriverLicense;
 using CES.Domain.Models.Request.DriverMedicalCertificate;
 using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Request.MaterialReport;
-using CES.Domain.Models.Request.Mes;
 using CES.Domain.Models.Request.Mes.Acts;
+using CES.Domain.Models.Request.Mes.Notes;
+using CES.Domain.Models.Request.Mes.Organization;
 using CES.Domain.Models.Request.Vehicle;
-using CES.Domain.Models.Response.Act;
 using CES.Domain.Models.Response.Division;
 using CES.Domain.Models.Response.Employees;
 using CES.Domain.Models.Response.MaterialReport;
-using CES.Domain.Models.Response.Mes;
-using CES.Domain.Models.Response.Mes.HouseNumbers;
+using CES.Domain.Models.Response.Mes.Notes;
+using CES.Domain.Models.Response.Mes.Organizations;
 using CES.Domain.Models.Response.Mes.Street;
 using CES.Domain.Models.Response.Report;
 using CES.Domain.Models.Response.Vehicle;
@@ -24,8 +24,6 @@ using CES.Infra.Models.MaterialReport;
 using CES.Infra.Models.Mes;
 using CES.InfraSecurity.Models;
 using CES.XmlFormat.Models;
-using System.Configuration;
-using System.Globalization;
 
 namespace CES.Domain.Mapper
 {
@@ -147,7 +145,7 @@ namespace CES.Domain.Mapper
 
             CreateMap<UsedMaterial, GetAllUsedMaterialsResponse>();
 
-            CreateMap<AddNoteRequest, NoteEntity>()
+            CreateMap<CreateNoteRequest, NoteEntity>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
@@ -170,8 +168,6 @@ namespace CES.Domain.Mapper
 
             CreateMap<OrganizationEntity, CreateOrganizationResponse>();
 
-            CreateMap<OrganizationEntity, GetOrganizationsResponse>();
-
             CreateMap<EditOrganizationRequest, OrganizationEntity>();
 
             CreateMap<OrganizationEntity, EditOrganizationResponse>();
@@ -192,14 +188,6 @@ namespace CES.Domain.Mapper
             CreateMap<StreetEntity, CreateStreetResponse>()
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
               .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Name));
-
-            CreateMap<HouseNumberEntity, CreateHouseNumberResponse>()
-              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-             .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.Number));
-
-            CreateMap<HouseNumberEntity, GetHouseNumbersResponse>()
-              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-             .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.Number));
 
             CreateMap<ActKO514Entity, Models.Response.Act.Act>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

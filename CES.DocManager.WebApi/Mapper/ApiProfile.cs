@@ -7,6 +7,8 @@ using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Request.Mes;
 using CES.Domain.Models.Request.Mes.Acts;
+using CES.Domain.Models.Request.Mes.Notes;
+using CES.Domain.Models.Request.Mes.Organization;
 using CES.Domain.Models.Response.CarMechanic;
 using CES.Domain.Models.Response.Division;
 using CES.Domain.Models.Response.MaterialReport;
@@ -67,12 +69,11 @@ namespace CES.DocManager.WebApi.Mapper
              .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit))
              .ForMember(dest => dest.NameParty, opt => opt.MapFrom(src => src.NameParty));
 
-            CreateMap<NoteViewModel, AddNoteRequest>()
+            CreateMap<NoteViewModel, CreateNoteRequest>()
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
                .ForMember(dest => dest.IsChecked, opt => opt.MapFrom(src => src.IsChecked));
-
 
             CreateMap<EditExistedNoteViewModel, EditExistedNoteRequest>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
