@@ -1,4 +1,6 @@
-﻿namespace CES.Domain.Models.Response.Mes
+﻿using CES.Domain.Models.Request.Mes.Organization;
+
+namespace CES.Domain.Models.Response.Mes.Organizations
 {
     public class CreateOrganizationResponse : Organization
     {

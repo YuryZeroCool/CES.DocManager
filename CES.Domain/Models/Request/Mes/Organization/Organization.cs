@@ -1,4 +1,4 @@
-﻿namespace CES.Domain.Models
+﻿namespace CES.Domain.Models.Request.Mes.Organization
 {
     public class Organization
     {

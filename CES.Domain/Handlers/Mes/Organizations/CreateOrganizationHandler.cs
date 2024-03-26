@@ -1,19 +1,19 @@
 ﻿using AutoMapper;
-using CES.Domain.Models.Request.Mes;
-using CES.Domain.Models.Response.Mes;
+using CES.Domain.Models.Request.Mes.Organization;
+using CES.Domain.Models.Response.Mes.Organizations;
 using CES.Infra;
 using CES.Infra.Models.Mes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace CES.Domain.Handlers.Mes
+namespace CES.Domain.Handlers.Mes.Organizations
 {
     public class CreateOrganizationHandler : IRequestHandler<CreateOrganizationRequest, CreateOrganizationResponse>
     {
         private readonly DocMangerContext _ctx;
 
         private readonly IMapper _mapper;
-        public CreateOrganizationHandler(DocMangerContext ctx, IMapper mapper) 
+        public CreateOrganizationHandler(DocMangerContext ctx, IMapper mapper)
         {
             _ctx = ctx;
             _mapper = mapper;
