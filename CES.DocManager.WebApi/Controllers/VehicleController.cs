@@ -11,6 +11,7 @@ namespace CES.DocManager.WebApi.Controllers
     [EnableCors("MyPolicy")]
     [Route("vehicle/")]
     [ApiController]
+
     public class VehicleController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -20,8 +21,8 @@ namespace CES.DocManager.WebApi.Controllers
             _mediator = mediator;
         }
 
-      [HttpGet("getAllBrands")]
-      [Produces(typeof(IEnumerator<GetAllBrandsResponse>))]
+        [HttpGet("getAllBrands")]
+        [Produces(typeof(IEnumerator<GetAllBrandsResponse>))]
         public async Task<object> GetAllBrandsAsync()
         {
             try
