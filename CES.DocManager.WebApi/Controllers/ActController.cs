@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
 using CES.DocManager.WebApi.Models.Mes;
-using CES.Domain.Models.Request.Mes;
 using CES.Domain.Models.Request.Mes.Acts;
 using CES.Domain.Models.Response.Act;
-using CES.Domain.Models.Response.Mes;
-using CES.Domain.Models.Response.Mes.Acts;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -14,8 +11,9 @@ namespace CES.DocManager.WebApi.Controllers
 {
 
     [EnableCors("MyPolicy")]
-    [Route("mes/act/")]
+    [Route("mes/acts/")]
     [ApiController]
+
     public class ActController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -53,43 +51,7 @@ namespace CES.DocManager.WebApi.Controllers
 
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        [HttpPost("workInAct")]
-        [Produces(typeof(CreateOrganizationResponse))]
-        public async Task<object> CreateWorkNameInAct([FromBody] WorkNameInActViewModel workName)
-        {
-            try
-            {
-                var res = await _mediator.Send(new CreateWorkNameInActRequest()
-                {
-                    Name = workName.Name,
-                    Price = workName.Price,
-                });
-                HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
-                return res;
-            }
-            catch 
-            {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                return new { Message = "Упс! Что-то пошло не так" };
-            }
-        }
-
-        [HttpGet("workNameInAct")]
-        [Produces(typeof(List<WorkNameInActResponse>))]
-        public async Task<object> GetWorkNameInAct()
-        {
-            try
-            {
-                return await _mediator.Send(new WorkNameInActRequest());
-            }
-            catch (Exception)
-            {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
-            }
-        }
-
-        [HttpGet("actTypesFromFile")]
+        [HttpGet("types/actFromFile")]
         [Produces(typeof(IEnumerable<GetActTypesFromFileResponse>))]
         public async Task<object> GetActTypesFromFile()
         {
@@ -104,7 +66,9 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-        [HttpGet("actDataFromFile")]
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("data/actFromFile")]
         [Produces(typeof(string))]
         public async Task<object> GetActDataFromFile([FromQuery] string fileName)
         {
