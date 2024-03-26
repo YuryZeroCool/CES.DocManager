@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using CES.Domain.Handlers.Comparers;
-using CES.Domain.Models.Request.Mes;
-using CES.Domain.Models.Response.Mes;
+using CES.Domain.Models.Request.Mes.Notes;
+using CES.Domain.Models.Response.Mes.Notes;
 using CES.Infra;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
-namespace CES.Domain.Handlers.Mes
+namespace CES.Domain.Handlers.Mes.Notes
 {
     public class NoteWithoutActHandler : IRequestHandler<NotesWithoutActRequest, IEnumerable<NotesWithoutActResponse>>
     {
@@ -15,9 +15,9 @@ namespace CES.Domain.Handlers.Mes
 
         private readonly DocMangerContext _ctx;
 
-        public NoteWithoutActHandler (IMapper mapper, DocMangerContext ctx)
+        public NoteWithoutActHandler(IMapper mapper, DocMangerContext ctx)
         {
-           _mapper = mapper;
+            _mapper = mapper;
             _ctx = ctx;
         }
 

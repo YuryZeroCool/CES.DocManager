@@ -1,11 +1,11 @@
-﻿using CES.Domain.Models.Request.Mes;
+﻿using CES.Domain.Models.Request.Mes.Notes;
 using CES.Infra;
 using CES.Infra.Models.Mes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace CES.Domain.Handlers.Mes
+namespace CES.Domain.Handlers.Mes.Notes
 {
     public class EditExistedNoteHandler : IRequestHandler<EditExistedNoteRequest, int>
     {
@@ -27,7 +27,7 @@ namespace CES.Domain.Handlers.Mes
             {
                 if (!_ctx.NoteEntities.Any(p => p.Id == request.Id)) throw new System.Exception("Error");
 
-                    EntityEntry? note = null;
+                EntityEntry? note = null;
 
                 for (int i = 0; i < request.NoteContactsInfo.Length; i++)
                 {
@@ -75,7 +75,7 @@ namespace CES.Domain.Handlers.Mes
                             Entrance = request.NoteContactsInfo[i].Entrance == null
                                  ? null
                                  : await _ctx.Entrances.FirstOrDefaultAsync(x =>
-                                     x.Number == (int) request.NoteContactsInfo[i].Entrance!, cancellationToken),
+                                     x.Number == (int)request.NoteContactsInfo[i].Entrance!, cancellationToken),
                             Tel = request.NoteContactsInfo[i].Tel,
                         };
 
@@ -90,7 +90,7 @@ namespace CES.Domain.Handlers.Mes
                 }
                 await _ctx.SaveChangesAsync(cancellationToken);
                 return await Task.FromResult(request.Id);
-                }
+            }
             throw new System.Exception("Error");
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace CES.Domain.Models.Response.Mes
+﻿namespace CES.Domain.Models.Response.Mes.Notes
 {
     public class GetSortedNotesResponse : Note
     { }
