@@ -1,5 +1,5 @@
 ﻿using CES.Domain.Models.Request.Mes.Price;
-using CES.Domain.Models.Response.Mes;
+using CES.Domain.Models.Response.Mes.Organizations;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +8,9 @@ using System.Net;
 namespace CES.DocManager.WebApi.Controllers
 {
     [EnableCors("MyPolicy")]
-    [Route("mes/price/")]
+    [Route("mes/prices/")]
+    [ApiController]
+
     public class PriceController : ControllerBase
     {
         private readonly IMediator _mediator;
