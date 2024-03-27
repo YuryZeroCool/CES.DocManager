@@ -68,12 +68,23 @@ builder.Services.AddCors(options =>
         });
 });
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<DocMangerContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CONNECTION_STRING_DEVELOPMENT")));
 
-builder.Services.AddDbContext<DocMangerContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CONNECTION_STRING")));
+    builder.Services.AddDbContext<DocMangerIdentityDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("CONNECTION_STRING_DEVELOPMENT")));
+}
+else
+{
+    builder.Services.AddDbContext<DocMangerContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CONNECTION_STRING_PRODUCTION")));
 
-builder.Services.AddDbContext<DocMangerIdentityDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CONNECTION_STRING")));
+    builder.Services.AddDbContext<DocMangerIdentityDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("CONNECTION_STRING_PRODUCTION")));
+}
+
 
 builder.Services.AddIdentity<UserEntity, AppRoleEntity>(options => {
         options.User.RequireUniqueEmail = false;
@@ -104,7 +115,6 @@ var app = builder.Build();
 //    //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
 //    //});
 //}
-
 app.UseRouting();
 app.UseStaticFiles();
 app.UseAuthentication();
