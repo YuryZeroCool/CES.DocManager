@@ -14,7 +14,7 @@ namespace Ces.DocManager.AppAndroid.Services
         private List<NoteModel> _notes;
 
         //private readonly string url = "http://localhost:7788/mes/noteCreate"; 
-        private string url = "https://ces-docmanager.ru/mes/noteCreate";
+        private string url = "https://ces-docmanager.ru/mes/notes";
         private HttpClient _httpClient;
 
 
@@ -33,7 +33,7 @@ namespace Ces.DocManager.AppAndroid.Services
             _httpClient.Timeout = TimeSpan.FromSeconds(10);
             var content = new StringContent(JsonConvert.SerializeObject(jsonDocument), Encoding.UTF8, "application/json-patch+json");
 
-            var response = await _httpClient.PatchAsync($"https://ces-docmanager.ru/mes/editNote?id={edit.Id}", content);
+            var response = await _httpClient.PatchAsync($"https://ces-docmanager.ru/mes/notes?id={edit.Id}", content);
             if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new Exception("Не удалось отправить на сервер");
             var json = await response.Content.ReadAsStringAsync();
@@ -53,7 +53,7 @@ namespace Ces.DocManager.AppAndroid.Services
         {
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(10);
-            var response = await _httpClient.DeleteAsync($"https://ces-docmanager.ru/mes/deleteNote?id={note.Id}");
+            var response = await _httpClient.DeleteAsync($"https://ces-docmanager.ru/mes/notes?id={note.Id}");
             if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new Exception("Не удалось отправить на сервер");
             var res = _notes.Remove(_notes.AsParallel().FirstOrDefault(p => p.Id == note.Id
@@ -140,7 +140,7 @@ namespace Ces.DocManager.AppAndroid.Services
         {
             _httpClient = new HttpClient();
             _httpClient.Timeout = TimeSpan.FromSeconds(10);
-            var response = await _httpClient.GetAsync($"https://ces-docmanager.ru/mes/getSortedNotes?text={note.Comment}" +
+            var response = await _httpClient.GetAsync($"https://ces-docmanager.ru//mes/notes/sortedNotes?text={note.Comment}" +
                 $"&min={note.MinDate:yyyy/MM/dd}" +
                 $"&max={note.MaxDate:yyyy/MM/dd}");
             if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)

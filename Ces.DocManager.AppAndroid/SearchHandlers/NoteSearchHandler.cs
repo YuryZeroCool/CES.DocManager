@@ -1,7 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
-
-namespace Ces.DocManager.AppAndroid.SearchHandlers
+﻿namespace Ces.DocManager.AppAndroid.SearchHandlers
 {
     public class NoteSearchHandler : SearchHandler
     {
