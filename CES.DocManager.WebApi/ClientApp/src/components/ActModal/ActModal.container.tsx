@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useCombobox } from '@mantine/core';
+import { useInputState } from '@mantine/hooks';
+
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { resetDriversByCar } from '../../redux/reducers/drivers/driversReducer';
 import { RootState } from '../../redux/reducers/combineReducers';
@@ -8,7 +9,13 @@ import organizationsBySearch from '../../redux/actions/mes/organizationsBySearch
 import getCarByCarNumber from '../../redux/actions/vehicle/getCarByCarNumber';
 import getDriversByCarNumber from '../../redux/actions/drivers/getDriversByCarNumber';
 import createNewAct from '../../redux/actions/mes/createNewAct';
-import { editNotesWithoutActAfterAddAct, resetActData } from '../../redux/reducers/mes/mesReducer';
+import {
+  editNotesWithoutActAfterAddAct,
+  resetActData,
+  resetOrganizationsBySearch,
+  resetStreetsBySearch,
+} from '../../redux/reducers/mes/mesReducer';
+import { resetCarsByCarNumber } from '../../redux/reducers/vehicle/vehicleReducer';
 import {
   Act,
   AddNewActReq,
@@ -17,9 +24,8 @@ import {
 } from '../../types/MesTypes';
 import { IVehicleResponse } from '../../types/VehicleTypes';
 import { IDriverResponse } from '../../types/DriversType';
-import AddActModalComponent from './AddActModal.component';
 import handleError from '../../utils';
-import getStreetsBySearch from '../../redux/actions/mes/getStreetsBySearch';
+import ActModalComponent from './ActModal.component';
 
 interface Props {
   selectedNotesId: number[];
@@ -34,7 +40,7 @@ interface Props {
   handleSelectNote: (newValue: number[]) => void;
 }
 
-function AddActModalContainer(props: Props) {
+function ActModalContainer(props: Props) {
   const {
     selectedNotesId,
     currentActData,
@@ -48,26 +54,16 @@ function AddActModalContainer(props: Props) {
     handleSelectNote,
   } = props;
 
-  const [selectedNotes, setSelectedNotes] = useState<IFullNoteData[]>([]);
-  const [organization, setOrganization] = useState<string>('');
-  const [car, setCar] = useState<string>('');
+  const [selectedNotes, setSelectedNotes] = useInputState<IFullNoteData[]>([]);
+  const [organization, setOrganization] = useInputState('');
+  const [car, setCar] = useInputState('');
   const [driver, setDriver] = useState<string | null>(null);
   const [actAdditionDate, setActAdditionDate] = useState<Date | null>(null);
   const [modalError, setModalError] = useState<string>('');
-  const [counter, setCounter] = useState<number>(1);
-
-  const combobox = useCombobox({
-    onDropdownClose: () => combobox.resetSelectedOption(),
-  });
-
-  const driverCombobox = useCombobox({
-    onDropdownClose: () => driverCombobox.resetSelectedOption(),
-  });
 
   const {
     notesWithoutAct,
     allOrganizationsBySearch,
-    streetsBySearch,
     totalActSumm,
     vat,
   } = useSelector<RootState, INotesState>(
@@ -89,27 +85,7 @@ function AddActModalContainer(props: Props) {
   const dispatch: IAuthResponseType = useDispatch();
 
   useEffect(() => {
-    if (selectedNotesId.length === 0 && addActModalOpened) {
-      const currentDate = new Date();
-      currentDate.setHours(12, 0, 0);
-      setSelectedNotes([{
-        id: counter,
-        comment: '',
-        date: currentDate.toISOString(),
-        entrance: 0,
-        houseNumber: '',
-        isChecked: true,
-        street: '',
-        tel: '',
-      }]);
-      setCounter((prevCounter) => (prevCounter + 1));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addActModalOpened]);
-
-  useEffect(() => {
     const newSelectedNotes = notesWithoutAct.filter((note) => selectedNotesId.includes(note.id));
-
     setSelectedNotes(newSelectedNotes);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNotesId]);
@@ -135,14 +111,14 @@ function AddActModalContainer(props: Props) {
     setCar('');
     setDriver(null);
     setActAdditionDate(null);
+    dispatch(resetCarsByCarNumber());
     dispatch(resetDriversByCar());
     dispatch(resetActData(type));
+    dispatch(resetOrganizationsBySearch());
+    dispatch(resetStreetsBySearch());
     setModalError('');
     handleSelectNote([]);
-    if (selectedNotesId.length === 0) {
-      setSelectedNotes([]);
-      setCounter(1);
-    }
+    setSelectedNotes([]);
     if (addActModalOpened) {
       addActModalClose();
     }
@@ -151,8 +127,13 @@ function AddActModalContainer(props: Props) {
     }
   };
 
-  const handleOrganizationsInputChange = (value: string) => {
-    if (organization !== value) {
+  const handleOrganizationsInputChange = (value: string | null) => {
+    if (value === null) {
+      setOrganization('');
+      dispatch(resetOrganizationsBySearch());
+      return;
+    }
+    if (value.length === 1) {
       dispatch(organizationsBySearch(value))
         .then(() => {
           setOrganization(value);
@@ -160,106 +141,48 @@ function AddActModalContainer(props: Props) {
         .catch((error) => {
           handleError(error, setModalError);
         });
+
+      return;
     }
+    if (value.length === 0) {
+      setOrganization('');
+      dispatch(resetOrganizationsBySearch());
+    }
+
+    setOrganization(value);
   };
 
-  const changeCarInputValue = (value: string) => {
+  const handleCarInputChange = (value: string | null) => {
+    if (value === null) {
+      setCar('');
+      dispatch(resetCarsByCarNumber());
+      return;
+    }
+    if (value.length === 1) {
+      dispatch(getCarByCarNumber(value))
+        .then(() => {
+          setCar(value);
+        })
+        .catch((error) => {
+          handleError(error, setModalError);
+        });
+
+      return;
+    }
+    if (value.length === 0) {
+      setCar('');
+      dispatch(resetCarsByCarNumber());
+    }
+
     setCar(value);
   };
 
-  const handleCarInputChange = (value: string) => {
-    changeCarInputValue(value);
-
-    dispatch(getCarByCarNumber(value))
-      .then(() => {
-        combobox.openDropdown();
-        combobox.updateSelectedOptionIndex();
-      })
-      .catch((error) => {
-        handleError(error, setModalError);
-      });
-  };
-
-  const handleDriverSelectChange = (value: string) => {
+  const handleDriverSelectChange = (value: string | null) => {
     setDriver(value);
   };
 
   const handleActAdditionDateChange = (value: Date | null) => {
     setActAdditionDate(value);
-  };
-
-  const handleStreetSearchChange = (value: string, index: number) => {
-    if (selectedNotes[index].street !== value) {
-      dispatch(getStreetsBySearch(value))
-        .then(() => {
-          const updatedSelectedNotes = selectedNotes.map((el, i) => {
-            if (i === index) {
-              return { ...el, street: value };
-            }
-            return el;
-          });
-          setSelectedNotes(updatedSelectedNotes);
-        })
-        .catch((error) => {
-          handleError(error, setModalError);
-        });
-    }
-  };
-
-  const handleEntranceChange = (value: string, index: number) => {
-    const updatedSelectedNotes: IFullNoteData[] = selectedNotes.map((el, i) => {
-      if (i === index) {
-        return { ...el, entrance: Number(value) };
-      }
-      return el;
-    });
-    setSelectedNotes(updatedSelectedNotes);
-  };
-
-  const handleHouseNumberChange = (value: string, index: number) => {
-    const updatedSelectedNotes: IFullNoteData[] = selectedNotes.map((el, i) => {
-      if (i === index) {
-        return { ...el, houseNumber: value };
-      }
-      return el;
-    });
-    setSelectedNotes(updatedSelectedNotes);
-  };
-
-  const handleTelChange = (value: string, index: number) => {
-    const updatedSelectedNotes: IFullNoteData[] = selectedNotes.map((el, i) => {
-      if (i === index) {
-        return { ...el, tel: value };
-      }
-      return el;
-    });
-    setSelectedNotes(updatedSelectedNotes);
-  };
-
-  const handleAddButtonClick = () => {
-    const currentDate = new Date();
-    currentDate.setHours(12, 0, 0);
-    setSelectedNotes((prevFormState) => ([
-      ...prevFormState,
-      {
-        id: counter,
-        comment: '',
-        date: currentDate.toISOString(),
-        entrance: 0,
-        houseNumber: '',
-        isChecked: true,
-        street: '',
-        tel: '',
-      },
-    ]));
-    setCounter((prevCounter) => (prevCounter + 1));
-  };
-
-  const handleDeleteButtonClick = (id: number) => {
-    if (selectedNotes.length > 1) {
-      const newArr = selectedNotes.filter((el) => el.id !== id);
-      setSelectedNotes(newArr);
-    }
   };
 
   const handleAddActSubmit = () => {
@@ -272,8 +195,8 @@ function AddActModalContainer(props: Props) {
         actType: currentActData.type,
         completedWorks: currentActData.works,
         notesWithoutAct: selectedNotes,
-        totalActSumm,
-        vat,
+        totalActSumm: +(+totalActSumm).toFixed(2),
+        vat: +(+vat).toFixed(2),
       };
 
       dispatch(createNewAct(request))
@@ -288,7 +211,7 @@ function AddActModalContainer(props: Props) {
   };
 
   return (
-    <AddActModalComponent
+    <ActModalComponent
       currentActData={currentActData}
       isAddActModalOpen={addActModalOpened}
       isEditActModalOpen={editActModalOpened}
@@ -297,25 +220,15 @@ function AddActModalContainer(props: Props) {
       allOrganizationsBySearch={allOrganizationsBySearch}
       carsByCarNumber={carsByCarNumber}
       car={car}
-      combobox={combobox}
-      driverCombobox={driverCombobox}
       driversByCarNumber={driversByCarNumber}
       driver={driver}
       actAdditionDate={actAdditionDate}
       modalError={modalError}
       selectedNotesId={selectedNotesId}
       selectedNotes={selectedNotes}
-      streetsBySearch={streetsBySearch}
-      handleStreetSearchChange={handleStreetSearchChange}
-      handleEntranceChange={handleEntranceChange}
-      handleHouseNumberChange={handleHouseNumberChange}
-      handleTelChange={handleTelChange}
-      handleAddButtonClick={handleAddButtonClick}
-      handleDeleteButtonClick={handleDeleteButtonClick}
       handleClose={handleClose}
       handleOrganizationsInputChange={handleOrganizationsInputChange}
       handleCarInputChange={handleCarInputChange}
-      changeCarInputValue={changeCarInputValue}
       handleDriverSelectChange={handleDriverSelectChange}
       handleActAdditionDateChange={handleActAdditionDateChange}
       handleAddActSubmit={handleAddActSubmit}
@@ -323,4 +236,4 @@ function AddActModalContainer(props: Props) {
   );
 }
 
-export default AddActModalContainer;
+export default ActModalContainer;

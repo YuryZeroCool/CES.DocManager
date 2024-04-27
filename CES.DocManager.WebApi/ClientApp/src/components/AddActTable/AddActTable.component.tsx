@@ -10,9 +10,11 @@ import classes from './AddActTable.module.scss';
 
 interface Props {
   currentActData: Act;
-  totalActSumm: number;
-  vat: number;
+  totalActSumm: string;
+  vat: string;
   handleInputNumberChange: (workName: string, value: string) => void;
+  handleTotalActSummChange: (value: string) => void;
+  handleVatChange: (value: string) => void;
 }
 
 export default function AddActTableComponent(props: Props) {
@@ -21,6 +23,8 @@ export default function AddActTableComponent(props: Props) {
     totalActSumm,
     vat,
     handleInputNumberChange,
+    handleTotalActSummChange,
+    handleVatChange,
   } = props;
 
   const tableHead = (
@@ -93,7 +97,19 @@ export default function AddActTableComponent(props: Props) {
             )}
           </Flex>
         </Table.Td>
-        <Table.Td>{totalActSumm}</Table.Td>
+        <Table.Td>
+          <TextInput
+            placeholder="0"
+            onFocus={() => {
+              if (totalActSumm === '0') {
+                handleTotalActSummChange('');
+              }
+            }}
+            value={totalActSumm}
+            onChange={(e) => handleTotalActSummChange(e.target.value)}
+            variant="unstyled"
+          />
+        </Table.Td>
       </Table.Tr>
       {currentActData.type !== 'Для жилых помещений' && (
         <Table.Tr>
@@ -102,7 +118,19 @@ export default function AddActTableComponent(props: Props) {
               В том числе НДС
             </Text>
           </Table.Td>
-          <Table.Td>{vat}</Table.Td>
+          <Table.Td>
+            <TextInput
+              placeholder="0"
+              onFocus={() => {
+                if (vat === '0') {
+                  handleVatChange('');
+                }
+              }}
+              value={vat}
+              onChange={(e) => handleVatChange(e.target.value)}
+              variant="unstyled"
+            />
+          </Table.Td>
         </Table.Tr>
       )}
     </>

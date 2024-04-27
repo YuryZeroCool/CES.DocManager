@@ -4,7 +4,12 @@ import AddActTableComponent from './AddActTable.component';
 import { Act, INotesState } from '../../types/MesTypes';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { RootState } from '../../redux/reducers/combineReducers';
-import { updateActDataFromFile, updateActTotalSumm } from '../../redux/reducers/mes/mesReducer';
+import {
+  changeActTotalSumm,
+  changeVat,
+  updateActDataFromFile,
+  updateActTotalSumm,
+} from '../../redux/reducers/mes/mesReducer';
 
 interface Props {
   currentActData: Act;
@@ -28,12 +33,22 @@ function AddActTableContainer(props: Props) {
     dispatch(updateActTotalSumm(type));
   };
 
+  const handleTotalActSummChange = (value: string) => {
+    dispatch(changeActTotalSumm({ type, value }));
+  };
+
+  const handleVatChange = (value: string) => {
+    dispatch(changeVat(value));
+  };
+
   return (
     <AddActTableComponent
       currentActData={currentActData}
       totalActSumm={totalActSumm}
       vat={vat}
       handleInputNumberChange={handleInputNumberChange}
+      handleTotalActSummChange={handleTotalActSummChange}
+      handleVatChange={handleVatChange}
     />
   );
 }
