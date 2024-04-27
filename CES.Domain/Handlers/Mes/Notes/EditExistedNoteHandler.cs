@@ -76,7 +76,7 @@ namespace CES.Domain.Handlers.Mes.Notes
                                  ? null
                                  : await _ctx.Entrances.FirstOrDefaultAsync(x =>
                                      x.Number == (int)request.NoteContactsInfo[i].Entrance!, cancellationToken),
-                            Tel = request.NoteContactsInfo[i].Tel,
+                            Tel = request.NoteContactsInfo[i].Tel
                         };
 
                         if (i == 0)

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CES.DocManager.WebApi.Models;
+using CES.DocManager.WebApi.Models.Mes;
 using CES.Domain.Models.Request.Mes.Notes;
 using CES.Domain.Models.Response.Mes.Notes;
 using MediatR;
@@ -46,7 +47,7 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost]
         [Produces(typeof(CreateNoteRequest))]
-        public async Task<object> CreateNote([FromBody] NoteViewModel note)
+        public async Task<object> CreateNote([FromBody] CreateNoteViewModel note)
         {
             try
             {
@@ -134,13 +135,30 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPut()]
         [Produces(typeof(int))]
-        public async Task<object> EditExistedNote([FromBody] EditExistedNoteViewModel model)
+        public async Task<object> EditExistedNote([FromBody] EditExistedNoteViewModel note)
         {
             try
             {
-                var id = await _mediator.Send(_mapper.Map<EditExistedNoteRequest>(model));
+                var id = await _mediator.Send(_mapper.Map<EditExistedNoteRequest>(note));
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
                 return id;
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new { e.Message };
+            }
+        }
+
+        [HttpPost("existedNote")]
+        [Produces(typeof(string))]
+        public async Task<object> CreateExistedNote([FromBody] CreateExistedNoteViewModel note)
+        {
+            try
+            {
+                var status = await _mediator.Send(_mapper.Map<CreateExistedNoteRequest>(note));
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
+                return status;
             }
             catch (Exception e)
             {

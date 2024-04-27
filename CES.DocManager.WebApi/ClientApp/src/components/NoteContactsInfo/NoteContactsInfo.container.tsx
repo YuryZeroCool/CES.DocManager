@@ -5,7 +5,7 @@ import NoteContactsInfoComponent from './NoteContactsInfo.component';
 interface NoteContactsInfoContainerProps {
   noteContactsInfo: ContactInfo[] | IFullNoteData[];
   streetsBySearch: string[];
-  handleStreetSearchChange: (value: string, index: number) => void;
+  handleStreetChange: (value: string | null, index: number) => void;
   handleHouseNumberChange: (value: string, index: number) => void;
   handleEntranceChange: (value: string, index: number) => void;
   handleTelChange: (value: string, index: number) => void;
@@ -17,7 +17,7 @@ function NoteContactsInfoContainer(props: NoteContactsInfoContainerProps) {
   const {
     noteContactsInfo,
     streetsBySearch,
-    handleStreetSearchChange,
+    handleStreetChange,
     handleHouseNumberChange,
     handleEntranceChange,
     handleTelChange,
@@ -29,7 +29,7 @@ function NoteContactsInfoContainer(props: NoteContactsInfoContainerProps) {
     <NoteContactsInfoComponent
       noteContactsInfo={noteContactsInfo}
       streetsBySearch={streetsBySearch}
-      handleStreetSearchChange={handleStreetSearchChange}
+      handleStreetChange={handleStreetChange}
       handleHouseNumberChange={handleHouseNumberChange}
       handleEntranceChange={handleEntranceChange}
       handleTelChange={handleTelChange}

@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { FetchTodosError } from '../../../types/type';
-import $api from '../../../http/loginHttp';
 import { ISearchOrganization, SearchOrganization } from '../../../types/MesTypes';
+import $api from '../../../http/loginHttp';
 
 const searchOrganizations = createAsyncThunk<ISearchOrganization,
 SearchOrganization, { rejectValue: FetchTodosError }>(

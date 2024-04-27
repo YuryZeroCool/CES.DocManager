@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {
-  ComboboxStore,
   Flex,
   Group,
+  List,
   Modal,
   Select,
   Stack,
@@ -13,26 +13,16 @@ import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import { IconCalendar } from '@tabler/icons-react';
 import AddActTable from '../AddActTable/AddActTable.container';
 import ModalButtons from '../ModalButtons/ModalButtons.container';
-import SearchableSelect from '../SearchableSelect/SearchableSelect.container';
-import DriverComboBox from '../DriverComboBox/DriverComboBox.container';
-import NoteContactsInfo from '../NoteContactsInfo/NoteContactsInfo.container';
 import { Act, IFullNoteData } from '../../types/MesTypes';
-import classes from './AddActModal.module.scss';
+import classes from './ActModal.module.scss';
 
-interface Props {
+interface ActModalProps {
   handleClose: () => void;
-  handleOrganizationsInputChange: (value: string) => void;
-  handleCarInputChange: (value: string) => void;
-  changeCarInputValue: (value: string) => void;
-  handleDriverSelectChange: (value: string) => void;
+  handleOrganizationsInputChange: (value: string | null) => void;
+  handleCarInputChange: (value: string | null) => void;
+  handleDriverSelectChange: (value: string | null) => void;
   handleActAdditionDateChange: (value: Date | null) => void;
   handleAddActSubmit: () => void;
-  handleStreetSearchChange: (value: string, index: number) => void;
-  handleEntranceChange: (value: string, index: number) => void;
-  handleHouseNumberChange: (value: string, index: number) => void;
-  handleTelChange: (value: string, index: number) => void;
-  handleAddButtonClick: () => void;
-  handleDeleteButtonClick: (id: number) => void;
   isAddActModalOpen: boolean;
   isEditActModalOpen: boolean;
   allOrganizationsBySearch: string[];
@@ -41,32 +31,22 @@ interface Props {
   type: string;
   carsByCarNumber: string[];
   car: string;
-  combobox: ComboboxStore;
-  driverCombobox: ComboboxStore;
   driversByCarNumber: string[];
   driver: string | null;
   actAdditionDate: Date | null;
   modalError: string;
   selectedNotesId: number[];
   selectedNotes: IFullNoteData[];
-  streetsBySearch: string[];
 }
 
-export default function AddActModalComponent(props: Props) {
+export default function ActModalComponent(props: ActModalProps) {
   const {
     handleClose,
     handleOrganizationsInputChange,
     handleCarInputChange,
-    changeCarInputValue,
     handleDriverSelectChange,
     handleActAdditionDateChange,
     handleAddActSubmit,
-    handleStreetSearchChange,
-    handleEntranceChange,
-    handleHouseNumberChange,
-    handleTelChange,
-    handleAddButtonClick,
-    handleDeleteButtonClick,
     isAddActModalOpen,
     isEditActModalOpen,
     allOrganizationsBySearch,
@@ -75,15 +55,12 @@ export default function AddActModalComponent(props: Props) {
     type,
     carsByCarNumber,
     car,
-    combobox,
-    driverCombobox,
     driversByCarNumber,
     driver,
     actAdditionDate,
     modalError,
     selectedNotesId,
     selectedNotes,
-    streetsBySearch,
   } = props;
 
   const renderTitle = () => (
@@ -117,26 +94,41 @@ export default function AddActModalComponent(props: Props) {
           data={allOrganizationsBySearch}
           searchable
           onSearchChange={(value) => handleOrganizationsInputChange(value)}
+          onChange={(value) => handleOrganizationsInputChange(value)}
+          clearable
           value={organization}
           name="organizationSelect"
         />
         <Flex gap={10}>
-          <SearchableSelect
-            combobox={combobox}
-            searchValue={car}
-            carsByCarNumber={carsByCarNumber}
-            changeCarInputValue={changeCarInputValue}
-            handleCarInputChange={handleCarInputChange}
-            width="50%"
+          <Select
+            classNames={{
+              dropdown: classes.selectDropdown,
+            }}
+            w="50%"
+            label="Машина"
+            placeholder="Введите номер машины"
+            data={carsByCarNumber}
+            searchable
+            onSearchChange={(value) => handleCarInputChange(value)}
+            onChange={(value) => handleCarInputChange(value)}
+            clearable
+            value={car}
           />
-          <DriverComboBox
-            combobox={driverCombobox}
-            drivers={driversByCarNumber}
-            driver={driver}
-            width="50%"
-            changeDriverValue={handleDriverSelectChange}
+
+          <Select
+            classNames={{
+              dropdown: classes.selectDropdown,
+            }}
+            w="50%"
+            label="Водитель"
+            placeholder="Выберите водителя"
+            data={driversByCarNumber}
+            onChange={(value) => handleDriverSelectChange(value)}
+            clearable
+            value={driver}
           />
         </Flex>
+
         <DatesProvider
           settings={{
             locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'UTC',
@@ -159,26 +151,56 @@ export default function AddActModalComponent(props: Props) {
             maxDate={new Date()}
           />
         </DatesProvider>
-        {selectedNotesId.length === 0 && (
-          <NoteContactsInfo
-            noteContactsInfo={selectedNotes}
-            streetsBySearch={streetsBySearch}
-            handleAddButtonClick={handleAddButtonClick}
-            handleDeleteButtonClick={handleDeleteButtonClick}
-            handleEntranceChange={handleEntranceChange}
-            handleHouseNumberChange={handleHouseNumberChange}
-            handleStreetSearchChange={handleStreetSearchChange}
-            handleTelChange={handleTelChange}
-          />
+
+        {selectedNotes.length > 0 && (
+          <Stack gap={10}>
+            <Text>Заявки:</Text>
+
+            <List size="md">
+              {selectedNotes.map((el) => (
+                <List.Item>
+                  {el.street && (
+                    <>
+                      {el.street}
+                      ,&nbsp;
+                    </>
+                  )}
+                  {el.houseNumber && (
+                    <>
+                      д.&nbsp;
+                      {el.houseNumber}
+                    </>
+                  )}
+                  {el.entrance !== 0 && (
+                    <>
+                      ,&nbsp;
+                      п.&nbsp;
+                      {el.entrance}
+                    </>
+                  )}
+                  {el.tel !== '' && (
+                    <>
+                      ,&nbsp;
+                      т.&nbsp;
+                      {el.tel}
+                    </>
+                  )}
+                </List.Item>
+              ))}
+            </List>
+          </Stack>
         )}
+
         {currentActData.works.length !== 0 && (
           <AddActTable currentActData={currentActData} type={type} />
         )}
+
         {modalError && (
           <Group>
             <Text style={{ fontSize: 18, color: 'red' }}>{modalError}</Text>
           </Group>
         )}
+
         <ModalButtons
           confirmBtnTitle="Добавить акт"
           cancelBtnTitle="Отменить"

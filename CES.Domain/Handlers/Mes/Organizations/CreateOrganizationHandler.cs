@@ -31,7 +31,7 @@ namespace CES.Domain.Handlers.Mes.Organizations
                 throw new System.Exception("Заполните имя организации");
             }
 
-            var existingName = await _ctx.OrganizationEntities.FirstOrDefaultAsync(x => x.Name == request.Name, cancellationToken);
+            var existingName = await _ctx.OrganizationEntities!.FirstOrDefaultAsync(x => x.Name == request.Name, cancellationToken);
             if (existingName != null)
             {
                 throw new System.Exception("Такая организация уже существует");
@@ -39,7 +39,7 @@ namespace CES.Domain.Handlers.Mes.Organizations
 
             if (!string.IsNullOrWhiteSpace(request.PayerAccountNumber))
             {
-                var existingPayerAccountNumber = await _ctx.OrganizationEntities.FirstOrDefaultAsync(x => x.PayerAccountNumber == request.PayerAccountNumber, cancellationToken);
+                var existingPayerAccountNumber = await _ctx.OrganizationEntities!.FirstOrDefaultAsync(x => x.PayerAccountNumber == request.PayerAccountNumber, cancellationToken);
                 if (existingPayerAccountNumber != null)
                 {
                     throw new System.Exception("Такой УНП уже существует");
@@ -47,7 +47,7 @@ namespace CES.Domain.Handlers.Mes.Organizations
             }
 
             var organization = _mapper.Map<OrganizationEntity>(request);
-            var addedOrganization = await _ctx.OrganizationEntities.AddAsync(organization, cancellationToken);
+            var addedOrganization = await _ctx.OrganizationEntities!.AddAsync(organization, cancellationToken);
             await _ctx.SaveChangesAsync(cancellationToken);
             return _mapper.Map<CreateOrganizationResponse>(addedOrganization.Entity);
         }

@@ -1,9 +1,7 @@
-﻿namespace CES.DocManager.WebApi.Models
+﻿namespace CES.DocManager.WebApi.Models.Mes
 {
     public class NoteViewModel
     {
-        public int Id { get; set; }
-
         public string Comment { get; set; } = string.Empty;
 
         public DateTime Date { get; set; }
