@@ -21,13 +21,18 @@ export interface INoteContactInfo {
   tel: string;
 }
 
-export interface EditNoteRequest {
-  id: number;
+export interface ExistedNote {
   date: string;
   comment: string;
   isChecked: boolean;
   noteContactsInfo: ContactInfo[];
 }
+
+export interface EditNoteRequest extends ExistedNote {
+  id: number;
+}
+
+export interface CreateNoteRequest extends ExistedNote {};
 
 export interface IFullNoteData extends INote {
   street: string;
@@ -69,16 +74,15 @@ export interface INotesState {
   notesWithoutAct: IFullNoteData[];
   actTypesFromFile: ActTypesFromFileResponse[];
   actDataFromFile: ActDataFromFileResponse;
-  totalActSumm: number;
+  totalActSumm: string;
   deletedNoteId: number;
-  vat: number;
+  vat: string;
   streetsBySearch: string[];
   createdActId: number;
   actsList: ActsList[];
   totalActsListCount: number;
   selectedActId: number;
   deletedActId: number;
-  createdNoteId: number;
 }
 
 export interface SearchOrganization {
@@ -164,4 +168,9 @@ export interface ActsList {
 export interface ActsListRes {
   actsList: ActsList[];
   totalActsListPagesCount: number;
+}
+
+export interface StreetResponse {
+  id: number;
+  street: string
 }

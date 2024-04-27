@@ -23,14 +23,14 @@ import {
   IconClipboardList,
   IconCalendar,
 } from '@tabler/icons-react';
-import AddActModal from '../../components/AddActModal/AddActModal.container';
+import ActModal from '../../components/ActModal/ActModal.container';
 import NotesTable from '../../components/NotesTable/NotesTable.container';
 import AddOrganizationModal from '../../components/AddOrganizationModal/AddOrganizationModal.container';
 import OrganizationsTable from '../../components/OrganizationsTable/OrganizationsTable.container';
 import Pagination from '../../components/Pagination/Pagination.container';
 import NotesWithoutActsTableContainer from '../../components/NotesWithoutActsTable/NotesWithoutActsTable.container';
 import ActsListTable from '../../components/ActsListTable/ActsListTable.container';
-import EditNoteModal from '../../components/EditNoteModal/EditNoteModal.container';
+import ExistedNoteModal from '../../components/ExistedNoteModal/ExistedNoteModal.container';
 
 import {
   Act,
@@ -438,18 +438,20 @@ export default function MesPageComponent(props: Props) {
       {mesPageType === 'Заявки без актов' && renderNotesWithoutActsTable()}
       {mesPageType === 'История актов' && renderActsListTable()}
       {mesPageType === 'История актов' && mesError === '' && renderCounPerPageButtons()}
-      <AddActModal
-        selectedNotesId={selectedNotesId}
-        currentActData={currentActData}
-        type={type}
-        addActModalOpened={addActModalOpened}
-        editActModalOpened={editActModalOpened}
-        addActModalClose={addActModalClose}
-        editActModalClose={editActModalClose}
-        resetCurrentActData={resetCurrentActData}
-        changeType={changeType}
-        handleSelectNote={handleSelectNote}
-      />
+      {(addActModalOpened || editActModalOpened) && (
+        <ActModal
+          selectedNotesId={selectedNotesId}
+          currentActData={currentActData}
+          type={type}
+          addActModalOpened={addActModalOpened}
+          editActModalOpened={editActModalOpened}
+          addActModalClose={addActModalClose}
+          editActModalClose={editActModalClose}
+          resetCurrentActData={resetCurrentActData}
+          changeType={changeType}
+          handleSelectNote={handleSelectNote}
+        />
+      )}
       <AddOrganizationModal
         addOrganizationModalOpened={addOrganizationModalOpened}
         editOrganizationModalOpened={editOrganizationModalOpened}
@@ -457,7 +459,7 @@ export default function MesPageComponent(props: Props) {
         addOrganizationModalClose={addOrganizationModalClose}
       />
       {mesPageType === 'Заявки' && (
-        <EditNoteModal
+        <ExistedNoteModal
           noteModalOpened={noteModalOpened}
           isEditModal={isEditModal}
           noteModalClose={noteModalClose}

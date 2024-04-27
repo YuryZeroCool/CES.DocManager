@@ -12,7 +12,7 @@ import { ContactInfo, IFullNoteData } from '../../types/MesTypes';
 interface NoteContactsInfoComponentProps {
   noteContactsInfo: ContactInfo[] | IFullNoteData[];
   streetsBySearch: string[];
-  handleStreetSearchChange: (value: string, index: number) => void;
+  handleStreetChange: (value: string | null, index: number) => void;
   handleHouseNumberChange: (value: string, index: number) => void;
   handleEntranceChange: (value: string, index: number) => void;
   handleTelChange: (value: string, index: number) => void;
@@ -24,7 +24,7 @@ function NoteContactsInfoComponent(props: NoteContactsInfoComponentProps) {
   const {
     noteContactsInfo,
     streetsBySearch,
-    handleStreetSearchChange,
+    handleStreetChange,
     handleHouseNumberChange,
     handleEntranceChange,
     handleTelChange,
@@ -44,10 +44,11 @@ function NoteContactsInfoComponent(props: NoteContactsInfoComponentProps) {
                 placeholder="Введите значение"
                 data={streetsBySearch}
                 searchable
-                onSearchChange={(value) => handleStreetSearchChange(value, index)}
+                onSearchChange={(value) => handleStreetChange(value, index)}
+                onChange={(value) => handleStreetChange(value, index)}
+                clearable
                 value={el.street}
               />
-
               <TextInput
                 label="Номер дома"
                 placeholder="Номер дома"
@@ -81,6 +82,7 @@ function NoteContactsInfoComponent(props: NoteContactsInfoComponentProps) {
           >
             <IconTrash style={{ width: '20px', height: '20px' }} />
           </ActionIcon>
+
           {index === noteContactsInfo.length - 1 && (
             <ActionIcon
               onClick={handleAddButtonClick}

@@ -22,7 +22,8 @@ import streetsBySearch from '../../actions/mes/getStreetsBySearch';
 import createNewAct from '../../actions/mes/createNewAct';
 import getActsList from '../../actions/mes/getActsList';
 import deleteAct from '../../actions/mes/deleteAct';
-import createNewNote from '../../actions/mes/createNewNote';
+import createExistedNote from '../../actions/mes/createExistedNote';
+import createStreet from '../../actions/mes/createStreet';
 
 const organizationDefault = {
   id: 0,
@@ -61,15 +62,14 @@ const initial: INotesState = {
   actTypesFromFile: [],
   actDataFromFile: actDataFromFileDefault,
   deletedNoteId: 0,
-  totalActSumm: 0,
-  vat: 0,
+  totalActSumm: '0',
+  vat: '0',
   streetsBySearch: [],
   createdActId: 0,
   actsList: [],
   totalActsListCount: 0,
   selectedActId: 0,
   deletedActId: 0,
-  createdNoteId: 0,
 };
 
 const mesReducer = createSlice({
@@ -83,7 +83,7 @@ const mesReducer = createSlice({
     },
     resetTotalActSummVat: (state) => {
       let stateCopy: INotesState = state;
-      stateCopy = { ...stateCopy, totalActSumm: 0, vat: 0 };
+      stateCopy = { ...stateCopy, totalActSumm: '0', vat: '0' };
       return stateCopy;
     },
     changeSelectedNoteId: (state, action: PayloadAction<number>) => {
@@ -169,9 +169,31 @@ const mesReducer = createSlice({
 
       stateCopy = {
         ...stateCopy,
-        totalActSumm: +totalSumm.toFixed(2),
-        vat: action.payload !== 'Для жилых помещений' ? +(totalSumm / 6).toFixed(2) : 0,
+        totalActSumm: totalSumm.toFixed(2),
+        vat: action.payload !== 'Для жилых помещений' ? (totalSumm / 6).toFixed(2) : '0',
       };
+      return stateCopy;
+    },
+    changeActTotalSumm: (state, action: PayloadAction<{ type: string, value: string }>) => {
+      let stateCopy: INotesState = state;
+
+      stateCopy = {
+        ...stateCopy,
+        totalActSumm: action.payload.value,
+        vat: action.payload.type !== 'Для жилых помещений'
+          ? (+action.payload.value.replace(',', '.') / 6).toFixed(2)
+          : '0',
+      };
+      return stateCopy;
+    },
+    changeVat: (state, action: PayloadAction<string>) => {
+      const stateCopy: INotesState = state;
+      const regexp = /^[0-9]{0,}([,.0-9]{0,3})?$/g;
+
+      if (action.payload.match(regexp)) {
+        stateCopy.vat = action.payload;
+      }
+
       return stateCopy;
     },
     updateActDataFromFile: (state, action: PayloadAction<UpdateActDataFromFileReq>) => {
@@ -188,14 +210,14 @@ const mesReducer = createSlice({
 
         if (workIndex !== -1) {
           const currentWork = actDataFromFile.act[actIndex].works[workIndex];
-          const regexp = /^[0-9]{0,}(\.[0-9]{0,3})?$/g;
+          const regexp = /^[0-9]{0,}([,.0-9]{0,3})?$/g;
 
           if (value.match(regexp)) {
             currentWork.count = value;
           }
 
           if (value !== '') {
-            currentWork.totalSumm = +(currentWork.price * parseFloat(value)).toFixed(2);
+            currentWork.totalSumm = +(currentWork.price * parseFloat(value.replace(',', '.'))).toFixed(2);
           } else {
             currentWork.totalSumm = 0;
           }
@@ -219,8 +241,8 @@ const mesReducer = createSlice({
       }
       newState = {
         ...newState,
-        totalActSumm: 0,
-        vat: 0,
+        totalActSumm: '0',
+        vat: '0',
       };
     },
     editActsListAfterDelete: (state, action: PayloadAction<number>) => {
@@ -231,6 +253,16 @@ const mesReducer = createSlice({
           ...stateCopy.actsList.filter((el) => el.id !== action.payload),
         ],
       };
+      return stateCopy;
+    },
+    resetStreetsBySearch: (state) => {
+      let stateCopy: INotesState = state;
+      stateCopy = { ...stateCopy, streetsBySearch: [] };
+      return stateCopy;
+    },
+    resetOrganizationsBySearch: (state) => {
+      let stateCopy: INotesState = state;
+      stateCopy = { ...stateCopy, allOrganizationsBySearch: [] };
       return stateCopy;
     },
   },
@@ -539,7 +571,7 @@ const mesReducer = createSlice({
       throw Error(action.payload?.message);
     });
 
-    builder.addCase(createNewNote.pending, (state) => {
+    builder.addCase(createExistedNote.pending, (state) => {
       let stateCopy = state;
       stateCopy = {
         ...stateCopy,
@@ -547,16 +579,27 @@ const mesReducer = createSlice({
       };
       return stateCopy;
     });
-    builder.addCase(createNewNote.fulfilled, (state, action) => {
+    builder.addCase(createExistedNote.fulfilled, (state) => {
       let stateCopy = state;
       stateCopy = {
         ...stateCopy,
-        createdActId: action.payload,
         requestStatus: 'fulfilled',
       };
       return stateCopy;
     });
-    builder.addCase(createNewNote.rejected, (state, action) => {
+    builder.addCase(createExistedNote.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(createStreet.pending, (state) => {
+      const stateCopy = state;
+      return stateCopy;
+    });
+    builder.addCase(createStreet.fulfilled, (state) => {
+      const stateCopy = state;
+      return stateCopy;
+    });
+    builder.addCase(createStreet.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
   },
@@ -575,9 +618,13 @@ export const {
   updateActDataFromFile,
   resetTotalActSummVat,
   updateActTotalSumm,
+  changeActTotalSumm,
+  changeVat,
   resetActData,
   editActsListAfterDelete,
   editNotesWithoutActAfterAddAct,
+  resetStreetsBySearch,
+  resetOrganizationsBySearch,
 } = mesReducer.actions;
 
 export default mesReducer.reducer;

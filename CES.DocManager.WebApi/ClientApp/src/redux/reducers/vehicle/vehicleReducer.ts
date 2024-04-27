@@ -13,7 +13,13 @@ const initial: IVehicleResponse = {
 const vehicleReducer = createSlice({
   name: 'vehicle',
   initialState: initial,
-  reducers: {},
+  reducers: {
+    resetCarsByCarNumber: (state) => {
+      let stateCopy: IVehicleResponse = state;
+      stateCopy = { ...stateCopy, carsByCarNumber: [] };
+      return stateCopy;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getAllBrands.fulfilled, (state, action) => {
       let stateCopy = state;
@@ -43,5 +49,9 @@ const vehicleReducer = createSlice({
     });
   },
 });
+
+export const {
+  resetCarsByCarNumber,
+} = vehicleReducer.actions;
 
 export default vehicleReducer.reducer;
