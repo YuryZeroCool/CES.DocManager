@@ -189,7 +189,7 @@ namespace CES.Domain.Mapper
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
               .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Name));
 
-            CreateMap<ActKO514Entity, Models.Response.Act.Act>()
+            CreateMap<ActEntity, Models.Response.Act.Act>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.ActDateOfCreation, opt => opt.MapFrom(src => src.ActDateOfCreation))
                 .ForMember(dest => dest.DateOfWorkCompletion, opt => opt.MapFrom(src => src.DateOfWorkCompletion))
@@ -200,12 +200,12 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.Vat, opt => opt.MapFrom(src => src.Vat))
                 .ForMember(dest => dest.ActType, opt => opt.MapFrom(src => src.ActType.Name));
 
-            CreateMap<WorkPerformActEntity, Work>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Name))
-               // .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price.Price))
-                .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Name!.Unit!.Name))
-                .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count.ToString()));
-                                //.ToString(CultureInfo.CreateSpecificCulture("en-GB"))));
+            //CreateMap<WorkPerformActEntity, Work>()
+            //    .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Name))
+            //   // .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price.Price))
+            //    .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Name!.Unit!.Name))
+            //    .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count.ToString()));
+            //                    //.ToString(CultureInfo.CreateSpecificCulture("en-GB"))));
 
             CreateMap<NoteEntity, FullNoteData>()
                 .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street!.Name))

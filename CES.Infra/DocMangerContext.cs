@@ -13,10 +13,15 @@ namespace CES.Infra
 {
     public class DocMangerContext : DbContext
     {
-        //dotnet ef migrations add InitialCreate --context BlogContext --output-dir Migrations/SqlServerMigrations
-        //Add-Migration AddOneToManyHouseNumberStreetTables -context DocMangerContext
+        //Add-Migration RemoveUnnecessaryColumnsAndTables -context DocMangerContext
+
+        //update-database -context DocMangerContext   
+
+        //update-database -context DocMangerContext -Args '--environment Production'
+
         //update-database -context DocMangerContext   PriceOfWorkInActEntityWorkNameInActEntity
-        // Remove-migration -context DocMangerContext
+
+        // Remove-migration -context DocMangerContext  
 
         public DocMangerContext(DbContextOptions<DocMangerContext> options)
             : base(options)
@@ -64,19 +69,15 @@ namespace CES.Infra
 
         public virtual DbSet<OrganizationEntity>? OrganizationEntities { get; set; }
 
-        public virtual DbSet<ActKO514Entity>? ActKO514 { get; set; }
+        public virtual DbSet<ActEntity>? Act { get; set; }
 
         public virtual DbSet<ActTypeEntity>? ActTypes { get; set; }
-
-        public virtual DbSet<WorkNameInActEntity>? WorkNameInAct { get; set; }
 
         public virtual DbSet<StreetEntity>? Streets { get; set; }
 
         public virtual DbSet<EntranceEntity>? Entrances { get; set; }
 
         public virtual DbSet<HouseNumberEntity>? HouseNumbers { get; set; }
-
-        public virtual DbSet<WorkPerformActEntity>? WorkPerformsAct { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -102,9 +103,8 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new NoteConfig());
             modelBuilder.ApplyConfiguration(new OrganizationConfig());
             modelBuilder.ApplyConfiguration(new OrganizationConfig());
-            modelBuilder.ApplyConfiguration(new ActKO514Config());
+            modelBuilder.ApplyConfiguration(new ActConfig());
             modelBuilder.ApplyConfiguration(new ActTypeConfig());
-            modelBuilder.ApplyConfiguration(new WorkNameInActConfig());
             modelBuilder.ApplyConfiguration(new HouseNumberConfig());
             modelBuilder.ApplyConfiguration(new StreetConfig());
         }
