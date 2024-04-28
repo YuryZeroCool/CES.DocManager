@@ -5,7 +5,6 @@ using CES.Domain.Models.Response.Mes.Notes;
 using CES.Infra;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace CES.Domain.Handlers.Mes.Notes
 {
@@ -32,6 +31,7 @@ namespace CES.Domain.Handlers.Mes.Notes
                 .Include(x => x.Street)
                 .Include(x => x.HouseNumber)
                 .Include(x => x.Entrance)
+                .Where(x => x.Act == null)
                 .ToListAsync(cancellationToken);
             notes.OrderByDescending(p => p, comparer);
 

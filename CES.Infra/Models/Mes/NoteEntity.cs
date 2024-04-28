@@ -25,5 +25,10 @@ namespace CES.Infra.Models.Mes
         public int? EntranceId { get; set; }
 
         public EntranceEntity? Entrance { get; set; }
+
+        public int? ActId { get; set; }
+
+        [JsonIgnore]
+        public ActEntity? Act { get; set; }
     }
 }

@@ -89,7 +89,7 @@ namespace CES.DocManager.WebApi.Controllers
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost()]
-        [Produces(typeof(CreateActResponse))]
+        [Produces(typeof(string))]
         public async Task<object> CreateAct([FromBody] ActViewModel act)
         {
             try

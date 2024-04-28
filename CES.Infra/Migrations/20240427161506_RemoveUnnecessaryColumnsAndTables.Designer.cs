@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20240427161506_RemoveUnnecessaryColumnsAndTables")]
+    partial class RemoveUnnecessaryColumnsAndTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -547,9 +549,6 @@ namespace CES.Infra.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("ActId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
@@ -572,8 +571,6 @@ namespace CES.Infra.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ActId");
 
                     b.HasIndex("EntranceId");
 
@@ -884,10 +881,6 @@ namespace CES.Infra.Migrations
 
             modelBuilder.Entity("CES.Infra.Models.Mes.NoteEntity", b =>
                 {
-                    b.HasOne("CES.Infra.Models.Mes.ActEntity", "Act")
-                        .WithMany("Notes")
-                        .HasForeignKey("ActId");
-
                     b.HasOne("CES.Infra.Models.Mes.EntranceEntity", "Entrance")
                         .WithMany()
                         .HasForeignKey("EntranceId");
@@ -899,8 +892,6 @@ namespace CES.Infra.Migrations
                     b.HasOne("CES.Infra.Models.Mes.StreetEntity", "Street")
                         .WithMany()
                         .HasForeignKey("StreetId");
-
-                    b.Navigation("Act");
 
                     b.Navigation("Entrance");
 
@@ -981,11 +972,6 @@ namespace CES.Infra.Migrations
             modelBuilder.Entity("CES.Infra.Models.MaterialReport.UnitEntity", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("CES.Infra.Models.Mes.ActEntity", b =>
-                {
-                    b.Navigation("Notes");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.NumberPlateOfCarEntity", b =>

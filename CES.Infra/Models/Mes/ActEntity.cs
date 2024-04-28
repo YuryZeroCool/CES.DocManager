@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.Metrics;
+﻿using CES.Infra.Models.Drivers;
 
 namespace CES.Infra.Models.Mes
 {
-    public class ActKO514Entity
+    public class ActEntity
     {
         public int Id { get; set; }
 
@@ -16,28 +16,22 @@ namespace CES.Infra.Models.Mes
 
         public int OrganizationId { get; set; }
 
-        public OrganizationEntity Organization { get; set; }
+        public OrganizationEntity? Organization { get; set; }
 
         public int EmployeeId { get; set; }
 
         public int NumberPlateOfCarId { get; set; }
 
-        public NumberPlateOfCarEntity NumberPlateOfCar { get; set; }
+        public NumberPlateOfCarEntity? NumberPlateOfCar { get; set; }
 
-        public EmployeeEntity Employee { get; set; }
+        public EmployeeEntity? Employee { get; set; }
 
         public int ActTypeEntityId { get; set; }
 
-        public ActTypeEntity ActType { get; set; }
+        public ActTypeEntity? ActType { get; set; }
 
-        public WorkPerformActEntity? WaterRefillId { get; set; }
+        public string? WorkPerformAct {get;set;}
 
-        public WorkPerformActEntity? PipeDiameter100 { get; set; }
-
-        public WorkPerformActEntity? PipeDiameter150 { get; set; }
-
-        public WorkPerformActEntity? PipeDiameter200 { get; set; }
-
-        public WorkPerformActEntity? PipeDiameter300 { get; set; }
+        public ICollection<NoteEntity>? Notes { get; set; } = new List <NoteEntity> ();
     }
 }

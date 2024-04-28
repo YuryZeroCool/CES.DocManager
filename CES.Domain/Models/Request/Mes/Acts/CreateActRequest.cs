@@ -3,7 +3,7 @@ using MediatR;
 
 namespace CES.Domain.Models.Request.Mes.Acts
 {
-    public class CreateActRequest : IRequest<CreateActResponse>
+    public class CreateActRequest : IRequest<string>
     {
         public string Organization { get; set; } = string.Empty;
 
