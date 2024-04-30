@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CES.DocManager.WebApi.Models.Mes;
 using CES.Domain.Models.Request.Mes.Acts;
+using CES.Domain.Models.Request.Mes.Notes;
 using CES.Domain.Models.Response.Act;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
@@ -102,6 +103,29 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return new { Message = "Упс! Что-то пошло не так" };
+            }
+        }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpDelete]
+        [Produces(typeof(int))]
+        public async Task<object> DeleteAct(int id)
+        {
+            try
+            {
+                return await _mediator.Send(new DeleteActRequest()
+                {
+                    Id = id
+                });
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    e.Message
+                };
             }
         }
     }
