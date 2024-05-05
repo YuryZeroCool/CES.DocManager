@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { MantineProvider, createTheme } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import store from './redux/store/configureStore';
 import Layout from './components/Layout/Layout.component';
 import HomePage from './routes/home/HomePage.container';
@@ -18,6 +19,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/index.scss';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
+import '@mantine/notifications/styles.css';
 
 const root = createRoot(document.getElementById('root') as Element);
 const theme = createTheme({
@@ -27,6 +29,7 @@ const theme = createTheme({
 root.render(
   <Provider store={store}>
     <MantineProvider theme={theme}>
+      <Notifications />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>

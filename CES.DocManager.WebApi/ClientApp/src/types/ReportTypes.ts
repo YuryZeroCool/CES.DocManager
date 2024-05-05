@@ -45,7 +45,6 @@ export interface FuelReportResponse {
   deletedDivisionWorkSchedule: IDivisionWorkSchedule;
   createdDivisionWorkSchedule: ICreateDivisionWorkScheduleResponse;
   allDivisionWorkSchedule: IAllDivisionWorkSchedulesResponse;
-  period: Dayjs | null;
   status: string;
   fuelReportInfo: IGetFuelReportInfoResponse[];
 }

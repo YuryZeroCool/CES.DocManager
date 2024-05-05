@@ -1,7 +1,6 @@
-import { Dayjs } from 'dayjs';
 import { IPeriod } from './types/ReportTypes';
 
-const countCurrentPeriod = (period: Dayjs | null): IPeriod => {
+const countCurrentPeriod = (period: Date | null): IPeriod => {
   let currentMonth = 0;
   let currentYear = 0;
   let currentPeriod: IPeriod = {
@@ -9,8 +8,8 @@ const countCurrentPeriod = (period: Dayjs | null): IPeriod => {
     year: 0,
   };
   if (period) {
-    currentMonth = period.month();
-    currentYear = period.year();
+    currentMonth = period.getMonth();
+    currentYear = period.getFullYear();
     currentPeriod = {
       month: currentMonth + 1,
       year: currentYear,

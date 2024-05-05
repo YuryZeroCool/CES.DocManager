@@ -1,135 +1,82 @@
 import React from 'react';
 import {
-  Box,
+  Accordion,
+  ActionIcon,
   Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
+  FileInput,
+  Group,
   Select,
-  SelectChangeEvent,
-  styled,
-  TextField,
-  Typography,
-} from '@mui/material';
-import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
-import MuiAccordionSummary, {
-  AccordionSummaryProps,
-} from '@mui/material/AccordionSummary';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
+  Stack,
+  rem,
+  Text,
+} from '@mantine/core';
+import { MonthPickerInput, DatesProvider } from '@mantine/dates';
+import { IconCalendar, IconUpload } from '@tabler/icons-react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Calendar, DateObject } from 'react-multi-date-picker';
 import DatePanel from 'react-multi-date-picker/plugins/date_panel';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
 import FuelReportTable from '../../components/FuelReportTable/FuelReportTable.container';
 import './FuelReportPage.style.scss';
-import { Division, IAllDivisionWorkSchedulesResponse, ICreateDivisionWorkScheduleResponse } from '../../types/ReportTypes';
+import { IAllDivisionWorkSchedulesResponse, ICreateDivisionWorkScheduleResponse } from '../../types/ReportTypes';
 import { months, weekDays } from './FuelReportPage.config';
 
 interface Props {
   dates: DateObject[];
-  currentDivision: string;
-  divisions: Division[];
-  workScheduleError: string;
+  currentDivision: string | null;
+  divisions: string[];
   allDivisionWorkScheduleState: IAllDivisionWorkSchedulesResponse | undefined;
   isDivisionSelected: boolean;
   isDatesSelected: boolean;
-  expanded: boolean;
-  fuelReportPeriod: Dayjs | null;
-  fuelReportInfoError: string;
-  onChange: (val: DateObject[]) => void;
-  handleChange: (event: SelectChangeEvent) => void;
-  handleClick: () => void;
+  fuelReportPeriod: Date | null;
+  file: File | null;
+  isLoading: boolean;
+  handleCalendarChange: (val: DateObject[]) => void;
+  handleMonthChange: (date: DateObject) => void;
+  handleDivisionChange: (value: string | null) => void;
+  handleSaveBtnClick: () => void;
   handeDeleteElement: (id: number) => Promise<void>;
   createDatesStr: (dateArr: string[]) => string;
-  handleAccordionChange: () => void;
-  handleFuelReportCalendarChange: (value: Dayjs | null) => void;
-  handleFuelReportCalendarClose: () => void;
+  handleFuelReportCalendarChange: (value: Date | null) => void;
+  handleInputFileChange: (value: File | null) => void;
+  handleUploadFile: () => void;
 }
-
-const Accordion = styled((elProps: AccordionProps) => (
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  <MuiAccordion disableGutters elevation={0} square {...elProps} />
-))(({ theme }) => ({
-  border: `1px solid ${theme.palette.divider}`,
-  '.MuiTypography-root': {
-    color: '#000',
-  },
-  '&:not(:last-child)': {
-    borderBottom: 0,
-  },
-  '&:before': {
-    display: 'none',
-  },
-}));
-
-const AccordionSummary = styled((elProps: AccordionSummaryProps) => (
-  <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...elProps}
-  />
-))(({ theme }) => ({
-  backgroundColor:
-    theme.palette.mode === 'dark'
-      ? 'rgba(255, 255, 255, .05)'
-      : 'rgba(0, 0, 0, .03)',
-  flexDirection: 'row-reverse',
-  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)',
-  },
-  '& .MuiAccordionSummary-content': {
-    marginLeft: theme.spacing(1),
-  },
-}));
-
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  padding: theme.spacing(2),
-  borderTop: '1px solid rgba(0, 0, 0, .125)',
-}));
 
 export default function FuelReportPageComponent(props: Props) {
   const {
     dates,
     currentDivision,
     divisions,
-    workScheduleError,
     allDivisionWorkScheduleState,
     isDivisionSelected,
     isDatesSelected,
-    expanded,
     fuelReportPeriod,
-    fuelReportInfoError,
-    onChange,
-    handleChange,
-    handleClick,
+    file,
+    isLoading,
+    handleCalendarChange,
+    handleMonthChange,
+    handleDivisionChange,
+    handleSaveBtnClick,
     handeDeleteElement,
     createDatesStr,
-    handleAccordionChange,
     handleFuelReportCalendarChange,
-    handleFuelReportCalendarClose,
+    handleInputFileChange,
+    handleUploadFile,
   } = props;
 
   const renderAccordion = () => (
-    <div className="accordion-wrapper">
-      <Accordion expanded={expanded} onChange={handleAccordionChange}>
-        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-          <Typography className="calendar-form-title">Добавить график работы смен</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <div className="error-message-container">
-            {workScheduleError ? (<p className="error-message">{workScheduleError}</p>) : <p> </p>}
-          </div>
-          <Box sx={{ display: 'flex' }} className="division-work-schedule-block">
-            <div className="calendar-form">
-              <div className="calendar-block">
+    <Accordion variant="contained" defaultValue="Apples" className="accordion">
+      <Accordion.Item value="Добавить график работы смен" className="accordionItem">
+        <Accordion.Control className="accordionControl">Добавить график работы смен</Accordion.Control>
+
+        <Accordion.Panel pt={20}>
+          <Group gap={20} align="flex-start">
+            <Stack gap={20} p="0 20px">
+              <Group justify="space-between" align="flex-start" gap={40}>
                 <Calendar
                   className="calendar"
                   value={dates}
-                  onChange={onChange}
+                  onChange={handleCalendarChange}
+                  onMonthChange={handleMonthChange}
                   format="YYYY-MM-DD"
                   months={months}
                   weekDays={weekDays}
@@ -138,87 +85,97 @@ export default function FuelReportPageComponent(props: Props) {
                     <DatePanel header="Даты" />,
                   ]}
                 />
-                <FormControl className="divisions-select-control">
-                  <InputLabel id="demo-simple-select-label">Смена</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={currentDivision}
-                    label="Смена"
-                    className="divisions-select"
-                    onChange={handleChange}
-                  >
-                    {divisions.map((el: Division) => (
-                      <MenuItem key={el.id} value={el.division}>{el.division}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </div>
-              <div className="calendar-form-button-block">
-                <Button
-                  className="calendar-form-button"
-                  variant="outlined"
-                  size="medium"
-                  disabled={!(isDivisionSelected && isDatesSelected)}
-                  onClick={handleClick}
-                >
-                  Сохранить
-                </Button>
-              </div>
-            </div>
-            <div className="saved-data">
+
+                <Select
+                  label="Смена"
+                  placeholder="Выберите смену"
+                  data={divisions}
+                  value={currentDivision}
+                  onChange={(value) => handleDivisionChange(value)}
+                />
+              </Group>
+
+              <Button
+                variant="gradient"
+                gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
+                disabled={!(isDivisionSelected && isDatesSelected)}
+                onClick={handleSaveBtnClick}
+                w={380}
+              >
+                Сохранить
+              </Button>
+            </Stack>
+
+            <Stack style={{ flexGrow: 1 }} pt={20}>
               {allDivisionWorkScheduleState
-              && allDivisionWorkScheduleState?.length !== 0 && (
-                allDivisionWorkScheduleState.map((el: ICreateDivisionWorkScheduleResponse) => (
-                  <div key={el.id} className="saved-data-container">
+                && allDivisionWorkScheduleState.length !== 0
+                && allDivisionWorkScheduleState.map((el: ICreateDivisionWorkScheduleResponse) => (
+                  <Group key={el.id} className="saved-data-container">
                     {el.division && el.dates && (
-                      <p>{`${el.division}: ${createDatesStr(el.dates)}`}</p>
+                      <Text>{`${el.division}: ${createDatesStr(el.dates)}`}</Text>
                     )}
                     { /* eslint-disable-next-line @typescript-eslint/no-misused-promises */ }
                     <DeleteIcon className="icon-delete" onClick={() => handeDeleteElement(el.id)} />
-                  </div>
-                ))
-              )}
-            </div>
-          </Box>
-        </AccordionDetails>
-      </Accordion>
-    </div>
+                  </Group>
+                ))}
+            </Stack>
+          </Group>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
   );
 
   const renderFuelReportCalendar = () => (
-    <div className="fuel-report-calendar-block">
-      <h6>Выберите период отчета:</h6>
-      <FormControl sx={{ width: 250, height: 40 }} size="small" className="fuel-report-calendar">
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
-          <DatePicker
-            views={['month', 'year']}
-            label=""
-            minDate={dayjs('2010-01-01')}
-            maxDate={dayjs()}
+    <Group p={15} mb={20} gap={40} className="fuel-report-calendar-block">
+      <Group gap={15} align="flex-end">
+        <FileInput
+          value={file}
+          onChange={handleInputFileChange}
+          accept=".xls"
+          label="Добавить карточки работы техники"
+          placeholder="Добавить"
+          clearable
+          classNames={{
+            input: 'fuelWorkCardInput',
+            label: 'fuelWorkCardInputLabel',
+          }}
+        />
+
+        {file && (
+          <ActionIcon size={40} onClick={handleUploadFile} loading={isLoading}>
+            <IconUpload />
+          </ActionIcon>
+        )}
+      </Group>
+
+      <Stack>
+        <DatesProvider
+          settings={{
+            locale: 'ru', firstDayOfWeek: 0, weekendDays: [0], timezone: 'UTC',
+          }}
+        >
+          <MonthPickerInput
+            rightSection={<IconCalendar style={{ width: rem(18), height: rem(18) }} stroke={1.5} />}
+            rightSectionPointerEvents="none"
+            label="Выберите период отчета:"
+            placeholder="Период"
             value={fuelReportPeriod}
-            onChange={(newValue) => {
-              handleFuelReportCalendarChange(newValue);
+            onChange={(value) => handleFuelReportCalendarChange(value)}
+            styles={{
+              input: { height: 40 },
+              label: { marginBottom: 5 },
             }}
-            onClose={() => {
-              handleFuelReportCalendarClose();
-            }}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            renderInput={(params) => (
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              <TextField {...params} helperText={null} size="small" placeholder="" />
-            )}
           />
-        </LocalizationProvider>
-      </FormControl>
-    </div>
+        </DatesProvider>
+      </Stack>
+    </Group>
   );
 
   return (
-    <section className="report-page-section">
+    <Stack className="report-page-section" gap={15}>
       {renderAccordion()}
       {renderFuelReportCalendar()}
-      <FuelReportTable fuelReportInfoError={fuelReportInfoError} />
-    </section>
+      <FuelReportTable />
+    </Stack>
   );
 }

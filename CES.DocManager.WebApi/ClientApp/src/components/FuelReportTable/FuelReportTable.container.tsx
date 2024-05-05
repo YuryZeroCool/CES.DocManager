@@ -9,15 +9,7 @@ import {
 } from '../../types/ReportTypes';
 import FuelReportTableComponent from './FuelReportTable.component';
 
-interface Props {
-  fuelReportInfoError: string;
-}
-
-function FuelReportTableContainer(props: Props) {
-  const {
-    fuelReportInfoError,
-  } = props;
-
+function FuelReportTableContainer() {
   const [
     divisionsWithShiftsData,
     setDivisionsWithShiftsData,
@@ -65,7 +57,6 @@ function FuelReportTableContainer(props: Props) {
       divisionsWithShifts={divisionsWithShiftsData}
       divisionsWithoutShifts={divisionsWithoutShiftsData}
       status={status}
-      fuelReportInfoError={fuelReportInfoError}
     />
   );
 }

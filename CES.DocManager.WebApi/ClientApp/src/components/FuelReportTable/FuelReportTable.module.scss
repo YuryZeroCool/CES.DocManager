@@ -1,0 +1,21 @@
+.tableHeadCell {
+  padding: 15px !important;
+  background-color: var(--mantine-color-cyan-filled) !important;
+  color: var(--mantine-color-body);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.tableRow:first-child .tableHeadCell {
+  background-color: #0c7887 !important;
+}
+
+.tableRow:not(.tableRow:nth-child(1)) .tableBodyCell,
+.tableRow:not(.tableRow:nth-child(2)) .tableBodyCell {
+  padding: 15px !important;
+}
+
+.tableRow:nth-child(1) .tableBodyCell  {
+  padding: 15px !important;
+  padding-top: 0 !important;
+}

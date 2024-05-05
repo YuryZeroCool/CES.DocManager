@@ -1,39 +1,38 @@
 @import '../../styles/variables.scss';
 
-.division-work-schedule-block {
-  display: flex;
+.fuel-report-calendar-block {
+  background-color: $color-white;
+  border: 1px solid #d3cece;
+  border-radius: 8px;
 }
 
-.fuel-report-calendar-block {
-  padding: 15px;
-  margin-bottom: 20px;
-  background-color: $background-color-white;
+.fuelWorkCardInput {
+  height: 40px !important;
+  min-width: 100px;
+  text-align: 'center';
+}
 
-  h6 {
-    margin-bottom: 1rem;
-  }
+.fuelWorkCardInputLabel {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.accordion {
+  border-radius: 8px;
+}
+
+.accordionItem {
+  background-color: $color-white;
+  border: 1px solid #d3cece;
+  border-radius: 8px;
+}
+
+.accordionControl {
+  border-bottom: 1px solid #d3cece;
 }
 
 .calendar-form-title {
   margin-bottom: 10px;
-}
-
-.calendar-form {
-  width: 60%;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-  padding: 0 20px;
-
-  .rmdp-shadow {
-    margin-right: 30px;
-  }
-}
-
-.calendar-block {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
 }
 
 .saved-data {
@@ -46,36 +45,7 @@
 
 .calendar {
   height: 320px;
-}
-
-.divisions-select-control {
-  width: 220px !important;
-  height: 56px !important;
-  margin-right: 30px !important;
-}
-
-.divisions-select {
-  background-color: $color-white !important;
-
-  &.Mui-focused .MuiOutlinedInput-notchedOutline {
-    color: $color-link-active !important;
-  }
-}
-
-.calendar-form-button {
-  height: 50px !important;
-  width: 120px !important;
-  color: $color-black !important;
-  background-color: $color-white !important;
-
-  &:hover {
-    cursor: pointer;
-  }
-
-  &.Mui-disabled {
-    border: 1px solid rgb(20 5 5 / 35%) !important;
-    background-color: rgb(122, 120, 120) !important;
-  }
+  z-index: 1 !important;
 }
 
 .error-message-container {
@@ -105,15 +75,5 @@
 .fuel-report-calendar {
   legend {
     float: right !important;
-  }
-}
-
-@media all and (max-width: 1140px)  {
-  .division-work-schedule-block {
-    flex-direction: column;
-  }
-
-  .saved-data {
-    width: 75%;
   }
 }
