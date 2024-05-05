@@ -21,28 +21,22 @@ namespace CES.Domain.Handlers.FuelReport
         }
         public async Task<List<GetAllWorkCardsResponse>> Handle(GetAllWorkCardsRequest request, CancellationToken cancellationToken)
         {
-
             var allWorkCards = new List<GetAllWorkCardsResponse>();
 
             var period = _date.SplitDate($"{request.Year}-{request.Month}-01");
-
-            var divisions = await _ctx.Divisions.Select(x => x.Name).ToListAsync(cancellationToken);
-            if (divisions == null) throw new System.Exception("Смены не найдены");
-
+            var divisions = await _ctx.Divisions!.Select(x => x.Name).ToListAsync(cancellationToken) ?? throw new System.Exception("Смены не найдены");
             foreach (var division in divisions)
             {
-                var allCars = await _ctx.Divisions
+                var allCars = await _ctx.Divisions!
                     .Include(y => y.NumberPlateOfCars)
                     .FirstOrDefaultAsync(x => x.Name == division, cancellationToken);
-
-                var dates = await _ctx.WorkCardDivisions
+                var dates = await _ctx.WorkCardDivisions!
                     .FirstOrDefaultAsync(x => x.Division == division && x.PeriodReport == period, cancellationToken);
-
                 if (dates == null && allCars != null && allCars.NumberPlateOfCars != null)
                 {
                     foreach(var car in allCars.NumberPlateOfCars)
                     {
-                        var card = await _ctx.FuelWorkCards
+                        var card = await _ctx.FuelWorkCards!
                             .FirstOrDefaultAsync(x => x.NumberPlateCar!.GarageNumber == car.GarageNumber
                                 && x.WorkDate == period, cancellationToken);
                         if (card != null)
@@ -52,7 +46,6 @@ namespace CES.Domain.Handlers.FuelReport
                             {
                                 var fuel = data.Sum(x => x.ActualConsumption);
                                 var mileage = data.Sum(x => x.MileagePerDay);
-
                                 var workCard = new GetAllWorkCardsResponse
                                 {
                                     Id = car.Id,
@@ -60,7 +53,6 @@ namespace CES.Domain.Handlers.FuelReport
                                     SumMileage = mileage,
                                     SumFuel = fuel,
                                 };
-
                                 workCard.WorkCards.Add(new WorkCardsResponse
                                 {
                                     Id = car.Id * 2,
@@ -68,7 +60,6 @@ namespace CES.Domain.Handlers.FuelReport
                                     FuelPerMonth = fuel,
                                     MileagePerMonth = mileage,
                                 });
-
                                 allWorkCards.Add(workCard);
                             }    
                         } 
@@ -76,12 +67,10 @@ namespace CES.Domain.Handlers.FuelReport
                 }
                 else
                 {
-                    var workDates = JsonSerializer.Deserialize<ICollection<DateTime>>(dates.Date);
-                    if (workDates == null) throw new System.Exception("Error");
-
-                    foreach (var car in allCars.NumberPlateOfCars)
+                    var workDates = JsonSerializer.Deserialize<ICollection<DateTime>>(dates!.Date) ?? throw new System.Exception("Error");
+                    foreach (var car in allCars!.NumberPlateOfCars!)
                     {
-                        var card = await _ctx.FuelWorkCards
+                        var card = await _ctx.FuelWorkCards!
                             .FirstOrDefaultAsync(x => x.NumberPlateCar!.GarageNumber == car.GarageNumber
                                 && x.WorkDate == period, cancellationToken);
                         if (card != null)
@@ -100,9 +89,8 @@ namespace CES.Domain.Handlers.FuelReport
                                 if (allWorkCards.Any(x => x.CarNumber == car.Number))
                                 {
                                     var currentCar = allWorkCards.FirstOrDefault(x => x.CarNumber == car.Number);
-                                    currentCar.SumMileage += mileage;
+                                    currentCar!.SumMileage += mileage;
                                     currentCar.SumFuel += fuel;
-
                                     currentCar.WorkCards.Add(new WorkCardsResponse
                                     {
                                         Id = currentCar.WorkCards.Last().Id + 1,
@@ -120,7 +108,6 @@ namespace CES.Domain.Handlers.FuelReport
                                         SumMileage = mileage,
                                         SumFuel = fuel,
                                     };
-
                                     workCard.WorkCards.Add(new WorkCardsResponse
                                     {
                                         Id = car.Id * 2,
@@ -130,12 +117,8 @@ namespace CES.Domain.Handlers.FuelReport
                                     });
                                     allWorkCards.Add(workCard);
                                 }
-
-
                             }
-
                         }
-
                     }
                 };
             }

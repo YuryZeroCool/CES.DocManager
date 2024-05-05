@@ -1,10 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Dayjs } from 'dayjs';
+import { createSlice } from '@reduxjs/toolkit';
 import { FuelReportResponse } from '../../../types/ReportTypes';
 import createDivisionWorkSchedule from '../../actions/report/fuelReport/createDivisionWorkSchedule';
 import deleteDivisionWorkSchedule from '../../actions/report/fuelReport/deleteDivisionWorkSchedule';
 import getAllDivisionWorkSchedules from '../../actions/report/fuelReport/getAllDivisionWorkSchedules';
 import getFuelReportInfo from '../../actions/report/fuelReport/getFuelReportInfo';
+import uploadFuelWorkCard from '../../actions/report/fuelReport/uploadFuelWorkCard';
 
 const initial: FuelReportResponse = {
   deletedDivisionWorkSchedule: {
@@ -16,7 +16,6 @@ const initial: FuelReportResponse = {
     division: '',
   },
   allDivisionWorkSchedule: [],
-  period: null,
   status: '',
   fuelReportInfo: [],
 };
@@ -24,16 +23,7 @@ const initial: FuelReportResponse = {
 const fuelReportReducer = createSlice({
   name: 'fuelReport',
   initialState: initial,
-  reducers: {
-    changeFuelReportPeriod: (state, action: PayloadAction<Dayjs>) => {
-      let stateCopy = state;
-      stateCopy = {
-        ...stateCopy,
-        period: action.payload,
-      };
-      return stateCopy;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(createDivisionWorkSchedule.fulfilled, (state, action) => {
       let stateCopy = state;
@@ -75,10 +65,21 @@ const fuelReportReducer = createSlice({
     builder.addCase(getFuelReportInfo.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
+
+    builder.addCase(uploadFuelWorkCard.pending, (state) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, status: 'pending' };
+      return stateCopy;
+    });
+    builder.addCase(uploadFuelWorkCard.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, status: 'fulfilled' };
+      return stateCopy;
+    });
+    builder.addCase(uploadFuelWorkCard.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
   },
 });
 
-export const {
-  changeFuelReportPeriod,
-} = fuelReportReducer.actions;
 export default fuelReportReducer.reducer;
