@@ -2,8 +2,10 @@
 using CES.Domain.Models.Request.Mes.Acts;
 using CES.Domain.Models.Response.Act;
 using CES.Infra;
+using CES.Infra.Models.Mes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Text.Json;
 
 namespace CES.Domain.Handlers.Mes.Acts
@@ -29,32 +31,74 @@ namespace CES.Domain.Handlers.Mes.Acts
                 if (request.Page <= 0) throw new System.Exception("Error");
                 int totalCount = 0;
                 var offset = (request.Page - 1) * request.Limit;
-                totalCount = await _ctx.Act
-                  .Where(x =>
-                    x.DateOfWorkCompletion.Year >= request.Min.Year
-                  & x.DateOfWorkCompletion.Month >= request.Min.Month
-                  & x.DateOfWorkCompletion.Year <= request.Max.Year
-                  & x.DateOfWorkCompletion.Month <= request.Max.Month)
-                  .CountAsync(cancellationToken);
+                totalCount = await _ctx.Act.Where(x => x.DateOfWorkCompletion >= request.Min && (x.DateOfWorkCompletion <= request.Max))
+                    .CountAsync(cancellationToken);
                 if (totalCount == 0) return await Task.FromResult(new GetActsResponse());
                 int totalPage = (int)Math.Ceiling(totalCount / (double)request.Limit);
                 if (totalPage < request.Page) throw new System.Exception("Нет актов");
                 var data = new GetActsResponse();
                 data.TotalActsListPagesCount = totalPage;
-                var acts = _ctx.Act
-                  .Include(x => x.Organization)
-                  .Include(x => x.NumberPlateOfCar)
-                  .Include(x => x.ActType)
-                  .Include(x => x.Employee)
-                  .AsEnumerable()
-                  .Where(x =>
-                             x.DateOfWorkCompletion.Year >= request.Min.Year
-                           & x.DateOfWorkCompletion.Month >= request.Min.Month
-                           & x.DateOfWorkCompletion.Year <= request.Max.Year
-                           & x.DateOfWorkCompletion.Month <= request.Max.Month)
-                  .Skip(offset)
-                  .Take(request.Limit)
-                  .ToList();
+                List<ActEntity>? acts = null;
+                acts = request.Filter switch
+                {
+                    "organization" => _ctx.Act
+                                      .Include(x => x.Organization)
+                                      .Include(x => x.NumberPlateOfCar)
+                                      .Include(x => x.ActType)
+                                      .Include(x => x.Employee)
+                                      .AsEnumerable()
+                                      .Where(x => (x.DateOfWorkCompletion >= request.Min) && (x.DateOfWorkCompletion <= request.Max)
+                                               && (x.Organization!.Name.ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())))
+                                      .Skip(offset)
+                                      .Take(request.Limit)
+                                      .ToList(),
+                    "employee" => _ctx.Act
+                                      .Include(x => x.Organization)
+                                      .Include(x => x.NumberPlateOfCar)
+                                      .Include(x => x.ActType)
+                                      .Include(x => x.Employee)
+                                      .AsEnumerable()
+                                      .Where(x => (x.DateOfWorkCompletion >= request.Min) && (x.DateOfWorkCompletion <= request.Max)
+                                               && ((x.Employee!.LastName + x.Employee.FirstName).ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())))
+                                      .Skip(offset)
+                                      .Take(request.Limit)
+                                      .ToList(),
+                    "numberPlateOfCar" => _ctx.Act
+                                      .Include(x => x.Organization)
+                                      .Include(x => x.NumberPlateOfCar)
+                                      .Include(x => x.ActType)
+                                      .Include(x => x.Employee)
+                                      .AsEnumerable()
+                                      .Where(x => (x.DateOfWorkCompletion >= request.Min) && (x.DateOfWorkCompletion <= request.Max)
+                                               && (x.NumberPlateOfCar!.Number!.ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())))
+                                      .Skip(offset)
+                                      .Take(request.Limit)
+                                      .ToList(),
+                    "street" => _ctx.Act
+                                       .Include(x => x.Organization)
+                                       .Include(x => x.NumberPlateOfCar)
+                                       .Include(x => x.ActType)
+                                       .Include(x => x.Notes!)
+                                       .ThenInclude(p=>p.Street)
+                                       .Include(x => x.Employee)
+                                       .AsEnumerable()
+                                       .Where(x => (x.DateOfWorkCompletion >= request.Min) && (x.DateOfWorkCompletion <= request.Max)
+                                                 && (x.Notes!.FirstOrDefault(x => x.Street!.Name
+                                                    .ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())) != null))
+                                       .Skip(offset)
+                                       .Take(request.Limit)
+                                       .ToList(),
+                    _ => _ctx.Act
+                                      .Include(x => x.Organization)
+                                      .Include(x => x.NumberPlateOfCar)
+                                      .Include(x => x.ActType)
+                                      .Include(x => x.Employee)
+                                      .AsEnumerable()
+                                      .Where(x => (x.DateOfWorkCompletion >= request.Min) && (x.DateOfWorkCompletion <= request.Max))
+                                      .Skip(offset)
+                                      .Take(request.Limit)
+                                      .ToList(),
+                };
                 data.ActsList = new List<Act>();
                 for (var i = 0; i < acts.Count; i++)
                 {

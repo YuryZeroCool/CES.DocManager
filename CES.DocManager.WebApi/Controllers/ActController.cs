@@ -31,7 +31,7 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet()]
         [Produces(typeof(List<GetActsResponse>))]
-        public async Task<object> GetActs(DateTime min, DateTime max, int page, int limit)
+        public async Task<object> GetActs(DateTime min, DateTime max, int page, string? filter, string? searchValue, int limit)
         {
             try
             {
@@ -41,6 +41,8 @@ namespace CES.DocManager.WebApi.Controllers
                     Max = max,
                     Page = page,
                     Limit = limit,
+                    Filter = filter,
+                    SearchValue = searchValue,
                 });
             }
             catch (Exception)
