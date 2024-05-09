@@ -7,6 +7,7 @@ import {
   Group,
   Input,
   InputBase,
+  Radio,
   Stack,
   Tabs,
   Text,
@@ -65,6 +66,8 @@ interface Props {
   itemsPerPage: number;
   noteModalOpened: boolean;
   isEditModal: boolean;
+  filter: string;
+  actSearchValue: string;
 
   editOrganizationModalOpen: () => void;
   editOrganizationModalClose: () => void;
@@ -93,6 +96,8 @@ interface Props {
   noteModalOpen: () => void;
   noteModalClose: () => void;
   changeIsEditModal: (value: boolean) => void;
+  handleFiltersChange: (value: string) => void;
+  handleActSearchValueChange: (value: string) => void;
 }
 
 export default function MesPageComponent(props: Props) {
@@ -121,6 +126,8 @@ export default function MesPageComponent(props: Props) {
     itemsPerPage,
     noteModalOpened,
     isEditModal,
+    filter,
+    actSearchValue,
 
     editOrganizationModalOpen,
     editOrganizationModalClose,
@@ -149,6 +156,8 @@ export default function MesPageComponent(props: Props) {
     noteModalOpen,
     noteModalClose,
     changeIsEditModal,
+    handleFiltersChange,
+    handleActSearchValueChange,
   } = props;
 
   const iconStyle = { width: rem(20), height: rem(20) };
@@ -236,69 +245,103 @@ export default function MesPageComponent(props: Props) {
   );
 
   const renderActsListHeader = () => (
-    <Group w="100%" align="end">
-      <Group w={400}>
-        <DatesProvider
-          settings={{
-            locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'UTC',
-          }}
-        >
-          <DatePickerInput
-            leftSection={<IconCalendar size="1.1rem" stroke={1.5} />}
-            label="От"
-            placeholder="От"
-            value={minActDate}
-            onChange={(value: Date | null) => {
-              handleMinActDateChange(value);
-            }}
-            classNames={{
-              day: classes.day,
-            }}
-            w="100%"
-            clearable
-            leftSectionPointerEvents="none"
-            maxDate={new Date()}
-          />
-        </DatesProvider>
+    <Stack w="100%">
+      <Group w="100%" gap={30}>
+        <Group w="calc((100% - 30px) / 2)" gap={20}>
+          <Group w="calc((100% - 20px) / 2)">
+            <DatesProvider
+              settings={{
+                locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'UTC',
+              }}
+            >
+              <DatePickerInput
+                leftSection={<IconCalendar size="1.1rem" stroke={1.5} />}
+                label="От"
+                placeholder="От"
+                value={minActDate}
+                onChange={(value: Date | null) => {
+                  handleMinActDateChange(value);
+                }}
+                classNames={{
+                  day: classes.day,
+                }}
+                w="100%"
+                clearable
+                leftSectionPointerEvents="none"
+                maxDate={new Date()}
+              />
+            </DatesProvider>
+          </Group>
+
+          <Group w="calc((100% - 20px) / 2)">
+            <DatesProvider
+              settings={{
+                locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'UTC',
+              }}
+            >
+              <DatePickerInput
+                leftSection={<IconCalendar size="1.1rem" stroke={1.5} />}
+                label="До"
+                placeholder="До"
+                value={maxActDate}
+                onChange={(value: Date | null) => {
+                  handleMaxActDateChange(value);
+                }}
+                classNames={{
+                  day: classes.day,
+                }}
+                w="100%"
+                clearable
+                leftSectionPointerEvents="none"
+                maxDate={new Date()}
+              />
+            </DatesProvider>
+          </Group>
+        </Group>
+
+        <Group w="calc((100% - 30px) / 2)">
+          <Radio.Group
+            label="Выберите категории для поиска"
+            value={filter}
+            onChange={handleFiltersChange}
+          >
+            <Group mt="xs">
+              <Radio value="" label="Все категории" />
+              <Radio value="organization" label="Организация" />
+              <Radio value="employee" label="Водитель" />
+              <Radio value="street" label="Улица" />
+              <Radio value="numberPlateOfCar" label="Номер машины" />
+            </Group>
+          </Radio.Group>
+        </Group>
       </Group>
 
-      <Group w={400}>
-        <DatesProvider
-          settings={{
-            locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'UTC',
-          }}
-        >
-          <DatePickerInput
-            leftSection={<IconCalendar size="1.1rem" stroke={1.5} />}
-            label="До"
-            placeholder="До"
-            value={maxActDate}
-            onChange={(value: Date | null) => {
-              handleMaxActDateChange(value);
-            }}
-            classNames={{
-              day: classes.day,
-            }}
-            w="100%"
-            clearable
-            leftSectionPointerEvents="none"
-            maxDate={new Date()}
-          />
-        </DatesProvider>
-      </Group>
+      <Group gap={20} w="50%" align="end">
+        <TextInput
+          label="Введите значение для поиска"
+          value={actSearchValue}
+          onChange={(event) => handleActSearchValueChange(event.currentTarget.value)}
+          style={{ flexGrow: 1 }}
+        />
 
-      <Button
-        variant="gradient"
-        gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
-        onClick={handleGetActsListBtnClick}
-      >
-        Получить акты
-      </Button>
-    </Group>
+        <Button
+          variant="gradient"
+          gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
+          onClick={handleGetActsListBtnClick}
+          disabled={filter !== '' && actSearchValue === ''}
+        >
+          Получить акты
+        </Button>
+      </Group>
+    </Stack>
   );
 
   const renderTableHeader = () => (
-    <Flex align="center" gap={15} h="9vh">
+    <Flex
+      py={20}
+      gap={15}
+      mih="9vh"
+    >
       {mesPageType === 'Организации' && (
         <>
           <Button
@@ -437,7 +480,7 @@ export default function MesPageComponent(props: Props) {
       {mesPageType === 'Организации' && renderPagination()}
       {mesPageType === 'Заявки без актов' && renderNotesWithoutActsTable()}
       {mesPageType === 'История актов' && renderActsListTable()}
-      {mesPageType === 'История актов' && mesError === '' && renderCounPerPageButtons()}
+      {mesPageType === 'История актов' && mesError === '' && actsList.length > 0 && renderCounPerPageButtons()}
       {(addActModalOpened || editActModalOpened) && (
         <ActModal
           selectedNotesId={selectedNotesId}

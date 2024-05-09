@@ -32,8 +32,7 @@ namespace CES.Domain.Handlers.Mes.Organizations
                     var res = await _ctx.OrganizationEntities
                         .Where(x => x.Name.ToUpper()
                                     .Trim()
-                                    .TrimEnd()
-                                    .Contains(request.Title.ToUpper().Trim().TrimEnd()))
+                                    .Contains(request.Title.ToUpper().Trim()))
                         .ToListAsync(cancellationToken);
                     if (res.Count == 0) return new List<string>();
                     return await Task.FromResult(_mapper.Map<List<string>>(res.Select(p => p.Name)));

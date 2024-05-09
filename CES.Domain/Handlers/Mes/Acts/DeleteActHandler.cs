@@ -20,13 +20,14 @@ namespace CES.Domain.Handlers.Mes.Acts
             { 
                 if(await _ctx.NoteEntities.AnyAsync(x=>x.ActId == request.Id,cancellationToken))
                 {
-                   var note = await _ctx.NoteEntities.Include(p=>p.Act).Where(x => x.ActId == request.Id).ToListAsync();
-                   var act = note![0].Act;
-                   note.ForEach(x => x.ActId = null);
-                   _ctx.NoteEntities.UpdateRange(note);
-                   await _ctx.SaveChangesAsync(cancellationToken);
-                   _ctx.Act.Remove(act!);
-                   await _ctx.SaveChangesAsync(cancellationToken);
+                    var note = await _ctx.NoteEntities.Include(p=>p.Act).Where(x => x.ActId == request.Id).ToListAsync();
+                    var act = note![0].Act;
+                    note.ForEach(x => x.ActId = null);
+                    _ctx.NoteEntities.UpdateRange(note);
+                    await _ctx.SaveChangesAsync(cancellationToken);
+                    _ctx.Act.Remove(act!);
+                    await _ctx.SaveChangesAsync(cancellationToken);
+                    return await Task.FromResult(request.Id);
                 }
             }
             throw new NotImplementedException();
