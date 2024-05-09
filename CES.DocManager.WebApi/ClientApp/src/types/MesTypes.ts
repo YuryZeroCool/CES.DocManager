@@ -149,6 +149,8 @@ export interface GetActsListReq {
   max: string;
   page: number;
   limit: number;
+  searchValue: string;
+  filter: string;
 }
 
 export interface ActsList {

@@ -31,6 +31,8 @@ function MesPageContainer() {
   const [actTypeSelectValue, setActTypeSelectValue] = useState<string>('');
   const [currentActData, setCurrentActData] = useState<Act>({ type: '', works: [] });
   const [isEditModal, setIsEditModal] = useState<boolean>(false);
+  const [filter, setFilter] = useState('');
+  const [actSearchValue, setActSearchValue] = useState('');
 
   const minDate = new Date();
   minDate.setDate(1);
@@ -100,6 +102,8 @@ function MesPageContainer() {
       page: activeActsListPage,
       min: minActDate.toISOString(),
       max: maxActDate.toISOString(),
+      filter,
+      searchValue: actSearchValue,
     };
     dispatch(getActsList(params))
       .catch((error) => {
@@ -259,6 +263,15 @@ function MesPageContainer() {
     changeIsEditModal(false);
   };
 
+  const handleFiltersChange = (value: string) => {
+    setFilter(value);
+    setActSearchValue('');
+  };
+
+  const handleActSearchValueChange = (value: string) => {
+    setActSearchValue(value);
+  };
+
   return (
     <MesPageComponent
       mesError={mesError}
@@ -285,6 +298,8 @@ function MesPageContainer() {
       itemsPerPage={itemsPerPage}
       noteModalOpened={noteModalOpened}
       isEditModal={isEditModal}
+      filter={filter}
+      actSearchValue={actSearchValue}
       editOrganizationModalOpen={editOrganizationModalOpen}
       editOrganizationModalClose={editOrganizationModalClose}
       addActModalClose={addActModalClose}
@@ -312,6 +327,8 @@ function MesPageContainer() {
       noteModalClose={noteModalClose}
       noteModalOpen={noteModalOpen}
       changeIsEditModal={changeIsEditModal}
+      handleFiltersChange={handleFiltersChange}
+      handleActSearchValueChange={handleActSearchValueChange}
     />
   );
 }

@@ -202,9 +202,22 @@ function ActsListTableComponent(props: ActsListTableComponentProps) {
     )
   );
 
+  const renderSearchNotesError = () => (
+    actsList.length === 0
+      && requestStatus === 'fulfilled'
+      && (
+        <Stack align="center" justify="center" w="100%">
+          <Text style={{ fontSize: 18, color: 'red' }}>
+            Совпадений не найдено
+          </Text>
+        </Stack>
+      )
+  );
+
   return (
     <Stack className="notes-table">
       {renderError()}
+      {renderSearchNotesError()}
       {renderTable()}
       {actsList.length === 0 && requestStatus !== 'fulfilled' && mesError === '' && renderLoaderModal()}
       <DetailsInfoPanel
