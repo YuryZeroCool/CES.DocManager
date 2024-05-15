@@ -6,10 +6,10 @@ using CES.InfraSecurity.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Net.NetworkInformation;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -93,7 +93,7 @@ builder.Services.AddIdentity<UserEntity, AppRoleEntity>(options => {
     .AddRoleManager<RoleManager<AppRoleEntity>>()
     .AddDefaultTokenProviders()
     .AddSignInManager<SignInManager<UserEntity>>();
-builder.Services.AddMediatR(typeof(GetIsPersonalNumberHandler));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetIsPersonalNumberHandler).Assembly));
 
 
 //// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
