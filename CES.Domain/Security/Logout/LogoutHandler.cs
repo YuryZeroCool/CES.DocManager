@@ -15,7 +15,7 @@ namespace CES.Domain.Security.Logout
             _userMgr = userMgr;
         }
 
-        public async Task<Unit> Handle(LogoutRequest request, CancellationToken cancellationToken)
+        public async Task Handle(LogoutRequest request, CancellationToken cancellationToken)
         {
             var user = await _userMgr.FindByEmailAsync(request.EmailAddress);
 
@@ -23,8 +23,6 @@ namespace CES.Domain.Security.Logout
 
             var res = _userMgr.RemoveAuthenticationTokenAsync(user, "MyApp", "RefreshToken").Result;
             if (!res.Succeeded) throw new RestException(HttpStatusCode.NotFound);
-
-            return await Task.FromResult(new Unit());
         }
     }
 }

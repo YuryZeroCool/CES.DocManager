@@ -5,7 +5,6 @@ using CES.Infra;
 using CES.Infra.Models.Mes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Text.Json;
 
 namespace CES.Domain.Handlers.Mes.Acts
@@ -31,13 +30,6 @@ namespace CES.Domain.Handlers.Mes.Acts
                 if (request.Page <= 0) throw new System.Exception("Error");
                 int totalCount = 0;
                 var offset = (request.Page - 1) * request.Limit;
-                totalCount = await _ctx.Act.Where(x => x.DateOfWorkCompletion >= request.Min && (x.DateOfWorkCompletion <= request.Max))
-                    .CountAsync(cancellationToken);
-                if (totalCount == 0) return await Task.FromResult(new GetActsResponse());
-                int totalPage = (int)Math.Ceiling(totalCount / (double)request.Limit);
-                if (totalPage < request.Page) throw new System.Exception("Нет актов");
-                var data = new GetActsResponse();
-                data.TotalActsListPagesCount = totalPage;
                 List<ActEntity>? acts = null;
                 acts = request.Filter switch
                 {
@@ -99,6 +91,14 @@ namespace CES.Domain.Handlers.Mes.Acts
                                       .Take(request.Limit)
                                       .ToList(),
                 };
+
+                totalCount = acts.Count;
+                if (totalCount == 0) return await Task.FromResult(new GetActsResponse());
+                int totalPage = (int)Math.Ceiling(totalCount / (double)request.Limit);
+                if (totalPage < request.Page) throw new System.Exception("Нет актов");
+                var data = new GetActsResponse();
+                data.TotalActsListPagesCount = totalPage;
+
                 data.ActsList = new List<Act>();
                 for (var i = 0; i < acts.Count; i++)
                 {

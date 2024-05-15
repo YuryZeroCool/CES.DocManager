@@ -51,9 +51,8 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                var res = await _mediator.Send(_mapper.Map<CreateNoteRequest>(note));
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
-                return res;
+                return await _mediator.Send(_mapper.Map<CreateNoteRequest>(note));
             }
             catch (Exception)
             {

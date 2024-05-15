@@ -191,7 +191,7 @@ function ActModalContainer(props: Props) {
         organization,
         vehicle: car,
         driver,
-        actAdditionDate,
+        actAdditionDate: actAdditionDate.toLocaleString('en-GB', { timeZone: 'Europe/Minsk' }),
         actType: currentActData.type,
         completedWorks: currentActData.works,
         notesWithoutAct: selectedNotes,

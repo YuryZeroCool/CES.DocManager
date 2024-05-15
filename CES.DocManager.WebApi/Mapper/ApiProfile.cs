@@ -81,14 +81,16 @@ namespace CES.DocManager.WebApi.Mapper
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
                 .ForMember(dest => dest.IsChecked, opt => opt.MapFrom(src => src.IsChecked));
 
-            CreateMap< CreateExistedNoteViewModel, CreateExistedNoteRequest >();
+            CreateMap< CreateExistedNoteViewModel, CreateExistedNoteRequest >()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.Parse(src.Date)));
 
             CreateMap<ContactInfoViewModel, ContactInfoModel>();
 
             CreateMap<OrganizationViewModel, CreateOrganizationRequest>();
             CreateMap<OrganizationViewModel, EditOrganizationRequest>();
 
-            CreateMap<ActViewModel, CreateActRequest>();
+            CreateMap<ActViewModel, CreateActRequest>()
+                .ForMember(dest => dest.ActAdditionDate, opt => opt.MapFrom(src => DateTime.Parse(src.ActAdditionDate)));
             CreateMap<Models.Mes.Work, Domain.Models.Request.Mes.Acts.Work>();
             CreateMap<Models.Mes.FullNoteData, Domain.Models.Request.Mes.Acts.FullNoteData>();
         }

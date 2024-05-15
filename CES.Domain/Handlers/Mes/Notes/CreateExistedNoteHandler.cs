@@ -48,16 +48,11 @@ namespace CES.Domain.Handlers.Mes.Notes
                             await _ctx.SaveChangesAsync(cancellationToken);
                         }
                     }
-                    var year = request.Date.Year;
-                    var month = request.Date.Month;
-                    var day = request.Date.Day;
                     if (!await _ctx.NoteEntities.AnyAsync(x =>
-                         (x.Date.Year == request.Date.Year
-                         && x.Date.Month == request.Date.Month 
-                        && x.Date.Day == request.Date.Day)
+                           x.Date == request.Date
                         && x.Street!.Name == note!.Street
                         && x.HouseNumber!.Number == note.HouseNumber,cancellationToken))
-                   {
+                    {
                         await _ctx.NoteEntities.AddAsync(new NoteEntity()
                         {
                             Comment = request.Comment,

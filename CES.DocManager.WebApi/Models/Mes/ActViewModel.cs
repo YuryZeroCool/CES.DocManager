@@ -8,7 +8,7 @@
 
         public string Driver { set; get; } = string.Empty;
 
-        public DateTime ActAdditionDate { get; set; }
+        public string ActAdditionDate { get; set; }
 
         public string ActType { get; set; } = string.Empty;
 

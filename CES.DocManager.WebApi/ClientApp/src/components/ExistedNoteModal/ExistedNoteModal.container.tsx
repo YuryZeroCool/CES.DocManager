@@ -210,7 +210,7 @@ function ExistedNoteModalContainer(props: ExistedNoteModalContainerProps) {
         });
     } else {
       if (noteDate) {
-        stateCopy.date = noteDate?.toISOString();
+        stateCopy.date = noteDate.toLocaleString('en-GB', { timeZone: 'Europe/Minsk' });
       }
 
       dispatch(createExistedNote(stateCopy))
