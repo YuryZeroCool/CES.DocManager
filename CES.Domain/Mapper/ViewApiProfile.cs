@@ -211,6 +211,11 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street!.Name))
                  .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.HouseNumber!.Number))
                  .ForMember(dest => dest.Entrance, opt => opt.MapFrom(src => src.Entrance!.Number));
+
+            CreateMap<NoteEntity, CreateNoteResponse>()
+                .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.HouseNumber!.Number))
+                .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street!.Name))
+                .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.HouseNumber!.Number));
         }
     }
 }

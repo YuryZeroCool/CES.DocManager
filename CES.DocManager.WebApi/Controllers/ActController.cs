@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CES.DocManager.WebApi.Models.Mes;
 using CES.Domain.Models.Request.Mes.Acts;
-using CES.Domain.Models.Request.Mes.Notes;
 using CES.Domain.Models.Response.Act;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
@@ -31,14 +30,14 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet()]
         [Produces(typeof(List<GetActsResponse>))]
-        public async Task<object> GetActs(DateTime min, DateTime max, int page, string? filter, string? searchValue, int limit)
+        public async Task<object> GetActs(string min, string max, int page, string? filter, string? searchValue, int limit)
         {
             try
             {
                 return await _mediator.Send(new GetActsRequest()
                 {
-                    Min = min,
-                    Max = max,
+                    Min = DateTime.Parse(min),
+                    Max = DateTime.Parse(max),
                     Page = page,
                     Limit = limit,
                     Filter = filter,
