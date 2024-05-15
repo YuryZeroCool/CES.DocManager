@@ -136,7 +136,7 @@ export interface AddNewActReq {
   organization: string;
   vehicle: string;
   driver: string;
-  actAdditionDate: Date;
+  actAdditionDate: string;
   actType: string;
   completedWorks: Work[];
   notesWithoutAct: IFullNoteData[];

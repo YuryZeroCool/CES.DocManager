@@ -131,7 +131,7 @@ export default function ActModalComponent(props: ActModalProps) {
 
         <DatesProvider
           settings={{
-            locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'UTC',
+            locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'Europe/Minsk',
           }}
         >
           <DatePickerInput

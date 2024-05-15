@@ -100,8 +100,8 @@ function MesPageContainer() {
     const params: GetActsListReq = {
       limit: itemsPerPage,
       page: activeActsListPage,
-      min: minActDate.toISOString(),
-      max: maxActDate.toISOString(),
+      min: minActDate.toLocaleString('en-GB', { timeZone: 'Europe/Minsk' }),
+      max: maxActDate.toLocaleString('en-GB', { timeZone: 'Europe/Minsk' }),
       filter,
       searchValue: actSearchValue,
     };
@@ -242,7 +242,11 @@ function MesPageContainer() {
   };
 
   const handleGetActsListBtnClick = () => {
-    getActsListReq();
+    if (activeActsListPage === 1) {
+      getActsListReq();
+    } else {
+      setActiveActsListPage(1);
+    }
   };
 
   const handleItemsPerPageChange = (value: number) => {

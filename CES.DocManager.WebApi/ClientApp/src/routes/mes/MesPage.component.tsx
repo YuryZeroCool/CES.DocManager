@@ -251,7 +251,7 @@ export default function MesPageComponent(props: Props) {
           <Group w="calc((100% - 20px) / 2)">
             <DatesProvider
               settings={{
-                locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'UTC',
+                locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'Europe/Minsk',
               }}
             >
               <DatePickerInput
@@ -276,7 +276,7 @@ export default function MesPageComponent(props: Props) {
           <Group w="calc((100% - 20px) / 2)">
             <DatesProvider
               settings={{
-                locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'UTC',
+                locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'Europe/Minsk',
               }}
             >
               <DatePickerInput

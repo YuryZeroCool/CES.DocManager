@@ -8,7 +8,7 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core';
-import { DateTimePicker } from '@mantine/dates';
+import { DateTimePicker, DatesProvider } from '@mantine/dates';
 import { ExistedNote } from '../../types/MesTypes';
 import NoteContactsInfo from '../NoteContactsInfo/NoteContactsInfo.container';
 import classes from './ExistedNoteModal.module.scss';
@@ -83,14 +83,20 @@ export default function ExistedNoteModalComponent(props: ExistedNoteModalCompone
           <Stack gap={15}>
             <Group wrap="nowrap">
               {!isEditModal && (
-                <DateTimePicker
-                  label="Дата принятие заявки"
-                  placeholder="Выберите дату"
-                  value={noteDate}
-                  onChange={(value: Date | null) => handleNoteDateChange(value)}
-                  clearable
-                  w="50%"
-                />
+                <DatesProvider
+                  settings={{
+                    locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'Europe/Minsk',
+                  }}
+                >
+                  <DateTimePicker
+                    label="Дата принятие заявки"
+                    placeholder="Выберите дату"
+                    value={noteDate}
+                    onChange={(value: Date | null) => handleNoteDateChange(value)}
+                    clearable
+                    w="50%"
+                  />
+                </DatesProvider>
               )}
             </Group>
 
