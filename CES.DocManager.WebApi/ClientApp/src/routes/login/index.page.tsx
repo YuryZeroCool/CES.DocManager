@@ -14,7 +14,7 @@ import login from '../../redux/actions/login';
 import { setEmail, setToken, setUserName } from '../../redux/reducers/loginReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { IUserRequest } from '../../types/UserTypes';
-import './Login.style.scss';
+import classes from './login.module.scss';
 
 interface CustomizedState {
   fromPage: string;
@@ -79,8 +79,8 @@ function LoginPage() {
   };
 
   return (
-    <Stack className="section-login">
-      <Stack className="login-container" p={20}>
+    <Stack className={classes.sectionLogin}>
+      <Stack className={classes.loginContainer} p={20}>
         <Text
           ta="center"
           fz={20}
@@ -89,7 +89,7 @@ function LoginPage() {
         </Text>
 
         {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-        <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
+        <form className={classes.loginForm} onSubmit={handleSubmit(onSubmit)}>
           <Stack gap={35}>
             <Stack>
               <Group>

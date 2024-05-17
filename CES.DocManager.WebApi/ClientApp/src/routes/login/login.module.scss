@@ -1,15 +1,9 @@
-html,
-body,
-#root {
-  height: 100%;
-}
-
-.section-login {
+.sectionLogin {
   height: 90vh;
   background-color: rgba(17, 68, 96, .5);
 }
 
-.login-container {
+.loginContainer {
   position: relative;
   left: 50%;
   top: 50%;
@@ -20,7 +14,7 @@ body,
   border-radius: 0.3rem;
 }
 
-.login-form {
+.loginForm {
   position: relative;
   left: 50%;
   transform: translate(-50%);
