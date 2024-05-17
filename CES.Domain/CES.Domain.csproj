@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="FreeSpire.PDF" Version="10.2.0" />
+    <PackageReference Include="FreeSpire.XLS" Version="14.2.0" />
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.22" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.1.39" />
@@ -17,8 +19,6 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
     <PackageReference Include="SkiaSharp" Version="2.88.8" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" />
-    <PackageReference Include="Spire.PDF" Version="10.4.7" />
-    <PackageReference Include="Spire.XLS" Version="14.4.7" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.1" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
   </ItemGroup>
