@@ -10,7 +10,6 @@ import {
 import {
   Control,
   Controller,
-  FormState,
   UseFormHandleSubmit,
 } from 'react-hook-form';
 import { Organization } from '../../types/MesTypes';
@@ -20,8 +19,8 @@ interface Props {
   isAddOrganizationModalOpen: boolean;
   isEditOrganizationModalOpen: boolean;
   control: Control<Organization, Organization>;
-  formState: FormState<Organization>;
   organizationError: string;
+  isDisabled: boolean;
   handleSubmit: UseFormHandleSubmit<Organization>;
   handleClose: () => void;
   onSubmit: (data: Organization) => void;
@@ -32,7 +31,7 @@ export default function AddOrganizationModalComponent(props: Props) {
     isAddOrganizationModalOpen,
     isEditOrganizationModalOpen,
     control,
-    formState,
+    isDisabled,
     organizationError,
     handleSubmit,
     handleClose,
@@ -67,6 +66,7 @@ export default function AddOrganizationModalComponent(props: Props) {
         <TextInput
           label="Название организации"
           w="100%"
+          withAsterisk
           onChange={onChange}
           value={value}
           error={!!error?.message}
@@ -94,12 +94,21 @@ export default function AddOrganizationModalComponent(props: Props) {
     <Controller
       name="payerAccountNumber"
       control={control}
-      render={({ field: { onChange, value } }) => (
+      rules={{
+        required: 'Обязательное поле для заполнения',
+        minLength: {
+          value: 3,
+          message: 'Минимальное количество символов 3',
+        },
+      }}
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextInput
           label="УНП"
+          withAsterisk
           w="32%"
           onChange={onChange}
           value={value}
+          error={!!error?.message}
         />
       )}
     />
@@ -184,7 +193,7 @@ export default function AddOrganizationModalComponent(props: Props) {
             <Button
               variant="gradient"
               gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
-              disabled={!formState.isValid}
+              disabled={isDisabled}
               type="submit"
             >
               Сохранить

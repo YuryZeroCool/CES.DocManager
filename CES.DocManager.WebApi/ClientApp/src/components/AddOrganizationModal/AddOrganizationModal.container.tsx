@@ -33,17 +33,21 @@ function AddOrganizationModalContainer(props: AddOrganizationModalContainerProps
     editOrganizationModalClose,
   } = props;
   const [organizationError, setOrganizationError] = useState<string>('');
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const {
     control,
     handleSubmit,
     reset,
-    formState,
     setValue,
+    watch,
   } = useForm<Organization, Organization>({
     mode: 'onChange',
     defaultValues: organizationDefaultValues,
   });
+
+  const watchedName = watch('name');
+  const watchedPayerAccountNumber = watch('payerAccountNumber');
 
   const {
     allOrganizations,
@@ -66,11 +70,17 @@ function AddOrganizationModalContainer(props: AddOrganizationModalContainerProps
       setValue('email', elem.email);
       setValue('phone', elem.phone);
     }
-    return () => {
-      dispatch(changeSelectedOrganizationId(0));
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedOrganizationId]);
+
+  useEffect(() => {
+    if (watchedName.length > 2 && watchedPayerAccountNumber.length > 2) {
+      setIsDisabled(false);
+    } else {
+      setIsDisabled(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchedName, watchedPayerAccountNumber]);
 
   const handleClose = () => {
     if (addOrganizationModalOpened) {
@@ -80,6 +90,7 @@ function AddOrganizationModalContainer(props: AddOrganizationModalContainerProps
       editOrganizationModalClose();
     }
     reset();
+    dispatch(changeSelectedOrganizationId(0));
   };
 
   const onSubmit = (data: Organization) => {
@@ -108,8 +119,8 @@ function AddOrganizationModalContainer(props: AddOrganizationModalContainerProps
       isAddOrganizationModalOpen={addOrganizationModalOpened}
       isEditOrganizationModalOpen={editOrganizationModalOpened}
       control={control}
-      formState={formState}
       organizationError={organizationError}
+      isDisabled={isDisabled}
       handleSubmit={handleSubmit}
       handleClose={handleClose}
       onSubmit={onSubmit}
