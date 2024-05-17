@@ -17,7 +17,7 @@ import classes from './header.module.scss';
 
 function Header() {
   const user = useSelector<RootState, UserState>((state) => state.login);
-  const [report, setReport] = useState<string | null>(null);
+  const [report, setReport] = useState<string | null>('');
 
   const location = useLocation();
   const navigate = useNavigate();
