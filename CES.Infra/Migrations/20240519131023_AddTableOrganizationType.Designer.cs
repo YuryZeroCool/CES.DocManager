@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20240519131023_AddTableOrganizationType")]
+    partial class AddTableOrganizationType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -602,9 +604,6 @@ namespace CES.Infra.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("OrganizationTypeId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PayerAccountNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -615,8 +614,6 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("Name")
                         .IsUnique();
-
-                    b.HasIndex("OrganizationTypeId");
 
                     b.ToTable("OrganizationEntities");
                 });
@@ -934,15 +931,6 @@ namespace CES.Infra.Migrations
                     b.Navigation("Street");
                 });
 
-            modelBuilder.Entity("CES.Infra.Models.Mes.OrganizationEntity", b =>
-                {
-                    b.HasOne("CES.Infra.Models.Mes.OrganizationTypeEntity", "OrganizationType")
-                        .WithMany("Organizations")
-                        .HasForeignKey("OrganizationTypeId");
-
-                    b.Navigation("OrganizationType");
-                });
-
             modelBuilder.Entity("CES.Infra.Models.NumberPlateOfCarEntity", b =>
                 {
                     b.HasOne("CES.Infra.Models.VehicleModelEntity", "VehicleModel")
@@ -1020,11 +1008,6 @@ namespace CES.Infra.Migrations
             modelBuilder.Entity("CES.Infra.Models.Mes.ActEntity", b =>
                 {
                     b.Navigation("Notes");
-                });
-
-            modelBuilder.Entity("CES.Infra.Models.Mes.OrganizationTypeEntity", b =>
-                {
-                    b.Navigation("Organizations");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.NumberPlateOfCarEntity", b =>
