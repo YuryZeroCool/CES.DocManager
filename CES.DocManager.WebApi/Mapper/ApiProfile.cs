@@ -91,7 +91,7 @@ namespace CES.DocManager.WebApi.Mapper
             CreateMap<OrganizationViewModel, EditOrganizationRequest>();
 
             CreateMap<ActViewModel, CreateActRequest>()
-                .ForMember(dest => dest.ActAdditionDate, opt => opt.MapFrom(src => DateTime.Parse(src.ActAdditionDate)));
+                .ForMember(dest => dest.ActAdditionDate, opt => opt.MapFrom(src => DateTime.ParseExact(src.ActAdditionDate, "dd/MM/yyyy, HH:mm:ss", CultureInfo.InvariantCulture)));
             CreateMap<Models.Mes.Work, Domain.Models.Request.Mes.Acts.Work>();
             CreateMap<Models.Mes.FullNoteData, Domain.Models.Request.Mes.Acts.FullNoteData>();
         }
