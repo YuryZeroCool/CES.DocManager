@@ -13,5 +13,9 @@
         public string? Email { get; set; }
         
         public string? Phone { get; set; }
+
+        public int? OrganizationTypeId { get; set; }
+
+        public OrganizationTypeEntity? OrganizationType { get; set; }
     }
 }
