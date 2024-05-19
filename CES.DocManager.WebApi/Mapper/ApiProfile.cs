@@ -14,6 +14,7 @@ using CES.Domain.Models.Response.Division;
 using CES.Domain.Models.Response.MaterialReport;
 using CES.Domain.Security.Login;
 using CES.Infra.Models;
+using System.Globalization;
 
 namespace CES.DocManager.WebApi.Mapper
 {
@@ -82,7 +83,7 @@ namespace CES.DocManager.WebApi.Mapper
                 .ForMember(dest => dest.IsChecked, opt => opt.MapFrom(src => src.IsChecked));
 
             CreateMap< CreateExistedNoteViewModel, CreateExistedNoteRequest >()
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.Parse(src.Date)));
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.ParseExact(src.Date, "dd/MM/yyyy, HH:mm:ss", CultureInfo.InvariantCulture)));
 
             CreateMap<ContactInfoViewModel, ContactInfoModel>();
 
