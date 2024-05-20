@@ -1,0 +1,18 @@
+@import '../../../../styles/variables.scss';
+
+.fuelReportCalendarBlock {
+  background-color: $color-white;
+  border: 1px solid #d3cece;
+  border-radius: 8px;
+}
+
+.fuelWorkCardInput {
+  height: 40px !important;
+  min-width: 100px;
+  text-align: 'center';
+}
+
+.fuelWorkCardInputLabel {
+  font-size: 16px;
+  margin-bottom: 5px;
+}

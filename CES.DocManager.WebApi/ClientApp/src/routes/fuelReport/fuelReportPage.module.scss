@@ -1,0 +1,8 @@
+@import '../../styles/variables.scss';
+
+.reportPageSection {
+  position: relative;
+  min-height: 90vh;
+  background-color: $background-color-white;
+  padding: 1vh 1vw;
+}
