@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/reducers/combineReducers';
+import { Group, Stack, Text } from '@mantine/core';
+import { RootState } from '../../../../redux/reducers/combineReducers';
 import {
   Division,
   DivisionData,
   FuelReportResponse,
   IGetFuelReportInfoResponse,
-} from '../../types/ReportTypes';
-import FuelReportTableComponent from './FuelReportTable.component';
+} from '../../../../types/ReportTypes';
+import DivisionsWithShiftsTable from './components/DivisionsWithShiftsTable';
+import DivisionsWithoutShiftsTable from './components/DivisionsWithoutShiftsTable';
 
-function FuelReportTableContainer() {
+function FuelReportTable() {
   const [
     divisionsWithShiftsData,
     setDivisionsWithShiftsData,
@@ -52,13 +54,23 @@ function FuelReportTableContainer() {
   }, [fuelReportInfo, divisions]);
 
   return (
-    <FuelReportTableComponent
-      fuelReportInfo={fuelReportInfo}
-      divisionsWithShifts={divisionsWithShiftsData}
-      divisionsWithoutShifts={divisionsWithoutShiftsData}
-      status={status}
-    />
+    <Group w="100%">
+      {fuelReportInfo.length !== 0 && (
+        <>
+          <DivisionsWithShiftsTable divisionsWithShifts={divisionsWithShiftsData} />
+          <DivisionsWithoutShiftsTable divisionsWithoutShifts={divisionsWithoutShiftsData} />
+        </>
+      )}
+
+      {fuelReportInfo.length === 0 && status === 'fulfilled' && (
+        <Stack align="center" justify="center" w="100%">
+          <Text style={{ fontSize: 18, color: 'red' }}>
+            По выбранному периоду нет данных
+          </Text>
+        </Stack>
+      )}
+    </Group>
   );
 }
 
-export default FuelReportTableContainer;
+export default memo(FuelReportTable);
