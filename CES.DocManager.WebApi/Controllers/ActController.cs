@@ -5,6 +5,7 @@ using CES.Domain.Models.Response.Act;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Net;
 
 namespace CES.DocManager.WebApi.Controllers
@@ -36,8 +37,8 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new GetActsRequest()
                 {
-                    Min = DateTime.Parse(min),
-                    Max = DateTime.Parse(max),
+                    Min = DateTime.ParseExact(min, "dd/MM/yyyy, HH:mm:ss", CultureInfo.InvariantCulture),
+                    Max = DateTime.ParseExact(max, "dd/MM/yyyy, HH:mm:ss", CultureInfo.InvariantCulture),
                     Page = page,
                     Limit = limit,
                     Filter = filter,
