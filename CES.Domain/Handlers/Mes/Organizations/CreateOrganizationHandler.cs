@@ -21,22 +21,28 @@ namespace CES.Domain.Handlers.Mes.Organizations
 
         public async Task<CreateOrganizationResponse> Handle(CreateOrganizationRequest request, CancellationToken cancellationToken)
         {
+            request.OrganizationType = "Сторонние";
             if (request is null)
             {
                 throw new System.Exception("Запрос не может быть пустым");
             }
 
+            if (request.OrganizationType == "" || !await _ctx.OrganizationTypes!.AnyAsync(x =>x.Name == request.OrganizationType, cancellationToken))
+            {
+
+                throw new System.Exception("Запрос не может быть пустым");
+            }
+
+
             if (string.IsNullOrWhiteSpace(request.Name))
             {
                 throw new System.Exception("Заполните имя организации");
             }
-
             var existingName = await _ctx.OrganizationEntities!.FirstOrDefaultAsync(x => x.Name == request.Name, cancellationToken);
             if (existingName != null)
             {
                 throw new System.Exception("Такая организация уже существует");
             }
-
             if (!string.IsNullOrWhiteSpace(request.PayerAccountNumber))
             {
                 var existingPayerAccountNumber = await _ctx.OrganizationEntities!.FirstOrDefaultAsync(x => x.PayerAccountNumber == request.PayerAccountNumber, cancellationToken);
@@ -45,8 +51,9 @@ namespace CES.Domain.Handlers.Mes.Organizations
                     throw new System.Exception("Такой УНП уже существует");
                 }
             }
-
             var organization = _mapper.Map<OrganizationEntity>(request);
+            organization.OrganizationType  = await _ctx.OrganizationTypes!
+                    .FirstOrDefaultAsync(x => x.Name.Trim() == request.OrganizationType.Trim(), cancellationToken);
             var addedOrganization = await _ctx.OrganizationEntities!.AddAsync(organization, cancellationToken);
             await _ctx.SaveChangesAsync(cancellationToken);
             return _mapper.Map<CreateOrganizationResponse>(addedOrganization.Entity);

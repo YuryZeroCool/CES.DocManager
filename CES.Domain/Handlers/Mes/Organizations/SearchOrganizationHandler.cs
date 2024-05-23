@@ -23,40 +23,37 @@ namespace CES.Domain.Handlers.Mes.Organizations
         public async Task<SearchOrganizationResponse> Handle(SearchOrganizationRequest request, CancellationToken cancellationToken)
         {
             List<OrganizationEntity> result;
-
             if (request.Page <= 0) throw new System.Exception("Error");
             int totalCount = 0;
             var offset = (request.Page - 1) * request.Limit;
-
             if (string.IsNullOrEmpty(request.Title))
             {
-                totalCount = await _ctx.OrganizationEntities.CountAsync();
+                totalCount = await _ctx.OrganizationEntities!.CountAsync(cancellationToken);
             }
             else
             {
-                totalCount = await _ctx.OrganizationEntities
+                totalCount = await _ctx.OrganizationEntities!
                     .Where(x => x.Name.Contains(request.Title))
-                    .CountAsync();
+                    .CountAsync(cancellationToken);
             }
             int totalPage = (int)Math.Ceiling(totalCount / (double)request.Limit);
-
             if (totalCount == 0 || totalPage < request.Page) throw new System.Exception("Нет организаций");
-
-
             if (string.IsNullOrEmpty(request.Title))
             {
-                result = await _ctx.OrganizationEntities
+                result = await _ctx.OrganizationEntities!
+                   .Include(x => x.OrganizationType)
                    .Skip(offset)
                    .Take(request.Limit)
                    .ToListAsync(cancellationToken);
             }
             else
             {
-                result = await _ctx.OrganizationEntities
-                     .Where(x => x.Name.Contains(request.Title))
-                     .Skip(offset)
-                     .Take(request.Limit)
-                     .ToListAsync(cancellationToken);
+                result = await _ctx.OrganizationEntities!
+                    .Include(x => x.OrganizationType)
+                    .Where(x => x.Name.Contains(request.Title))
+                    .Skip(offset)
+                    .Take(request.Limit)
+                    .ToListAsync(cancellationToken);
             }
             return await Task.FromResult(new SearchOrganizationResponse()
             {
