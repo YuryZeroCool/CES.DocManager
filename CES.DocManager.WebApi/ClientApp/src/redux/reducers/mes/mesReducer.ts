@@ -32,6 +32,7 @@ const organizationDefault = {
   address: '',
   email: '',
   phone: '',
+  organizationType: null,
 };
 
 const searchOrganizationsDefault: ISearchOrganization = {

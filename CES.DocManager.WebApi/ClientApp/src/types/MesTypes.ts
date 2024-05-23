@@ -47,6 +47,7 @@ export interface Organization {
   address: string;
   email: string;
   phone: string;
+  organizationType: string | null;
 }
 
 export interface OrganizationResponse extends Organization {

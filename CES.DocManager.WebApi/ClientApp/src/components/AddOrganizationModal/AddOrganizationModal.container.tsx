@@ -10,12 +10,13 @@ import AddOrganizationModalComponent from './AddOrganizationModal.component';
 import { INotesState, Organization, OrganizationResponse } from '../../types/MesTypes';
 import handleError from '../../utils';
 
-const organizationDefaultValues = {
+const organizationDefaultValues: Organization = {
   name: '',
   payerAccountNumber: '',
   address: '',
   email: '',
   phone: '',
+  organizationType: null,
 };
 
 interface AddOrganizationModalContainerProps {
@@ -64,11 +65,13 @@ function AddOrganizationModalContainer(props: AddOrganizationModalContainerProps
       const elem = allOrganizations.organizations.filter(
         (el) => el.id === selectedOrganizationId,
       )[0];
+      console.log(elem);
       setValue('name', elem.name);
       setValue('address', elem.address);
       setValue('payerAccountNumber', elem.payerAccountNumber);
       setValue('email', elem.email);
       setValue('phone', elem.phone);
+      setValue('organizationType', elem.organizationType);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedOrganizationId]);
