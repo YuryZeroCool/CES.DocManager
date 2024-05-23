@@ -21,7 +21,6 @@ namespace CES.Domain.Handlers.Mes.Organizations
 
         public async Task<CreateOrganizationResponse> Handle(CreateOrganizationRequest request, CancellationToken cancellationToken)
         {
-            request.OrganizationType = "Сторонние";
             if (request is null)
             {
                 throw new System.Exception("Запрос не может быть пустым");
