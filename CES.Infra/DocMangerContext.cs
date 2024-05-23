@@ -79,6 +79,8 @@ namespace CES.Infra
 
         public virtual DbSet<HouseNumberEntity>? HouseNumbers { get; set; }
 
+        public virtual DbSet<OrganizationTypeEntity>? OrganizationTypes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfig());
@@ -107,6 +109,7 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new ActTypeConfig());
             modelBuilder.ApplyConfiguration(new HouseNumberConfig());
             modelBuilder.ApplyConfiguration(new StreetConfig());
+            modelBuilder.ApplyConfiguration(new OrganizationTypeConfig()); 
         }
     }
 }

@@ -39,10 +39,14 @@ const headCells: readonly HeadCell[] = [
   },
   {
     id: 6,
-    label: '',
+    label: 'Тип',
   },
   {
     id: 7,
+    label: '',
+  },
+  {
+    id: 8,
     label: '',
   },
 ];
@@ -82,11 +86,12 @@ export default function OrganizationsTableComponent(props: Props) {
     <>
       {allOrganizations.map((organization) => (
         <Table.Tr key={organization.id}>
-          <Table.Td w="30%">{organization.name}</Table.Td>
-          <Table.Td w="30%">{organization.address}</Table.Td>
+          <Table.Td w="25%">{organization.name}</Table.Td>
+          <Table.Td w="25%">{organization.address}</Table.Td>
           <Table.Td w="10%">{organization.email}</Table.Td>
           <Table.Td w="10%">{organization.phone}</Table.Td>
           <Table.Td w="10%">{organization.payerAccountNumber}</Table.Td>
+          <Table.Td w="10%">{organization.organizationType}</Table.Td>
           <Table.Td w="5%">
             <EditIcon
               width={20}

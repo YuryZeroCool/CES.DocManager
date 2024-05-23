@@ -6,6 +6,7 @@ import {
   Flex,
   Title,
   TextInput,
+  Select,
 } from '@mantine/core';
 import {
   Control,
@@ -160,6 +161,22 @@ export default function AddOrganizationModalComponent(props: Props) {
     />
   );
 
+  const renderTypeSelect = () => (
+    <Controller
+      name="organizationType"
+      control={control}
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
+        <Select
+          label="Тип организации"
+          data={['Сторонние', 'ЖЭС']}
+          value={value}
+          onChange={onChange}
+          mb={20}
+        />
+      )}
+    />
+  );
+
   return (
     <Modal
       opened={isAddOrganizationModalOpen || isEditOrganizationModalOpen}
@@ -183,6 +200,7 @@ export default function AddOrganizationModalComponent(props: Props) {
             {renderPhone()}
             {renderPayerAccountNumber()}
           </Flex>
+          {renderTypeSelect()}
           <Flex justify="flex-end" gap={10}>
             <Button
               variant="outline"
