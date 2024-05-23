@@ -164,15 +164,23 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.Tel, opt => opt.MapFrom(src => src.Tel));
             ;
 
-            CreateMap<CreateOrganizationRequest, OrganizationEntity>();
+            CreateMap<CreateOrganizationRequest, OrganizationEntity>()
+                .ForMember(dest => dest.OrganizationType, opt => opt.Ignore());
 
-            CreateMap<OrganizationEntity, CreateOrganizationResponse>();
+
+            CreateMap<OrganizationEntity, CreateOrganizationResponse>()
+                .ForMember(dest => dest.OrganizationType, opt => opt.MapFrom(src => src.OrganizationType!.Name));
 
             CreateMap<EditOrganizationRequest, OrganizationEntity>();
+                
 
-            CreateMap<OrganizationEntity, EditOrganizationResponse>();
+            CreateMap<OrganizationEntity, EditOrganizationResponse>()
+                .ForMember(dest => dest.OrganizationType, opt => opt.MapFrom(src => src.OrganizationType!.Name));
 
             CreateMap<OrganizationEntity, Organization>();
+
+            CreateMap<string, OrganizationTypeEntity>()
+                  .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src));
 
             CreateMap<NoteEntity, NotesWithoutActResponse>()
                 .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street!.Name))
@@ -182,23 +190,23 @@ namespace CES.Domain.Mapper
             CreateMap<OrganizationEntity, string>();
 
             CreateMap<StreetEntity, GetStreetsResponse>()
-                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Name));
 
             CreateMap<StreetEntity, CreateStreetResponse>()
-               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-              .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Name));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Name));
 
             CreateMap<ActEntity, Models.Response.Act.Act>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.ActDateOfCreation, opt => opt.MapFrom(src => src.ActDateOfCreation))
                 .ForMember(dest => dest.DateOfWorkCompletion, opt => opt.MapFrom(src => src.DateOfWorkCompletion))
-                .ForMember(dest => dest.Organization, opt => opt.MapFrom(src => src.Organization.Name))
+                .ForMember(dest => dest.Organization, opt => opt.MapFrom(src => src.Organization!.Name))
                 .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.Total))
-                .ForMember(dest => dest.NumberPlateOfCar, opt => opt.MapFrom(src => src.NumberPlateOfCar.Number))
-                .ForMember(dest => dest.Driver, opt => opt.MapFrom(src => src.Employee.LastName+" "+src.Employee.FirstName))
+                .ForMember(dest => dest.NumberPlateOfCar, opt => opt.MapFrom(src => src.NumberPlateOfCar!.Number))
+                .ForMember(dest => dest.Driver, opt => opt.MapFrom(src => src.Employee!.LastName+" "+src.Employee.FirstName))
                 .ForMember(dest => dest.Vat, opt => opt.MapFrom(src => src.Vat))
-                .ForMember(dest => dest.ActType, opt => opt.MapFrom(src => src.ActType.Name));
+                .ForMember(dest => dest.ActType, opt => opt.MapFrom(src => src.ActType!.Name));
 
             //CreateMap<WorkPerformActEntity, Work>()
             //    .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Name))
