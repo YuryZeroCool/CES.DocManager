@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CES.InfraSecurity", "CES.In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CES.XmlFormat", "CES.XmlFormat\CES.XmlFormat.csproj", "{8A24E15D-B335-4072-9C30-EF73DD1CF0D4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ces.DocManager.AppAndroid", "Ces.DocManager.AppAndroid\Ces.DocManager.AppAndroid.csproj", "{F539D56C-2637-4245-9048-3AC41F7F80D8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,12 +39,6 @@ Global
 		{8A24E15D-B335-4072-9C30-EF73DD1CF0D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A24E15D-B335-4072-9C30-EF73DD1CF0D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A24E15D-B335-4072-9C30-EF73DD1CF0D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F539D56C-2637-4245-9048-3AC41F7F80D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F539D56C-2637-4245-9048-3AC41F7F80D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F539D56C-2637-4245-9048-3AC41F7F80D8}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{F539D56C-2637-4245-9048-3AC41F7F80D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F539D56C-2637-4245-9048-3AC41F7F80D8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F539D56C-2637-4245-9048-3AC41F7F80D8}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
