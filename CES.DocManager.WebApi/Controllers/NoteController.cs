@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CES.DocManager.WebApi.Models;
 using CES.DocManager.WebApi.Models.Mes;
+using CES.DocManager.WebApi.Services;
 using CES.Domain.Models.Request.Mes.Notes;
 using CES.Domain.Models.Response.Mes.Notes;
 using MediatR;
@@ -36,10 +37,10 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new GetAllNotesRequest());
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -54,10 +55,10 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
                 return await _mediator.Send(_mapper.Map<CreateNoteRequest>(note));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                return new { };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -77,11 +78,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -100,11 +98,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -123,10 +118,10 @@ namespace CES.DocManager.WebApi.Controllers
                     Max = max
                 });
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -144,8 +139,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new { e.Message };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -161,8 +156,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new { e.Message };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -178,11 +173,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
     }

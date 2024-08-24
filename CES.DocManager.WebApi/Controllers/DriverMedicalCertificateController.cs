@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CES.DocManager.WebApi.Models;
+using CES.DocManager.WebApi.Services;
 using CES.Domain.Models.Request.DriverMedicalCertificate;
 using CES.Domain.Models.Response.Employees;
 using MediatR;
@@ -33,10 +34,10 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(_mapper.Map<CreateMedicalCertificateViewModel, CreateMedicalCertificateRequest>(model));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
     }

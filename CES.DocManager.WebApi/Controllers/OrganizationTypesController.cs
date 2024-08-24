@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CES.DocManager.WebApi.Services;
 using CES.Domain.Models.Request.Mes.OrganizationTypes;
 using CES.Domain.Models.Response.Mes.OrganizationTypes;
 using MediatR;
@@ -24,7 +25,6 @@ namespace CES.DocManager.WebApi.Controllers
             _mapper = mapper;
         }
 
-
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet()]
@@ -37,11 +37,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
     }

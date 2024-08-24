@@ -1,4 +1,5 @@
-﻿using CES.Domain.Models.Request.Mes.Price;
+﻿using CES.DocManager.WebApi.Services;
+using CES.Domain.Models.Request.Mes.Price;
 using CES.Domain.Models.Response.Mes.Organizations;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
@@ -35,12 +36,11 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
                 return res;
             }
-            catch
+            catch(Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                return new { Message = "Упс! Что-то пошло не так" };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
-
         }
     }
 }

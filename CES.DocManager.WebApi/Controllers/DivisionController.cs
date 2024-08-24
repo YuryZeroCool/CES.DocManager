@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CES.DocManager.WebApi.Services;
 using CES.Domain.Exception;
 using CES.Domain.Models.Request.Division;
 using CES.Domain.Models.Response.Division;
@@ -34,10 +35,10 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new GetDivisionNumbersRequest());
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -56,19 +57,10 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
                 return res;
             }
-            catch (RestException ex)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = ((int)ex.Code);
-
-                return new
-                {
-                    ex.Error
-                };
-            }
-            catch (Exception)
-            {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                return new { };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
     }

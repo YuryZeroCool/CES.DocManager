@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CES.DocManager.WebApi.Services;
 using CES.Domain.Models.Request.CommonInfo;
 using CES.Domain.Models.Request.Division;
 using CES.Domain.Models.Response.CommonInfo;
@@ -33,10 +34,10 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new GetCommonInfoRequest());
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
     }

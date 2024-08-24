@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CES.DocManager.WebApi.Models.Mes;
+using CES.DocManager.WebApi.Services;
 using CES.Domain.Models.Request.Mes.Organization;
 using CES.Domain.Models.Response.Mes.Organizations;
 using MediatR;
@@ -42,11 +43,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -64,13 +62,12 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
                 if (e.Message == "Такой УНП существует"
                     || e.Message == "Такая организация существует"
-                    || e.Message == "Заполните имя организации") return new { e.Message };
-                return new { Message = "Упс! Что-то пошло не так" };
+                    || e.Message == "Заполните имя организации") return new ErrorResponse(e.Message);
+                return new ErrorResponse(e.Message);
             }
-
         }
 
         // [Authorize(AuthenticationSchemes =
@@ -87,8 +84,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new { e.Message };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -107,11 +104,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -130,11 +124,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CES.DocManager.WebApi.Models;
+using CES.DocManager.WebApi.Services;
 using CES.Domain.Exception;
 using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Request.Mes;
@@ -36,22 +37,10 @@ namespace CES.DocManager.WebApi.Controllers
                 var response = await _mediator.Send(new GetEmployeesByDivisionRequest());
                 return _mapper.Map<IEnumerable<GetEmployeesByDivisionResponse>>(response);
             }
-            catch (Microsoft.Data.SqlClient.SqlException)
-            {
-                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotExtended;
-
-                return new object();
-            }
             catch (Exception e)
             {
-
-                HttpContext.Response.StatusCode = (int) HttpStatusCode.NotFound;
-
-                return new
-                {
-                    statusCode = 404,
-                    title = e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -64,10 +53,10 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new GetIsValidNumberNumberRequest {Id = personalNumber});
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -84,11 +73,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (RestException e)
             {
-                HttpContext.Response.StatusCode = (int)e.Code;
-                return new
-                {
-                    errorMessage = e.Error,
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
             catch (Exception)
             {
@@ -106,26 +92,26 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new GetListEmployeesNoDriverLicenseRequest());
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return new { } ;
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("expiringDriverLicense")]
         [Produces(typeof(IEnumerable<GetExpiringDocumentEmployeeResponse>))]
-
         public async Task<object> GetExpiringDriverLicense(int numberMonth)
         {
             try
             {
                 return await _mediator.Send(new GetExpiringDocumentEmployeeRequest() { NumberMonth  = numberMonth });
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                return new { };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -142,10 +128,10 @@ namespace CES.DocManager.WebApi.Controllers
                     NameDocument = "DriverMedicalCertificate"
                 });
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                return new { };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -159,10 +145,10 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new GetNoMedicalCertificateRequest());
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                return new {};
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -175,10 +161,10 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(_mapper.Map<GetAllInformationEmployeeRequest>(model));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                return  new { };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -192,12 +178,12 @@ namespace CES.DocManager.WebApi.Controllers
             {
                return await _mediator.Send(_mapper.Map<CreateEmployeeRequest>(model));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return new { };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
-
 
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
@@ -214,11 +200,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
     }

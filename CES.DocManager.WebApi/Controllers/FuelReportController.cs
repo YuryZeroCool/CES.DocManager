@@ -1,4 +1,5 @@
-﻿using CES.Domain.Models.Request.FuelReport;
+﻿using CES.DocManager.WebApi.Services;
+using CES.Domain.Models.Request.FuelReport;
 using CES.Domain.Models.Request.Report;
 using CES.Domain.Models.Response.FuelReport;
 using CES.Domain.Models.Response.Report;
@@ -29,10 +30,10 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new GetAllDivisionsWorkScheduleRequest() { Period = period});
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -51,14 +52,9 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
-           
         }
 
         [HttpPost("divisionWorkSchedule")]
@@ -69,23 +65,31 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(createCard);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
         [HttpPost("fuelWorkCard")]
-        public async Task<StatusCodeResult> UploadingFuelWorkCardAsync(IFormFile file)
+        public async Task<object> UploadingFuelWorkCardAsync(IFormFile file)
         {
-            if (file.Length == 0) return await Task.FromResult(StatusCode(404));
-            var stream = new FuelWorkCardRequest
+            try
             {
-                FuelWorkCardFile = file,
-            };
-            var res = await _mediator.Send(stream);
-            return await Task.FromResult(StatusCode(res));
+                if (file.Length == 0) throw new Exception("Error");
+                var stream = new FuelWorkCardRequest
+                {
+                    FuelWorkCardFile = file,
+                };
+                var res = await _mediator.Send(stream);
+                return await Task.FromResult(StatusCode(res));
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
+            }
         }
 
         [HttpDelete("deleteDivisionWorkSchedule")]
@@ -97,10 +101,10 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                 return await _mediator.Send(new DeleteDivisionWorkScheduleRequest() { IdDivison = idDivision});
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
     }
