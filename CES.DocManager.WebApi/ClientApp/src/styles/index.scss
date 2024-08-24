@@ -1,5 +1,11 @@
 @import './variables.scss';
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 #root {
   position: relative;
 }
@@ -38,4 +44,12 @@ main {
 .modal-title {
   margin-bottom: 15px !important;
   text-align: center;
+}
+
+.error-message {
+  color: $color-red;
+  padding-left: 20px;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }

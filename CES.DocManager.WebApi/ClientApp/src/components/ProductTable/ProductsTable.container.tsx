@@ -41,39 +41,28 @@ function ProductsTableContainer(props: Props) {
   const { productsTableError, setProductsTableError } = props;
 
   const [editMaterialsError, setEditMaterialsError] = useState<string>('');
-
   const [offSetX, setOffSetX] = useState<number>(0);
-
   const [offSetTop, setOffSetTop] = useState<number>(0);
-
   const [tableHeight, setTableHeight] = useState<number>(0);
-
   const [tableWidth, setTableWidth] = useState<number>(0);
-
   const [tableIndexArr, setTableIndexArr] = useState<number[]>([]);
-
   const [isDialogHightBigger, setIsDialogHightBigger] = useState<boolean>(false);
-
   const [filteredMaterials, setFilteredMaterials] = useState<Product[]>([]);
-
   const [dialogHeight, setDialogHeight] = useState<number>(150);
-
   const [
     filteredAttachedMaterials,
     setFilteredAttachedMaterials,
   ] = useState<IMaterialAttachedResponse[]>([]);
-
   const [
     filteredUsedMaterials,
     setFilteredUsedMaterials,
   ] = useState<IUsedMaterialResponse[]>([]);
-
   const [
     filteredDecommissionedMaterials,
     setFilteredDecommissionedMaterials,
   ] = useState<IAllDecommissionedMaterials[]>([]);
 
-  const materials = useSelector<RootState, Product[]>((state) => state.materials.getAllMaterials);
+  const { allMaterials } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const { isMaterialReportDialogOpen } = useSelector<RootState,
   IModal>((state) => state.modals);
@@ -85,7 +74,6 @@ function ProductsTableContainer(props: Props) {
     currentGroupAccount,
     rowActiveId,
     status,
-    accordionHeight,
     createdAttachedMaterial,
     allDecommissionedMaterials,
     pageType,
@@ -143,20 +131,20 @@ function ProductsTableContainer(props: Props) {
   const filterMaterials = (): Product[] => {
     const arr: Product[] = [];
     if (!isCheckedByDate) {
-      for (let i = 0; i < materials.length; i += 1) {
-        const ifIncludeName = materials[i].name.toLowerCase().includes(
+      for (let i = 0; i < allMaterials.length; i += 1) {
+        const ifIncludeName = allMaterials[i].name.toLowerCase().includes(
           searchValue.materialsSearchValue,
         );
         const filteredElem = {
-          ...materials[i],
+          ...allMaterials[i],
           party: [
-            ...materials[i].party.filter((elem) => (
+            ...allMaterials[i].party.filter((elem) => (
               elem.partyName.startsWith(searchValue.materialsSearchValue)
             )),
           ],
         };
         if (ifIncludeName) {
-          arr.push(materials[i]);
+          arr.push(allMaterials[i]);
           // eslint-disable-next-line no-continue
           continue;
         }
@@ -165,7 +153,7 @@ function ProductsTableContainer(props: Props) {
         }
       }
     } else {
-      materials.forEach((el: Product) => {
+      allMaterials.forEach((el: Product) => {
         const filteredElem = {
           ...el,
           party: [...el.party.filter((elem) => elem.partyDate.toString().startsWith(
@@ -232,11 +220,11 @@ function ProductsTableContainer(props: Props) {
   }, [pageType, materialsTableType]);
 
   useEffect(() => {
-    if (materials.length !== 0) {
+    if (allMaterials.length !== 0) {
       setFilteredMaterials(filterMaterials());
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [materials]);
+  }, [allMaterials]);
 
   useEffect(() => {
     if (allUsedMaterials.length !== 0) {
@@ -280,7 +268,9 @@ function ProductsTableContainer(props: Props) {
   }, [filteredDecommissionedMaterials]);
 
   useEffect(() => {
-    setFilteredMaterials(filterMaterials());
+    if (allMaterials.length !== 0) {
+      setFilteredMaterials(filterMaterials());
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue.materialsSearchValue]);
 
@@ -300,7 +290,9 @@ function ProductsTableContainer(props: Props) {
   }, [searchValue.decommissionedMaterialsSearchValue]);
 
   useEffect(() => {
-    setFilteredMaterials(filterMaterials());
+    if (allMaterials.length !== 0) {
+      setFilteredMaterials(filterMaterials());
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCheckedByDate]);
 
@@ -363,7 +355,7 @@ function ProductsTableContainer(props: Props) {
         dispatch(changeAttachedMaterial({
           party: el.partyName,
           count: el.count,
-          unit: materials.filter((e) => (
+          unit: allMaterials.filter((e) => (
             e.party.filter((elem) => elem.partyId === el.partyId)).length !== 0)[0].unit,
         }));
         dispatch(changeRowActiveId(el.partyId));
@@ -386,8 +378,8 @@ function ProductsTableContainer(props: Props) {
 
   return (
     <ProductsTableComponent
-      materials={searchValue.materialsSearchValue === '' ? materials : filteredMaterials}
-      baseMaterials={materials}
+      materials={searchValue.materialsSearchValue === '' ? allMaterials : filteredMaterials}
+      baseMaterials={allMaterials}
       allUsedMaterials={searchValue.usedMaterialSearchValue === '' ? allUsedMaterials : filteredUsedMaterials}
       baseAllUsedMaterials={allUsedMaterials}
       allAttachedMaterials={searchValue.attachedMaterialsSearchValue === '' ? allAttachedMaterials : filteredAttachedMaterials}
@@ -400,7 +392,6 @@ function ProductsTableContainer(props: Props) {
       rowActiveId={rowActiveId}
       offSetX={offSetX}
       offSetTop={offSetTop}
-      accordionHeight={accordionHeight}
       isMaterialReportDialogOpen={isMaterialReportDialogOpen}
       materialsTableType={materialsTableType}
       isDialogHightBigger={isDialogHightBigger}

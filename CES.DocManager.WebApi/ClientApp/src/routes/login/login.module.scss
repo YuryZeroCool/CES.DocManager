@@ -1,0 +1,21 @@
+.sectionLogin {
+  height: 90vh;
+  background-color: rgba(17, 68, 96, .5);
+}
+
+.loginContainer {
+  position: relative;
+  left: 50%;
+  top: 50%;
+  width: 400px;
+  min-width: 300px;
+  transform: translate(-50%, -50%);
+  background-color: #fefefe;
+  border-radius: 0.3rem;
+}
+
+.loginForm {
+  position: relative;
+  left: 50%;
+  transform: translate(-50%);
+}

@@ -1,0 +1,25 @@
+@import '../../../../styles/variables.scss';
+
+.accordion {
+  border-radius: 8px;
+}
+
+.accordionItem {
+  background-color: $color-white;
+  border: 1px solid #d3cece;
+  border-radius: 8px;
+}
+
+.accordionControl {
+  border-bottom: 1px solid #d3cece;
+}
+
+.calendar {
+  height: 320px;
+  z-index: 1 !important;
+}
+
+.savedDataContainer {
+  display: flex;
+  justify-content: space-between;
+}

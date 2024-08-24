@@ -1,0 +1,31 @@
+@import '../../styles/variables.scss';
+
+.header {
+  position: fixed;
+  width: 100%;
+  height: 10vh;
+  padding-top: 2vh;
+  background-color: $background-color-dark;
+  z-index: 10;
+}
+
+.logoContainer {
+  width: 50px;
+  height: 50px;
+  background-image: url('../../assets/icons/logo.png');
+  background-position: center;
+  background-size: cover;
+}
+
+.navLinkItem {
+  text-decoration: none;
+  color: $color-white;
+}
+
+.selectInput {
+  border: none !important;
+  background-color: transparent !important;
+  color: $color-white !important;
+  font-size: 16px !important;
+  width: 205px !important;
+}

@@ -58,7 +58,6 @@ interface Props {
   rowActiveId: number;
   offSetX: number;
   offSetTop: number;
-  accordionHeight: number;
   isMaterialReportDialogOpen: boolean;
   materialsTableType: string;
   isDialogHightBigger: boolean;
@@ -104,7 +103,6 @@ export default function ProductsTableComponent(props: Props) {
     rowActiveId,
     offSetX,
     offSetTop,
-    accordionHeight,
     isMaterialReportDialogOpen,
     materialsTableType,
     isDialogHightBigger,
@@ -350,8 +348,7 @@ export default function ProductsTableComponent(props: Props) {
               position: 'relative',
               overflow: isDialogHightBigger ? 'visible' : 'auto',
               maxHeight:
-                `calc(100vh - ${HEADER_WIDTH} - ${REPORT_PAGE_NAVIGATION} - ${TABLE_HEADER_WIDTH} - ${MARGIN} - ${
-                  pageType === 'Материалы' && materialsTableType === 'Свободные' ? accordionHeight : 0}px)`,
+                `calc(100vh - ${HEADER_WIDTH} - ${REPORT_PAGE_NAVIGATION} - ${TABLE_HEADER_WIDTH} - ${MARGIN} - 0px)`,
             }}
           >
             <Table stickyHeader aria-label="sticky table" className="materials-table">

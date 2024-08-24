@@ -1,0 +1,19 @@
+@import '../../styles/variables.scss';
+
+.accordion {
+  border-radius: 8px;
+}
+
+.accordionItem {
+  background-color: $color-white;
+  border: 1px solid #d3cece;
+  border-radius: 8px;
+}
+
+.accordionControl {
+  border-bottom: 1px solid #d3cece;
+}
+
+.input:checked {
+  background: linear-gradient(90deg, var(--mantine-color-violet-filled) 0%, var(--mantine-color-blue-filled) 100%) !important;
+}

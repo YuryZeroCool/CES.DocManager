@@ -51,7 +51,7 @@ function EditAttachedMaterialModalContainer() {
     (state) => state.modals,
   );
 
-  const materials = useSelector<RootState, Product[]>((state) => state.materials.getAllMaterials);
+  const { allMaterials } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const { allBrands, numbersPlateOfCar } = useSelector<RootState,
   IVehicleResponse>((state) => state.vehicle);
@@ -115,7 +115,7 @@ function EditAttachedMaterialModalContainer() {
   };
 
   const createMaxNumber = (currentElem: IMaterialAttachedResponse) => {
-    const chosenMaterial = materials.filter(
+    const chosenMaterial = allMaterials.filter(
       (material: Product) => material.party.filter(
         (el) => el.partyName === currentElem.nameParty,
       ).length !== 0,
@@ -136,7 +136,7 @@ function EditAttachedMaterialModalContainer() {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     getCarInfo();
 
-    if (materials.length === 0) {
+    if (allMaterials.length === 0) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       getMaterials(currentElem.accountName);
     } else {
@@ -148,7 +148,7 @@ function EditAttachedMaterialModalContainer() {
   useEffect(() => {
     createMaxNumber(currentMaterial);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [materials.length]);
+  }, [allMaterials.length]);
 
   useEffect(() => {
     if (editedAttachedMaterial.accountName !== '') {

@@ -4,9 +4,6 @@ import { IModal } from '../../../types/type';
 const initial: IModal = {
   isMaterialReportDialogOpen: false,
   isCarAttachmentModalOpen: false,
-  isAddDriverModalOpen: false,
-  isAddMedicalCertificateModalOpen: false,
-  isAddDriverLicenseModalOpen: false,
   isAddMaterialsWriteOffModalOpen: false,
   isDetailedInformationModalOpen: false,
   isAddUsedMaterialModalOpen: false,
@@ -26,21 +23,6 @@ const modalsReducer = createSlice({
     toggleCarAttachmentModal: (state, action: PayloadAction<boolean>) => {
       let stateCopy: IModal = state;
       stateCopy = { ...stateCopy, isCarAttachmentModalOpen: action.payload };
-      return stateCopy;
-    },
-    toggleAddDriverModal: (state, action: PayloadAction<boolean>) => {
-      let stateCopy: IModal = state;
-      stateCopy = { ...stateCopy, isAddDriverModalOpen: action.payload };
-      return stateCopy;
-    },
-    toggleAddMedicalCertificateModal: (state, action: PayloadAction<boolean>) => {
-      let stateCopy: IModal = state;
-      stateCopy = { ...stateCopy, isAddMedicalCertificateModalOpen: action.payload };
-      return stateCopy;
-    },
-    toggleAddDriverLicenseModal: (state, action: PayloadAction<boolean>) => {
-      let stateCopy: IModal = state;
-      stateCopy = { ...stateCopy, isAddDriverLicenseModalOpen: action.payload };
       return stateCopy;
     },
     toggleAddMaterialsWriteOffModal: (state, action: PayloadAction<boolean>) => {
@@ -75,13 +57,11 @@ const modalsReducer = createSlice({
 export const {
   toggleMaterialReportDialog,
   toggleCarAttachmentModal,
-  toggleAddDriverModal,
-  toggleAddMedicalCertificateModal,
-  toggleAddDriverLicenseModal,
   toggleAddMaterialsWriteOffModal,
   toggleDetailedInformationModal,
   toggleAddUsedMaterialModal,
   toggleLoaderModal,
   toggleEditAttachedMaterialModal,
 } = modalsReducer.actions;
+
 export default modalsReducer.reducer;

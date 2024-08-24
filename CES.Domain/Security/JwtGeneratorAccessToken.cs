@@ -41,8 +41,9 @@ namespace CES.Domain.Security
             );
             //var tokenHandler = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
             //var token = tokenHandler.CreateToken(tokenDescriptor);
+            string token = new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
 
-            return await Task.FromResult(new JwtSecurityTokenHandler().WriteToken(tokenDescriptor));
+            return await Task.FromResult(token);
         }
 
         public bool ValidateToken(string tokenRefresh)
