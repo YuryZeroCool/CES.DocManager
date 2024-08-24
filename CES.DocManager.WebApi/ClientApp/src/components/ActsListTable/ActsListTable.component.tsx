@@ -20,24 +20,28 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
   {
+    id: 0,
+    label: '№',
+  },
+  {
     id: 1,
-    label: 'Название организации',
+    label: 'Дата',
   },
   {
     id: 2,
-    label: 'Дата создания акта',
+    label: 'Название организации',
   },
   {
     id: 3,
-    label: 'Водитель',
+    label: 'УНП',
   },
   {
     id: 4,
-    label: 'Номер машины',
+    label: 'Сумма',
   },
   {
     id: 5,
-    label: 'Адрес заявки',
+    label: 'НДС',
   },
   {
     id: 6,
@@ -55,6 +59,8 @@ interface ActsListTableComponentProps {
   requestStatus: string;
   detailsInfoPanelOpen: boolean;
   currentAct: ActsList | null;
+  totalActSumm: number;
+  totalActVat: number;
   handleDrawerOpen: (actId: number) => void;
   handleDrawerClose: () => void;
   handleEditIconClick: (id: number) => void;
@@ -68,17 +74,13 @@ function ActsListTableComponent(props: ActsListTableComponentProps) {
     requestStatus,
     detailsInfoPanelOpen,
     currentAct,
+    totalActSumm,
+    totalActVat,
     handleDrawerOpen,
     handleDrawerClose,
     handleEditIconClick,
     handleDeleteIconClick,
   } = props;
-
-  const renderError = () => (
-    mesError !== '' && (
-      <p className="error-message">{mesError}</p>
-    )
-  );
 
   const renderTableHead = () => (
     <Table.Tr>
@@ -90,44 +92,14 @@ function ActsListTableComponent(props: ActsListTableComponentProps) {
 
   const renderTableBody = () => (
     <>
-      {actsList.map((act) => (
+      {actsList.map((act, index) => (
         <Table.Tr key={act.id} onClick={() => handleDrawerOpen(act.id)}>
-          <Table.Td w="30%">{act.organization}</Table.Td>
-          <Table.Td w="15%">{act.actDateOfCreation}</Table.Td>
-          <Table.Td w="10%">{act.driver}</Table.Td>
-          <Table.Td w="10%">{act.numberPlateOfCar}</Table.Td>
-          <Table.Td w="25%">
-            {act.notesWithoutAct.map((note) => (
-              <Text key={note.id} style={{ fontSize: 14 }}>
-                {note.street && (
-                  <>
-                    {note.street}
-                    ,&nbsp;
-                  </>
-                )}
-                {note.houseNumber !== '' && note.houseNumber !== '0' && (
-                  <>
-                    д.&nbsp;
-                    {note.houseNumber}
-                    ,&nbsp;
-                  </>
-                )}
-                {note.entrance !== 0 && (
-                  <>
-                    п.&nbsp;
-                    {note.entrance}
-                    ,&nbsp;
-                  </>
-                )}
-                {note.tel !== '' && (
-                  <>
-                    т.&nbsp;
-                    {note.tel}
-                  </>
-                )}
-              </Text>
-            ))}
-          </Table.Td>
+          <Table.Td align="center">{index + 1}</Table.Td>
+          <Table.Td w="10%">{act.dateOfWorkCompletion.split(' ')[0]}</Table.Td>
+          <Table.Td>{act.organization}</Table.Td>
+          <Table.Td w="10%">{act.payerAccountNumber}</Table.Td>
+          <Table.Td w="7%">{act.total}</Table.Td>
+          <Table.Td w="7%">{act.vat !== 0 ? act.vat : ''}</Table.Td>
           <Table.Td w="5%" align="center">
             <ActionIcon
               onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -160,6 +132,14 @@ function ActsListTableComponent(props: ActsListTableComponentProps) {
           </Table.Td>
         </Table.Tr>
       ))}
+      <Table.Tr>
+        <Table.Td fw={900} align="center">ИТОГО</Table.Td>
+        <Table.Td colSpan={7} fw={900} align="right">{totalActSumm}</Table.Td>
+      </Table.Tr>
+      <Table.Tr>
+        <Table.Td fw={900} align="center">НДС</Table.Td>
+        <Table.Td colSpan={7} fw={900} align="right">{totalActVat}</Table.Td>
+      </Table.Tr>
     </>
   );
 
@@ -187,6 +167,8 @@ function ActsListTableComponent(props: ActsListTableComponentProps) {
           striped
           highlightOnHover
           withTableBorder
+          withColumnBorders
+          withRowBorders
           classNames={{
             th: classes.tableHeadCell,
             td: classes.tableBodyCell,
@@ -216,7 +198,6 @@ function ActsListTableComponent(props: ActsListTableComponentProps) {
 
   return (
     <Stack className="notes-table">
-      {renderError()}
       {renderSearchNotesError()}
       {renderTable()}
       {actsList.length === 0 && requestStatus !== 'fulfilled' && mesError === '' && renderLoaderModal()}

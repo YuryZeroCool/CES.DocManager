@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDisclosure } from '@mantine/hooks';
+import { getDaysInMonth, format } from 'date-fns';
+import { showNotification } from '@mantine/notifications';
+import { IconX } from '@tabler/icons-react';
+import { rem } from '@mantine/core';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { changeMesPageType, resetTotalActSummVat } from '../../redux/reducers/mes/mesReducer';
 import { RootState } from '../../redux/reducers/combineReducers';
@@ -10,6 +14,7 @@ import getNotesWithoutActs from '../../redux/actions/mes/getNotesWithoutActs';
 import getActTypesFromFile from '../../redux/actions/mes/getActTypesFromFile';
 import getActDataFromFile from '../../redux/actions/mes/getActDataFromFile';
 import getActsList from '../../redux/actions/mes/getActsList';
+import getOrganizationType from '../../redux/actions/mes/getOrganizationTypes';
 import handleError from '../../utils';
 import {
   Act,
@@ -33,13 +38,14 @@ function MesPageContainer() {
   const [isEditModal, setIsEditModal] = useState<boolean>(false);
   const [filter, setFilter] = useState('');
   const [actSearchValue, setActSearchValue] = useState('');
+  const [organizationType, setOrganizationType] = useState<string | null>('');
 
   const minDate = new Date();
   minDate.setDate(1);
   const [minActDate, setMinActDate] = useState<Date>(minDate);
 
   const maxDate = new Date();
-  maxDate.setDate(31);
+  maxDate.setDate(getDaysInMonth(maxDate));
   const [maxActDate, setMaxActDate] = useState<Date>(maxDate);
 
   const [
@@ -75,6 +81,7 @@ function MesPageContainer() {
     actsList,
     totalActsListCount,
     requestStatus,
+    organizationTypes,
   } = useSelector<RootState, INotesState>(
     (state) => state.mes,
   );
@@ -98,16 +105,22 @@ function MesPageContainer() {
     setMesError('');
 
     const params: GetActsListReq = {
+      organizationType: organizationType ?? '',
       limit: itemsPerPage,
       page: activeActsListPage,
-      min: minActDate.toLocaleString('en-GB', { timeZone: 'Europe/Minsk' }),
-      max: maxActDate.toLocaleString('en-GB', { timeZone: 'Europe/Minsk' }),
+      min: format(minActDate, 'dd-MM-yyyy HH:mm:ss'),
+      max: format(maxActDate, 'dd-MM-yyyy HH:mm:ss'),
       filter,
       searchValue: actSearchValue,
     };
     dispatch(getActsList(params))
-      .catch((error) => {
-        handleError(error, setMesError);
+      .catch(() => {
+        showNotification({
+          title: 'Список актов не был получен',
+          message: 'Совпадений не найдено',
+          icon: <IconX style={{ width: rem(20), height: rem(20) }} />,
+          styles: { icon: { background: 'red' } },
+        });
       });
   };
 
@@ -134,6 +147,15 @@ function MesPageContainer() {
     }
     if (mesPageType === 'История актов') {
       getActsListReq();
+      dispatch(getOrganizationType())
+        .catch(() => {
+          showNotification({
+            title: 'Список типов организаций не был получен',
+            message: 'Произошла ошибка во время получения списка типов организаций.',
+            icon: <IconX style={{ width: rem(20), height: rem(20) }} />,
+            styles: { icon: { background: 'red' } },
+          });
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mesPageType]);
@@ -276,6 +298,10 @@ function MesPageContainer() {
     setActSearchValue(value);
   };
 
+  const handleOrganizationTypeChange = (value: string | null) => {
+    setOrganizationType(value);
+  };
+
   return (
     <MesPageComponent
       mesError={mesError}
@@ -304,6 +330,8 @@ function MesPageContainer() {
       isEditModal={isEditModal}
       filter={filter}
       actSearchValue={actSearchValue}
+      organizationType={organizationType}
+      organizationTypes={organizationTypes}
       editOrganizationModalOpen={editOrganizationModalOpen}
       editOrganizationModalClose={editOrganizationModalClose}
       addActModalClose={addActModalClose}
@@ -333,6 +361,7 @@ function MesPageContainer() {
       changeIsEditModal={changeIsEditModal}
       handleFiltersChange={handleFiltersChange}
       handleActSearchValueChange={handleActSearchValueChange}
+      handleOrganizationTypeChange={handleOrganizationTypeChange}
     />
   );
 }

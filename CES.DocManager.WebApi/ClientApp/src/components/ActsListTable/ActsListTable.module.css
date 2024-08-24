@@ -1,9 +1,10 @@
 .tableHeadCell {
-  padding: 15px !important;
+  padding: 15px 5px !important;
   background-color: var(--mantine-color-cyan-filled) !important;
   color: var(--mantine-color-body);
+  text-align: center !important;
 }
 
 .tableBodyCell {
-  padding: 15px !important;
+  padding: 5px !important;
 }

@@ -12,7 +12,7 @@ GetActsListReq, { rejectValue: FetchTodosError }>(
         throw Error('Упс, что-то пошло не так...');
       }
       const response = await $api.get<ActsListRes>(
-        `${process.env.REACT_APP_GET_ACTS_LIST}?min=${params.min}&max=${params.max}
+        `${process.env.REACT_APP_GET_ACTS_LIST}?min=${params.min}&max=${params.max}&organizationType=${params.organizationType}
           &page=${params.page}&filter=${params.filter}&searchValue=${params.searchValue}&limit=${params.limit}`,
       );
       return response.data;

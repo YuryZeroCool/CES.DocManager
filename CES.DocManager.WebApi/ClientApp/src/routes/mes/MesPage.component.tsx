@@ -8,6 +8,7 @@ import {
   Input,
   InputBase,
   Radio,
+  Select,
   Stack,
   Tabs,
   Text,
@@ -38,6 +39,7 @@ import {
   ActDataFromFileResponse,
   ActTypesFromFileResponse,
   ActsList,
+  OrganizationType,
 } from '../../types/MesTypes';
 import classes from './MesPage.module.scss';
 
@@ -68,6 +70,8 @@ interface Props {
   isEditModal: boolean;
   filter: string;
   actSearchValue: string;
+  organizationType: string | null;
+  organizationTypes: OrganizationType[];
 
   editOrganizationModalOpen: () => void;
   editOrganizationModalClose: () => void;
@@ -98,6 +102,7 @@ interface Props {
   changeIsEditModal: (value: boolean) => void;
   handleFiltersChange: (value: string) => void;
   handleActSearchValueChange: (value: string) => void;
+  handleOrganizationTypeChange: (value: string | null) => void;
 }
 
 export default function MesPageComponent(props: Props) {
@@ -128,6 +133,8 @@ export default function MesPageComponent(props: Props) {
     isEditModal,
     filter,
     actSearchValue,
+    organizationType,
+    organizationTypes,
 
     editOrganizationModalOpen,
     editOrganizationModalClose,
@@ -158,6 +165,7 @@ export default function MesPageComponent(props: Props) {
     changeIsEditModal,
     handleFiltersChange,
     handleActSearchValueChange,
+    handleOrganizationTypeChange,
   } = props;
 
   const iconStyle = { width: rem(20), height: rem(20) };
@@ -316,7 +324,18 @@ export default function MesPageComponent(props: Props) {
         </Group>
       </Group>
 
-      <Group gap={20} w="50%" align="end">
+      <Group gap={20} w="70%" align="end">
+        <Select
+          label="Тип организации"
+          data={[
+            { label: 'Все', value: '' },
+            ...organizationTypes.map((el) => ({ label: el.name, value: el.name })),
+          ]}
+          value={organizationType}
+          onChange={handleOrganizationTypeChange}
+          allowDeselect={false}
+        />
+
         <TextInput
           label="Введите значение для поиска"
           value={actSearchValue}
@@ -495,12 +514,16 @@ export default function MesPageComponent(props: Props) {
           handleSelectNote={handleSelectNote}
         />
       )}
-      <AddOrganizationModal
-        addOrganizationModalOpened={addOrganizationModalOpened}
-        editOrganizationModalOpened={editOrganizationModalOpened}
-        editOrganizationModalClose={editOrganizationModalClose}
-        addOrganizationModalClose={addOrganizationModalClose}
-      />
+
+      {(addOrganizationModalOpened || editOrganizationModalOpened) && (
+        <AddOrganizationModal
+          addOrganizationModalOpened={addOrganizationModalOpened}
+          editOrganizationModalOpened={editOrganizationModalOpened}
+          editOrganizationModalClose={editOrganizationModalClose}
+          addOrganizationModalClose={addOrganizationModalClose}
+        />
+      )}
+
       {mesPageType === 'Заявки' && (
         <ExistedNoteModal
           noteModalOpened={noteModalOpened}

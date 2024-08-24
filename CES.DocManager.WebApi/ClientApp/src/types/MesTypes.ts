@@ -32,7 +32,7 @@ export interface EditNoteRequest extends ExistedNote {
   id: number;
 }
 
-export interface CreateNoteRequest extends ExistedNote {};
+export interface CreateNoteRequest extends ExistedNote {}
 
 export interface IFullNoteData extends INote {
   street: string;
@@ -52,6 +52,11 @@ export interface Organization {
 
 export interface OrganizationResponse extends Organization {
   id: number;
+}
+
+export interface OrganizationType {
+  id: number;
+  name: string;
 }
 
 export interface ISearchOrganization {
@@ -84,6 +89,7 @@ export interface INotesState {
   totalActsListCount: number;
   selectedActId: number;
   deletedActId: number;
+  organizationTypes: OrganizationType[];
 }
 
 export interface SearchOrganization {
@@ -152,6 +158,7 @@ export interface GetActsListReq {
   limit: number;
   searchValue: string;
   filter: string;
+  organizationType: string;
 }
 
 export interface ActsList {
@@ -159,6 +166,7 @@ export interface ActsList {
   actDateOfCreation: string;
   dateOfWorkCompletion: string;
   organization: string;
+  payerAccountNumber: string;
   total: number;
   vat: number;
   driver: string;

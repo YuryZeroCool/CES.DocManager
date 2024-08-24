@@ -23,7 +23,7 @@ import createNewAct from '../../actions/mes/createNewAct';
 import getActsList from '../../actions/mes/getActsList';
 import deleteAct from '../../actions/mes/deleteAct';
 import createExistedNote from '../../actions/mes/createExistedNote';
-import createStreet from '../../actions/mes/createStreet';
+import getOrganizationType from '../../actions/mes/getOrganizationTypes';
 
 const organizationDefault = {
   id: 0,
@@ -71,6 +71,7 @@ const initial: INotesState = {
   totalActsListCount: 0,
   selectedActId: 0,
   deletedActId: 0,
+  organizationTypes: [],
 };
 
 const mesReducer = createSlice({
@@ -592,15 +593,16 @@ const mesReducer = createSlice({
       throw Error(action.payload?.message);
     });
 
-    builder.addCase(createStreet.pending, (state) => {
-      const stateCopy = state;
+    builder.addCase(getOrganizationType.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        organizationTypes: action.payload,
+        requestStatus: 'fulfilled',
+      };
       return stateCopy;
     });
-    builder.addCase(createStreet.fulfilled, (state) => {
-      const stateCopy = state;
-      return stateCopy;
-    });
-    builder.addCase(createStreet.rejected, (state, action) => {
+    builder.addCase(getOrganizationType.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
   },
