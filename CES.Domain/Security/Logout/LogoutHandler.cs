@@ -3,6 +3,7 @@ using CES.InfraSecurity.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
 using MediatR;
+using System.Threading.Tasks;
 
 namespace CES.Domain.Security.Logout
 {
