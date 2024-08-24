@@ -7,7 +7,7 @@ using Spire.Xls;
 
 namespace CES.Domain.Handlers.MaterialReport
 {
-    public class AddMaterialsHandler : IRequestHandler<AddMaterialReportRequest, Unit>
+    public class AddMaterialsHandler : IRequestHandler<AddMaterialReportRequest, MediatR.Unit>
     {
         private readonly DocMangerContext _ctx;
 

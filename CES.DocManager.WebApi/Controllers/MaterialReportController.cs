@@ -454,7 +454,6 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("getAllUsedMaterials")]
@@ -473,6 +472,27 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 return new object();
+            }
+        }
+
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("units")]
+        [Produces(typeof(byte[]))]
+        public async Task<object> GetUnits()
+        {
+            try
+            {
+                return await _mediator.Send(new GetUnitsRequest());
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                return new
+                {
+                    e.Message
+                };
             }
         }
     }
