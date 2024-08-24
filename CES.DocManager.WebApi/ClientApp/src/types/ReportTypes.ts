@@ -78,8 +78,6 @@ export interface AllMaterialsResponse {
 
 export type AllGroupAccountsResponse = GroupAccount[];
 
-export type CurrentGroupAccountResponse = string[];
-
 export interface MaterialAttached {
   party?: string;
   count?: number;
@@ -117,16 +115,15 @@ export interface ISearch {
 export interface IMaterialsResponse {
   uploadMaterialsMessage: string;
   isUploadNewMaterialsLoader: boolean;
-  getAllMaterials: Product[];
+  allMaterials: Product[];
   totalCount: string;
   totalSum: string;
   allAttachedMaterials: IMaterialAttachedResponse[];
   deletedMaterialId: number;
-  getAllGroupAccounts: AllGroupAccountsResponse;
-  currentGroupAccount: CurrentGroupAccountResponse;
+  accountsList: AllGroupAccountsResponse;
+  currentGroupAccount: string[];
   status: string;
   rowActiveId: number;
-  accordionHeight: number;
   attachedMaterial: MaterialAttached;
   createdAttachedMaterial: IMaterialAttachedResponse;
   pageType: string;
@@ -145,11 +142,6 @@ export interface IMaterialsResponse {
   isCheckedByDate: boolean;
   editedAttachedMaterial: IMaterialAttachedResponse;
   period: Dayjs | null;
-}
-
-export interface AccountsGroupState {
-  name: string;
-  checked: boolean;
 }
 
 export interface IMaterialsWriteOffForm {

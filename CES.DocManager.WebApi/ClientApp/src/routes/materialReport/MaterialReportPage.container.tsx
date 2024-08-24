@@ -1,4 +1,3 @@
-import { SelectChangeEvent } from '@mui/material/Select';
 import { AxiosError } from 'axios';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useState } from 'react';
@@ -19,9 +18,9 @@ import MaterialReportPageComponent from './MaterialReportPage.component';
 
 function MaterialReportPageContainer() {
   const [productsTableError, setProductsTableError] = useState<string>('');
-  const [reportName, setReportName] = useState<string>('');
+  const [reportName, setReportName] = useState<string | null>(null);
   const [file, setFile] = useState<string>('');
-  const [period, setPeriod] = useState<Dayjs | null>(null);
+  const [period, setPeriod] = useState<Date | null>(null);
   const [errorMessage, setErrorMessage] = useState<ReportErrors>(
     { reportNameError: false, periodError: false },
   );
@@ -117,23 +116,15 @@ function MaterialReportPageContainer() {
     }
   };
 
-  const handleHistoryBtnClick = () => {
-    dispatch(changePageType('История ремонтов'));
+  const handleChangePageType = (value: string) => {
+    dispatch(changePageType(value));
   };
 
-  const handleReportNameChange = (event: SelectChangeEvent) => {
-    if (event.target.value !== '') {
+  const handleReportNameChange = (name: string | null) => {
+    if (name !== '') {
       setErrorMessage((prevErrorMessage) => ({ ...prevErrorMessage, reportNameError: false }));
     }
-    setReportName(event.target.value);
-  };
-
-  const handleMaterialsBtnClick = () => {
-    dispatch(changePageType('Материалы'));
-  };
-
-  const handleReportsBtnClick = () => {
-    dispatch(changePageType('Отчеты'));
+    setReportName(name);
   };
 
   const handleDownload = async () => {
@@ -165,6 +156,10 @@ function MaterialReportPageContainer() {
     }
   };
 
+  const handleReportCalendarChange = (value: Date | null) => {
+    setPeriod(value);
+  };
+
   return (
     <MaterialReportPageComponent
       productsTableError={productsTableError}
@@ -180,11 +175,9 @@ function MaterialReportPageContainer() {
       errorMessage={errorMessage}
       setProductsTableError={setProductsTableError}
       handleClick={handleClick}
-      handleHistoryBtnClick={handleHistoryBtnClick}
-      handleMaterialsBtnClick={handleMaterialsBtnClick}
-      handleReportsBtnClick={handleReportsBtnClick}
+      handleChangePageType={handleChangePageType}
       handleReportNameChange={handleReportNameChange}
-      setPeriod={setPeriod}
+      handleReportCalendarChange={handleReportCalendarChange}
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       handleDownload={handleDownload}
     />

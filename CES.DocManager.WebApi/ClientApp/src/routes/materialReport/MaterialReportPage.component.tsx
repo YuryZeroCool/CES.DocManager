@@ -1,15 +1,20 @@
 import React from 'react';
+import {
+  Flex,
+  Select,
+  Stack,
+  Tabs,
+  rem,
+} from '@mantine/core';
+import { DatesProvider, MonthPickerInput } from '@mantine/dates';
+import {
+  IconSquareLetterM,
+  IconHistory,
+  IconReport,
+  IconCalendar,
+} from '@tabler/icons-react';
 import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs, { Dayjs } from 'dayjs';
-import TextField from '@mui/material/TextField';
-import AccountGroupCheckboxes from '../../components/AccountGroupCheckboxes/AccountGroupCheckboxes.container';
+import AccountGroupCheckboxes from '../../components/AccountGroupCheckboxes';
 import ProductsTableHeader from '../../components/ProductsTableHeader/ProductsTableHeader.container';
 import ProductsTable from '../../components/ProductTable/ProductsTable.container';
 import CarAttachmentModal from '../../components/CarAttachmentModal/CarAttachmentModal.container';
@@ -31,16 +36,14 @@ interface Props {
   isEditAttachedMaterialModalOpen: boolean;
   materialsTableType: string;
   pageType: string;
-  reportName: string;
-  period: Dayjs | null;
+  reportName: string | null;
+  period: Date | null;
   errorMessage: ReportErrors;
   setProductsTableError: React.Dispatch<React.SetStateAction<string>>;
   handleClick: () => void;
-  handleHistoryBtnClick: () => void;
-  handleMaterialsBtnClick: () => void;
-  handleReportsBtnClick: () => void;
-  handleReportNameChange: (event: SelectChangeEvent) => void;
-  setPeriod: React.Dispatch<React.SetStateAction<Dayjs | null>>;
+  handleChangePageType: (value: string) => void;
+  handleReportNameChange: (name: string | null) => void;
+  handleReportCalendarChange: (value: Date | null) => void;
   handleDownload: () => Promise<void>;
 }
 
@@ -59,52 +62,53 @@ export default function MaterialReportPageComponent(props: Props) {
     errorMessage,
     setProductsTableError,
     handleClick,
-    handleHistoryBtnClick,
-    handleMaterialsBtnClick,
-    handleReportsBtnClick,
+    handleChangePageType,
     handleReportNameChange,
-    setPeriod,
+    handleReportCalendarChange,
     handleDownload,
   } = props;
 
+  const iconStyle = { width: rem(20), height: rem(20) };
+
   const renderSelectReportType = () => (
-    pageType === 'Отчеты' && (
-      <div className="report-block">
-        <FormControl sx={{ width: 250, marginBottom: '20px' }} size="medium">
-          <InputLabel id="demo-simple-select-readonly-label">Вариант акта</InputLabel>
-          <Select
-            labelId="demo-simple-select-readonly-label"
-            id="demo-simple-select-readonly"
-            value={reportName}
-            name="reportName"
-            label="Вариант акта"
-            onChange={handleReportNameChange}
-            error={errorMessage.reportNameError}
+    <Flex mih="80vh" justify="center">
+      <Stack className="reportBlock">
+        <Select
+          value={reportName}
+          label="Вариант акта"
+          placeholder="Выбрать"
+          withAsterisk
+          w={250}
+          onChange={handleReportNameChange}
+          error={errorMessage.reportNameError}
+          data={reportTypes}
+        />
+
+        <Stack>
+          <DatesProvider
+            settings={{
+              locale: 'ru', firstDayOfWeek: 0, weekendDays: [0], timezone: 'Europe/Minsk',
+            }}
           >
-            {reportTypes?.map((el) => (
-              <MenuItem key={el} value={el}>{el}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl sx={{ width: 250, marginBottom: '20px' }} size="medium">
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
-            <DatePicker
-              views={['month', 'year']}
-              label="Месяц"
-              minDate={dayjs('2012-03-01')}
-              maxDate={dayjs()}
+            <MonthPickerInput
+              rightSection={
+                <IconCalendar style={{ width: rem(18), height: rem(18) }} stroke={1.5} />
+              }
+              rightSectionPointerEvents="none"
+              label="Выберите период отчета:"
+              placeholder="Период"
               value={period}
-              onChange={(newValue) => {
-                setPeriod(newValue);
+              w={250}
+              maxDate={new Date()}
+              onChange={(value) => handleReportCalendarChange(value)}
+              styles={{
+                input: { height: 40 },
+                label: { marginBottom: 5 },
               }}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              renderInput={(params) => (
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                <TextField {...params} helperText={null} error={errorMessage.periodError} />
-              )}
             />
-          </LocalizationProvider>
-        </FormControl>
+          </DatesProvider>
+        </Stack>
+
         <Button
           sx={{ margin: '0 8px', minWidth: 120, height: '30px' }}
           variant="outlined"
@@ -115,30 +119,48 @@ export default function MaterialReportPageComponent(props: Props) {
         >
           Скачать
         </Button>
-      </div>
-    )
+      </Stack>
+    </Flex>
   );
 
   const renderReportPageNavigation = () => (
-    <div className="report-page-navigation">
-      <Button sx={{ margin: '0 8px', minWidth: 120, height: '30px' }} variant="contained" size="small" onClick={handleMaterialsBtnClick}>Материалы</Button>
-      <Button sx={{ margin: '0 8px', minWidth: 120, height: '30px' }} variant="contained" size="small" onClick={handleHistoryBtnClick}>История ремонтов</Button>
-      <Button sx={{ margin: '0 8px', minWidth: 120, height: '30px' }} variant="contained" size="small" onClick={handleReportsBtnClick}>Отчеты</Button>
-    </div>
+    <Flex h={50} gap={10} pl={10} mb={20} align="center">
+      <Tabs
+        value={pageType}
+        onChange={(value) => handleChangePageType(value ?? '')}
+        classNames={{
+          tabLabel: 'tabLabel',
+          tab: 'tab',
+        }}
+        w="100%"
+      >
+        <Tabs.List>
+          <Tabs.Tab value="Материалы" leftSection={<IconSquareLetterM style={iconStyle} />}>
+            Материалы
+          </Tabs.Tab>
+          <Tabs.Tab value="История ремонтов" leftSection={<IconHistory style={iconStyle} />}>
+            История ремонтов
+          </Tabs.Tab>
+          <Tabs.Tab value="Отчеты" leftSection={<IconReport style={iconStyle} />}>
+            Отчеты
+          </Tabs.Tab>
+        </Tabs.List>
+      </Tabs>
+    </Flex>
   );
 
   return (
     <section className="report-page-section" onClick={handleClick} aria-hidden="true">
       {renderReportPageNavigation()}
       {pageType !== 'Отчеты' && <ProductsTableHeader />}
-      {pageType === 'Материалы' && materialsTableType === 'Свободные' && <AccountGroupCheckboxes setProductsTableError={setProductsTableError} />}
+      {pageType === 'Материалы' && materialsTableType === 'Свободные' && <AccountGroupCheckboxes />}
       {pageType !== 'Отчеты' && (
         <ProductsTable
           productsTableError={productsTableError}
           setProductsTableError={setProductsTableError}
         />
       )}
-      {renderSelectReportType()}
+      { pageType === 'Отчеты' && renderSelectReportType()}
       {isCarAttachmentModalOpen && <CarAttachmentModal />}
       {isAddMaterialsWriteOffModalOpen && <AddMaterialsWriteOffModal />}
       {isDetailedInformationModalOpen && <DetailedInformationModal />}

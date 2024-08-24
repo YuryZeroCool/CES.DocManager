@@ -42,16 +42,15 @@ const defaultAttachedMaterial: IMaterialAttachedResponse = {
 const initial: IMaterialsResponse = {
   uploadMaterialsMessage: '',
   isUploadNewMaterialsLoader: false,
-  getAllMaterials: [],
+  allMaterials: [],
   totalCount: '',
   totalSum: '',
   allAttachedMaterials: [],
   deletedMaterialId: 0,
-  getAllGroupAccounts: [],
+  accountsList: [],
   currentGroupAccount: [],
   status: '',
   rowActiveId: 0,
-  accordionHeight: 0,
   attachedMaterial: {
     party: '',
     count: 0,
@@ -101,22 +100,22 @@ const materialsReducer = createSlice({
   reducers: {
     deleteFromMaterials: (state, action: PayloadAction<number>) => {
       const stateCopy: IMaterialsResponse = state;
-      const chosenMaterial = stateCopy.getAllMaterials.filter(
+      const chosenMaterial = stateCopy.allMaterials.filter(
         (material: Product) => material.party.filter(
           (el) => el.partyId === action.payload,
         ).length !== 0,
       )[0];
-      const chosenElemIndex = stateCopy.getAllMaterials.findIndex(
+      const chosenElemIndex = stateCopy.allMaterials.findIndex(
         (el) => el.id === chosenMaterial.id,
       );
 
       if (chosenMaterial.party.length === 1) {
-        stateCopy.getAllMaterials.splice(chosenElemIndex, 1);
+        stateCopy.allMaterials.splice(chosenElemIndex, 1);
       } else {
         const parties = chosenMaterial.party.filter(
           (el) => el.partyId !== action.payload,
         );
-        stateCopy.getAllMaterials[chosenElemIndex].party = [...parties];
+        stateCopy.allMaterials[chosenElemIndex].party = [...parties];
       }
       return stateCopy;
     },
@@ -125,11 +124,11 @@ const materialsReducer = createSlice({
       action: PayloadAction<IMaterialAttachedResponse>,
     ) => {
       const stateCopy: IMaterialsResponse = state;
-      const currentElemIndex = stateCopy.getAllMaterials.findIndex(
+      const currentElemIndex = stateCopy.allMaterials.findIndex(
         (el) => el.name === action.payload.nameMaterial,
       );
       if (currentElemIndex === -1) throw new Error('Не удалось отредактировать материал. Такого материала не найдено. Перезагрузите страницу.');
-      const currentElem = stateCopy.getAllMaterials.filter(
+      const currentElem = stateCopy.allMaterials.filter(
         (el) => el.name === action.payload.nameMaterial,
       )[0];
 
@@ -155,19 +154,19 @@ const materialsReducer = createSlice({
         const parties = currentElem.party.filter(
           (el) => el.partyName !== action.payload.nameParty,
         );
-        stateCopy.getAllMaterials[currentElemIndex].party.splice(
+        stateCopy.allMaterials[currentElemIndex].party.splice(
           0,
-          stateCopy.getAllMaterials[currentElemIndex].party.length,
+          stateCopy.allMaterials[currentElemIndex].party.length,
           ...parties,
         );
-        if (stateCopy.getAllMaterials[currentElemIndex].party.length === 0) {
-          stateCopy.getAllMaterials.splice(currentElemIndex, 1);
+        if (stateCopy.allMaterials[currentElemIndex].party.length === 0) {
+          stateCopy.allMaterials.splice(currentElemIndex, 1);
         }
       } else {
-        stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].count = finalCount;
-        stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].totalSum = Number(
+        stateCopy.allMaterials[currentElemIndex].party[currentPartyIndex].count = finalCount;
+        stateCopy.allMaterials[currentElemIndex].party[currentPartyIndex].totalSum = Number(
           (
-            finalCount * stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].price
+            finalCount * stateCopy.allMaterials[currentElemIndex].party[currentPartyIndex].price
           ).toFixed(2),
         );
       }
@@ -178,11 +177,11 @@ const materialsReducer = createSlice({
       action: PayloadAction<Product>,
     ) => {
       const stateCopy: IMaterialsResponse = state;
-      const currentElemIndex = stateCopy.getAllMaterials.findIndex(
+      const currentElemIndex = stateCopy.allMaterials.findIndex(
         (el) => el.name === action.payload.name,
       );
       if (currentElemIndex === -1) throw new Error('Не удалось отредактировать материал. Такого материала не найдено. Перезагрузите страницу.');
-      const currentElem = stateCopy.getAllMaterials.filter(
+      const currentElem = stateCopy.allMaterials.filter(
         (el) => el.name === action.payload.name,
       )[0];
 
@@ -210,19 +209,19 @@ const materialsReducer = createSlice({
         const parties = currentElem.party.filter(
           (el) => el.partyName !== action.payload.party[0].partyName,
         );
-        stateCopy.getAllMaterials[currentElemIndex].party.splice(
+        stateCopy.allMaterials[currentElemIndex].party.splice(
           0,
-          stateCopy.getAllMaterials[currentElemIndex].party.length,
+          stateCopy.allMaterials[currentElemIndex].party.length,
           ...parties,
         );
-        if (stateCopy.getAllMaterials[currentElemIndex].party.length === 0) {
-          stateCopy.getAllMaterials.splice(currentElemIndex, 1);
+        if (stateCopy.allMaterials[currentElemIndex].party.length === 0) {
+          stateCopy.allMaterials.splice(currentElemIndex, 1);
         }
       } else {
-        stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].count = finalCount;
-        stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].totalSum = Number(
+        stateCopy.allMaterials[currentElemIndex].party[currentPartyIndex].count = finalCount;
+        stateCopy.allMaterials[currentElemIndex].party[currentPartyIndex].totalSum = Number(
           (
-            finalCount * stateCopy.getAllMaterials[currentElemIndex].party[currentPartyIndex].price
+            finalCount * stateCopy.allMaterials[currentElemIndex].party[currentPartyIndex].price
           ).toFixed(2),
         );
       }
@@ -230,25 +229,15 @@ const materialsReducer = createSlice({
     },
     resetAllMaterials: (state) => {
       let stateCopy: IMaterialsResponse = state;
-      stateCopy = { ...stateCopy, getAllMaterials: [] };
+      stateCopy = { ...stateCopy, allMaterials: [] };
       return stateCopy;
     },
-    addToCurrentGroupAccount: (state, action: PayloadAction<string>) => {
+    addToCurrentGroupAccount: (state, action: PayloadAction<string[]>) => {
       let stateCopy: IMaterialsResponse = state;
       if (stateCopy.currentGroupAccount) {
         stateCopy = {
           ...stateCopy,
-          currentGroupAccount: [...stateCopy.currentGroupAccount, action.payload],
-        };
-      }
-      return stateCopy;
-    },
-    deleteFromCurrentGroupAccount: (state, action: PayloadAction<string>) => {
-      let stateCopy: IMaterialsResponse = state;
-      if (stateCopy.currentGroupAccount) {
-        stateCopy = {
-          ...stateCopy,
-          currentGroupAccount: stateCopy.currentGroupAccount.filter((el) => el !== action.payload),
+          currentGroupAccount: [...action.payload],
         };
       }
       return stateCopy;
@@ -266,11 +255,6 @@ const materialsReducer = createSlice({
     changeRowActiveId: (state, action: PayloadAction<number>) => {
       let stateCopy: IMaterialsResponse = state;
       stateCopy = { ...stateCopy, rowActiveId: action.payload };
-      return stateCopy;
-    },
-    changeAccordionHeight: (state, action: PayloadAction<number>) => {
-      let stateCopy: IMaterialsResponse = state;
-      stateCopy = { ...stateCopy, accordionHeight: action.payload };
       return stateCopy;
     },
     changeAttachedMaterial: (state, action: PayloadAction<MaterialAttached>) => {
@@ -472,7 +456,7 @@ const materialsReducer = createSlice({
       let stateCopy = state;
       stateCopy = {
         ...stateCopy,
-        getAllMaterials: [...action.payload.data],
+        allMaterials: [...action.payload.data],
         totalCount: action.payload.totalCount,
         totalSum: action.payload.totalSum,
         status: 'fulfilled',
@@ -499,7 +483,7 @@ const materialsReducer = createSlice({
 
     builder.addCase(getAllGroupAccounts.fulfilled, (state, action) => {
       let stateCopy = state;
-      stateCopy = { ...stateCopy, getAllGroupAccounts: [...action.payload] };
+      stateCopy = { ...stateCopy, accountsList: [...action.payload] };
       return stateCopy;
     });
     builder.addCase(getAllGroupAccounts.rejected, (state, action) => {
@@ -655,10 +639,8 @@ export const {
   resetAllMaterials,
   resetAllAttachedMaterials,
   resetAllUsedMaterials,
-  deleteFromCurrentGroupAccount,
   changeStatus,
   changeRowActiveId,
-  changeAccordionHeight,
   changeAttachedMaterial,
   resetAttachedMaterial,
   resetEditedAttachedMaterial,

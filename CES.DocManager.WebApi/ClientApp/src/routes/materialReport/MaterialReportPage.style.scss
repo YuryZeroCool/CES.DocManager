@@ -17,17 +17,25 @@
   height: 40px;
 }
 
-.report-block {
+.reportBlock {
   position: fixed;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   border-radius: 4px;
-  width: 350px;
-  height: 250px;
   background-color: $background-color-white;
+}
+
+.tab {
+  min-width: 150px;
+
+  &[data-active] {
+    border-bottom: 3px solid #228be6;
+    border-image: linear-gradient(90deg, #7950f2 0%, #228be6 100%);
+    border-image-slice: 1;
+  }
+}
+
+.tabLabel {
+  font-size: 18px;
 }

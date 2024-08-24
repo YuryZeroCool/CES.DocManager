@@ -31,7 +31,7 @@ function AddUsedMaterialModalContainer() {
     (state) => state.modals,
   );
 
-  const materials = useSelector<RootState, Product[]>((state) => state.materials.getAllMaterials);
+  const { allMaterials } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const {
     rowActiveId,
@@ -41,7 +41,7 @@ function AddUsedMaterialModalContainer() {
   const dispatch: IAuthResponseType = useDispatch();
 
   useEffect(() => {
-    const chosenMaterial = materials.filter(
+    const chosenMaterial = allMaterials.filter(
       (material: Product) => material.party.filter((el) => el.partyId === rowActiveId).length !== 0,
     )[0];
     const chosenMaterialParty = chosenMaterial.party.filter(
