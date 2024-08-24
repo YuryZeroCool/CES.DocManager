@@ -14,6 +14,7 @@ using CES.Domain.Models.Response.Employees;
 using CES.Domain.Models.Response.MaterialReport;
 using CES.Domain.Models.Response.Mes.Notes;
 using CES.Domain.Models.Response.Mes.Organizations;
+using CES.Domain.Models.Response.Mes.OrganizationTypes;
 using CES.Domain.Models.Response.Mes.Street;
 using CES.Domain.Models.Response.Report;
 using CES.Domain.Models.Response.Vehicle;
@@ -24,6 +25,7 @@ using CES.Infra.Models.MaterialReport;
 using CES.Infra.Models.Mes;
 using CES.InfraSecurity.Models;
 using CES.XmlFormat.Models;
+using System.Globalization;
 
 namespace CES.Domain.Mapper
 {
@@ -199,21 +201,15 @@ namespace CES.Domain.Mapper
 
             CreateMap<ActEntity, Models.Response.Act.Act>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ActDateOfCreation, opt => opt.MapFrom(src => src.ActDateOfCreation))
-                .ForMember(dest => dest.DateOfWorkCompletion, opt => opt.MapFrom(src => src.DateOfWorkCompletion))
+                .ForMember(dest => dest.ActDateOfCreation, opt => opt.MapFrom(src => src.ActDateOfCreation.ToString("dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)))
+                .ForMember(dest => dest.DateOfWorkCompletion, opt => opt.MapFrom(src => src.DateOfWorkCompletion.ToString("dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)))
                 .ForMember(dest => dest.Organization, opt => opt.MapFrom(src => src.Organization!.Name))
+                .ForMember(dest => dest.PayerAccountNumber, opt => opt.MapFrom(src => src.Organization!.PayerAccountNumber))
                 .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.Total))
                 .ForMember(dest => dest.NumberPlateOfCar, opt => opt.MapFrom(src => src.NumberPlateOfCar!.Number))
                 .ForMember(dest => dest.Driver, opt => opt.MapFrom(src => src.Employee!.LastName+" "+src.Employee.FirstName))
                 .ForMember(dest => dest.Vat, opt => opt.MapFrom(src => src.Vat))
                 .ForMember(dest => dest.ActType, opt => opt.MapFrom(src => src.ActType!.Name));
-
-            //CreateMap<WorkPerformActEntity, Work>()
-            //    .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.Name))
-            //   // .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price.Price))
-            //    .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Name!.Unit!.Name))
-            //    .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count.ToString()));
-            //                    //.ToString(CultureInfo.CreateSpecificCulture("en-GB"))));
 
             CreateMap<NoteEntity, FullNoteData>()
                 .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street!.Name))
@@ -224,6 +220,14 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.HouseNumber!.Number))
                 .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street!.Name))
                 .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.HouseNumber!.Number));
+
+            CreateMap<OrganizationTypeEntity, GetOrganizationTypesResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
+
+            CreateMap<UnitEntity, Unit>()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
         }
     }
 }

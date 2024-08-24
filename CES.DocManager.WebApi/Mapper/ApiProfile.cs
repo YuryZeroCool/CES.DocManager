@@ -14,6 +14,8 @@ using CES.Domain.Models.Response.Division;
 using CES.Domain.Models.Response.MaterialReport;
 using CES.Domain.Security.Login;
 using CES.Infra.Models;
+using Humanizer;
+using NPOI.SS.Formula.Functions;
 using System.Globalization;
 
 namespace CES.DocManager.WebApi.Mapper
@@ -82,16 +84,19 @@ namespace CES.DocManager.WebApi.Mapper
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
                 .ForMember(dest => dest.IsChecked, opt => opt.MapFrom(src => src.IsChecked));
 
-            CreateMap< CreateExistedNoteViewModel, CreateExistedNoteRequest >()
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.ParseExact(src.Date, "dd/MM/yyyy, HH:mm:ss", CultureInfo.InvariantCulture)));
+            CreateMap<CreateExistedNoteViewModel, CreateExistedNoteRequest>()
+                .ForMember(dest => dest.Date,
+                opt => opt.MapFrom(src => DateTime.ParseExact(src.Date, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)));
 
             CreateMap<ContactInfoViewModel, ContactInfoModel>();
 
             CreateMap<OrganizationViewModel, CreateOrganizationRequest>();
             CreateMap<OrganizationViewModel, EditOrganizationRequest>();
-
+           
             CreateMap<ActViewModel, CreateActRequest>()
-                .ForMember(dest => dest.ActAdditionDate, opt => opt.MapFrom(src => DateTime.ParseExact(src.ActAdditionDate, "dd/MM/yyyy, HH:mm:ss", CultureInfo.InvariantCulture)));
+                .ForMember(dest => dest.ActAdditionDate,
+                opt => opt.MapFrom(src => DateTime.ParseExact(src.ActAdditionDate, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)));
+
             CreateMap<Models.Mes.Work, Domain.Models.Request.Mes.Acts.Work>();
             CreateMap<Models.Mes.FullNoteData, Domain.Models.Request.Mes.Acts.FullNoteData>();
         }
