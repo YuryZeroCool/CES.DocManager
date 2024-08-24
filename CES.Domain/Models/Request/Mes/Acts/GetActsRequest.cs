@@ -9,6 +9,8 @@ namespace CES.Domain.Models.Request.Mes.Acts
 
         public DateTime Max { get; set; }
 
+        public string OrganizationType { get; set; } = string.Empty;
+
         public int Page { get; set; }
 
         public int Limit { get; set; }

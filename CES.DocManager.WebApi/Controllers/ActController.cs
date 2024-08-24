@@ -30,15 +30,16 @@ namespace CES.DocManager.WebApi.Controllers
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet()]
-        [Produces(typeof(List<GetActsResponse>))]
-        public async Task<object> GetActs(string min, string max, int page, string? filter, string? searchValue, int limit)
+        [Produces(typeof(GetActsResponse))]
+        public async Task<object> GetActs(string min, string max, string? organizationType, int page, string? filter, string? searchValue, int limit)
         {
             try
             {
                 return await _mediator.Send(new GetActsRequest()
                 {
-                    Min = DateTime.ParseExact(min, "dd/MM/yyyy, HH:mm:ss", CultureInfo.InvariantCulture),
-                    Max = DateTime.ParseExact(max, "dd/MM/yyyy, HH:mm:ss", CultureInfo.InvariantCulture),
+                    Min = DateTime.ParseExact(min.Split(" ")[0] + " " + "00:00:00", "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                    Max = DateTime.ParseExact(max.Split(" ")[0] + " " + "00:00:00", "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                    OrganizationType = organizationType,
                     Page = page,
                     Limit = limit,
                     Filter = filter,
@@ -47,8 +48,9 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception)
             {
+
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
+                return new {};
             }
         }
 
