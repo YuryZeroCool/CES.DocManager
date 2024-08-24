@@ -228,6 +228,15 @@ namespace CES.Domain.Mapper
             CreateMap<UnitEntity, Unit>()
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
+
+            CreateMap<PartyEntity,AddMaterialResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.PartyName, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.PartyDate, opt => opt.MapFrom(src => src.PartyDate.ToString("dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src=>src.Price))
+                .ForMember(dest => dest.Count, opt => opt.MapFrom(src => src.Count))
+                .ForMember(dest => dest.ProductGroupAccountId, opt => opt.Ignore())
+                .ForMember(dest => dest.UnitId, opt => opt.Ignore());
         }
     }
 }

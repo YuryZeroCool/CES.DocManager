@@ -1,4 +1,5 @@
-﻿using CES.Domain.Models.Request.MaterialReport;
+﻿using CES.DocManager.WebApi.Services;
+using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Request.Vehicle;
 using CES.Domain.Models.Response.MaterialReport;
 using MediatR;
@@ -38,17 +39,16 @@ namespace CES.DocManager.WebApi.Controllers
                 var count = (decimal)totalMaterials.Select(p =>
                     p.Party!.Select(x => x.Count).Sum()).ToList().Sum();
                 HttpContext.Response.Headers["X-Total-Count"] = count.ToString(CultureInfo.InvariantCulture);
-                   
-                var sum = totalMaterials.Select(p => 
+
+                var sum = totalMaterials.Select(p =>
                     p.Party!.Select(x => x.TotalSum).Sum()).ToList().Sum();
                 HttpContext.Response.Headers["X-Total-Sum"] = sum.ToString(CultureInfo.InvariantCulture);
                 return totalMaterials;
-
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -61,19 +61,16 @@ namespace CES.DocManager.WebApi.Controllers
             try
             {
                 return await _mediator.Send(new EditMaterialRequest()
-                    {
-                        PartyId = id,
-                        EditedMaterial = editedMaterial
-                    }
+                {
+                    PartyId = id,
+                    EditedMaterial = editedMaterial
+                }
                 );
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -87,17 +84,17 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new GetAllProductsGroupAccountRequest());
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost("materialReport")]
-        public async Task<string> UploadingMaterialReport(IFormFile uploadedFile) 
+        public async Task<object> UploadingMaterialReport(IFormFile uploadedFile)
         {
             try
             {
@@ -107,18 +104,33 @@ namespace CES.DocManager.WebApi.Controllers
                 var path = _appEnvironment.WebRootPath + "/download/" + uploadedFile.FileName;
                 await using var fileStream = new FileStream(path, FileMode.Create);
                 await uploadedFile.CopyToAsync(fileStream);
-            
+
                 HttpContext.Response.StatusCode = 200;
 
                 return await Task.FromResult("Файл успешно записан");
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = 500;
-                //return await Task.FromResult("Произашка ошибка при записи файла");
-                return e.Message;
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
+        }
 
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpPost("newMaterial")]
+        public async Task<object> CreateMaterial(AddMaterialRequest material)
+        {
+            try
+            {
+                if (material == null) throw new Exception("Error");
+                return await _mediator.Send(material);
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
+            }
         }
 
         // [Authorize(AuthenticationSchemes =
@@ -131,10 +143,10 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new GetAllEnshrinedMaterialRequest());
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -150,11 +162,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    message = e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -175,11 +184,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -198,11 +204,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                { 
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -221,11 +224,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                { 
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -241,11 +241,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                { 
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -261,11 +258,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                { 
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -281,18 +275,15 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("getDefectiveSheet")]
-        public async Task<string> GetDefectiveSheetAsync(int id)
+        public async Task<object> GetDefectiveSheetAsync(int id)
         {
             try
             {
@@ -304,10 +295,9 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return e.Message;
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
-
         }
 
         // [Authorize(AuthenticationSchemes =
@@ -323,16 +313,12 @@ namespace CES.DocManager.WebApi.Controllers
                     Month = month,
                     Year = year,
                     Path = _appEnvironment.WebRootPath
-
                 });
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    Error = e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -348,12 +334,9 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
-            } 
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
+            }
         }
 
         // [Authorize(AuthenticationSchemes =
@@ -373,11 +356,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -394,11 +374,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                   e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -420,11 +397,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                   e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -446,11 +420,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
 
@@ -464,17 +435,16 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new GetAllUsedMaterialsRequest()
                 {
-                    Month = month, 
+                    Month = month,
                     Year = year
                 });
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new object();
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
-
 
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
@@ -488,11 +458,8 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception e)
             {
-                HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                return new
-                {
-                    e.Message
-                };
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
             }
         }
     }
