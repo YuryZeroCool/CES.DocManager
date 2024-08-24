@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInputState } from '@mantine/hooks';
+import { format } from 'date-fns';
 
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { resetDriversByCar } from '../../redux/reducers/drivers/driversReducer';
@@ -191,7 +192,7 @@ function ActModalContainer(props: Props) {
         organization,
         vehicle: car,
         driver,
-        actAdditionDate: actAdditionDate.toLocaleString('en-GB', { timeZone: 'Europe/Minsk' }),
+        actAdditionDate: format(actAdditionDate, 'dd-MM-yyyy HH:mm:ss'),
         actType: currentActData.type,
         completedWorks: currentActData.works,
         notesWithoutAct: selectedNotes,

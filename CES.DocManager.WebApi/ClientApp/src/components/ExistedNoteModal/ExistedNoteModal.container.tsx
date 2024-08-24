@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInputState } from '@mantine/hooks';
+import { format } from 'date-fns';
 
 import ExistedNoteModalComponent from './ExistedNoteModal.component';
 import { RootState } from '../../redux/reducers/combineReducers';
@@ -210,9 +211,10 @@ function ExistedNoteModalContainer(props: ExistedNoteModalContainerProps) {
         });
     } else {
       if (noteDate) {
-        stateCopy.date = noteDate.toLocaleString('en-GB', { timeZone: 'Europe/Minsk' });
+        stateCopy.date = format(noteDate, 'dd-MM-yyyy HH:mm:ss');
       }
 
+      stateCopy.isChecked = true;
       dispatch(createExistedNote(stateCopy))
         .then(() => handleClose())
         .catch((error) => {

@@ -90,10 +90,10 @@ function DetailsInfoPanelCompnent(props: DetailsInfoPanelCompnentProps) {
       <Stack gap={20}>
         <Stack gap={5}>
           <Text className={classes.detailedInfoTitle}>
-            Дата выполнения акта:
+            Дата создания акта:
           </Text>
           <Text className={classes.detailedInfoValue}>
-            {currentAct?.dateOfWorkCompletion}
+            {currentAct?.actDateOfCreation}
           </Text>
         </Stack>
 
@@ -108,19 +108,55 @@ function DetailsInfoPanelCompnent(props: DetailsInfoPanelCompnentProps) {
 
         <Stack gap={10}>
           <Text className={classes.detailedInfoTitle}>
-            Общая сумма:
+            Адреса:
+          </Text>
+          {currentAct?.notesWithoutAct.map((note) => (
+            <Text key={note.id} className={classes.detailedInfoValue}>
+              {note.street && (
+                <>
+                  {note.street}
+                  ,&nbsp;
+                </>
+              )}
+              {note.houseNumber !== '' && note.houseNumber !== '0' && (
+                <>
+                  д.&nbsp;
+                  {note.houseNumber}
+                  ,&nbsp;
+                </>
+              )}
+              {note.entrance !== 0 && (
+                <>
+                  п.&nbsp;
+                  {note.entrance}
+                  ,&nbsp;
+                </>
+              )}
+              {note.tel !== '' && (
+                <>
+                  т.&nbsp;
+                  {note.tel}
+                </>
+              )}
+            </Text>
+          ))}
+        </Stack>
+
+        <Stack gap={5}>
+          <Text className={classes.detailedInfoTitle}>
+            Водитель:
           </Text>
           <Text className={classes.detailedInfoValue}>
-            {currentAct?.total}
+            {currentAct?.driver}
           </Text>
         </Stack>
 
-        <Stack gap={10}>
+        <Stack gap={5}>
           <Text className={classes.detailedInfoTitle}>
-            НДС:
+            Номер машины:
           </Text>
           <Text className={classes.detailedInfoValue}>
-            {currentAct?.vat}
+            {currentAct?.numberPlateOfCar}
           </Text>
         </Stack>
 

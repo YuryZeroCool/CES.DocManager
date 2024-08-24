@@ -13,7 +13,7 @@ import {
   Controller,
   UseFormHandleSubmit,
 } from 'react-hook-form';
-import { Organization } from '../../types/MesTypes';
+import { Organization, OrganizationType } from '../../types/MesTypes';
 import classes from './AddOrganizationModal.module.scss';
 
 interface Props {
@@ -22,6 +22,7 @@ interface Props {
   control: Control<Organization, Organization>;
   organizationError: string;
   isDisabled: boolean;
+  organizationTypes: OrganizationType[];
   handleSubmit: UseFormHandleSubmit<Organization>;
   handleClose: () => void;
   onSubmit: (data: Organization) => void;
@@ -34,6 +35,7 @@ export default function AddOrganizationModalComponent(props: Props) {
     control,
     isDisabled,
     organizationError,
+    organizationTypes,
     handleSubmit,
     handleClose,
     onSubmit,
@@ -168,10 +170,11 @@ export default function AddOrganizationModalComponent(props: Props) {
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <Select
           label="Тип организации"
-          data={['Сторонние', 'ЖЭС']}
+          data={organizationTypes.map((el) => el.name)}
           value={value}
           onChange={onChange}
           mb={20}
+          error={error?.message}
         />
       )}
     />

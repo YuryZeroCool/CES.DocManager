@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
+import { showNotification } from '@mantine/notifications';
+import { IconX } from '@tabler/icons-react';
+import { rem } from '@mantine/core';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import createOrganization from '../../redux/actions/mes/createOrganization';
 import { changeSelectedOrganizationId } from '../../redux/reducers/mes/mesReducer';
 import editOrganization from '../../redux/actions/mes/editOrganization';
+import getOrganizationType from '../../redux/actions/mes/getOrganizationTypes';
 import AddOrganizationModalComponent from './AddOrganizationModal.component';
 import { INotesState, Organization, OrganizationResponse } from '../../types/MesTypes';
 import handleError from '../../utils';
@@ -53,6 +57,7 @@ function AddOrganizationModalContainer(props: AddOrganizationModalContainerProps
   const {
     allOrganizations,
     selectedOrganizationId,
+    organizationTypes,
   } = useSelector<RootState, INotesState>(
     (state) => state.mes,
   );
@@ -65,7 +70,7 @@ function AddOrganizationModalContainer(props: AddOrganizationModalContainerProps
       const elem = allOrganizations.organizations.filter(
         (el) => el.id === selectedOrganizationId,
       )[0];
-      console.log(elem);
+
       setValue('name', elem.name);
       setValue('address', elem.address);
       setValue('payerAccountNumber', elem.payerAccountNumber);
@@ -73,6 +78,17 @@ function AddOrganizationModalContainer(props: AddOrganizationModalContainerProps
       setValue('phone', elem.phone);
       setValue('organizationType', elem.organizationType);
     }
+
+    dispatch(getOrganizationType())
+      .catch(() => {
+        showNotification({
+          title: 'Список типов организаций не был получен',
+          message: 'Произошла ошибка во время получения списка типов организаций.',
+          icon: <IconX style={{ width: rem(20), height: rem(20) }} />,
+          styles: { icon: { background: 'red' } },
+        });
+      });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedOrganizationId]);
 
@@ -124,6 +140,7 @@ function AddOrganizationModalContainer(props: AddOrganizationModalContainerProps
       control={control}
       organizationError={organizationError}
       isDisabled={isDisabled}
+      organizationTypes={organizationTypes}
       handleSubmit={handleSubmit}
       handleClose={handleClose}
       onSubmit={onSubmit}
