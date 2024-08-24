@@ -22,7 +22,7 @@ namespace CES.Domain.Handlers.MaterialReport
         }
         public async Task<List<GetAllDecommissionedMaterialsResponse>> Handle(GetAllDecommissionedMaterialsRequest request, CancellationToken cancellationToken)
         {
-            var limit = 200;
+            var limit = 600;
             var page = 0;
 
             var TotalCount = _ctx.DecommissionedMaterials.Count();
