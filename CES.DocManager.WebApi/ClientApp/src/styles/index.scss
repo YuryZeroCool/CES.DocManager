@@ -45,3 +45,11 @@ main {
   margin-bottom: 15px !important;
   text-align: center;
 }
+
+.error-message {
+  color: $color-red;
+  padding-left: 20px;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}

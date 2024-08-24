@@ -1,16 +1,22 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  Container,
+  Flex,
+  Title,
+} from '@mantine/core';
+
 import getExpiringDriverLicense from '../../redux/actions/home/getExpiringDriverLicense';
 import getExpiringMedicalCertificate from '../../redux/actions/home/getExpiringMedicalCertificate';
 import { RootState } from '../../redux/reducers/combineReducers';
 import { clearUserState } from '../../redux/reducers/loginReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
-import HomePageComponent from './HomePage.component';
 import { clearExpiringMedicalCertificate } from '../../redux/reducers/documents/medicalCertificates/medicalCertificatesReducer';
 import { clearExpiringDriverLicensesState } from '../../redux/reducers/documents/driverLicense/driverLicenseReducer';
 import { IDriverLicenses, IMedicalCertificates } from '../../types/DocumentType';
+import ExpiringDocumentsTable from '../../components/home/ExpiringDocumentsTable';
 
-function HomePageContainer() {
+function HomePage() {
   const dispatch: IAuthResponseType = useDispatch();
   const { expiringDriverLicenses } = useSelector<RootState, IDriverLicenses>(
     (state) => state.driverLicense,
@@ -19,7 +25,7 @@ function HomePageContainer() {
     (state) => state.medicalCertificates,
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function getDocument(): Promise<void> {
       const driver = await dispatch(getExpiringDriverLicense(1));
       if (driver.meta.requestStatus === 'rejected') {
@@ -39,11 +45,25 @@ function HomePageContainer() {
   }, [dispatch]);
 
   return (
-    <HomePageComponent
-      driverLicense={expiringDriverLicenses}
-      medicalCertificates={expiringMedicalCertificate}
-    />
+    <Container
+      size={1440}
+      display="flex"
+      style={{ flexDirection: 'column', gap: 40 }}
+      pt={30}
+    >
+      <Title c="#FFF" fz={28} style={{ textAlign: 'center' }}>Expiring documents</Title>
+
+      <Flex justify="space-between" gap={40}>
+        {expiringDriverLicenses.length > 0 && (
+          <ExpiringDocumentsTable data={expiringDriverLicenses} name="Истекающие водительские удостоверения" />
+        )}
+
+        {expiringMedicalCertificate.length > 0 && (
+          <ExpiringDocumentsTable data={expiringMedicalCertificate} name="Истекающие водительские медсправки" />
+        )}
+      </Flex>
+    </Container>
   );
 }
 
-export default HomePageContainer;
+export default HomePage;
