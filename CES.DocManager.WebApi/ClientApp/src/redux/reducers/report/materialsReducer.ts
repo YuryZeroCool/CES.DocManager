@@ -23,6 +23,8 @@ import getAllUsedMaterials from '../../actions/report/materialReport/getAllUsedM
 import getDefectiveSheet from '../../actions/report/materialReport/getDefectiveSheet';
 import patchAttachedMaterial from '../../actions/report/materialReport/patchAttachedMaterial';
 import uploadNewMaterials from '../../actions/report/materialReport/uploadNewMaterials';
+import getUnits from '../../actions/report/materialReport/getUnits';
+import createNewMaterial from '../../actions/report/materialReport/createNewMaterial';
 
 const defaultAttachedMaterial: IMaterialAttachedResponse = {
   id: 0,
@@ -92,6 +94,8 @@ const initial: IMaterialsResponse = {
   isCheckedByDate: false,
   editedAttachedMaterial: defaultAttachedMaterial,
   period: null,
+  units: [],
+  createdMaterial: null,
 };
 
 const materialsReducer = createSlice({
@@ -626,6 +630,24 @@ const materialsReducer = createSlice({
       return stateCopy;
     });
     builder.addCase(patchAttachedMaterial.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(getUnits.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, units: [...action.payload] };
+      return stateCopy;
+    });
+    builder.addCase(getUnits.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(createNewMaterial.fulfilled, (state, action) => {
+      let stateCopy = state;
+      stateCopy = { ...stateCopy, createdMaterial: { ...action.payload } };
+      return stateCopy;
+    });
+    builder.addCase(createNewMaterial.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
   },

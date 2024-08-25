@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDisclosure } from '@mantine/hooks';
 import getAllGroupAccounts from '../../redux/actions/report/materialReport/getAllGroupAccounts';
 import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
 import getAllUsedMaterials from '../../redux/actions/report/materialReport/getAllUsedMaterials';
@@ -36,6 +37,11 @@ function ProductsTableHeaderContainer() {
   const [fileName, setFileName] = useState<string>('');
   const [materialsError, setMaterialsError] = useState<string>('');
   const [uploadFileError, setUploadFileError] = useState<boolean>(false);
+
+  const [
+    addMaterialModalOpened,
+    { open: addMaterialModalOpen, close: addMaterialModalClose },
+  ] = useDisclosure(false);
 
   const dispatch: IAuthResponseType = useDispatch();
 
@@ -206,6 +212,10 @@ function ProductsTableHeaderContainer() {
     dispatch(toggleCheckboxByDateInMaterials(event.target.checked));
   };
 
+  const handleAddMaterialButtonClick = () => {
+    addMaterialModalOpen();
+  };
+
   return (
     <ProductsTableHeaderComponent
       materialsTableType={materialsTableType}
@@ -220,6 +230,7 @@ function ProductsTableHeaderContainer() {
       isCheckedByDate={isCheckedByDate}
       allAttachedMaterials={allAttachedMaterials}
       calendarPeriod={calendarPeriod}
+      addMaterialModalOpened={addMaterialModalOpened}
       handleUsedMaterialsCalendarChange={handleUsedMaterialsCalendarChange}
       handleUsedMaterialsCalendarClose={handleUsedMaterialsCalendarClose}
       handleChange={handleChange}
@@ -229,6 +240,8 @@ function ProductsTableHeaderContainer() {
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       handleSubmit={handleSubmit}
       handleSearchValueChange={handleSearchValueChange}
+      handleAddMaterialButtonClick={handleAddMaterialButtonClick}
+      addMaterialModalClose={addMaterialModalClose}
     />
   );
 }

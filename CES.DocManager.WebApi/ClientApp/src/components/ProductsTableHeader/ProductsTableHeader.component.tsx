@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
@@ -17,8 +17,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Button } from '@mantine/core';
 import { IMaterialAttachedResponse, ISearch } from '../../types/ReportTypes';
 import TABLE_TYPES from './ProductsTableHeader.config';
+import AddMaterialModal from '../AddMaterialModal';
 
 interface Props {
   materialsTableType: string;
@@ -33,6 +35,7 @@ interface Props {
   isCheckedByDate: boolean;
   allAttachedMaterials: IMaterialAttachedResponse[];
   calendarPeriod: Dayjs | null;
+  addMaterialModalOpened: boolean;
   handleUsedMaterialsCalendarChange: (value: Dayjs | null) => void;
   handleUsedMaterialsCalendarClose: () => void;
   handleChange: (event: SelectChangeEvent) => void;
@@ -41,6 +44,8 @@ interface Props {
   handleInputFileChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSubmit: (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
   handleSearchValueChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleAddMaterialButtonClick: () => void;
+  addMaterialModalClose: () => void;
 }
 
 const style = {
@@ -67,6 +72,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
     isCheckedByDate,
     allAttachedMaterials,
     calendarPeriod,
+    addMaterialModalOpened,
     handleUsedMaterialsCalendarChange,
     handleUsedMaterialsCalendarClose,
     handleChange,
@@ -75,22 +81,40 @@ export default function ProductsTableHeaderComponent(props: Props) {
     handleInputFileChange,
     handleSubmit,
     handleSearchValueChange,
+    handleAddMaterialButtonClick,
+    addMaterialModalClose,
   } = props;
 
   const renderUploadFileForm = () => (
     pageType === 'Материалы' && materialsTableType === 'Свободные' && (
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      <form name="test" encType="multipart/form-data" onSubmit={(event) => handleSubmit(event)}>
-        <Button sx={{ minWidth: 120, height: 40 }} variant="contained" size="small" component="label">
-          {fileName || 'Добавить'}
-          <input ref={fileInputRef} hidden onChange={handleInputFileChange} accept=".xls" type="file" name="uploadedFile" />
+      <>
+        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+        <form name="test" encType="multipart/form-data" onSubmit={(event) => handleSubmit(event)}>
+          <Button
+            variant="gradient"
+            gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
+            miw={120}
+            h={40}
+            component="label"
+          >
+            {fileName || 'Загрузить файл'}
+            <input ref={fileInputRef} hidden onChange={handleInputFileChange} accept=".xls" type="file" name="uploadedFile" />
+          </Button>
+          {fileName !== '' && (
+            <IconButton aria-label="upload" sx={{ width: '40px', height: '40px', padding: 0 }} type="submit">
+              <UploadIcon />
+            </IconButton>
+          )}
+        </form>
+
+        <Button
+          variant="gradient"
+          gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
+          onClick={handleAddMaterialButtonClick}
+        >
+          Добавить материал
         </Button>
-        {fileName !== '' && (
-          <IconButton aria-label="upload" sx={{ width: '40px', height: '40px', padding: 0 }} type="submit">
-            <UploadIcon />
-          </IconButton>
-        )}
-      </form>
+      </>
     )
   );
 
@@ -198,10 +222,11 @@ export default function ProductsTableHeaderComponent(props: Props) {
 
   const renderAddRepairButton = () => (
     <Button
-      sx={{ m: 1, minWidth: 120 }}
+      miw={120}
+      h={40}
       disabled={allAttachedMaterials.length === 0}
-      variant="contained"
-      size="small"
+      variant="gradient"
+      gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
       onClick={handleClick}
     >
       Добавить ремонт
@@ -256,6 +281,12 @@ export default function ProductsTableHeaderComponent(props: Props) {
         {renderCheckbox()}
       </div>
       {renderLoaderModal()}
+      {addMaterialModalOpened && (
+        <AddMaterialModal
+          addMaterialModalOpened={addMaterialModalOpened}
+          addMaterialModalClose={addMaterialModalClose}
+        />
+      )}
     </div>
   );
 }

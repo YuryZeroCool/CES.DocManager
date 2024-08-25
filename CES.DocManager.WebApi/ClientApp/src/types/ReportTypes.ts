@@ -142,6 +142,8 @@ export interface IMaterialsResponse {
   isCheckedByDate: boolean;
   editedAttachedMaterial: IMaterialAttachedResponse;
   period: Dayjs | null;
+  units: Unit[];
+  createdMaterial: Material | null;
 }
 
 export interface IMaterialsWriteOffForm {
@@ -201,3 +203,34 @@ export interface IPatchAttachedMaterialRequest {
   id: number;
   data: IPatchAttachedMaterialData[];
 }
+
+export interface Unit {
+  id: number;
+  name: string;
+}
+
+export interface NewMaterialForm {
+  name: string;
+  unit: string;
+  productGroupAccount: string;
+  partyName: string;
+  partyDate: string;
+  count: string;
+  price: string;
+}
+
+export interface MaterialRequest {
+  name: string;
+  unitId: number;
+  productGroupAccountId: number;
+  partyName: string;
+  partyDate: string;
+  count: number;
+  price: number;
+}
+
+export interface Material extends MaterialRequest {
+  id: number;
+}
+
+export type FormInputNameType = 'name' | 'unit' | 'productGroupAccount' | 'partyName' | 'partyDate' | 'count' | 'price';

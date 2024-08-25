@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Response.MaterialReport;
-using CES.Domain.Models.Response.Mes.Notes;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
@@ -54,7 +54,7 @@ namespace CES.Domain.Handlers.MaterialReport
                         Name = request.partyName,
                         Count = request.Count,
                         DateCreated = DateTime.Now,
-                        PartyDate = DateTime.ParseExact(request.PartyDate.Replace(".", "-"), "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                        PartyDate = DateTimeConverter.ConvertToDateTime(request.PartyDate, "yyyy-MM-dd HH:mm:ss"),
                         Price = request.Price,
                         Product = new ProductEntity()
                         {
