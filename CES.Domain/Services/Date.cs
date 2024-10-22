@@ -14,7 +14,7 @@
             {
                 return new DateTime(year, month, day);
             }
-            else throw new System.Exception("Error");
+            else throw new System.Exception("Упс! Что-то пошло не так");
         }
 
         public int GetYear(string date)

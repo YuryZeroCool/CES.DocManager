@@ -32,7 +32,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                if (accountsName == null) throw new Exception("Error");
+                if (accountsName == null) throw new Exception("Упс! Что-то пошло не так");
 
                 var totalMaterials = await _mediator.Send(new GetTotalMaterialsRequest() { Accounts = accountsName });
                 if (totalMaterials.Count <= 0) return totalMaterials;
@@ -98,7 +98,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                if (uploadedFile.Length == 0 || uploadedFile == null) throw new Exception("Error");
+                if (uploadedFile.Length == 0 || uploadedFile == null) throw new Exception("Упс! Что-то пошло не так");
                 await _mediator.Send(new AddMaterialReportRequest() { File = uploadedFile });
 
                 var path = _appEnvironment.WebRootPath + "/download/" + uploadedFile.FileName;
@@ -123,7 +123,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                if (material == null) throw new Exception("Error");
+                if (material == null) throw new Exception("Упс! Что-то пошло не так");
                 return await _mediator.Send(material);
             }
             catch (Exception e)

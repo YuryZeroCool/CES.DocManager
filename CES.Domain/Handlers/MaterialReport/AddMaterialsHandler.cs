@@ -109,7 +109,7 @@ namespace CES.Domain.Handlers.MaterialReport
                                 {
                                     var party = await _ctx.Parties.FirstOrDefaultAsync(p =>
                                         p.Name == partyArr[0].Substring(7), cancellationToken);
-                                    if (party == null) throw new System.Exception("Error");
+                                    if (party == null) throw new System.Exception("Упс! Что-то пошло не так");
 
                                     var countMaterial = double.Parse(sheet.Rows[k].CellList[13].Value);
                                     var difference = Math.Abs(party.Count * .00001);

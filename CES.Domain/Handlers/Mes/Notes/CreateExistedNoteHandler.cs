@@ -71,12 +71,12 @@ namespace CES.Domain.Handlers.Mes.Notes
                             Tel = note.Tel
                         },cancellationToken);
                    }
-                    else throw new System.Exception("Error");
+                    else throw new System.Exception("Упс! Что-то пошло не так");
                 }
                 await _ctx.SaveChangesAsync(cancellationToken);
                 return await Task.FromResult("ok");
             }
-            throw new System.Exception("Error");
+            throw new System.Exception("Упс! Что-то пошло не так");
         }
     }
 }

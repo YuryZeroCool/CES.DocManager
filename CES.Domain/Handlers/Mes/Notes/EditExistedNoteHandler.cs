@@ -25,7 +25,7 @@ namespace CES.Domain.Handlers.Mes.Notes
                 && _ctx.HouseNumbers is not null
                 && _ctx.Entrances is not null)
             {
-                if (!_ctx.NoteEntities.Any(p => p.Id == request.Id)) throw new System.Exception("Error");
+                if (!_ctx.NoteEntities.Any(p => p.Id == request.Id)) throw new System.Exception("Упс! Что-то пошло не так");
 
                 EntityEntry? note = null;
 
@@ -91,7 +91,7 @@ namespace CES.Domain.Handlers.Mes.Notes
                 await _ctx.SaveChangesAsync(cancellationToken);
                 return await Task.FromResult(request.Id);
             }
-            throw new System.Exception("Error");
+            throw new System.Exception("Упс! Что-то пошло не так");
         }
     }
 }

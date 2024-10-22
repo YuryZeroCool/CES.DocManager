@@ -50,15 +50,15 @@ namespace CES.Domain.Handlers.MaterialReport
                     .Skip(page*limit).Take(limit).ToListAsync();
             }
 
-            if (materials == null) throw new SystemException("Error");
+            if (materials == null) throw new SystemException("Упс! Что-то пошло не так");
 
             foreach (var item in materials)
             {
                 var decommissionedMaterials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(item.Materials);
 
-                if (decommissionedMaterials == null) throw new System.Exception("Error");
+                if (decommissionedMaterials == null) throw new System.Exception("Упс! Что-то пошло не так");
 
-                if (item.CarMechanic == null) throw new System.Exception("Error");
+                if (item.CarMechanic == null) throw new System.Exception("Упс! Что-то пошло не так");
 
                 _materialsResponses.Add(new GetAllDecommissionedMaterialsResponse()
                 {

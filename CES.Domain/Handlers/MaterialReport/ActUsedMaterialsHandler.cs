@@ -25,11 +25,11 @@ namespace CES.Domain.Handlers.MaterialReport
             var usedMaterials = await _ctx.UsedMaterials.FirstOrDefaultAsync(x => x.Period.Month == request.Month &&
             x.Period.Year == request.Year, cancellationToken);
 
-            if (usedMaterials == null) throw new SystemException("Error");
+            if (usedMaterials == null) throw new SystemException("Упс! Что-то пошло не так");
 
             var materials = JsonSerializer.Deserialize<List<UsedMaterial>>(usedMaterials.Materials);
 
-            if (materials == null) throw new SystemException("Error");
+            if (materials == null) throw new SystemException("Упс! Что-то пошло не так");
              materials=  materials.OrderBy(p => p.NameMaterial).ToList();
             var workbook = new Workbook();
             workbook.LoadFromFile(request.Path+"/Docs/materialAct.xls");

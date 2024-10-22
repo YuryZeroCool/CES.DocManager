@@ -30,7 +30,7 @@ namespace CES.Domain.Handlers.Division
             await _docMangerContext.SaveChangesAsync(cancellationToken);
 
             var division = _docMangerContext.Divisions.FirstOrDefault(p => p.Name == request.DivisionName);
-            if (division == null) throw new System.Exception("Error");
+            if (division == null) throw new System.Exception("Упс! Что-то пошло не так");
             return await Task.FromResult(_mapper.Map<DivisionEntity, GetDivisionNumbersResponse>(division));
         }
     }

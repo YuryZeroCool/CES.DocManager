@@ -96,7 +96,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private List<AddDecommissionedMaterial> JoinMaterials(List<DecommissionedMaterialEntity>? decommissionedMaterials)
         {
-            if (decommissionedMaterials == null) throw new SystemException("Error");
+            if (decommissionedMaterials == null) throw new SystemException("Упс! Что-то пошло не так");
 
             var materialsList = new List<AddDecommissionedMaterial>();
 
@@ -104,7 +104,7 @@ namespace CES.Domain.Handlers.MaterialReport
             {
                var  materials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(item.Materials);
 
-                if (materials == null) throw new System.Exception("Error");
+                if (materials == null) throw new System.Exception("Упс! Что-то пошло не так");
 
                 foreach (var material in from material in materials let res = materialsList.FirstOrDefault(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty) select material)
                 {

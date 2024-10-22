@@ -40,7 +40,7 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 var result = await _mediator.Send(query);
 
-                if (result.RefreshToken == null) throw new Exception("Error");
+                if (result.RefreshToken == null) throw new Exception("Упс! Что-то пошло не так");
 
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                 {
@@ -87,9 +87,9 @@ namespace CES.DocManager.WebApi.Controllers
                     RefreshToken = token
                 });
 
-                if (result.AccessToken == null) throw new SystemException("Error");
+                if (result.AccessToken == null) throw new SystemException("Упс! Что-то пошло не так");
 
-                if (result.RefreshToken == null) throw new SystemException("Error");
+                if (result.RefreshToken == null) throw new SystemException("Упс! Что-то пошло не так");
 
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
                     {

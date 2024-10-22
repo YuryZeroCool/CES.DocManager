@@ -29,7 +29,7 @@ namespace CES.Domain.Handlers.Mes.Notes
                .ToList();
                 return await Task.FromResult(res.Select(p => _mapper.Map<GetAllNotesResponse>(p)).ToList());
             }
-            throw new System.Exception("Error");
+            throw new System.Exception("Упс! Что-то пошло не так");
         }
     }
 }

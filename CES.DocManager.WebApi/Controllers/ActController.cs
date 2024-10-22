@@ -6,6 +6,7 @@ using CES.Domain.Models.Response.Act;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Globalization;
 using System.Net;
 
@@ -103,8 +104,9 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
                 return res;
             }
-            catch
+            catch(Exception e)
             {
+
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
                 return new ErrorResponse("Упс! Что-то пошло не так");
             }

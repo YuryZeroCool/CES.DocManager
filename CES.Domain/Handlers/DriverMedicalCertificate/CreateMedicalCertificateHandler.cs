@@ -25,7 +25,7 @@ namespace CES.Domain.Handlers.DriverMedicalCertificate
             var res = _ctx.Employees 
                 .FirstOrDefault(x => x.FirstName == request.FirstName && x.LastName == request.LastName);
 
-            if (res == null) throw new System.Exception("Error");
+            if (res == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             request.EmployeeId = res.Id;
 
@@ -37,7 +37,7 @@ namespace CES.Domain.Handlers.DriverMedicalCertificate
             {
                 return await Task.FromResult(_mapper.Map<EmployeeEntity, GetEmployeesByDivisionResponse>(medical.Entity.Employee));
             }
-            throw new System.Exception("Error");
+            throw new System.Exception("Упс! Что-то пошло не так");
         }
     }
 }

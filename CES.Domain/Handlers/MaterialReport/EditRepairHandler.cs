@@ -18,7 +18,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
             var repair = await _ctx.DecommissionedMaterials.FindAsync(request.RepairId, cancellationToken);
 
-            if (repair == null) throw new System.Exception("Error");
+            if (repair == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             var date = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(repair.Materials);
             

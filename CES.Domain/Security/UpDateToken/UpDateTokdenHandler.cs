@@ -28,7 +28,7 @@ namespace CES.Domain.Security.UpDateToken
             if (_refreshToken.ValidateToken(request.RefreshToken))
             {
                 var user = await _userMgr.FindByEmailAsync(request.EmailAddress);
-                if (user == null) throw new TokenException(HttpStatusCode.Unauthorized, "Error");
+                if (user == null) throw new TokenException(HttpStatusCode.Unauthorized, "Упс! Что-то пошло не так");
 
                 var token = await _userMgr.GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken");
 

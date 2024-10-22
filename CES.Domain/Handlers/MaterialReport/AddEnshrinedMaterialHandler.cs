@@ -27,7 +27,7 @@ namespace CES.Domain.Handlers.MaterialReport
             
             var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.Party, cancellationToken);
 
-            if (party == null || party.ProductId == 0) throw new System.Exception("Error");
+            if (party == null || party.ProductId == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
             var product = await _ctx.Products
                 .Include(p => p.Unit)
@@ -35,7 +35,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 .Include(p => p.Parties)
                 .FirstOrDefaultAsync(x => x.Id == party.ProductId, cancellationToken);
 
-            if (product == null || product.Parties == null || product.Parties.Count == 0) throw new System.Exception("Error");
+            if (product == null || product.Parties == null || product.Parties.Count == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
             if (_ctx.EnshrinedMaterial.Any(x => x.VehicleBrand == request.Brand &&
                x.NumberPlateCar == request.NumberPlateOfCar && x.NameParty == request.Party)) // если существует такой закрепленный материал
@@ -46,7 +46,7 @@ namespace CES.Domain.Handlers.MaterialReport
                     x.NumberPlateCar == request.NumberPlateOfCar &&
                     x.NameParty == request.Party, cancellationToken);
 
-                if (enshrinedMaterial == null) throw new System.Exception("Error");
+                if (enshrinedMaterial == null) throw new System.Exception("Упс! Что-то пошло не так");
                 enshrinedMaterial.Count += request.Count;
                 _ctx.EnshrinedMaterial.Update(enshrinedMaterial);
 

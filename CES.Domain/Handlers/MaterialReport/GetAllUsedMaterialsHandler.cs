@@ -27,7 +27,7 @@ namespace CES.Domain.Handlers.MaterialReport
             if (data == null) return new List<GetAllUsedMaterialsResponse>();
 
             var materials = JsonSerializer.Deserialize<List<UsedMaterial>>(data.Materials);
-            if (materials == null) throw new SystemException("Error");
+            if (materials == null) throw new SystemException("Упс! Что-то пошло не так");
 
             return await Task.FromResult(materials.Select(p => _mapper.Map<GetAllUsedMaterialsResponse>(p)).ToList());
         }

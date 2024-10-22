@@ -24,7 +24,7 @@ namespace CES.Domain.Handlers.MaterialReport
             {
               return await Task.FromResult(_mapper.Map<List<CES.Domain.Models.Unit>>( await _ctx.Units.ToListAsync(cancellationToken)));
             }
-            throw new System.Exception("Error");
+            throw new System.Exception("Упс! Что-то пошло не так");
         }
     }
 }

@@ -77,7 +77,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                if (file.Length == 0) throw new Exception("Error");
+                if (file.Length == 0) throw new Exception("Упс! Что-то пошло не так");
                 var stream = new FuelWorkCardRequest
                 {
                     FuelWorkCardFile = file,

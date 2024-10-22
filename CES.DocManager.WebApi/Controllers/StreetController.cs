@@ -43,7 +43,7 @@ namespace CES.DocManager.WebApi.Controllers
                     }
                     return data;
                 }
-                throw new Exception("Error");
+                throw new Exception("Упс! Что-то пошло не так");
             }
             catch (Exception e)
             {

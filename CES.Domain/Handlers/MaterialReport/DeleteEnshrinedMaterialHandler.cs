@@ -18,12 +18,12 @@ namespace CES.Domain.Handlers.MaterialReport
         {
             var enshrinedMaterial =  await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x => x.Id == request.MaterialId,cancellationToken);
 
-            if (enshrinedMaterial == null) throw new System.Exception("Error");
+            if (enshrinedMaterial == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.NameParty,cancellationToken);
 
             var unit = await _ctx.Units.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.Unit,cancellationToken);
-            if (unit == null) throw new System.Exception("Error");
+            if (unit == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             var account = await _ctx.ProductsGroupAccount
             .FirstOrDefaultAsync(x => x.AccountName == enshrinedMaterial.AccountName,cancellationToken);
@@ -59,7 +59,7 @@ namespace CES.Domain.Handlers.MaterialReport
             {
                 var par = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.NameParty,cancellationToken);
 
-                if (par == null) throw new System.Exception("Error");
+                if (par == null) throw new System.Exception("Упс! Что-то пошло не так");
 
                 par.Count += enshrinedMaterial.Count;
                 par.TotalSum = (decimal)par.Count * par.Price;

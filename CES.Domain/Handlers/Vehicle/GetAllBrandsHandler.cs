@@ -23,7 +23,7 @@ namespace CES.Domain.Handlers.Vehicle
         {
             var date =  await _ctx.VehicleBrands.Select(p =>
                 _mapper.Map<GetAllBrandsResponse>(p)).ToListAsync(cancellationToken);
-            if (date == null) throw new System.Exception("Error");
+            if (date == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             return await Task.FromResult(date);
         }

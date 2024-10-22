@@ -24,7 +24,7 @@ namespace CES.Domain.Handlers.MaterialReport
         {
             var material =  await _ctx.EnshrinedMaterial.FindAsync(request.Id, cancellationToken);
 
-            if (material == null) throw new System.Exception("Error");
+            if (material == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             var countNew = material.Count;
 

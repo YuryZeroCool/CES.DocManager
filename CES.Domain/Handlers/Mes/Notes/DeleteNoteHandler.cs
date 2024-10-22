@@ -17,7 +17,7 @@ namespace CES.Domain.Handlers.Mes.Notes
         public async Task<int> Handle(DeleteNoteRequest request, CancellationToken cancellationToken)
         {
             var note = await _ctx.NoteEntities.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
-            if (note == null) throw new System.Exception("Error");
+            if (note == null) throw new System.Exception("Упс! Что-то пошло не так");
             _ctx.NoteEntities.Remove(note);
             await _ctx.SaveChangesAsync(cancellationToken);
             return await Task.FromResult(note.Id);

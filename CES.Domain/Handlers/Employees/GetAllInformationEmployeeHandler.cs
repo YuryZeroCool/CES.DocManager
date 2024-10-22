@@ -19,7 +19,7 @@ namespace CES.Domain.Handlers.Employees
             object query;
             var emp = await _ctx.Employees.FirstOrDefaultAsync(emp =>
                 emp.LastName == request.LastName && emp.FirstName == request.FirstName, cancellationToken);
-            if (emp == null) throw new System.Exception("Error");
+            if (emp == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             var empId = emp.Id;
 

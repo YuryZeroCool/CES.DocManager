@@ -28,10 +28,10 @@ namespace CES.Domain.Handlers.MaterialReport
                 .Include(p => p.CarMechanic)
                 .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
-            if (material == null) throw new System.Exception("Error");
+            if (material == null) throw new System.Exception("Упс! Что-то пошло не так");
                var materials =  JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(material.Materials);
 
-            if (materials == null) throw new System.Exception("Error");
+            if (materials == null) throw new System.Exception("Упс! Что-то пошло не так");
 
 
             foreach (var mater in materials)

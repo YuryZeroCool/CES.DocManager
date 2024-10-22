@@ -25,7 +25,7 @@ namespace CES.Domain.Handlers.MaterialReport
             if (request.Accounts != null)
             {
                 var arrAccounts = request.Accounts.Split(", ").ToList();
-                if (arrAccounts == null) throw new System.Exception("Error");
+                if (arrAccounts == null) throw new System.Exception("Упс! Что-то пошло не так");
                 var totalMaterials = new List<GetTotalMaterialsResponse>();
 
                 foreach (var item in arrAccounts)
@@ -47,7 +47,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 }
                 return await Task.FromResult(totalMaterials);
             }
-            throw new SystemException("Error");
+            throw new SystemException("Упс! Что-то пошло не так");
         }
     }
 }

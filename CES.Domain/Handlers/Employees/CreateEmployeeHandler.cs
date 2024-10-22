@@ -24,7 +24,7 @@ namespace CES.Domain.Handlers.Employees
         {
             var divisionNumberId = await _docManagerCtx.Divisions.FirstOrDefaultAsync(x =>
                 x.Name == request.DivisionNumber, cancellationToken);
-            if (divisionNumberId == null) throw new SystemException("Error");
+            if (divisionNumberId == null) throw new SystemException("Упс! Что-то пошло не так");
 
             var employee = _mapper.Map<EmployeeEntity>(request);
             employee.DivisionNumber = divisionNumberId;
@@ -32,7 +32,7 @@ namespace CES.Domain.Handlers.Employees
             await _docManagerCtx.SaveChangesAsync(cancellationToken);
 
             var res = _mapper.Map<CreateEmployeeResponse>(employee);
-            if (res == null) throw new System.Exception("Error");
+            if (res == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             res.DivisionNumber = employee.DivisionNumber.Name;
             return await Task.FromResult(res);

@@ -23,8 +23,8 @@ namespace CES.Domain.Handlers.FuelReport
         {
             var date = new List<GetAllDivisionsWorkScheduleResponse>();
             DateTime period = new(
-                _date.GetYear(request.Period ?? throw new System.Exception("Error")),
-                _date.GetMonth(request.Period ?? throw new System.Exception("Error")),
+                _date.GetYear(request.Period ?? throw new System.Exception("Упс! Что-то пошло не так")),
+                _date.GetMonth(request.Period ?? throw new System.Exception("Упс! Что-то пошло не так")),
                 1);
 
             foreach (var item in await _ctx.WorkCardDivisions.Where(p =>

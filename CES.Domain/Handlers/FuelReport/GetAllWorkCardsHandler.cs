@@ -67,7 +67,7 @@ namespace CES.Domain.Handlers.FuelReport
                 }
                 else
                 {
-                    var workDates = JsonSerializer.Deserialize<ICollection<DateTime>>(dates!.Date) ?? throw new System.Exception("Error");
+                    var workDates = JsonSerializer.Deserialize<ICollection<DateTime>>(dates!.Date) ?? throw new System.Exception("Упс! Что-то пошло не так");
                     foreach (var car in allCars!.NumberPlateOfCars!)
                     {
                         var card = await _ctx.FuelWorkCards!

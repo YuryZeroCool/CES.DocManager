@@ -23,12 +23,12 @@ namespace CES.Domain.Handlers.Vehicle
         {
             var brand = await _ctx.VehicleBrands.FirstOrDefaultAsync(x => x.Name == request.Brand, cancellationToken);
 
-            if (brand == null)  throw new System.Exception("Error");
+            if (brand == null)  throw new System.Exception("Упс! Что-то пошло не так");
 
             var models = await _ctx.VehicleModels
                 .Where(x => x.VehicleBrand == brand).ToListAsync(cancellationToken);
 
-            if (models == null) throw new System.Exception("Error");
+            if (models == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             var date = new List<GetAllNumbersPlateResponse>();
 

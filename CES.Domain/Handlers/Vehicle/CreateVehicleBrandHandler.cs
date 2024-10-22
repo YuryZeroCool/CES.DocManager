@@ -30,7 +30,7 @@ namespace CES.Domain.Handlers.Vehicle
 
             var brand = await _ctx.VehicleBrands.FirstOrDefaultAsync(p =>
                 p.Name == request.Brand, cancellationToken);
-            if (brand == null) throw new System.Exception("Error");
+            if (brand == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             return  await Task.FromResult(_mapper.Map<VehicleBrandEntity, GetVehicleBrandResponse>(brand));
         }

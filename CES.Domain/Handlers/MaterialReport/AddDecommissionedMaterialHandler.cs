@@ -24,14 +24,14 @@ namespace CES.Domain.Handlers.MaterialReport
         }
         public async Task<AddDecommissionedMaterialResponse> Handle(AddDecommissionedMaterialRequest request, CancellationToken cancellationToken)
         {
-            if(request.Materials == null || request.Materials.Count == 0) throw new System.Exception("Error");
+            if(request.Materials == null || request.Materials.Count == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
             foreach (var material in request.Materials)
             {
                var enshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x =>
                    x.Id == material.Id, cancellationToken);
 
-                if (enshrinedMaterial == null || material.Count == 0) throw new System.Exception("Error");
+                if (enshrinedMaterial == null || material.Count == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
                 var difference = Math.Abs(material.Count * .00001);
 
@@ -42,17 +42,17 @@ namespace CES.Domain.Handlers.MaterialReport
                 else
                 {
                     enshrinedMaterial.Count -= material.Count;
-                    if (enshrinedMaterial.Count < 0) throw new System.Exception("Error");
+                    if (enshrinedMaterial.Count < 0) throw new System.Exception("Упс! Что-то пошло не так");
                     _ctx.Update(enshrinedMaterial);
                 }
                 _materials.Add(material);
                 _numberPlateOfCar = await _ctx.NumberPlateOfCar
                     .FirstOrDefaultAsync(x => x.Number == material.NumberPlateCar,cancellationToken);
-                if(_numberPlateOfCar == null) throw new System.Exception("Error");
+                if(_numberPlateOfCar == null) throw new System.Exception("Упс! Что-то пошло не так");
             }
             var mechanic = await _ctx.CarMechanics.FirstOrDefaultAsync(x =>
                 x.FIO == request.CarMechanic, cancellationToken);
-            if (mechanic == null) throw new System.Exception("Error");
+            if (mechanic == null) throw new System.Exception("Упс! Что-то пошло не так");
             var decommissionMaterial = new DecommissionedMaterialEntity()
             {
                 CurrentDate = request.CurrentDate,

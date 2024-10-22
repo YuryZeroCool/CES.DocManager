@@ -41,7 +41,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 if (await _ctx.Parties.AnyAsync(x => x.Name == request.partyName
                 && x.Product!.Name == request.Name, cancellationToken))
                 {
-                    var material = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.partyName && x.Product!.Name == request.Name, cancellationToken) ?? throw new System.Exception("Error");
+                    var material = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.partyName && x.Product!.Name == request.Name, cancellationToken) ?? throw new System.Exception("Упс! Что-то пошло не так");
                     material.Count += request.Count;
                     material.TotalSum = (decimal)material.Count * material.Price;
                     updatedMaterial = _ctx.Parties.Update(material).Entity;
@@ -81,7 +81,7 @@ namespace CES.Domain.Handlers.MaterialReport
                             TotalSum = updatedMaterial.TotalSum
                         });
                     }
-                    throw new System.Exception("Error");
+                    throw new System.Exception("Упс! Что-то пошло не так");
             }
             throw new NotImplementedException();
         }

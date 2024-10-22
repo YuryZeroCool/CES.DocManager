@@ -28,7 +28,7 @@ namespace CES.Domain.Handlers.Mes.OrganizationTypes
                     return await Task.FromResult(_mapper.Map<List<GetOrganizationTypesResponse>>(res));
                 }
             }
-            throw new System.Exception("Error");
+            throw new System.Exception("Упс! Что-то пошло не так");
         }
     }
 }

@@ -24,7 +24,7 @@ namespace CES.Domain.Handlers.FuelReport
 
         public async Task<int> Handle(FuelWorkCardRequest request, CancellationToken cancellationToken)
         {
-            if (request.FuelWorkCardFile == null) throw new System.Exception("Error");
+            if (request.FuelWorkCardFile == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             await using (_fs = request.FuelWorkCardFile.OpenReadStream())
             {
@@ -36,7 +36,7 @@ namespace CES.Domain.Handlers.FuelReport
                 var rows = _wk.GetSheetAt(i);
                 if (rows == null || rows.LastRowNum == 0) continue;
 
-                var row = rows.GetRow(1).GetCell(0).ToString() ?? throw new System.Exception("Error");
+                var row = rows.GetRow(1).GetCell(0).ToString() ?? throw new System.Exception("Упс! Что-то пошло не так");
 
                 var carId = await _ctx.NumberPlateOfCar.FirstOrDefaultAsync(p =>
                 row.Contains(p.Number!.Trim()), cancellationToken);
@@ -142,7 +142,7 @@ namespace CES.Domain.Handlers.FuelReport
         }
         private DateTime GetDate(string date)
         {
-            if (string.IsNullOrEmpty(date)) throw new System.Exception("Error");
+            if (string.IsNullOrEmpty(date)) throw new System.Exception("Упс! Что-то пошло не так");
 
             var strDate = date.Split(".").Reverse().ToList();
             var newDate = String.Join('-', strDate);

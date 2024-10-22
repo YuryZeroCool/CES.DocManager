@@ -24,7 +24,7 @@ namespace CES.Domain.Handlers.MaterialReport
         {
             var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.PartyName, cancellationToken);
 
-            if (party == null || party.ProductId == 0) throw new System.Exception("Error");
+            if (party == null || party.ProductId == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
             var product = await _ctx.Products
                 .Include(p => p.Unit)
@@ -32,7 +32,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 .Include(p => p.Parties)
                 .FirstOrDefaultAsync(x => x.Id == party.ProductId, cancellationToken);
 
-            if (product == null || product.Parties == null || product.Parties.Count == 0) throw new System.Exception("Error");
+            if (product == null || product.Parties == null || product.Parties.Count == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
             var difference = Math.Abs(party.Count * .00001);
 
@@ -49,7 +49,7 @@ namespace CES.Domain.Handlers.MaterialReport
             {
                  party.Count -= request.Count;
 
-                if (party.Count < 0) throw new System.Exception("Error");
+                if (party.Count < 0) throw new System.Exception("Упс! Что-то пошло не так");
 
                 _ctx.Parties.Update(party);
             }
@@ -84,11 +84,11 @@ namespace CES.Domain.Handlers.MaterialReport
             {
                 var data = await _ctx.UsedMaterials.FirstOrDefaultAsync(x => x.Period == currentDate, cancellationToken);
 
-                if (data == null) throw new SystemException("Error");
+                if (data == null) throw new SystemException("Упс! Что-то пошло не так");
 
                 var res = JsonSerializer.Deserialize<List<UsedMaterial>>(data.Materials);
 
-                if (res == null) throw new SystemException("Error");
+                if (res == null) throw new SystemException("Упс! Что-то пошло не так");
 
                 var index = res.FindIndex(x => x.NameParty == request.PartyName);
 
@@ -119,7 +119,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
             var lastMaterial = JsonSerializer.Deserialize<List<UsedMaterial>>(updatedMaterial!.Materials);
 
-            if (lastMaterial == null) throw new SystemException("Error");
+            if (lastMaterial == null) throw new SystemException("Упс! Что-то пошло не так");
                 
             return await Task.FromResult(_mapper.Map<AddUsedMaterialResponse>(lastMaterial.FirstOrDefault(x => x.NameParty == request.PartyName)));
         }

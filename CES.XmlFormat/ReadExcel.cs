@@ -42,7 +42,7 @@ namespace CES.XmlFormat
         {
             _SheetsArr = new List<List<FuelWorkAccountingCardEntity>>();
 
-            if (_workbook == null) throw new SystemException("Error");
+            if (_workbook == null) throw new SystemException("Упс! Что-то пошло не так");
 
                 for (var i = 0; i < _workbook.NumberOfSheets; i++)
                 {

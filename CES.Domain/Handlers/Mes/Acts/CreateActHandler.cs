@@ -31,9 +31,9 @@ namespace CES.Domain.Handlers.Mes.Acts
             {
                 foreach (var notesWithoutAct in request.NotesWithoutAct)
                 {
-                    if( await _ctx.NoteEntities.AnyAsync(x => x.Id == notesWithoutAct.Id &&x.Act != null, cancellationToken))
+                    if( await _ctx.NoteEntities.AnyAsync(x => x.Id == notesWithoutAct.Id && x.Act != null, cancellationToken))
                     {
-                        throw new System.Exception("Error");
+                        throw new System.Exception("Упс! Что-то пошло не так");
                     }
                 }
                 var entityAct = await _ctx.Act.AddAsync(new ActEntity()
@@ -41,21 +41,21 @@ namespace CES.Domain.Handlers.Mes.Acts
                     ActDateOfCreation = DateTime.Now,
                     DateOfWorkCompletion = request.ActAdditionDate,
                     Employee = await _ctx.Employees
-                    .FirstOrDefaultAsync(x => x.LastName + " " + x.FirstName == request.Driver, cancellationToken)
-                    ?? throw new System.Exception("Error"),
+                    .FirstOrDefaultAsync(x => x.LastName.Trim() + " " + x.FirstName.Trim() == request.Driver, cancellationToken)
+                    ?? throw new System.Exception("Упс! Что-то пошло не так"),
                     Organization = await _ctx.OrganizationEntities
-                    .FirstOrDefaultAsync(x => x.Name == request.Organization.Trim(), cancellationToken)
-                    ?? throw new System.Exception("Error"),
+                    .FirstOrDefaultAsync(x => x.Name.Trim() == request.Organization.Trim(), cancellationToken)
+                    ?? throw new System.Exception("Упс! Что-то пошло не так"),
                     NumberPlateOfCar = await _ctx.NumberPlateOfCar
                     .FirstOrDefaultAsync(x => request.Vehicle.Trim().Contains(x!.Number!), cancellationToken)
-                    ?? throw new System.Exception("Error"),
+                    ?? throw new System.Exception("Упс! Что-то пошло не так"),
                     Total = request.TotalActSumm,
                     Vat = request.Vat == 0 ? null : request.Vat,
                     ActType = await _ctx.ActTypes
-                    .FirstOrDefaultAsync(x => x.Name == request.ActType.Trim(), cancellationToken)
-                    ?? throw new System.Exception("Error"),
+                    .FirstOrDefaultAsync(x => x.Name.Trim() == request.ActType.Trim(), cancellationToken)
+                    ?? throw new System.Exception("Упс! Что-то пошло не так"),
                     WorkPerformAct=  JsonSerializer.Serialize(request.CompletedWorks)
-                    ?? throw new System.Exception("Error")
+                    ?? throw new System.Exception("Упс! Что-то пошло не так")
                 }, cancellationToken);
                 await _ctx.SaveChangesAsync(cancellationToken);
                 foreach (var notesWithoutAct in request.NotesWithoutAct)

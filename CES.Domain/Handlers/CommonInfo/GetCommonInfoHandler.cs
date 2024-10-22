@@ -34,23 +34,6 @@ namespace CES.Domain.Handlers.CommonInfo
                      .FirstOrDefaultAsync(x => x.Name == division.Name, cancellationToken);
                 var info = new List<GetCommonInfoResponse>();
 
-                //if (data == null || data.NumberPlateOfCars == null) throw new System.Exception("Error");
-
-                /*foreach (var item in data.NumberPlateOfCars)
-                {
-                    var carModel = cars
-                        .Select(x => x.VehiclesModels
-                            .FirstOrDefault(c => c.Id == item.VehicleModelId))
-                        .FirstOrDefault(el => el != null );
-                    info.Add(new GetCommonInfoResponse()
-                    {
-                        Id = item.Id,
-                        GarageNumber = item.GarageNumber,
-                        NumberPlateOfCar = item.Number,
-                        VehicleModel = carModel?.VehicleBrand?.Name + " " + carModel?.Name
-                    });
-                }*/
-
                 foreach (var item in data.EmployeeEntities)
                 {
                     foreach (var elem in info)

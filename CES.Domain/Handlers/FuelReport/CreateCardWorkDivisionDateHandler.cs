@@ -21,11 +21,11 @@ namespace CES.Domain.Handlers.FuelReport
         }
         public async Task<CreateCardWorkDivisionDateResponse> Handle(CreateCardWorkDivisionDateRequest request, CancellationToken cancellationToken)
         {
-            if (request == null) throw new System.Exception("Error");
+            if (request == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             ICollection<DateTime> dates = new List<DateTime>();
 
-            foreach (var item in request.Dates ?? throw new System.Exception("Error"))
+            foreach (var item in request.Dates ?? throw new System.Exception("Упс! Что-то пошло не так"))
             {
                 dates.Add( _date.SplitDate(item));
             }
@@ -34,9 +34,9 @@ namespace CES.Domain.Handlers.FuelReport
 
             if (_ctx.WorkCardDivisions.Any(p => p.PeriodReport == period
             && p.Division == request.Division)) 
-                throw new System.Exception("Error");
+                throw new System.Exception("Упс! Что-то пошло не так");
 
-            if (request.Division == null) throw new System.Exception("Error");
+            if (request.Division == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             await _ctx.WorkCardDivisions.AddAsync(new WorkCardDivisionsEntity()
             {
@@ -50,11 +50,11 @@ namespace CES.Domain.Handlers.FuelReport
             var db = await _ctx.WorkCardDivisions.FirstOrDefaultAsync(x => x.PeriodReport == period
             && x.Division == request.Division, cancellationToken);
 
-            if (db == null) throw new System.Exception("Error");
+            if (db == null) throw new System.Exception("Упс! Что-то пошло не так");
               
             var datesNew = new List<string>();
             var datesCollection = JsonSerializer.Deserialize<ICollection<string>>(db.Date);
-            if (datesCollection == null) throw new System.Exception("Error");
+            if (datesCollection == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             foreach (var item in datesCollection)
             {

@@ -32,13 +32,13 @@ namespace CES.Domain.Handlers.MaterialReport
               .Include(p => p.NumberPlateOfCar)
               .FirstOrDefaultAsync(p => p.Id == request.Id,cancellationToken);
 
-            if (decommissionedMaterials == null) throw new System.Exception("Error");
+            if (decommissionedMaterials == null) throw new System.Exception("Упс! Что-то пошло не так");
 
                 var materials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(decommissionedMaterials.Materials);
 
-                if (decommissionedMaterials.NumberPlateOfCar == null) throw new System.Exception("Error");
+                if (decommissionedMaterials.NumberPlateOfCar == null) throw new System.Exception("Упс! Что-то пошло не так");
 
-                if (materials == null) throw new System.Exception("Error");
+                if (materials == null) throw new System.Exception("Упс! Что-то пошло не так");
 
                 sheet.Range[$"C4"].Value = $"{materials[0].VehicleBrand + "-" + materials[0].VehicleModel}";
                 sheet.Range[$"G4"].Value = $"{decommissionedMaterials.NumberPlateOfCar.Number}";
@@ -72,7 +72,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
             var bytes = await File.ReadAllBytesAsync(pathPdf, cancellationToken);
 
-            if (bytes == null) throw new SystemException("Error");
+            if (bytes == null) throw new SystemException("Упс! Что-то пошло не так");
             var res = Convert.ToBase64String(bytes);
             
             return await Task.FromResult(res);
@@ -102,7 +102,7 @@ namespace CES.Domain.Handlers.MaterialReport
                     return arrMonths[i-1];
                 }
             }
-            throw new System.Exception("Error");
+            throw new System.Exception("Упс! Что-то пошло не так");
         }
     }
 }

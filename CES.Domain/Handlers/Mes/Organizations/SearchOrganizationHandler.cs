@@ -23,7 +23,7 @@ namespace CES.Domain.Handlers.Mes.Organizations
         public async Task<SearchOrganizationResponse> Handle(SearchOrganizationRequest request, CancellationToken cancellationToken)
         {
             List<OrganizationEntity> result;
-            if (request.Page <= 0) throw new System.Exception("Error");
+            if (request.Page <= 0) throw new System.Exception("Упс! Что-то пошло не так");
             int totalCount = 0;
             var offset = (request.Page - 1) * request.Limit;
             if (string.IsNullOrEmpty(request.Title))
