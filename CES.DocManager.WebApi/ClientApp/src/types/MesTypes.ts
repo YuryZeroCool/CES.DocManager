@@ -32,7 +32,7 @@ export interface EditNoteRequest extends ExistedNote {
   id: number;
 }
 
-export interface CreateNoteRequest extends ExistedNote {}
+export type CreateNoteRequest = ExistedNote;
 
 export interface IFullNoteData extends INote {
   street: string;
@@ -96,16 +96,6 @@ export interface SearchOrganization {
   title: string;
   page: number;
   limit: number;
-}
-
-export interface HeadSearchCell {
-  id: string;
-  name: string;
-}
-
-export interface SearchValueType {
-  id: string;
-  value: string;
 }
 
 export interface ActTypesFromFileResponse {
@@ -184,4 +174,22 @@ export interface ActsListRes {
 export interface StreetResponse {
   id: number;
   street: string
+}
+
+export interface NotesWithoutActsParams {
+  minDate: Date;
+  maxDate: Date;
+  filter: string[];
+  searchValue: string;
+  page: number;
+  limit: number;
+}
+
+export interface NotesWithoutActsReq {
+  minDate: string;
+  maxDate: string;
+  filter: string[];
+  searchValue: string;
+  page: number;
+  limit: number;
 }

@@ -6,11 +6,6 @@
   font-size: 16px;
 }
 
-.tableRow:not(.tableRow:nth-child(1)) .tableBodyCell  {
+.tableRow .tableBodyCell  {
   padding: 15px !important;
-}
-
-.tableRow:nth-child(1) .tableBodyCell  {
-  padding: 15px !important;
-  padding-top: 0 !important;
 }
