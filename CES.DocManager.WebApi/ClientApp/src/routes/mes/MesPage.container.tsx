@@ -10,9 +10,6 @@ import { changeMesPageType, resetTotalActSummVat } from '../../redux/reducers/me
 import { RootState } from '../../redux/reducers/combineReducers';
 import getAllNotes from '../../redux/actions/mes/getAllNotes';
 import searchOrganizations from '../../redux/actions/mes/searchOrganizations';
-import getNotesWithoutActs from '../../redux/actions/mes/getNotesWithoutActs';
-import getActTypesFromFile from '../../redux/actions/mes/getActTypesFromFile';
-import getActDataFromFile from '../../redux/actions/mes/getActDataFromFile';
 import getActsList from '../../redux/actions/mes/getActsList';
 import getOrganizationType from '../../redux/actions/mes/getOrganizationTypes';
 import handleError from '../../utils';
@@ -33,7 +30,6 @@ function MesPageContainer() {
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [selected, setSelected] = useState<number[]>([]);
   const [type, setType] = useState<string>('');
-  const [actTypeSelectValue, setActTypeSelectValue] = useState<string>('');
   const [currentActData, setCurrentActData] = useState<Act>({ type: '', works: [] });
   const [isEditModal, setIsEditModal] = useState<boolean>(false);
   const [filter, setFilter] = useState('');
@@ -76,7 +72,6 @@ function MesPageContainer() {
   const {
     mesPageType,
     allOrganizations,
-    actTypesFromFile,
     actDataFromFile,
     actsList,
     totalActsListCount,
@@ -135,16 +130,6 @@ function MesPageContainer() {
     if (mesPageType === 'Организации') {
       getOgranizations(activePage);
     }
-    if (mesPageType === 'Заявки без актов') {
-      dispatch(getActTypesFromFile())
-        .catch((error) => {
-          handleError(error, setMesError);
-        });
-      dispatch(getNotesWithoutActs())
-        .catch((error) => {
-          handleError(error, setMesError);
-        });
-    }
     if (mesPageType === 'История актов') {
       getActsListReq();
       dispatch(getOrganizationType())
@@ -159,21 +144,6 @@ function MesPageContainer() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mesPageType]);
-
-  useEffect(() => {
-    if (actTypeSelectValue !== '') {
-      const { fileName } = actTypesFromFile.filter((el) => (
-        `${el.actType} (${el.season.toLocaleLowerCase()})` === actTypeSelectValue
-      ))[0];
-
-      dispatch(getActDataFromFile(fileName))
-        .catch((error) => {
-          handleError(error, setMesError);
-        });
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actTypeSelectValue]);
 
   useEffect(() => {
     if (type) {
@@ -243,10 +213,6 @@ function MesPageContainer() {
     setSelected(newValue);
   };
 
-  const handleActTypeSelectChange = (value: string) => {
-    setActTypeSelectValue(value);
-  };
-
   const resetCurrentActData = () => {
     setCurrentActData({ type: '', works: [] });
   };
@@ -312,9 +278,6 @@ function MesPageContainer() {
       totalActsListPages={totalActsListCount}
       totalPage={allOrganizations.totalPage}
       selectedNotesId={selected}
-      actTypesFromFile={actTypesFromFile}
-      actTypeSelectValue={actTypeSelectValue}
-      actDataFromFile={actDataFromFile}
       currentActData={currentActData}
       type={type}
       addActModalOpened={addActModalOpened}
@@ -346,7 +309,6 @@ function MesPageContainer() {
       handleSearchButtonClick={handleSearchButtonClick}
       handleCurrentPageChange={handleCurrentPageChange}
       handleSelectNote={handleSelectNote}
-      handleActTypeSelectChange={handleActTypeSelectChange}
       resetCurrentActData={resetCurrentActData}
       changeType={changeType}
       handleCurrentActsListPageChange={handleCurrentActsListPageChange}

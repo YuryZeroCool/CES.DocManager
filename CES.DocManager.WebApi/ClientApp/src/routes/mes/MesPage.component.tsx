@@ -2,11 +2,8 @@ import React from 'react';
 import {
   ActionIcon,
   Button,
-  Combobox,
   Flex,
   Group,
-  Input,
-  InputBase,
   Radio,
   Select,
   Stack,
@@ -14,7 +11,6 @@ import {
   Text,
   TextInput,
   rem,
-  useCombobox,
 } from '@mantine/core';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import {
@@ -30,18 +26,16 @@ import NotesTable from '../../components/NotesTable/NotesTable.container';
 import AddOrganizationModal from '../../components/AddOrganizationModal/AddOrganizationModal.container';
 import OrganizationsTable from '../../components/OrganizationsTable/OrganizationsTable.container';
 import Pagination from '../../components/Pagination/Pagination.container';
-import NotesWithoutActsTableContainer from '../../components/NotesWithoutActsTable/NotesWithoutActsTable.container';
 import ActsListTable from '../../components/ActsListTable/ActsListTable.container';
 import ExistedNoteModal from '../../components/ExistedNoteModal/ExistedNoteModal.container';
 
 import {
   Act,
-  ActDataFromFileResponse,
-  ActTypesFromFileResponse,
   ActsList,
   OrganizationType,
 } from '../../types/MesTypes';
 import classes from './MesPage.module.scss';
+import NotesWithoutActs from './components/NotesWithoutActs';
 
 interface Props {
   mesError: string;
@@ -50,9 +44,6 @@ interface Props {
   page: number;
   totalPage: number;
   selectedNotesId: number[];
-  actTypesFromFile: ActTypesFromFileResponse[];
-  actTypeSelectValue: string;
-  actDataFromFile: ActDataFromFileResponse;
   currentActData: Act;
   type: string;
   addActModalOpened: boolean;
@@ -87,7 +78,6 @@ interface Props {
   handleSearchButtonClick: () => void;
   handleCurrentPageChange: (value: number) => void;
   handleSelectNote: (newValue: number[]) => void;
-  handleActTypeSelectChange: (value: string) => void;
   resetCurrentActData: () => void;
   changeType: (value: string) => void;
   handleCurrentActsListPageChange: (value: number) => void;
@@ -113,9 +103,6 @@ export default function MesPageComponent(props: Props) {
     page,
     totalPage,
     selectedNotesId,
-    actTypesFromFile,
-    actTypeSelectValue,
-    actDataFromFile,
     currentActData,
     type,
     addActModalOpened,
@@ -150,7 +137,6 @@ export default function MesPageComponent(props: Props) {
     handleSearchButtonClick,
     handleCurrentPageChange,
     handleSelectNote,
-    handleActTypeSelectChange,
     resetCurrentActData,
     changeType,
     handleCurrentActsListPageChange,
@@ -169,18 +155,6 @@ export default function MesPageComponent(props: Props) {
   } = props;
 
   const iconStyle = { width: rem(20), height: rem(20) };
-
-  const combobox = useCombobox({
-    onDropdownClose: () => combobox.resetSelectedOption(),
-  });
-
-  const options = actTypesFromFile.map((item) => (
-    <Combobox.Option value={`${item.actType} (${item.season.toLocaleLowerCase()})`} key={item.fileName}>
-      {item.actType}
-      &nbsp;
-      {`(${item.season.toLocaleLowerCase()})`}
-    </Combobox.Option>
-  ));
 
   const renderMesPageNavigation = () => (
     <Flex h={50} gap={10} pl={10} align="center">
@@ -209,47 +183,6 @@ export default function MesPageComponent(props: Props) {
         </Tabs.List>
       </Tabs>
     </Flex>
-  );
-
-  const renderActTypesSelect = () => (
-    <Combobox
-      store={combobox}
-      onOptionSubmit={(val) => {
-        handleActTypeSelectChange(val);
-        combobox.closeDropdown();
-      }}
-    >
-      <Combobox.Target>
-        <InputBase
-          component="button"
-          pointer
-          rightSection={<Combobox.Chevron />}
-          rightSectionPointerEvents="none"
-          onClick={() => combobox.toggleDropdown()}
-          styles={{
-            root: { minWidth: 250 },
-          }}
-        >
-          {actTypeSelectValue || <Input.Placeholder>Выберите тип акта</Input.Placeholder>}
-        </InputBase>
-      </Combobox.Target>
-
-      <Combobox.Dropdown>
-        <Combobox.Options>{options}</Combobox.Options>
-      </Combobox.Dropdown>
-    </Combobox>
-  );
-
-  const renderActsButtons = () => (
-    actDataFromFile.act.length !== 0 && actDataFromFile.act.map((act) => (
-      <Button
-        variant="gradient"
-        gradient={{ from: 'violet', to: 'blue', deg: 90 }}
-        onClick={() => handleAddActBtnClick(act.type)}
-      >
-        {act.type}
-      </Button>
-    ))
   );
 
   const renderActsListHeader = () => (
@@ -382,13 +315,6 @@ export default function MesPageComponent(props: Props) {
         </>
       )}
 
-      {mesPageType === 'Заявки без актов' && (
-        <>
-          {renderActTypesSelect()}
-          {renderActsButtons()}
-        </>
-      )}
-
       {mesPageType === 'История актов' && renderActsListHeader()}
 
       {mesPageType === 'Заявки' && (
@@ -482,22 +408,20 @@ export default function MesPageComponent(props: Props) {
     </Group>
   );
 
-  const renderNotesWithoutActsTable = () => (
-    <NotesWithoutActsTableContainer
-      mesError={mesError}
-      selectedNotesId={selectedNotesId}
-      handleSelectNote={handleSelectNote}
-    />
-  );
-
   return (
     <Stack className={classes.mesPageSection}>
       {renderMesPageNavigation()}
+      {mesPageType === 'Заявки без актов' && (
+        <NotesWithoutActs
+          selectedNotesId={selectedNotesId}
+          handleAddActBtnClick={handleAddActBtnClick}
+          handleSelectNote={handleSelectNote}
+        />
+      )}
       {renderTableHeader()}
       {mesPageType === 'Заявки' && renderNotesTable()}
       {mesPageType === 'Организации' && renderOrganizationsTable()}
       {mesPageType === 'Организации' && renderPagination()}
-      {mesPageType === 'Заявки без актов' && renderNotesWithoutActsTable()}
       {mesPageType === 'История актов' && renderActsListTable()}
       {mesPageType === 'История актов' && mesError === '' && actsList.length > 0 && renderCounPerPageButtons()}
       {(addActModalOpened || editActModalOpened) && (
