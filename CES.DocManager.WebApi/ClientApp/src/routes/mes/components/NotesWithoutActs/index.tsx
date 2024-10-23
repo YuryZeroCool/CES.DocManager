@@ -101,7 +101,7 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
     setNotesWithoutActsParams((prevState) => ({
       ...prevState,
       [key]: Array.isArray(prevState[key])
-        ? [...(prevState[key] as string[]), ...(Array.isArray(value) ? value : [value])]
+        ? [...(Array.isArray(value) ? value : [value])]
         : value,
     }));
   };
