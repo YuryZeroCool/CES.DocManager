@@ -166,28 +166,43 @@ const mesReducer = createSlice({
     },
     updateActTotalSumm: (state, action: PayloadAction<string>) => {
       let stateCopy: INotesState = state;
+
       const totalSumm = stateCopy.actDataFromFile.act.reduce((sum, act) => sum + act.works
         .reduce((workSum, work) => workSum + (work.totalSumm || 0), 0), 0);
+
+      const roundedTotalSumm = Math.round(totalSumm * 100) / 100;
+
+      const vat = action.payload !== 'Для жилых помещений'
+        ? Math.round((roundedTotalSumm / 6) * 100) / 100
+        : 0;
+
+      stateCopy = {
+        ...stateCopy,
+        totalActSumm: roundedTotalSumm.toFixed(2),
+        vat: vat.toFixed(2),
+      };
+
+      return stateCopy;
+    },
+
+    changeActTotalSumm: (state, action: PayloadAction<{ type: string, value: string }>) => {
+      let stateCopy: INotesState = state;
+
+      const totalSumm = Math.round(parseFloat(action.payload.value.replace(',', '.')) * 100) / 100;
+
+      const vat = action.payload.type !== 'Для жилых помещений'
+        ? Math.round((totalSumm / 6) * 100) / 100
+        : 0;
 
       stateCopy = {
         ...stateCopy,
         totalActSumm: totalSumm.toFixed(2),
-        vat: action.payload !== 'Для жилых помещений' ? (totalSumm / 6).toFixed(2) : '0',
+        vat: vat.toFixed(2),
       };
-      return stateCopy;
-    },
-    changeActTotalSumm: (state, action: PayloadAction<{ type: string, value: string }>) => {
-      let stateCopy: INotesState = state;
 
-      stateCopy = {
-        ...stateCopy,
-        totalActSumm: action.payload.value,
-        vat: action.payload.type !== 'Для жилых помещений'
-          ? (+action.payload.value.replace(',', '.') / 6).toFixed(2)
-          : '0',
-      };
       return stateCopy;
     },
+
     changeVat: (state, action: PayloadAction<string>) => {
       const stateCopy: INotesState = state;
       const regexp = /^[0-9]{0,}([,.0-9]{0,3})?$/g;
@@ -219,7 +234,7 @@ const mesReducer = createSlice({
           }
 
           if (value !== '') {
-            currentWork.totalSumm = +(currentWork.price * parseFloat(value.replace(',', '.'))).toFixed(2);
+            currentWork.totalSumm = Math.round(currentWork.price * parseFloat(value.replace(',', '.')) * 100) / 100;
           } else {
             currentWork.totalSumm = 0;
           }
