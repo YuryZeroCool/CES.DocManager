@@ -5,15 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CES.Domain.Handlers.Mes.Notes
 {
-    public class DeleteNoteHandler : IRequestHandler<DeleteNoteRequest, int>
+    public class DeleteNotesWithoutActHandler : IRequestHandler<DeleteNotesWithoutActRequest, int>
     {
         private readonly DocMangerContext _ctx;
 
-        public DeleteNoteHandler(DocMangerContext ctx)
+        public DeleteNotesWithoutActHandler(DocMangerContext ctx) 
         {
-            _ctx = ctx;
+            _ctx = ctx;        
         }
-        public async Task<int> Handle(DeleteNoteRequest request, CancellationToken cancellationToken)
+
+        public async Task<int> Handle(DeleteNotesWithoutActRequest request, CancellationToken cancellationToken)
         {
             if (_ctx.NoteEntities is not null)
             {

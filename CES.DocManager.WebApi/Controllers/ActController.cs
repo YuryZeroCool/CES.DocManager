@@ -39,8 +39,8 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new GetActsRequest()
                 {
-                    Min = DateTime.ParseExact(min.Split(" ")[0] + " " + "00:00:00", "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture),
-                    Max = DateTime.ParseExact(max.Split(" ")[0] + " " + "00:00:00", "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                    Min = DateTimeConverter.ConvertToDateTime(min, "yyyy-MM-dd HH:mm:ss"),
+                    Max = DateTimeConverter.ConvertToDateTime(max, "yyyy-MM-dd HH:mm:ss"),
                     OrganizationType = organizationType,
                     Page = page,
                     Limit = limit,

@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace CES.DocManager.WebApi.Services
+﻿namespace CES.DocManager.WebApi.Services
 {
     public class ErrorResponse
     {
