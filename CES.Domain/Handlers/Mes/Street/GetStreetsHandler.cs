@@ -12,7 +12,7 @@ namespace CES.Domain.Handlers.Mes.Street
 
         private readonly IMapper _mapper;
 
-        public GetStreetsHandler( DocMangerContext ctx, IMapper mapper)
+        public GetStreetsHandler(DocMangerContext ctx, IMapper mapper)
         {
             _ctx = ctx;
             _mapper = mapper;
@@ -21,7 +21,7 @@ namespace CES.Domain.Handlers.Mes.Street
         {
             if (_ctx.Streets != null)
             {
-                if(!string.IsNullOrEmpty(request.Value))
+                if (!string.IsNullOrEmpty(request.Value))
                 {
                     if (await _ctx.Streets.CountAsync(cancellationToken) == 0)
                         throw new System.Exception("Улицы не найдены");
@@ -35,7 +35,7 @@ namespace CES.Domain.Handlers.Mes.Street
                             )
                         .ToListAsync(cancellationToken);
                     return data is null ? throw new System.Exception("Улица не найдена")
-                        : await Task.FromResult(data.Select(p=>p.Name).ToList());
+                        : await Task.FromResult(data.Select(p => p.Name).ToList());
                 }
                 else
                 {

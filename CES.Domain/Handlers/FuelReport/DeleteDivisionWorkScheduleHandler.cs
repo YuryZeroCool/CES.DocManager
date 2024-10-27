@@ -4,7 +4,7 @@ using MediatR;
 
 namespace CES.Domain.Handlers.FuelReport
 {
-    public class DeleteDivisionWorkScheduleHandler : IRequestHandler<DeleteDivisionWorkScheduleRequest,int>
+    public class DeleteDivisionWorkScheduleHandler : IRequestHandler<DeleteDivisionWorkScheduleRequest, int>
     {
         private readonly DocMangerContext _ctx;
 

@@ -19,7 +19,7 @@ namespace CES.Domain.Models.Response.Act
 
         public string Organization { get; set; } = string.Empty;
 
-        public string PayerAccountNumber { get; set; } = string.Empty ;
+        public string PayerAccountNumber { get; set; } = string.Empty;
 
         public decimal Total { get; set; }
 

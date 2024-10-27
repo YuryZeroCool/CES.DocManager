@@ -1,6 +1,4 @@
-﻿using CES.Infra.Models.Drivers;
-
-namespace CES.Infra.Models.Mes
+﻿namespace CES.Infra.Models.Mes
 {
     public class ActEntity
     {
@@ -30,8 +28,8 @@ namespace CES.Infra.Models.Mes
 
         public ActTypeEntity? ActType { get; set; }
 
-        public string? WorkPerformAct {get;set;}
+        public string? WorkPerformAct { get; set; }
 
-        public ICollection<NoteEntity>? Notes { get; set; } = new List <NoteEntity> ();
+        public ICollection<NoteEntity>? Notes { get; set; } = new List<NoteEntity>();
     }
 }

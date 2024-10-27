@@ -28,7 +28,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                return await _mediator.Send(new GetAllDivisionsWorkScheduleRequest() { Period = period});
+                return await _mediator.Send(new GetAllDivisionsWorkScheduleRequest() { Period = period });
             }
             catch (Exception e)
             {
@@ -59,7 +59,7 @@ namespace CES.DocManager.WebApi.Controllers
 
         [HttpPost("divisionWorkSchedule")]
         [Produces(typeof(CreateCardWorkDivisionDateResponse))]
-        public async Task<object> CardWorkDivisionDateAsync( CreateCardWorkDivisionDateRequest createCard)
+        public async Task<object> CardWorkDivisionDateAsync(CreateCardWorkDivisionDateRequest createCard)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace CES.DocManager.WebApi.Controllers
             try
             {
                 HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                return await _mediator.Send(new DeleteDivisionWorkScheduleRequest() { IdDivison = idDivision});
+                return await _mediator.Send(new DeleteDivisionWorkScheduleRequest() { IdDivison = idDivision });
             }
             catch (Exception e)
             {

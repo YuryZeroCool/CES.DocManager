@@ -12,7 +12,7 @@ namespace CES.Domain.Handlers.Mes.Acts
 
         private readonly List<GetActTypesFromFileResponse> _actNames;
 
-        public GetActTypesFromFileHandler(IWebHostEnvironment environment) 
+        public GetActTypesFromFileHandler(IWebHostEnvironment environment)
         {
             _environment = environment;
             _actNames = new List<GetActTypesFromFileResponse>();
@@ -25,7 +25,7 @@ namespace CES.Domain.Handlers.Mes.Acts
             {
                 foreach (var item in Directory.GetFiles(path))
                 {
-                    if(item is not null) 
+                    if (item is not null)
                     {
                         var json = JsonConvert.DeserializeObject<GetActTypesFromFileResponse>(await File.ReadAllTextAsync(item, cancellationToken));
                         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
@@ -45,8 +45,8 @@ namespace CES.Domain.Handlers.Mes.Acts
                                 json.FileName = item.Split("/").Last().Split(".").First();
                                 _actNames.Add(json);
                             }
-                        }  
-                    }              
+                        }
+                    }
                 }
                 return await Task.FromResult(_actNames);
             }

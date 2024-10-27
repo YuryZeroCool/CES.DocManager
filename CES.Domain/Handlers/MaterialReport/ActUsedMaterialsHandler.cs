@@ -30,9 +30,9 @@ namespace CES.Domain.Handlers.MaterialReport
             var materials = JsonSerializer.Deserialize<List<UsedMaterial>>(usedMaterials.Materials);
 
             if (materials == null) throw new SystemException("Упс! Что-то пошло не так");
-             materials=  materials.OrderBy(p => p.NameMaterial).ToList();
+            materials = materials.OrderBy(p => p.NameMaterial).ToList();
             var workbook = new Workbook();
-            workbook.LoadFromFile(request.Path+"/Docs/materialAct.xls");
+            workbook.LoadFromFile(request.Path + "/Docs/materialAct.xls");
             var sheet = workbook.Worksheets[0];
 
             sheet.InsertRow(startRow, materials.Count);
@@ -88,7 +88,7 @@ namespace CES.Domain.Handlers.MaterialReport
             sheet.Range["K7"].Style.VerticalAlignment = VerticalAlignType.Center;
             sheet.Range["K7"].Style.Font.IsBold = true;
             sheet.Range["K7"].Text = request.Month < 10 ? $"0{request.Month}/{request.Year}" : $"{request.Month}/{request.Year}";
-            workbook.SaveToFile(request.Path+"/Docs/materialAct_Out.xls", ExcelVersion.Version97to2003);
+            workbook.SaveToFile(request.Path + "/Docs/materialAct_Out.xls", ExcelVersion.Version97to2003);
 
             return await File.ReadAllBytesAsync(request.Path + "/Docs/materialAct_Out.xls", cancellationToken);
         }

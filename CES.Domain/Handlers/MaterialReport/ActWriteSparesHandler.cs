@@ -23,7 +23,7 @@ namespace CES.Domain.Handlers.MaterialReport
             double totalCount = 0;
 
             var decommissionedMaterials = await _ctx.DecommissionedMaterials
-                .Where(x => 
+                .Where(x =>
                     x.CurrentDate.Month == request.Month &&
                     x.CurrentDate.Year == request.Year).ToListAsync(cancellationToken);
 
@@ -38,7 +38,7 @@ namespace CES.Domain.Handlers.MaterialReport
             for (var j = 0; j < materials.Count; j++)
             {
                 totalCount += materials[j].Count;
-                totalSum += materials[j].Price * (decimal)materials[j].Count; 
+                totalSum += materials[j].Price * (decimal)materials[j].Count;
 
                 sheet.SetRowHeight(startRow + j, 50);
 
@@ -91,7 +91,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
             workbook.SaveToFile(request.Path + "/Docs/materialAct_Out.xls", ExcelVersion.Version97to2003);
 
-            return await File.ReadAllBytesAsync(request.Path + "/Docs/materialAct_Out.xls", cancellationToken); 
+            return await File.ReadAllBytesAsync(request.Path + "/Docs/materialAct_Out.xls", cancellationToken);
         }
 
         private List<AddDecommissionedMaterial> JoinMaterials(List<DecommissionedMaterialEntity>? decommissionedMaterials)
@@ -102,7 +102,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
             foreach (var item in decommissionedMaterials)
             {
-               var  materials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(item.Materials);
+                var materials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(item.Materials);
 
                 if (materials == null) throw new System.Exception("Упс! Что-то пошло не так");
 
@@ -114,7 +114,7 @@ namespace CES.Domain.Handlers.MaterialReport
                     }
                     else
                     {
-                        var index =  materialsList.FindIndex(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty);
+                        var index = materialsList.FindIndex(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty);
                         materialsList[index].Count += material.Count;
                         if (!materialsList[index].VehicleBrand!.Contains(material.VehicleBrand!))
                         {
@@ -128,7 +128,7 @@ namespace CES.Domain.Handlers.MaterialReport
                     }
                 }
             }
-            
+
             return materialsList;
         }
     }

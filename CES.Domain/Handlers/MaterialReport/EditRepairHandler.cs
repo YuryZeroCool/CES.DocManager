@@ -21,7 +21,7 @@ namespace CES.Domain.Handlers.MaterialReport
             if (repair == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             var date = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(repair.Materials);
-            
+
             throw new NotImplementedException();
 
         }

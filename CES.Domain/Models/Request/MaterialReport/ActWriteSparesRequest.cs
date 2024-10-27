@@ -8,6 +8,6 @@ namespace CES.Domain.Models.Request.MaterialReport
 
         public int Year { get; set; }
 
-        public string? Path { get; set; } 
+        public string? Path { get; set; }
     }
 }

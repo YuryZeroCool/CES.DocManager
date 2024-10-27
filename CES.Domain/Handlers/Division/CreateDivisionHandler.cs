@@ -14,7 +14,7 @@ namespace CES.Domain.Handlers.Division
         private readonly DocMangerContext _docMangerContext;
         private readonly IMapper _mapper;
 
-        public CreateDivisionHandler(IMapper mapper, DocMangerContext ctx )
+        public CreateDivisionHandler(IMapper mapper, DocMangerContext ctx)
         {
             _mapper = mapper;
             _docMangerContext = ctx;

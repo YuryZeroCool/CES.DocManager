@@ -44,107 +44,107 @@ namespace CES.XmlFormat
 
             if (_workbook == null) throw new SystemException("Упс! Что-то пошло не так");
 
-                for (var i = 0; i < _workbook.NumberOfSheets; i++)
+            for (var i = 0; i < _workbook.NumberOfSheets; i++)
+            {
+                var rows = _workbook.GetSheetAt(i);
+                if (rows == null || rows.LastRowNum == 0) continue;
+
+                var rowsArr = new List<FuelWorkAccountingCardEntity>();
+
+                for (var j = 0; j < rows.LastRowNum; j++)
                 {
-                    var rows = _workbook.GetSheetAt(i);
-                    if (rows == null || rows.LastRowNum == 0) continue;
+                    var row = rows.GetRow(j);
+                    var isRow = row.GetCell(0).Address.FormatAsString();
+                    var cellA = row.GetCell(0).ToString();
 
-                    var rowsArr = new List<FuelWorkAccountingCardEntity>();
+                    var result = TryParse(cellA, out _);
 
-                    for (var j = 0; j < rows.LastRowNum; j++)
+                    if (cellA == "ИТОГО") break;
+
+                    if (isRow != null && cellA != "" && result)
                     {
-                        var row = rows.GetRow(j);
-                        var isRow = row.GetCell(0).Address.FormatAsString();
-                        var cellA = row.GetCell(0).ToString();
+                        var rowNew = new FuelWorkAccountingCardEntity();
 
-                        var result = TryParse(cellA, out _);
-
-                        if (cellA == "ИТОГО") break;
-
-                        if (isRow != null && cellA != "" && result)
+                        for (var k = 0; k < row.LastCellNum; k++)
                         {
-                            var rowNew = new FuelWorkAccountingCardEntity();
+                            var cell = row.GetCell(k);
 
-                            for (var k = 0; k < row.LastCellNum; k++)
+                            var cellAddress = cell.Address.FormatAsString();
+
+                            if (AddressDate != null && cellAddress[0] == AddressDate[0])
                             {
-                                var cell = row.GetCell(k);
-
-                                var cellAddress = cell.Address.FormatAsString();
-
-                                if (AddressDate != null && cellAddress[0] == AddressDate[0])
-                                {
-                                    if (cell.ToString() == "") continue;
-                                    rowNew.Date = DateTime.Parse(cell + " 0:00:00");
-                                    continue;
-                                }
-
-                                if (AddressNumberList != null && AddressNumberList[0] == cellAddress[0])
-                                {
-                                    if (cell.ToString() == "") continue;
-                                    rowNew.NumberList = Parse(cell.ToString() ?? string.Empty);
-                                    continue;
-                                }
-
-                                if (AddressDriver != null && AddressDriver[0] == cellAddress[0])
-                                {
-                                    if (cell.ToString() == "") continue;
-                                    var res = TryParse(cellAddress[1..], out var nextAddress);
-                                    if (!res) continue;
-
-                                    if (rows.GetRow(nextAddress).GetCell(6).ToString() != "")
-                                    {
-                                        rowNew.EngineHoursStart = double.Parse(rows.GetRow(nextAddress)
-                                            .GetCell(6).ToString() ?? string.Empty);
-                                        rowNew.EngineHoursEnd = double.Parse(rows.GetRow(nextAddress)
-                                            .GetCell(7).ToString() ?? string.Empty);
-                                    }
-
-                                    rowNew.DriverFullName = cell.ToString();
-                                    continue;
-                                }
-
-                                if (AddressMileageStart != null && AddressMileageStart[0] == cellAddress[0])
-                                {
-                                    if (cell.ToString() == "") continue;
-                                    rowNew.MileageStart = Parse(cell.ToString() ?? string.Empty);
-                                    continue;
-                                }
-
-                                if (AddressMileageEnd != null && AddressMileageEnd[0] == cellAddress[0])
-                                {
-                                    if (cell.ToString() == "") continue;
-                                    rowNew.EngineHoursEnd = double.Parse(cell.ToString() ?? string.Empty);
-                                    continue;
-                                }
-
-                                if (AddressMileagePerDay != null && AddressMileagePerDay[0] == cellAddress[0])
-                                {
-                                    if (cell.ToString() == "") continue;
-                                    rowNew.MileagePerDay = Parse(cell.ToString() ?? string.Empty);
-                                    continue;
-                                }
-
-                                if (AddressFuelStart != null && AddressFuelStart[0] == cellAddress[0])
-                                {
-                                    if (cell.ToString() == "") continue;
-                                    rowNew.FuelStart = Parse(cell.ToString() ?? string.Empty);
-                                    continue;
-                                }
-
-                                if (AddressRefueling != null && AddressRefueling[0] == cellAddress[0])
-                                {
-                                    if (cell.ToString() == "") continue;
-                                    rowNew.Refueling = double.Parse(cell.ToString() ?? string.Empty);
-                                    continue;
-                                }
+                                if (cell.ToString() == "") continue;
+                                rowNew.Date = DateTime.Parse(cell + " 0:00:00");
+                                continue;
                             }
 
-                            rowsArr.Add(rowNew);
-                        }
-                    }
+                            if (AddressNumberList != null && AddressNumberList[0] == cellAddress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.NumberList = Parse(cell.ToString() ?? string.Empty);
+                                continue;
+                            }
 
-                    _SheetsArr.Add(rowsArr);
+                            if (AddressDriver != null && AddressDriver[0] == cellAddress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                var res = TryParse(cellAddress[1..], out var nextAddress);
+                                if (!res) continue;
+
+                                if (rows.GetRow(nextAddress).GetCell(6).ToString() != "")
+                                {
+                                    rowNew.EngineHoursStart = double.Parse(rows.GetRow(nextAddress)
+                                        .GetCell(6).ToString() ?? string.Empty);
+                                    rowNew.EngineHoursEnd = double.Parse(rows.GetRow(nextAddress)
+                                        .GetCell(7).ToString() ?? string.Empty);
+                                }
+
+                                rowNew.DriverFullName = cell.ToString();
+                                continue;
+                            }
+
+                            if (AddressMileageStart != null && AddressMileageStart[0] == cellAddress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.MileageStart = Parse(cell.ToString() ?? string.Empty);
+                                continue;
+                            }
+
+                            if (AddressMileageEnd != null && AddressMileageEnd[0] == cellAddress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.EngineHoursEnd = double.Parse(cell.ToString() ?? string.Empty);
+                                continue;
+                            }
+
+                            if (AddressMileagePerDay != null && AddressMileagePerDay[0] == cellAddress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.MileagePerDay = Parse(cell.ToString() ?? string.Empty);
+                                continue;
+                            }
+
+                            if (AddressFuelStart != null && AddressFuelStart[0] == cellAddress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.FuelStart = Parse(cell.ToString() ?? string.Empty);
+                                continue;
+                            }
+
+                            if (AddressRefueling != null && AddressRefueling[0] == cellAddress[0])
+                            {
+                                if (cell.ToString() == "") continue;
+                                rowNew.Refueling = double.Parse(cell.ToString() ?? string.Empty);
+                                continue;
+                            }
+                        }
+
+                        rowsArr.Add(rowNew);
+                    }
                 }
+
+                _SheetsArr.Add(rowsArr);
+            }
 
             return _SheetsArr;
         }

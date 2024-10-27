@@ -22,63 +22,63 @@ namespace CES.Domain.Handlers.Employees
             switch (request.NameDocument)
             {
                 case "DriverLicense":
-                {
-                    var date = _ctx.DriverLicenses.Join(_ctx.Employees,
-                        p => p.EmployeeId,
-                        c => c.Id,
-                        (p, c) => new
-                        {
-                            c.Id,
-                            c.FirstName,
-                            c.LastName,
-                            c.BthDate,
-                            DivisionNumber = c.DivisionNumber.Name,
-                            p.ExpiryDate,
-                        }).Where(p => p.ExpiryDate <= DateTime.Now.AddMonths(request.NumberMonth));
-                    foreach (var item in date)
                     {
-                        dates.Add( new GetExpiringDocumentEmployeeResponse()
+                        var date = _ctx.DriverLicenses.Join(_ctx.Employees,
+                            p => p.EmployeeId,
+                            c => c.Id,
+                            (p, c) => new
+                            {
+                                c.Id,
+                                c.FirstName,
+                                c.LastName,
+                                c.BthDate,
+                                DivisionNumber = c.DivisionNumber.Name,
+                                p.ExpiryDate,
+                            }).Where(p => p.ExpiryDate <= DateTime.Now.AddMonths(request.NumberMonth));
+                        foreach (var item in date)
                         {
-                            Id = item.Id + DateTime.Now.Millisecond,
-                            FirstName = item.FirstName,
-                            LastName = item.LastName,
-                            DivisionNumber = item.DivisionNumber,
-                            BthDate = item.BthDate,
-                            ExpiryDate = item.ExpiryDate,
-                        });
-                    }
+                            dates.Add(new GetExpiringDocumentEmployeeResponse()
+                            {
+                                Id = item.Id + DateTime.Now.Millisecond,
+                                FirstName = item.FirstName,
+                                LastName = item.LastName,
+                                DivisionNumber = item.DivisionNumber,
+                                BthDate = item.BthDate,
+                                ExpiryDate = item.ExpiryDate,
+                            });
+                        }
 
-                    break;
-                }
+                        break;
+                    }
                 case "DriverMedicalCertificate":
-                {
-                    var date = _ctx.DriverMedicalCertificate.Join(_ctx.Employees,
-                        p => p.EmployeeId,
-                        c => c.Id,
-                        (p, c) => new
-                        {
-                            c.Id,
-                            c.FirstName,
-                            c.LastName,
-                            c.BthDate,
-                            DivisionNumber = c.DivisionNumber.Name,
-                            p.ExpiryDate,
-                        }).Where(p => p.ExpiryDate <= DateTime.Now.AddMonths(request.NumberMonth));
-                    foreach (var item in date)
                     {
-                        dates.Add(new GetExpiringDocumentEmployeeResponse()
+                        var date = _ctx.DriverMedicalCertificate.Join(_ctx.Employees,
+                            p => p.EmployeeId,
+                            c => c.Id,
+                            (p, c) => new
+                            {
+                                c.Id,
+                                c.FirstName,
+                                c.LastName,
+                                c.BthDate,
+                                DivisionNumber = c.DivisionNumber.Name,
+                                p.ExpiryDate,
+                            }).Where(p => p.ExpiryDate <= DateTime.Now.AddMonths(request.NumberMonth));
+                        foreach (var item in date)
                         {
-                            Id = item.Id,
-                            FirstName = item.FirstName,
-                            LastName = item.LastName,
-                            DivisionNumber = item.DivisionNumber,
-                            BthDate = item.BthDate,
-                            ExpiryDate = item.ExpiryDate,
-                        });
-                    }
+                            dates.Add(new GetExpiringDocumentEmployeeResponse()
+                            {
+                                Id = item.Id,
+                                FirstName = item.FirstName,
+                                LastName = item.LastName,
+                                DivisionNumber = item.DivisionNumber,
+                                BthDate = item.BthDate,
+                                ExpiryDate = item.ExpiryDate,
+                            });
+                        }
 
-                    break;
-                }
+                        break;
+                    }
             }
 
             return await Task.FromResult(dates);

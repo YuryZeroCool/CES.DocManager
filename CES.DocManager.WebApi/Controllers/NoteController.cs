@@ -2,14 +2,12 @@
 using CES.DocManager.WebApi.Models;
 using CES.DocManager.WebApi.Models.Mes;
 using CES.DocManager.WebApi.Services;
-using CES.Domain.Models;
 using CES.Domain.Models.Request.Mes.Notes;
 using CES.Domain.Models.Response.Mes.Notes;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using NPOI.SS.Formula.Functions;
 using System.Net;
 using System.Text.Json;
 
@@ -172,7 +170,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                return await _mediator.Send(new NotesWithoutActRequest() 
+                return await _mediator.Send(new NotesWithoutActRequest()
                 {
                     Min = DateTimeConverter.ConvertToDateTime(min.Trim(), "dd-MM-yyyy HH:mm:ss"),
                     Max = DateTimeConverter.ConvertToDateTime(max.Trim(), "dd-MM-yyyy HH:mm:ss"),

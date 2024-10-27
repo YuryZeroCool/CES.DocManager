@@ -3,5 +3,5 @@ using MediatR;
 
 namespace CES.Domain.Models.Request.MaterialReport
 {
-    public class GetAllProductsGroupAccountRequest: IRequest<List<GetAllProductsGroupAccountResponse>> {}
+    public class GetAllProductsGroupAccountRequest : IRequest<List<GetAllProductsGroupAccountResponse>> { }
 }

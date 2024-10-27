@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CES.DocManager.WebApi.Models;
 using CES.DocManager.WebApi.Services;
-using CES.Domain.Exception;
 using CES.Domain.Models.Request.DriverLicense;
 using CES.Domain.Models.Response.DriverLicense;
 using MediatR;

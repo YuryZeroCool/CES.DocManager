@@ -14,5 +14,5 @@ namespace CES.Infra.Models.Fuel
         {
             PriceEntities = new List<PriceEntity>();
         }
-     }
+    }
 }

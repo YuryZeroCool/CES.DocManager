@@ -7,6 +7,6 @@ namespace CES.Domain.Models.Request.FuelReport
     {
         public int Month { get; set; }
 
-         public int Year { get; set; }
+        public int Year { get; set; }
     }
 }

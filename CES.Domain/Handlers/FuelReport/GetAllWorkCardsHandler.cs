@@ -34,7 +34,7 @@ namespace CES.Domain.Handlers.FuelReport
                     .FirstOrDefaultAsync(x => x.Division == division && x.PeriodReport == period, cancellationToken);
                 if (dates == null && allCars != null && allCars.NumberPlateOfCars != null)
                 {
-                    foreach(var car in allCars.NumberPlateOfCars)
+                    foreach (var car in allCars.NumberPlateOfCars)
                     {
                         var card = await _ctx.FuelWorkCards!
                             .FirstOrDefaultAsync(x => x.NumberPlateCar!.GarageNumber == car.GarageNumber
@@ -61,8 +61,8 @@ namespace CES.Domain.Handlers.FuelReport
                                     MileagePerMonth = mileage,
                                 });
                                 allWorkCards.Add(workCard);
-                            }    
-                        } 
+                            }
+                        }
                     }
                 }
                 else

@@ -18,9 +18,9 @@ namespace CES.Domain.Handlers.MaterialReport
         public AddUsedMaterialHandler(DocMangerContext ctx, IMapper mapper)
         {
             _ctx = ctx;
-            _mapper = mapper;   
+            _mapper = mapper;
         }
-        public async  Task<AddUsedMaterialResponse> Handle(AddUsedMaterialRequest request, CancellationToken cancellationToken)
+        public async Task<AddUsedMaterialResponse> Handle(AddUsedMaterialRequest request, CancellationToken cancellationToken)
         {
             var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.PartyName, cancellationToken);
 
@@ -47,7 +47,7 @@ namespace CES.Domain.Handlers.MaterialReport
             }
             else
             {
-                 party.Count -= request.Count;
+                party.Count -= request.Count;
 
                 if (party.Count < 0) throw new System.Exception("Упс! Что-то пошло не так");
 
@@ -92,7 +92,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
                 var index = res.FindIndex(x => x.NameParty == request.PartyName);
 
-                if (index == -1) 
+                if (index == -1)
                 {
                     res.Add(new UsedMaterial
                     {
@@ -109,7 +109,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 {
                     res[index].Count += request.Count;
                 }
-           
+
                 data.Materials = JsonSerializer.SerializeToUtf8Bytes(res);
                 _ctx.UsedMaterials.Update(data);
             }
@@ -120,7 +120,7 @@ namespace CES.Domain.Handlers.MaterialReport
             var lastMaterial = JsonSerializer.Deserialize<List<UsedMaterial>>(updatedMaterial!.Materials);
 
             if (lastMaterial == null) throw new SystemException("Упс! Что-то пошло не так");
-                
+
             return await Task.FromResult(_mapper.Map<AddUsedMaterialResponse>(lastMaterial.FirstOrDefault(x => x.NameParty == request.PartyName)));
         }
     }

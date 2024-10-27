@@ -20,7 +20,7 @@ namespace CES.Domain.Handlers.CarMechanic
         }
         public async Task<List<GetAllCarMechanicResponse>> Handle(GetAllCarMechanicRequest request, CancellationToken cancellationToken)
         {
-            var res = await _ctx.CarMechanics.Where(p=>p.IsActive).ToListAsync(cancellationToken);
+            var res = await _ctx.CarMechanics.Where(p => p.IsActive).ToListAsync(cancellationToken);
             if (res == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             return await Task.FromResult(res.Select(p => _mapper.Map<GetAllCarMechanicResponse>(p)).ToList());

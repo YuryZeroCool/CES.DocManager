@@ -109,7 +109,7 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new ActTypeConfig());
             modelBuilder.ApplyConfiguration(new HouseNumberConfig());
             modelBuilder.ApplyConfiguration(new StreetConfig());
-            modelBuilder.ApplyConfiguration(new OrganizationTypeConfig()); 
+            modelBuilder.ApplyConfiguration(new OrganizationTypeConfig());
         }
     }
 }

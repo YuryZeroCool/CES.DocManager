@@ -14,8 +14,6 @@ using CES.Domain.Models.Response.Division;
 using CES.Domain.Models.Response.MaterialReport;
 using CES.Domain.Security.Login;
 using CES.Infra.Models;
-using Humanizer;
-using NPOI.SS.Formula.Functions;
 using System.Globalization;
 
 namespace CES.DocManager.WebApi.Mapper
@@ -92,7 +90,7 @@ namespace CES.DocManager.WebApi.Mapper
 
             CreateMap<OrganizationViewModel, CreateOrganizationRequest>();
             CreateMap<OrganizationViewModel, EditOrganizationRequest>();
-           
+
             CreateMap<ActViewModel, CreateActRequest>()
                 .ForMember(dest => dest.ActAdditionDate,
                 opt => opt.MapFrom(src => DateTime.ParseExact(src.ActAdditionDate, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)));

@@ -1,5 +1,4 @@
 ﻿using CES.Infra.Models.MaterialReport;
-using CES.Infra.Models.Mes;
 using System.Text.Json.Serialization;
 
 namespace CES.Infra.Models

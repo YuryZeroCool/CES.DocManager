@@ -3,7 +3,6 @@ using CES.DocManager.WebApi.Models;
 using CES.DocManager.WebApi.Services;
 using CES.Domain.Exception;
 using CES.Domain.Models.Request.Employee;
-using CES.Domain.Models.Request.Mes;
 using CES.Domain.Models.Response.Employees;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
@@ -27,7 +26,7 @@ namespace CES.DocManager.WebApi.Controllers
             _mapper = mapper;
         }
 
-       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet]
         [Produces(typeof(IEnumerable<GetEmployeesByDivisionResponse>))]
         public async Task<object> GetAllEmployees()
@@ -51,7 +50,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                return await _mediator.Send(new GetIsValidNumberNumberRequest {Id = personalNumber});
+                return await _mediator.Send(new GetIsValidNumberNumberRequest { Id = personalNumber });
             }
             catch (Exception e)
             {
@@ -68,7 +67,7 @@ namespace CES.DocManager.WebApi.Controllers
             try
             {
                 var response = await _mediator.Send(new GetEmployeesByDivisionRequest()
-                    {DivisionNumber = divisionNumber});
+                { DivisionNumber = divisionNumber });
                 return _mapper.Map<IEnumerable<GetEmployeesByDivisionResponse>>(response);
             }
             catch (RestException e)
@@ -78,11 +77,11 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Exception)
             {
-                HttpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+                HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return new object();
             }
         }
-        
+
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("noDriverLicense")]
         [Produces(typeof(IEnumerable<GetEmployeesByDivisionResponse>))]
@@ -106,7 +105,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                return await _mediator.Send(new GetExpiringDocumentEmployeeRequest() { NumberMonth  = numberMonth });
+                return await _mediator.Send(new GetExpiringDocumentEmployeeRequest() { NumberMonth = numberMonth });
             }
             catch (Exception e)
             {
@@ -115,9 +114,9 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("expiringDriverMedicalCertificate")]
-        [Produces(typeof(IEnumerable<GetExpiringDocumentEmployeeResponse>))] 
+        [Produces(typeof(IEnumerable<GetExpiringDocumentEmployeeResponse>))]
         public async Task<object> GetExpiringDriverMedicalCertificate(int numberMonth)
         {
             try
@@ -152,9 +151,9 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("allInformationEmployee")]
-        
+
         public async Task<object> GetAllInformationEmployee([FromQuery()] GetEmployeeViewModel model)
         {
             try
@@ -176,7 +175,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-               return await _mediator.Send(_mapper.Map<CreateEmployeeRequest>(model));
+                return await _mediator.Send(_mapper.Map<CreateEmployeeRequest>(model));
             }
             catch (Exception e)
             {

@@ -2,8 +2,8 @@
 
 namespace CES.Domain.Models.Request.Report
 {
-    public class DeleteDivisionWorkScheduleRequest: IRequest<int>
+    public class DeleteDivisionWorkScheduleRequest : IRequest<int>
     {
-        public int IdDivison { get; set; }  
+        public int IdDivison { get; set; }
     }
 }

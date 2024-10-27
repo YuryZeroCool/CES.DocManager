@@ -14,8 +14,8 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private readonly IMapper _mapper;
 
-        public  GetTotalMaterialsHandler (DocMangerContext ctx, IMapper mapper)
-        { 
+        public GetTotalMaterialsHandler(DocMangerContext ctx, IMapper mapper)
+        {
             _ctx = ctx;
             _mapper = mapper;
         }

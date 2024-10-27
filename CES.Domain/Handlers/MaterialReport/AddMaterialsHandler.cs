@@ -60,13 +60,13 @@ namespace CES.Domain.Handlers.MaterialReport
                         {
                             if (sheet.Rows[k].CellList[14].Value == "") continue;
 
-                            if(sheet.Rows[k].CellList[1].Text != null) //Добавляем материал в БД 
+                            if (sheet.Rows[k].CellList[1].Text != null) //Добавляем материал в БД 
                             {
                                 var sheetUnit = sheet.Rows[k].CellList[6].Text;
-                                
+
                                 _nameProduct = sheet.Rows[k].CellList[1].Text;
 
-                                var products =  await _ctx.Products.
+                                var products = await _ctx.Products.
                                         Include(p => p.Account).Where(x => x.Name == _nameProduct).ToListAsync(cancellationToken);
 
                                 if (products == null)
@@ -166,28 +166,28 @@ namespace CES.Domain.Handlers.MaterialReport
         {
             var materialUnit = await _ctx.Units.FirstOrDefaultAsync(p => p.Name == sheetUnit, cancellationToken);
 
-             if(materialUnit == null)
-             {
-               materialUnit = new UnitEntity()
-               {
-                   Name = sheetUnit,
-               };
+            if (materialUnit == null)
+            {
+                materialUnit = new UnitEntity()
+                {
+                    Name = sheetUnit,
+                };
                 await _ctx.Units.AddAsync(materialUnit, cancellationToken);
                 await _ctx.SaveChangesAsync(cancellationToken);
-             }
+            }
             return await Task.FromResult(materialUnit);
         }
 
         private static DateTime GetDate(string date)
-        { 
+        {
             var dateArr = date.Split(" ");
 
-           var strDate = dateArr[0].Split(".").Reverse();
-           var newDate = String.Join('-', strDate);
+            var strDate = dateArr[0].Split(".").Reverse();
+            var newDate = String.Join('-', strDate);
 
-           if (dateArr[1].Length != 8) dateArr[1] = "00:00:00";
-                
-            return DateTime.ParseExact(string.Concat(newDate, "T", dateArr[1]),"s",null);
+            if (dateArr[1].Length != 8) dateArr[1] = "00:00:00";
+
+            return DateTime.ParseExact(string.Concat(newDate, "T", dateArr[1]), "s", null);
         }
     }
 }

@@ -21,9 +21,9 @@ namespace CES.Domain.Handlers.MaterialReport
 
         public async Task<List<GetAllProductsGroupAccountResponse>> Handle(GetAllProductsGroupAccountRequest request, CancellationToken cancellationToken)
         {
-            var res =  await _ctx.ProductsGroupAccount.ToListAsync(cancellationToken);
+            var res = await _ctx.ProductsGroupAccount.ToListAsync(cancellationToken);
 
-            var date =  new List<GetAllProductsGroupAccountResponse>();
+            var date = new List<GetAllProductsGroupAccountResponse>();
 
             if (res == null) throw new ArgumentNullException(nameof(res));
 

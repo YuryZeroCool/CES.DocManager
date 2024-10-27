@@ -25,7 +25,7 @@ namespace CES.DocManager.WebApi.Controllers
         private readonly IMapper _mapper;
 
         private const int LifeTimeToken = 2;
-        
+
         public AccountController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
@@ -92,13 +92,13 @@ namespace CES.DocManager.WebApi.Controllers
                 if (result.RefreshToken == null) throw new SystemException("Упс! Что-то пошло не так");
 
                 HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
-                    {
-                        Expires = DateTimeOffset.Now.AddDays(LifeTimeToken),
-                        HttpOnly = true,
-                        Secure = true,
-                        Domain = "ces-docmanager.ru",
-                        Path = "/account/"
-                    });
+                {
+                    Expires = DateTimeOffset.Now.AddDays(LifeTimeToken),
+                    HttpOnly = true,
+                    Secure = true,
+                    Domain = "ces-docmanager.ru",
+                    Path = "/account/"
+                });
                 return result.AccessToken;
             }
 

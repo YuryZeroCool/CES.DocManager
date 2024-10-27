@@ -13,7 +13,7 @@ namespace CES.Domain.Handlers.MaterialReport
         private readonly DocMangerContext _ctx;
 
         private readonly IMapper _mapper;
-        
+
         public EditEnshrinedMaterialHandler(DocMangerContext ctx, IMapper mapper)
         {
             _ctx = ctx;
@@ -22,7 +22,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
         public async Task<EditEnshrinedMaterialResponse> Handle(EditEnshrinedMaterialRequest request, CancellationToken cancellationToken)
         {
-            var material =  await _ctx.EnshrinedMaterial.FindAsync(request.Id, cancellationToken);
+            var material = await _ctx.EnshrinedMaterial.FindAsync(request.Id, cancellationToken);
 
             if (material == null) throw new System.Exception("Упс! Что-то пошло не так");
 
@@ -33,12 +33,12 @@ namespace CES.Domain.Handlers.MaterialReport
 
             countNew -= material.Count;
 
-            var res = await _ctx.Parties.FirstOrDefaultAsync(x=>x.Name == material.NameParty,cancellationToken);
+            var res = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == material.NameParty, cancellationToken);
 
-            if(res == null) // Если не существует партии
+            if (res == null) // Если не существует партии
             {
                 var nameMaterial = await _ctx.Products
-                    .FirstOrDefaultAsync(x=>x.Name == material.NameMaterial, cancellationToken);
+                    .FirstOrDefaultAsync(x => x.Name == material.NameMaterial, cancellationToken);
 
                 if (nameMaterial == null) // Если не существует материала
                 {
@@ -46,12 +46,12 @@ namespace CES.Domain.Handlers.MaterialReport
                     {
                         Name = material.NameMaterial,
                         Account = _ctx.ProductsGroupAccount
-                            .FirstOrDefaultAsync(x=>x.AccountName == material.AccountName,cancellationToken).Result,
+                            .FirstOrDefaultAsync(x => x.AccountName == material.AccountName, cancellationToken).Result,
                         Unit = _ctx.Units
                             .FirstOrDefaultAsync(x => x.Name == material.Unit, cancellationToken).Result,
                     };
-                } 
-                
+                }
+
                 await _ctx.Parties.AddAsync(
                     new PartyEntity()
                     {
@@ -65,12 +65,12 @@ namespace CES.Domain.Handlers.MaterialReport
                     }, cancellationToken);
 
                 await _ctx.SaveChangesAsync(cancellationToken);
-               
+
             }
             else
             {
                 res.Count += countNew;
-                if( res.Count == 0)
+                if (res.Count == 0)
                 {
                     _ctx.Parties.Remove(res);
                 }

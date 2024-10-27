@@ -16,16 +16,16 @@ namespace CES.Domain.Handlers.Employees
         {
             List<GetEmployeesByDivisionResponse> data = new();
             var query = from b in _ctx.Employees
-                join p in _ctx.DriverMedicalCertificate
-                    on b.Id equals p.EmployeeId into grouping
-                from p in grouping.DefaultIfEmpty()
-                select new
-                {
-                    b.Id,
-                    b.FirstName,
-                    b.LastName,
-                    p.SerialNumber
-                };
+                        join p in _ctx.DriverMedicalCertificate
+                            on b.Id equals p.EmployeeId into grouping
+                        from p in grouping.DefaultIfEmpty()
+                        select new
+                        {
+                            b.Id,
+                            b.FirstName,
+                            b.LastName,
+                            p.SerialNumber
+                        };
             foreach (var item in query.Where(c => c.SerialNumber == null))
             {
                 data.Add(new GetEmployeesByDivisionResponse()

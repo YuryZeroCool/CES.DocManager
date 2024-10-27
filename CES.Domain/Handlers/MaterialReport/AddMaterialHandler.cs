@@ -26,14 +26,14 @@ namespace CES.Domain.Handlers.MaterialReport
 
         public async Task<AddMaterialResponse> Handle(AddMaterialRequest request, CancellationToken cancellationToken)
         {
-            if ( _ctx is not null
+            if (_ctx is not null
                 && _ctx.Parties is not null
                 && _ctx.Products is not null
                 && _ctx.Units is not null
                 && _ctx.ProductsGroupAccount is not null
                 && request is not null
-                && request.Count !=0 
-                && !string.IsNullOrEmpty(request.PartyDate) 
+                && request.Count != 0
+                && !string.IsNullOrEmpty(request.PartyDate)
                 && !string.IsNullOrEmpty(request.partyName)
                 && await _ctx.Units.AnyAsync(x => x.Id == request.UnitId, cancellationToken)
                 && await _ctx.ProductsGroupAccount.AnyAsync(x => x.Id == request.ProductGroupAccountId, cancellationToken))
@@ -66,22 +66,22 @@ namespace CES.Domain.Handlers.MaterialReport
                     }, cancellationToken).Result.Entity;
                     await _ctx.SaveChangesAsync(cancellationToken);
                 }
-                if ( updatedMaterial is not null) 
+                if (updatedMaterial is not null)
+                {
+                    return await Task.FromResult(new AddMaterialResponse()
                     {
-                        return await Task.FromResult(new AddMaterialResponse()
-                        {
-                            Id = updatedMaterial.Id,
-                            Name = request.Name,
-                            PartyDate = updatedMaterial.PartyDate.ToString("dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture),
-                            PartyName = updatedMaterial.Name!,
-                            ProductGroupAccountId = request.ProductGroupAccountId,
-                            UnitId = request.UnitId,
-                            Count = updatedMaterial.Count,
-                            Price = updatedMaterial.Price,
-                            TotalSum = updatedMaterial.TotalSum
-                        });
-                    }
-                    throw new System.Exception("Упс! Что-то пошло не так");
+                        Id = updatedMaterial.Id,
+                        Name = request.Name,
+                        PartyDate = updatedMaterial.PartyDate.ToString("dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                        PartyName = updatedMaterial.Name!,
+                        ProductGroupAccountId = request.ProductGroupAccountId,
+                        UnitId = request.UnitId,
+                        Count = updatedMaterial.Count,
+                        Price = updatedMaterial.Price,
+                        TotalSum = updatedMaterial.TotalSum
+                    });
+                }
+                throw new System.Exception("Упс! Что-то пошло не так");
             }
             throw new NotImplementedException();
         }

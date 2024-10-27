@@ -26,7 +26,7 @@ namespace CES.Domain.Handlers.Mes.Organizations
                 throw new System.Exception("Запрос не может быть пустым");
             }
 
-            if (request.OrganizationType == "" || !await _ctx.OrganizationTypes!.AnyAsync(x =>x.Name == request.OrganizationType, cancellationToken))
+            if (request.OrganizationType == "" || !await _ctx.OrganizationTypes!.AnyAsync(x => x.Name == request.OrganizationType, cancellationToken))
             {
 
                 throw new System.Exception("Запрос не может быть пустым");
@@ -51,7 +51,7 @@ namespace CES.Domain.Handlers.Mes.Organizations
                 }
             }
             var organization = _mapper.Map<OrganizationEntity>(request);
-            organization.OrganizationType  = await _ctx.OrganizationTypes!
+            organization.OrganizationType = await _ctx.OrganizationTypes!
                     .FirstOrDefaultAsync(x => x.Name.Trim() == request.OrganizationType.Trim(), cancellationToken);
             var addedOrganization = await _ctx.OrganizationEntities!.AddAsync(organization, cancellationToken);
             await _ctx.SaveChangesAsync(cancellationToken);

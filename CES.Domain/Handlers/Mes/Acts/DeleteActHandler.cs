@@ -17,10 +17,10 @@ namespace CES.Domain.Handlers.Mes.Acts
         public async Task<int> Handle(DeleteActRequest request, CancellationToken cancellationToken)
         {
             if (_ctx is not null && _ctx.Act is not null && _ctx.NoteEntities is not null && request is not null)
-            { 
-                if(await _ctx.NoteEntities.AnyAsync(x=>x.ActId == request.Id,cancellationToken))
+            {
+                if (await _ctx.NoteEntities.AnyAsync(x => x.ActId == request.Id, cancellationToken))
                 {
-                    var note = await _ctx.NoteEntities.Include(p=>p.Act).Where(x => x.ActId == request.Id).ToListAsync();
+                    var note = await _ctx.NoteEntities.Include(p => p.Act).Where(x => x.ActId == request.Id).ToListAsync();
                     var act = note![0].Act;
                     note.ForEach(x => x.ActId = null);
                     _ctx.NoteEntities.UpdateRange(note);

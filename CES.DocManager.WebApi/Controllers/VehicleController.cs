@@ -42,8 +42,8 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                return await _mediator.Send(new GetAllNumbersPalteRequest() 
-                { 
+                return await _mediator.Send(new GetAllNumbersPalteRequest()
+                {
                     Brand = brand
                 });
             }
@@ -60,7 +60,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-               var res = await _mediator.Send(new CreateVehicleBrandRequest()
+                var res = await _mediator.Send(new CreateVehicleBrandRequest()
                 {
                     Brand = brand
                 });
@@ -102,7 +102,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                if(string.IsNullOrEmpty(carNumber))  return new List<string>();
+                if (string.IsNullOrEmpty(carNumber)) return new List<string>();
                 return await _mediator.Send(new GetCarByCarNumberRequest()
                 {
                     CarNumber = carNumber,

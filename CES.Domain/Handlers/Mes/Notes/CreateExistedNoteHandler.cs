@@ -51,7 +51,7 @@ namespace CES.Domain.Handlers.Mes.Notes
                     if (!await _ctx.NoteEntities.AnyAsync(x =>
                            x.Date == request.Date
                         && x.Street!.Name == note!.Street
-                        && x.HouseNumber!.Number == note.HouseNumber,cancellationToken))
+                        && x.HouseNumber!.Number == note.HouseNumber, cancellationToken))
                     {
                         await _ctx.NoteEntities.AddAsync(new NoteEntity()
                         {
@@ -69,8 +69,8 @@ namespace CES.Domain.Handlers.Mes.Notes
                                  : await _ctx.Entrances!.FirstOrDefaultAsync(x =>
                                      x.Number == (int)note.Entrance!, cancellationToken),
                             Tel = note.Tel
-                        },cancellationToken);
-                   }
+                        }, cancellationToken);
+                    }
                     else throw new System.Exception("Упс! Что-то пошло не так");
                 }
                 await _ctx.SaveChangesAsync(cancellationToken);

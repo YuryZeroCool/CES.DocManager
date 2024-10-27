@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
 using CES.DocManager.WebApi.Services;
 using CES.Domain.Models.Request.CommonInfo;
-using CES.Domain.Models.Request.Division;
 using CES.Domain.Models.Response.CommonInfo;
-using CES.Domain.Models.Response.Division;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 

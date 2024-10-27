@@ -11,7 +11,7 @@
 
         public double SumFuel { get; set; }
 
-        public GetAllWorkCardsResponse() 
+        public GetAllWorkCardsResponse()
         {
             WorkCards = new List<WorkCardsResponse>();
         }

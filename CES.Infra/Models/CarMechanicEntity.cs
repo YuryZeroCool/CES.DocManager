@@ -16,7 +16,7 @@ namespace CES.Infra.Models
 
         public CarMechanicEntity()
         {
-            DecommissionedMaterials= new List<DecommissionedMaterialEntity>(); 
+            DecommissionedMaterials = new List<DecommissionedMaterialEntity>();
         }
     }
 }

@@ -6,8 +6,6 @@ using CES.Domain.Models.Response.Act;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Globalization;
 using System.Net;
 
 namespace CES.DocManager.WebApi.Controllers
@@ -80,7 +78,7 @@ namespace CES.DocManager.WebApi.Controllers
         {
             try
             {
-                return await _mediator.Send(new GetActDataFromFileRequest() 
+                return await _mediator.Send(new GetActDataFromFileRequest()
                 {
                     FileName = fileName
                 });
@@ -104,7 +102,7 @@ namespace CES.DocManager.WebApi.Controllers
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
                 return res;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
 
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);

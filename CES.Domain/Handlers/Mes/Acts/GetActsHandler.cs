@@ -41,7 +41,7 @@ namespace CES.Domain.Handlers.Mes.Acts
                 // Применение фильтра по типу организации после Include
                 if (!string.IsNullOrEmpty(request.OrganizationType))
                 {
-                    query = query.Where(x => x.Organization!.OrganizationType!.Name== request.OrganizationType);
+                    query = query.Where(x => x.Organization!.OrganizationType!.Name == request.OrganizationType);
                 }
                 // Apply filtering
                 query = request.Filter switch

@@ -17,7 +17,7 @@ namespace CES.DocManager.WebApi.Controllers
         private readonly IMediator _mediator;
 
         public PriceController(IMediator mediator)
-        { 
+        {
             _mediator = mediator;
         }
 
@@ -25,18 +25,18 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPost()]
         [Produces(typeof(CreateOrganizationResponse))]
-        public async Task<object> CreatePriceForAct([FromBody] decimal price )
+        public async Task<object> CreatePriceForAct([FromBody] decimal price)
         {
             try
             {
                 var res = await _mediator.Send(new CreatePriceActRequest()
                 {
-                   Price = price
+                    Price = price
                 });
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
                 return res;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
                 return new ErrorResponse(e.Message);

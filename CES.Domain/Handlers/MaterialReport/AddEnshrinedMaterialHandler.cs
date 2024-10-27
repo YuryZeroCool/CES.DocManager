@@ -24,7 +24,7 @@ namespace CES.Domain.Handlers.MaterialReport
         public async Task<AddEnshrinedMaterialResponse> Handle(AddEnshrinedMaterialRequest request, CancellationToken cancellationToken)
         {
             EnshrinedMaterialEntity? enshrine;
-            
+
             var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.Party, cancellationToken);
 
             if (party == null || party.ProductId == 0) throw new System.Exception("Упс! Что-то пошло не так");
@@ -94,7 +94,7 @@ namespace CES.Domain.Handlers.MaterialReport
             }
             else
             {
-                if(product.Parties.Count == 1)
+                if (product.Parties.Count == 1)
                 {
                     _ctx.Products.Remove(party.Product!);
                 }

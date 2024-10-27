@@ -6,6 +6,6 @@ namespace CES.DocManager.WebApi.Models
     {
         public int Id { get; set; }
 
-       public ContactInfoViewModel[]? NoteContactsInfo { get; set; }
+        public ContactInfoViewModel[]? NoteContactsInfo { get; set; }
     }
 }

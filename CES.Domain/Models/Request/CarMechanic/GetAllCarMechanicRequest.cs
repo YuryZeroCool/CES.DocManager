@@ -3,5 +3,5 @@ using MediatR;
 
 namespace CES.Domain.Models.Request.CarMechanic
 {
-    public class GetAllCarMechanicRequest: IRequest<List<GetAllCarMechanicResponse>> { }
+    public class GetAllCarMechanicRequest : IRequest<List<GetAllCarMechanicResponse>> { }
 }

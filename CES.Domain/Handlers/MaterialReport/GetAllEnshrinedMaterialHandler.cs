@@ -11,7 +11,7 @@ namespace CES.Domain.Handlers.MaterialReport
     {
         private readonly DocMangerContext _ctx;
 
-        private readonly IMapper _mapper; 
+        private readonly IMapper _mapper;
 
         public GetAllEnshrinedMaterialHandler(DocMangerContext ctx, IMapper mapper)
         {
@@ -20,12 +20,12 @@ namespace CES.Domain.Handlers.MaterialReport
         }
         public async Task<List<GetAllEnshrinedMaterialResponse>> Handle(GetAllEnshrinedMaterialRequest request, CancellationToken cancellationToken)
         {
-            var material =  await _ctx.EnshrinedMaterial.Select(p=>
+            var material = await _ctx.EnshrinedMaterial.Select(p =>
                 _mapper.Map<GetAllEnshrinedMaterialResponse>(p)).ToListAsync(cancellationToken);
 
             if (material == null) throw new System.Exception("Упс! Что-то пошло не так");
 
-            return material;    
+            return material;
         }
     }
 }

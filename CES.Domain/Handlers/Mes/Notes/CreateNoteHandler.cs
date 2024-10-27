@@ -23,7 +23,7 @@ namespace CES.Domain.Handlers.Mes.Notes
         {
             var note = _mapper.Map<NoteEntity>(request);
             note.Id = 0;
-            var res= await _ctx.NoteEntities!.AddAsync(note, cancellationToken);
+            var res = await _ctx.NoteEntities!.AddAsync(note, cancellationToken);
             await _ctx.SaveChangesAsync(cancellationToken);
             return await Task.FromResult(_mapper.Map<CreateNoteResponse>(res.Entity));
         }

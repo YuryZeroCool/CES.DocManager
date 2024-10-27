@@ -16,17 +16,17 @@ namespace CES.Domain.Handlers.MaterialReport
         }
         public async Task<int> Handle(DeleteEnshrinedMaterialRequest request, CancellationToken cancellationToken)
         {
-            var enshrinedMaterial =  await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x => x.Id == request.MaterialId,cancellationToken);
+            var enshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x => x.Id == request.MaterialId, cancellationToken);
 
             if (enshrinedMaterial == null) throw new System.Exception("Упс! Что-то пошло не так");
 
-            var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.NameParty,cancellationToken);
+            var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.NameParty, cancellationToken);
 
-            var unit = await _ctx.Units.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.Unit,cancellationToken);
+            var unit = await _ctx.Units.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.Unit, cancellationToken);
             if (unit == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             var account = await _ctx.ProductsGroupAccount
-            .FirstOrDefaultAsync(x => x.AccountName == enshrinedMaterial.AccountName,cancellationToken);
+            .FirstOrDefaultAsync(x => x.AccountName == enshrinedMaterial.AccountName, cancellationToken);
 
             if (party == null)
             {
@@ -57,7 +57,7 @@ namespace CES.Domain.Handlers.MaterialReport
             }
             else
             {
-                var par = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.NameParty,cancellationToken);
+                var par = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.NameParty, cancellationToken);
 
                 if (par == null) throw new System.Exception("Упс! Что-то пошло не так");
 
@@ -66,7 +66,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 _ctx.Parties.Update(par);
             }
             _ctx.EnshrinedMaterial.Remove(enshrinedMaterial);
-            return  _ctx.SaveChangesAsync(cancellationToken).Result;
+            return _ctx.SaveChangesAsync(cancellationToken).Result;
         }
     }
 }

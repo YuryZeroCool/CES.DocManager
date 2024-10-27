@@ -28,7 +28,7 @@ namespace CES.Domain.Handlers.Employees
 
             var employee = _mapper.Map<EmployeeEntity>(request);
             employee.DivisionNumber = divisionNumberId;
-            await _docManagerCtx.AddAsync(employee,cancellationToken);
+            await _docManagerCtx.AddAsync(employee, cancellationToken);
             await _docManagerCtx.SaveChangesAsync(cancellationToken);
 
             var res = _mapper.Map<CreateEmployeeResponse>(employee);

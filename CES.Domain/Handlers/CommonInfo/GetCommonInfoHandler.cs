@@ -19,8 +19,8 @@ namespace CES.Domain.Handlers.CommonInfo
             var returnedData = new List<GetAllCommonInfoResponse>();
             var divisions = await _ctx.Divisions.ToListAsync(cancellationToken);
             if (divisions == null) throw new System.Exception("No divisions exist");
-            var cars = await _ctx. VehicleBrands
-                .Include(x=>x.VehiclesModels)
+            var cars = await _ctx.VehicleBrands
+                .Include(x => x.VehiclesModels)
                 .ToListAsync(cancellationToken);
 
             foreach (var division in divisions)

@@ -18,9 +18,9 @@ namespace CES.Domain.Handlers.MaterialReport
             _ctx = ctx;
             _counter = 8;
         }
-        public async Task <string> Handle(GetDefectiveSheetRequest request, CancellationToken cancellationToken)
+        public async Task<string> Handle(GetDefectiveSheetRequest request, CancellationToken cancellationToken)
         {
-            var pathXls = request.Path+ "/Docs/repair.xls";
+            var pathXls = request.Path + "/Docs/repair.xls";
             var pathPdf = request.Path + "/Docs/repair.pdf";
 
             var workbook = new Workbook();
@@ -28,24 +28,24 @@ namespace CES.Domain.Handlers.MaterialReport
             var sheet = workbook.Worksheets[0];
 
             var decommissionedMaterials = await _ctx.DecommissionedMaterials
-              .Include(p =>p.CarMechanic)
+              .Include(p => p.CarMechanic)
               .Include(p => p.NumberPlateOfCar)
-              .FirstOrDefaultAsync(p => p.Id == request.Id,cancellationToken);
+              .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
 
             if (decommissionedMaterials == null) throw new System.Exception("Упс! Что-то пошло не так");
 
-                var materials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(decommissionedMaterials.Materials);
+            var materials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(decommissionedMaterials.Materials);
 
-                if (decommissionedMaterials.NumberPlateOfCar == null) throw new System.Exception("Упс! Что-то пошло не так");
+            if (decommissionedMaterials.NumberPlateOfCar == null) throw new System.Exception("Упс! Что-то пошло не так");
 
-                if (materials == null) throw new System.Exception("Упс! Что-то пошло не так");
+            if (materials == null) throw new System.Exception("Упс! Что-то пошло не так");
 
-                sheet.Range[$"C4"].Value = $"{materials[0].VehicleBrand + "-" + materials[0].VehicleModel}";
-                sheet.Range[$"G4"].Value = $"{decommissionedMaterials.NumberPlateOfCar.Number}";
+            sheet.Range[$"C4"].Value = $"{materials[0].VehicleBrand + "-" + materials[0].VehicleModel}";
+            sheet.Range[$"G4"].Value = $"{decommissionedMaterials.NumberPlateOfCar.Number}";
 
             for (var i = 0; i < 10; i++)
             {
-                if(i < materials.Count)
+                if (i < materials.Count)
                 {
                     sheet.Range[$"C{_counter}"].Value = $"{materials[i].NameMaterial}";
                     sheet.Range[$"G{_counter}"].Value = $"{materials[i].Count}";
@@ -74,32 +74,32 @@ namespace CES.Domain.Handlers.MaterialReport
 
             if (bytes == null) throw new SystemException("Упс! Что-то пошло не так");
             var res = Convert.ToBase64String(bytes);
-            
+
             return await Task.FromResult(res);
         }
 
-        private string GetStringMonth (int month)
+        private string GetStringMonth(int month)
         {
-            var arrMonths = new[] { 
-                "Января", 
-                "Февраля", 
-                "Марта", 
-                "Апреля", 
+            var arrMonths = new[] {
+                "Января",
+                "Февраля",
+                "Марта",
+                "Апреля",
                 "Мая",
-                "Июня", 
-                "Июля", 
+                "Июня",
+                "Июля",
                 "Августа",
-                "Сентября", 
-                "Октября", 
-                "Ноября", 
-                "Декабря" 
+                "Сентября",
+                "Октября",
+                "Ноября",
+                "Декабря"
             };
 
             for (var i = 1; i <= arrMonths.Length; i++)
             {
                 if (i == month)
                 {
-                    return arrMonths[i-1];
+                    return arrMonths[i - 1];
                 }
             }
             throw new System.Exception("Упс! Что-то пошло не так");

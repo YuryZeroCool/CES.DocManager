@@ -16,7 +16,7 @@ namespace CES.Infra.Config.MaterialReport
 
             builder.HasMany(x => x.Products)
                 .WithOne(p => p.Account)
-                .HasForeignKey(k=>k.ProductGroupAccountId);
+                .HasForeignKey(k => k.ProductGroupAccountId);
         }
     }
 }

@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Net.NetworkInformation;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -86,9 +85,10 @@ else
 }
 
 
-builder.Services.AddIdentity<UserEntity, AppRoleEntity>(options => {
-        options.User.RequireUniqueEmail = false;
-    })
+builder.Services.AddIdentity<UserEntity, AppRoleEntity>(options =>
+{
+    options.User.RequireUniqueEmail = false;
+})
     .AddEntityFrameworkStores<DocMangerIdentityDbContext>()
     .AddRoleManager<RoleManager<AppRoleEntity>>()
     .AddDefaultTokenProviders()

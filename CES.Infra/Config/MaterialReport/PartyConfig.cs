@@ -11,7 +11,7 @@ namespace CES.Infra.Config.MaterialReport
             builder.Property(e => e.Id).ValueGeneratedOnAdd();
 
             builder.Property(x => x.Price).HasPrecision(12, 2);
-            builder.Property(x=>x.TotalSum).HasPrecision(12, 2);
+            builder.Property(x => x.TotalSum).HasPrecision(12, 2);
             builder.Property(p => p.PartyDate)
                 .HasColumnType("smalldatetime");
             builder.Property(p => p.DateCreated)

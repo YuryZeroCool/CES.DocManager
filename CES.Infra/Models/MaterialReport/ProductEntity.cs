@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace CES.Infra.Models.MaterialReport
+﻿namespace CES.Infra.Models.MaterialReport
 {
     public class ProductEntity
     {

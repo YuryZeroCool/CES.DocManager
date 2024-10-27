@@ -18,18 +18,18 @@ namespace CES.Domain.Handlers.MaterialReport
         private readonly List<AddDecommissionedMaterial> _materials;
 
         public AddDecommissionedMaterialHandler(DocMangerContext ctx)
-        { 
+        {
             _ctx = ctx;
             _materials = new List<AddDecommissionedMaterial>();
         }
         public async Task<AddDecommissionedMaterialResponse> Handle(AddDecommissionedMaterialRequest request, CancellationToken cancellationToken)
         {
-            if(request.Materials == null || request.Materials.Count == 0) throw new System.Exception("Упс! Что-то пошло не так");
+            if (request.Materials == null || request.Materials.Count == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
             foreach (var material in request.Materials)
             {
-               var enshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x =>
-                   x.Id == material.Id, cancellationToken);
+                var enshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x =>
+                    x.Id == material.Id, cancellationToken);
 
                 if (enshrinedMaterial == null || material.Count == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
@@ -47,8 +47,8 @@ namespace CES.Domain.Handlers.MaterialReport
                 }
                 _materials.Add(material);
                 _numberPlateOfCar = await _ctx.NumberPlateOfCar
-                    .FirstOrDefaultAsync(x => x.Number == material.NumberPlateCar,cancellationToken);
-                if(_numberPlateOfCar == null) throw new System.Exception("Упс! Что-то пошло не так");
+                    .FirstOrDefaultAsync(x => x.Number == material.NumberPlateCar, cancellationToken);
+                if (_numberPlateOfCar == null) throw new System.Exception("Упс! Что-то пошло не так");
             }
             var mechanic = await _ctx.CarMechanics.FirstOrDefaultAsync(x =>
                 x.FIO == request.CarMechanic, cancellationToken);
@@ -63,7 +63,7 @@ namespace CES.Domain.Handlers.MaterialReport
             await _ctx.DecommissionedMaterials.AddAsync(decommissionMaterial, cancellationToken);
             await _ctx.SaveChangesAsync(cancellationToken);
 
-            return await Task.FromResult( new AddDecommissionedMaterialResponse()
+            return await Task.FromResult(new AddDecommissionedMaterialResponse()
             {
                 Id = decommissionMaterial.Id,
                 CarMechanic = decommissionMaterial.CarMechanic.FIO,

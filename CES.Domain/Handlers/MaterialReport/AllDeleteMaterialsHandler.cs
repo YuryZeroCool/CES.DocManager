@@ -12,7 +12,7 @@ namespace CES.Domain.Handlers.MaterialReport
         {
             _ctx = ctx;
         }
-        public async  Task<int> Handle(AllDeleteMaterialsRequest request, CancellationToken cancellationToken)
+        public async Task<int> Handle(AllDeleteMaterialsRequest request, CancellationToken cancellationToken)
         {
             _ctx.Parties.RemoveRange(_ctx.Parties);
             _ctx.Products.RemoveRange(_ctx.Products);
@@ -22,7 +22,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
 
             _ctx.Units.RemoveRange(_ctx.Units);
-            _ctx.ProductsGroupAccount.RemoveRange(_ctx.ProductsGroupAccount);  
+            _ctx.ProductsGroupAccount.RemoveRange(_ctx.ProductsGroupAccount);
 
 
             await _ctx.SaveChangesAsync(cancellationToken);

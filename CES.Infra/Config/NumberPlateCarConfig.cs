@@ -1,13 +1,10 @@
 ﻿using CES.Infra.Models;
-using CES.Infra.Models.Mes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
-using System.Reflection.Metadata;
 
 namespace CES.Infra.Config
 {
-    public class NumberPlateCarConfig:IEntityTypeConfiguration<NumberPlateOfCarEntity>
+    public class NumberPlateCarConfig : IEntityTypeConfiguration<NumberPlateOfCarEntity>
     {
         public void Configure(EntityTypeBuilder<NumberPlateOfCarEntity> builder)
         {
@@ -18,7 +15,7 @@ namespace CES.Infra.Config
                 .HasMaxLength(100);
 
             builder.HasMany(x => x.DecommissionedMaterials)
-                .WithOne(p=>p.NumberPlateOfCar);
+                .WithOne(p => p.NumberPlateOfCar);
 
             builder.HasMany(x => x.Employees)
                 .WithOne(p => p.CarNumber);

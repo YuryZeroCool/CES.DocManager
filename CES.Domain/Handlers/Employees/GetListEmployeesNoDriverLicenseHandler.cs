@@ -5,7 +5,7 @@ using MediatR;
 
 namespace CES.Domain.Handlers.Employees
 {
-    public class GetListEmployeesNoDriverLicenseHandler : 
+    public class GetListEmployeesNoDriverLicenseHandler :
         IRequestHandler<GetListEmployeesNoDriverLicenseRequest, IEnumerable<GetEmployeesByDivisionResponse>>
     {
         private readonly DocMangerContext _ctx;
@@ -18,16 +18,16 @@ namespace CES.Domain.Handlers.Employees
             List<GetEmployeesByDivisionResponse> list = new();
 
             var query = from b in _ctx.Employees
-                join p in _ctx.DriverLicenses
-                    on b.Id equals p.EmployeeId into grouping
-                from p in grouping.DefaultIfEmpty()
-                select new
-                {
-                    b.Id,
-                    b.FirstName,
-                    b.LastName,
-                    p.SerialNumber
-                };
+                        join p in _ctx.DriverLicenses
+                            on b.Id equals p.EmployeeId into grouping
+                        from p in grouping.DefaultIfEmpty()
+                        select new
+                        {
+                            b.Id,
+                            b.FirstName,
+                            b.LastName,
+                            p.SerialNumber
+                        };
 
             foreach (var item in query.Where(c => c.SerialNumber == null))
             {

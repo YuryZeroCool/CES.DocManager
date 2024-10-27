@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using CES.Domain.Models.Request.Employee;
-using CES.Domain.Models.Response.Employees;
+﻿using CES.Domain.Models.Request.Employee;
 using CES.Infra;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -20,19 +18,19 @@ namespace CES.Domain.Handlers.Employees
         {
             if (_ctx.NumberPlateOfCar is not null && _ctx.Employees is not null)
             {
-               var numberCar = await _ctx.NumberPlateOfCar
-                    .FirstOrDefaultAsync(x=> x.Number!.Trim() == request.CarNumber.Trim(),cancellationToken);
+                var numberCar = await _ctx.NumberPlateOfCar
+                     .FirstOrDefaultAsync(x => x.Number!.Trim() == request.CarNumber.Trim(), cancellationToken);
 
                 if (numberCar is not null)
                 {
                     var data = await _ctx.Employees
-                        .Where(x=> x.CarNumber == numberCar)
+                        .Where(x => x.CarNumber == numberCar)
                         .ToListAsync(cancellationToken);
 
-                    return await Task.FromResult(data.Select(p => p.LastName +" " + p.FirstName).ToList());
+                    return await Task.FromResult(data.Select(p => p.LastName + " " + p.FirstName).ToList());
                 }
             }
-                throw new NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

@@ -3,5 +3,5 @@ using MediatR;
 
 namespace CES.Domain.Models.Request.Vehicle
 {
-    public class GetAllBransRequest : IRequest< List<GetAllBrandsResponse>> { }
+    public class GetAllBransRequest : IRequest<List<GetAllBrandsResponse>> { }
 }

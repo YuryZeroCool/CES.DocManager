@@ -15,11 +15,11 @@ namespace CES.Domain.Handlers.MaterialReport
 
         public Task<int> Handle(GetEnshrinedByCarMaterialRequest request, CancellationToken cancellationToken)
         {
-           var materials = _ctx.EnshrinedMaterial
-                .Where(x => x.VehicleModel == request.Model && x.NumberPlateCar == request.NumberOfPlate);
+            var materials = _ctx.EnshrinedMaterial
+                 .Where(x => x.VehicleModel == request.Model && x.NumberPlateCar == request.NumberOfPlate);
 
             if (materials == null || !materials.Any()) throw new System.Exception("Упс! Что-то пошло не так");
-           
+
             throw new NotImplementedException();
         }
     }

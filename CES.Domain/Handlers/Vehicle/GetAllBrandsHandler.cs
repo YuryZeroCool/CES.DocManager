@@ -21,7 +21,7 @@ namespace CES.Domain.Handlers.Vehicle
 
         public async Task<List<GetAllBrandsResponse>> Handle(GetAllBransRequest request, CancellationToken cancellationToken)
         {
-            var date =  await _ctx.VehicleBrands.Select(p =>
+            var date = await _ctx.VehicleBrands.Select(p =>
                 _mapper.Map<GetAllBrandsResponse>(p)).ToListAsync(cancellationToken);
             if (date == null) throw new System.Exception("Упс! Что-то пошло не так");
 

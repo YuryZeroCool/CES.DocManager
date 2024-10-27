@@ -1,5 +1,4 @@
 ﻿using CES.Domain.Exception;
-using CES.Domain.Interfaces;
 using CES.InfraSecurity.Models;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

@@ -1,5 +1,4 @@
-﻿using CES.Domain.Models.Response.Act;
-using MediatR;
+﻿using MediatR;
 
 namespace CES.Domain.Models.Request.Mes.Acts
 {

@@ -13,7 +13,7 @@ namespace CES.Domain.Handlers.Mes.OrganizationTypes
 
         public IMapper _mapper;
 
-        public GetOrganizationTypesHandler(DocMangerContext ctx, IMapper mapper) 
+        public GetOrganizationTypesHandler(DocMangerContext ctx, IMapper mapper)
         {
             _ctx = ctx;
             _mapper = mapper;

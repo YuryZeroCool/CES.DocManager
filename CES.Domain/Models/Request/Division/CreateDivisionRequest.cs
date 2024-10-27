@@ -5,6 +5,6 @@ namespace CES.Domain.Models.Request.Division
 {
     public class CreateDivisionRequest : IRequest<GetDivisionNumbersResponse>
     {
-        public  string? DivisionName { get; set; }
+        public string? DivisionName { get; set; }
     }
 }

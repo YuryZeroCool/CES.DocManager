@@ -1,5 +1,4 @@
-﻿using System.Net;
-using AutoMapper;
+﻿using AutoMapper;
 using CES.Domain.Exception;
 using CES.Domain.Models.Request.Vehicle;
 using CES.Domain.Models.Response.Vehicle;
@@ -7,6 +6,7 @@ using CES.Infra;
 using CES.Infra.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace CES.Domain.Handlers.Vehicle
 {
@@ -22,7 +22,7 @@ namespace CES.Domain.Handlers.Vehicle
         }
         public async Task<GetVehicleBrandResponse> Handle(CreateVehicleBrandRequest request, CancellationToken cancellationToken)
         {
-            if (request.Brand == "") throw  new RestException(HttpStatusCode.BadRequest, "Переданы некорректные даные");
+            if (request.Brand == "") throw new RestException(HttpStatusCode.BadRequest, "Переданы некорректные даные");
             if (_ctx.VehicleBrands.Any(p => p.Name == request.Brand))
                 throw new RestException(HttpStatusCode.OK, "Такой бренд существует");
             _ctx.VehicleBrands.Add(_mapper.Map<CreateVehicleBrandRequest, VehicleBrandEntity>(request));
@@ -32,7 +32,7 @@ namespace CES.Domain.Handlers.Vehicle
                 p.Name == request.Brand, cancellationToken);
             if (brand == null) throw new System.Exception("Упс! Что-то пошло не так");
 
-            return  await Task.FromResult(_mapper.Map<VehicleBrandEntity, GetVehicleBrandResponse>(brand));
+            return await Task.FromResult(_mapper.Map<VehicleBrandEntity, GetVehicleBrandResponse>(brand));
         }
     }
 }

@@ -22,7 +22,7 @@ namespace CES.Domain.Handlers.MaterialReport
         {
             if (_ctx.Units is not null)
             {
-              return await Task.FromResult(_mapper.Map<List<CES.Domain.Models.Unit>>( await _ctx.Units.ToListAsync(cancellationToken)));
+                return await Task.FromResult(_mapper.Map<List<CES.Domain.Models.Unit>>(await _ctx.Units.ToListAsync(cancellationToken)));
             }
             throw new System.Exception("Упс! Что-то пошло не так");
         }

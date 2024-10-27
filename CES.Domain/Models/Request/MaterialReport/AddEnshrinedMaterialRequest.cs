@@ -3,7 +3,7 @@ using MediatR;
 
 namespace CES.Domain.Models.Request.MaterialReport
 {
-    public class AddEnshrinedMaterialRequest: IRequest<AddEnshrinedMaterialResponse>
+    public class AddEnshrinedMaterialRequest : IRequest<AddEnshrinedMaterialResponse>
     {
         public string? Party { get; set; }
 

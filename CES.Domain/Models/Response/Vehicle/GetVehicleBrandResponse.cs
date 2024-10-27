@@ -2,7 +2,7 @@
 {
     public class GetVehicleBrandResponse
     {
-        public  int Id { get; set; }
+        public int Id { get; set; }
 
         public string? Brand { get; set; }
 

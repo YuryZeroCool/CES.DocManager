@@ -31,7 +31,7 @@ namespace CES.Domain.Handlers.Mes.Acts
             {
                 foreach (var notesWithoutAct in request.NotesWithoutAct)
                 {
-                    if( await _ctx.NoteEntities.AnyAsync(x => x.Id == notesWithoutAct.Id && x.Act != null, cancellationToken))
+                    if (await _ctx.NoteEntities.AnyAsync(x => x.Id == notesWithoutAct.Id && x.Act != null, cancellationToken))
                     {
                         throw new System.Exception("Упс! Что-то пошло не так");
                     }
@@ -54,7 +54,7 @@ namespace CES.Domain.Handlers.Mes.Acts
                     ActType = await _ctx.ActTypes
                     .FirstOrDefaultAsync(x => x.Name.Trim() == request.ActType.Trim(), cancellationToken)
                     ?? throw new System.Exception("Упс! Что-то пошло не так"),
-                    WorkPerformAct=  JsonSerializer.Serialize(request.CompletedWorks)
+                    WorkPerformAct = JsonSerializer.Serialize(request.CompletedWorks)
                     ?? throw new System.Exception("Упс! Что-то пошло не так")
                 }, cancellationToken);
                 await _ctx.SaveChangesAsync(cancellationToken);
@@ -63,7 +63,7 @@ namespace CES.Domain.Handlers.Mes.Acts
                     var note = await _ctx.NoteEntities.FirstOrDefaultAsync(x => x.Id == notesWithoutAct.Id, cancellationToken);
                     if (note is not null)
                     {
-                        if(note.ActId != null)
+                        if (note.ActId != null)
                         {
                             _ctx.Act.Remove(entityAct.Entity);
                         }
@@ -74,7 +74,7 @@ namespace CES.Domain.Handlers.Mes.Acts
                         }
                     }
                 }
-                 await _ctx.SaveChangesAsync(cancellationToken);
+                await _ctx.SaveChangesAsync(cancellationToken);
                 return await Task.FromResult("ok");
             }
             throw new NotImplementedException();

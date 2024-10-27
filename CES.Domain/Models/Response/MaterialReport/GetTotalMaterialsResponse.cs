@@ -6,8 +6,8 @@
 
         public string? Name { get; set; }
 
-        public IEnumerable<PartyModel>? Party { get; set; }  
-        
+        public IEnumerable<PartyModel>? Party { get; set; }
+
         public string? Unit { get; set; }
     }
 }

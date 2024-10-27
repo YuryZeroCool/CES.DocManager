@@ -1,6 +1,6 @@
 ﻿namespace CES.Domain.Models.Response.CarMechanic
 {
-    public class GetAllCarMechanicResponse 
+    public class GetAllCarMechanicResponse
     {
         public int Id { get; set; }
 

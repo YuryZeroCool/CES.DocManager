@@ -24,7 +24,7 @@ namespace CES.Domain.Handlers.FuelReport
 
             DirectoryInfo dirInfo = new(request.Path + "/download");
             var dirPath = request.Path + "/download/" + dirInfo.GetFiles()[0].Name;
-           
+
             foreach (var sheet in _readExcel.ReadExcelDocument())
             {
                 rowArr = new List<GetVehicleExpenseSheetResponse>();

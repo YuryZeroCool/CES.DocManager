@@ -9,9 +9,9 @@ namespace CES.Domain.Handlers.Mes.Notes
     {
         private readonly DocMangerContext _ctx;
 
-        public DeleteNotesWithoutActHandler(DocMangerContext ctx) 
+        public DeleteNotesWithoutActHandler(DocMangerContext ctx)
         {
-            _ctx = ctx;        
+            _ctx = ctx;
         }
 
         public async Task<int> Handle(DeleteNotesWithoutActRequest request, CancellationToken cancellationToken)

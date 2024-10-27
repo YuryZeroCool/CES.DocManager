@@ -8,7 +8,7 @@ using MediatR;
 
 namespace CES.Domain.Handlers.DriverMedicalCertificate
 {
-    public class CreateMedicalCertificateHandler: IRequestHandler<CreateMedicalCertificateRequest, GetEmployeesByDivisionResponse>
+    public class CreateMedicalCertificateHandler : IRequestHandler<CreateMedicalCertificateRequest, GetEmployeesByDivisionResponse>
     {
         private readonly DocMangerContext _ctx;
         private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ namespace CES.Domain.Handlers.DriverMedicalCertificate
         {
             request.FirstName = request.FirstName?.Trim();
             request.LastName = request.LastName?.Trim();
-            var res = _ctx.Employees 
+            var res = _ctx.Employees
                 .FirstOrDefault(x => x.FirstName == request.FirstName && x.LastName == request.LastName);
 
             if (res == null) throw new System.Exception("Упс! Что-то пошло не так");

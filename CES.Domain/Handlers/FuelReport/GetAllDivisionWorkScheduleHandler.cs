@@ -36,7 +36,7 @@ namespace CES.Domain.Handlers.FuelReport
                     Division = item.Division?.Trim(),
                     Dates = JsonSerializer.Deserialize<ICollection<string>>(item.Date)
                 });
-            } 
+            }
 
             return await Task.FromResult(date);
         }

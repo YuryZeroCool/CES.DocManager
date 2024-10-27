@@ -3,8 +3,8 @@ using MediatR;
 
 namespace CES.Domain.Models.Request.MaterialReport
 {
-    public class GetTotalMaterialsRequest : IRequest<List<GetTotalMaterialsResponse>> 
+    public class GetTotalMaterialsRequest : IRequest<List<GetTotalMaterialsResponse>>
     {
-        public string? Accounts { get; set; }  
+        public string? Accounts { get; set; }
     }
 }

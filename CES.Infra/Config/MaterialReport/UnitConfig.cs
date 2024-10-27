@@ -16,7 +16,7 @@ namespace CES.Infra.Config.MaterialReport
 
             builder.HasMany(x => x.Products)
                 .WithOne(p => p.Unit)
-                .HasForeignKey(k=>k.UnitId);
+                .HasForeignKey(k => k.UnitId);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace CES.Domain.Handlers.MaterialReport
         private readonly IMapper _mapper;
 
         private int _id;
-        public DeleteDecommissionedMaterialHandler(DocMangerContext ctx,IMapper mapper)
+        public DeleteDecommissionedMaterialHandler(DocMangerContext ctx, IMapper mapper)
         {
             _ctx = ctx;
             _mapper = mapper;
@@ -29,7 +29,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (material == null) throw new System.Exception("Упс! Что-то пошло не так");
-               var materials =  JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(material.Materials);
+            var materials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(material.Materials);
 
             if (materials == null) throw new System.Exception("Упс! Что-то пошло не так");
 
@@ -41,7 +41,7 @@ namespace CES.Domain.Handlers.MaterialReport
                     && x.NameParty == mater.NameParty
                     && x.NumberPlateCar == mater.NumberPlateCar, cancellationToken);
 
-                if(enshrinedMaterial != null)
+                if (enshrinedMaterial != null)
                 {
                     enshrinedMaterial.Count += mater.Count;
                     _ctx.EnshrinedMaterial.Update(enshrinedMaterial);
@@ -50,13 +50,13 @@ namespace CES.Domain.Handlers.MaterialReport
                 {
                     var res = _mapper.Map<EnshrinedMaterialEntity>(mater);
                     res.Id = 0;
-                    await  _ctx.EnshrinedMaterial.AddAsync(res,cancellationToken);
+                    await _ctx.EnshrinedMaterial.AddAsync(res, cancellationToken);
                 }
             }
             _ctx.DecommissionedMaterials.Remove(material);
             await _ctx.SaveChangesAsync(cancellationToken);
             _id = material.Id;
-  
+
             return await Task.FromResult(_id);
         }
     }

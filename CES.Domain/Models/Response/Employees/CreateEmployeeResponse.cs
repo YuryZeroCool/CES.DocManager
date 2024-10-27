@@ -4,6 +4,6 @@ namespace CES.Domain.Models.Response.Employees
 {
     public class CreateEmployeeResponse : CreateEmployeeRequest
     {
-        public int Id { get; set; } 
+        public int Id { get; set; }
     }
 }

@@ -12,15 +12,15 @@ namespace CES.Domain.Handlers.Mes.Acts
         {
             _environment = environment;
         }
-        
+
         public async Task<string> Handle(GetActDataFromFileRequest request, CancellationToken cancellationToken)
         {
-            var path = Path.Combine(_environment.WebRootPath, "Act", request.FileName+".json");
+            var path = Path.Combine(_environment.WebRootPath, "Act", request.FileName + ".json");
 
             if (File.Exists(path))
             {
                 var json = await File.ReadAllTextAsync(path, cancellationToken);
-                if (json is not null)  return await Task.FromResult(json);
+                if (json is not null) return await Task.FromResult(json);
             }
             throw new NotImplementedException();
         }

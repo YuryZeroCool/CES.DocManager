@@ -13,7 +13,7 @@ namespace CES.Domain.Models.Request.Mes.Notes
 
         public string SearchValue { get; set; } = string.Empty;
 
-        public int Page{get;set; }
+        public int Page { get; set; }
 
         public int Limit { get; set; }
     }

@@ -1,5 +1,4 @@
-﻿using CES.Domain.Models.Response.Employees;
-using MediatR;
+﻿using MediatR;
 
 namespace CES.Domain.Models.Request.Employee
 {

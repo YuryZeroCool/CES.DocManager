@@ -27,10 +27,10 @@ namespace CES.Domain.Handlers.Mes.Organizations
 
 
             if (_ctx is not null && _ctx.OrganizationEntities is not null)
-            { 
-                if (await _ctx.OrganizationTypes!.AnyAsync(x => x.Name == request.Name, cancellationToken) || await _ctx.OrganizationEntities.AnyAsync(x => x.Id == request.Id,cancellationToken))
+            {
+                if (await _ctx.OrganizationTypes!.AnyAsync(x => x.Name == request.Name, cancellationToken) || await _ctx.OrganizationEntities.AnyAsync(x => x.Id == request.Id, cancellationToken))
                 {
-                    organization.OrganizationType = await _ctx.OrganizationTypes!.FirstOrDefaultAsync(x=>x.Name == request.OrganizationType,cancellationToken);
+                    organization.OrganizationType = await _ctx.OrganizationTypes!.FirstOrDefaultAsync(x => x.Name == request.OrganizationType, cancellationToken);
                     var res = _ctx.OrganizationEntities.Update(organization);
                     await _ctx.SaveChangesAsync(cancellationToken);
 

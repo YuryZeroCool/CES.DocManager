@@ -3,8 +3,8 @@ using MediatR;
 
 namespace CES.Domain.Models.Request.Report
 {
-    public class GetAllDivisionsWorkScheduleRequest: IRequest<List<GetAllDivisionsWorkScheduleResponse>>
+    public class GetAllDivisionsWorkScheduleRequest : IRequest<List<GetAllDivisionsWorkScheduleResponse>>
     {
-        public string? Period { get; set; } 
+        public string? Period { get; set; }
     }
 }

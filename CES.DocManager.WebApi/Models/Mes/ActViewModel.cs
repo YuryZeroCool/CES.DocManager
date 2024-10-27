@@ -12,13 +12,13 @@
 
         public string ActType { get; set; } = string.Empty;
 
-        public List<Work>? CompletedWorks {  get; set; }
+        public List<Work>? CompletedWorks { get; set; }
 
         public List<FullNoteData>? NotesWithoutAct { get; set; }
 
         public decimal TotalActSumm { get; set; }
 
-        public decimal Vat { get; set;}
+        public decimal Vat { get; set; }
     }
 
     public class Work
@@ -34,7 +34,7 @@
         public decimal TotalSumm { get; set; }
     }
 
-    public class FullNoteData 
+    public class FullNoteData
     {
         public int Id { get; set; }
 

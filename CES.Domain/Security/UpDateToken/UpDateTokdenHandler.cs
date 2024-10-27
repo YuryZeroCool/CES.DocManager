@@ -1,9 +1,9 @@
-﻿using CES.Domain.Interfaces;
+﻿using CES.Domain.Exception;
+using CES.Domain.Interfaces;
 using CES.InfraSecurity.Models;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
-using CES.Domain.Exception;
-using MediatR;
 
 namespace CES.Domain.Security.UpDateToken
 {

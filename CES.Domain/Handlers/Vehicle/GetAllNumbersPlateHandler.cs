@@ -23,7 +23,7 @@ namespace CES.Domain.Handlers.Vehicle
         {
             var brand = await _ctx.VehicleBrands.FirstOrDefaultAsync(x => x.Name == request.Brand, cancellationToken);
 
-            if (brand == null)  throw new System.Exception("Упс! Что-то пошло не так");
+            if (brand == null) throw new System.Exception("Упс! Что-то пошло не так");
 
             var models = await _ctx.VehicleModels
                 .Where(x => x.VehicleBrand == brand).ToListAsync(cancellationToken);
@@ -34,10 +34,10 @@ namespace CES.Domain.Handlers.Vehicle
 
             foreach (var item in models)
             {
-                IEnumerable<GetAllNumbersPlateResponse> second = _ctx.NumberPlateOfCar.Where(p=>p.VehicleModel == item).
-                                       Select(p =>  _mapper.Map<GetAllNumbersPlateResponse>(p));
+                IEnumerable<GetAllNumbersPlateResponse> second = _ctx.NumberPlateOfCar.Where(p => p.VehicleModel == item).
+                                       Select(p => _mapper.Map<GetAllNumbersPlateResponse>(p));
 
-                date = date.Union(second).ToList();   
+                date = date.Union(second).ToList();
             }
             return await Task.FromResult(date);
         }
