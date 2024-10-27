@@ -24,6 +24,7 @@ import getActsList from '../../actions/mes/getActsList';
 import deleteAct from '../../actions/mes/deleteAct';
 import createExistedNote from '../../actions/mes/createExistedNote';
 import getOrganizationType from '../../actions/mes/getOrganizationTypes';
+import deleteNoteWithoutAct from '../../actions/mes/deleteNoteWithoutAct';
 
 const organizationDefault = {
   id: 0,
@@ -618,6 +619,18 @@ const mesReducer = createSlice({
       return stateCopy;
     });
     builder.addCase(getOrganizationType.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
+    builder.addCase(deleteNoteWithoutAct.fulfilled, (state) => {
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        requestStatus: 'fulfilled',
+      };
+      return stateCopy;
+    });
+    builder.addCase(deleteNoteWithoutAct.rejected, (state, action) => {
       throw Error(action.payload?.message);
     });
   },

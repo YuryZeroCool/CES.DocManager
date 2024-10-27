@@ -16,6 +16,11 @@ import getNotesWithoutActs from '../../../../redux/actions/mes/getNotesWithoutAc
 import { IAuthResponseType } from '../../../../redux/store/configureStore';
 import { RootState } from '../../../../redux/reducers/combineReducers';
 import getActDataFromFile from '../../../../redux/actions/mes/getActDataFromFile';
+import deleteNoteWithoutAct from '../../../../redux/actions/mes/deleteNoteWithoutAct';
+import {
+  editNotesWithoutActAfterAddAct,
+} from '../../../../redux/reducers/mes/mesReducer';
+
 import NotesWithoutActsTable from './components/NotesWithoutActsTable';
 import LIMIT from '../../MesPage.config';
 
@@ -117,6 +122,20 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
       .catch(() => showErrorNotification('Список заявок не был получен'));
   };
 
+  const handleDeleteNoteBtnClick = () => {
+    if (selectedNotesId.length > 1) {
+      showErrorNotification('Невозможно удалить несколько заявок одновременно');
+    } else {
+      // отправить запрос на удаление заявки
+      dispatch(deleteNoteWithoutAct(selectedNotesId[0]))
+        .then(() => {
+          dispatch(editNotesWithoutActAfterAddAct(selectedNotesId));
+        })
+        .catch(() => showErrorNotification('Список заявок не был получен'));
+      handleSelectNote([]);
+    }
+  };
+
   return (
     <>
       <Flex
@@ -154,6 +173,18 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
                 </Button>
               ))}
             </Group>
+          </Stack>
+
+          <Divider style={{ background: 'linear-gradient(#7950f2 0%, #15aabf 100%)', height: 3 }} />
+
+          <Stack>
+            <Button
+              variant="gradient"
+              gradient={{ from: 'violet', to: 'blue', deg: 90 }}
+              onClick={() => handleDeleteNoteBtnClick()}
+            >
+              Удалить заявку
+            </Button>
           </Stack>
         </Stack>
       </Flex>
