@@ -168,7 +168,7 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("withoutAct")]
         [Produces(typeof(List<NotesWithoutActResponse>))]
-        public async Task<object> NotesWithoutAct(string min, string max, string filter, string searchValue, int page, int limit)
+        public async Task<object> NotesWithoutAct(string min, string max, string? filter, string? searchValue, int page, int limit)
         {
             try
             {
@@ -178,7 +178,7 @@ namespace CES.DocManager.WebApi.Controllers
                     Max = DateTimeConverter.ConvertToDateTime(max.Trim(), "dd-MM-yyyy HH:mm:ss"),
                     Page = page,
                     Limit = limit,
-                    Filter = filter,
+                    Filter = !string.IsNullOrEmpty(filter) ? JsonSerializer.Deserialize<string>(filter) : "",
                     SearchValue = searchValue,
                 });
             }
