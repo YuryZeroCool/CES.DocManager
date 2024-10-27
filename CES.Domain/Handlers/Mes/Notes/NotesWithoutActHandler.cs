@@ -22,21 +22,57 @@ namespace CES.Domain.Handlers.Mes.Notes
 
         public async Task<IEnumerable<NotesWithoutActResponse>> Handle(NotesWithoutActRequest request, CancellationToken cancellationToken)
         {
+            var s = request.Filter;
             if (_ctx.NoteEntities == null)
             {
-                throw new System.Exception("Контекст заякок не инициализирован.");
+                throw new System.Exception("Контекст заявок не инициализирован.");
             }
-            var comparer = new DateComparer();
-            var notes = await _ctx.NoteEntities
+            // Парсинг даты из запроса
+            DateTime minDate = request.Min;
+            DateTime maxDate = request.Max;
+            request.Limit = 500;
+            // Инициализация запроса с фильтрацией по отсутствию "Act"
+            var query = _ctx.NoteEntities
                 .Include(x => x.Street)
                 .Include(x => x.HouseNumber)
                 .Include(x => x.Entrance)
-                .Where(x => x.Act == null)
-                .ToListAsync(cancellationToken);
-            notes.OrderByDescending(p => p, comparer);
+                .Where(x => x.Act == null)  // Фильтр по отсутствию акта
+                .Where(x => x.Date.Date >= minDate.Date && x.Date.Date <= maxDate.Date);  // Фильтрация по диапазону дат
 
-            if (notes.Count == 0) return await Task.FromResult(new List<NotesWithoutActResponse>());
-            return await Task.FromResult(_mapper.Map<List<NotesWithoutActResponse>>(notes));
+            // Фильтрация по поисковому значению (если оно указано)
+            if (!string.IsNullOrEmpty(request.SearchValue) && !string.IsNullOrEmpty(request.Filter))
+            {
+
+                query = request.Filter switch
+                {
+                    "address" => query = query.Where(x => x.Street != null && x.Street.Name.Contains(request.SearchValue)),
+                    "tel" => query = query.Where(x => x.Tel != null && x.Tel.ToUpper().Replace(" ", "").Contains(request.SearchValue.ToUpper().Replace(" ", ""))),
+                    "comment" => query = query.Where(x => x.Comment != null && x.Comment.ToUpper().Replace(" ", "").Contains(request.SearchValue.ToUpper().Replace(" ", ""))),
+                    _ => query
+                };
+            }
+
+            // Сортировка
+            var comparer = new DateComparer();
+            var notes = await query
+                .OrderByDescending(x => x.Date)  // Сортировка по дате по убыванию
+                .ToListAsync(cancellationToken);
+
+            // Пагинация (если количество записей ограничено)
+            var paginatedNotes = notes
+                .Skip((request.Page - 1) * request.Limit)  // Пропуск предыдущих страниц
+                .Take(request.Limit)                       // Ограничение по количеству записей на странице
+                .ToList();
+
+            // Проверка наличия результатов
+            if (!paginatedNotes.Any())
+            {
+                return await Task.FromResult(new List<NotesWithoutActResponse>());
+            }
+
+            // Маппинг результатов и возврат
+            return await Task.FromResult(_mapper.Map<List<NotesWithoutActResponse>>(paginatedNotes));
+
             throw new NotImplementedException();
         }
     }

@@ -27,6 +27,7 @@ namespace CES.Domain.Handlers.Mes.Acts
                 && request is not null
                 )
             {
+                request.Limit *= request.Limit * 3;
                 if (request.Page <= 0) throw new System.Exception("Упс! Что-то пошло не так");
                 var offset = (request.Page - 1) * request.Limit;
 
@@ -40,7 +41,7 @@ namespace CES.Domain.Handlers.Mes.Acts
                 // Применение фильтра по типу организации после Include
                 if (!string.IsNullOrEmpty(request.OrganizationType))
                 {
-                    query = query.Where(x => x.Organization.OrganizationType.Name== request.OrganizationType);
+                    query = query.Where(x => x.Organization!.OrganizationType!.Name== request.OrganizationType);
                 }
                 // Apply filtering
                 query = request.Filter switch
@@ -54,7 +55,7 @@ namespace CES.Domain.Handlers.Mes.Acts
                 };
 
                 // Apply date range filtering
-                query = query.Where(x => x.DateOfWorkCompletion >= request.Min && x.DateOfWorkCompletion <= request.Max);
+                query = query.Where(x => x.DateOfWorkCompletion.Date >= request.Min.Date && x.DateOfWorkCompletion.Date <= request.Max.Date);
 
                 // Get the total count of filtered items
                 int totalCount = await query.CountAsync(cancellationToken);
