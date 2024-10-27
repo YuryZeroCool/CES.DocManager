@@ -179,7 +179,7 @@ export interface StreetResponse {
 export interface NotesWithoutActsParams {
   minDate: Date;
   maxDate: Date;
-  filter: string[];
+  filter: string;
   searchValue: string;
   page: number;
   limit: number;
@@ -188,7 +188,7 @@ export interface NotesWithoutActsParams {
 export interface NotesWithoutActsReq {
   minDate: string;
   maxDate: string;
-  filter: string[];
+  filter: string;
   searchValue: string;
   page: number;
   limit: number;

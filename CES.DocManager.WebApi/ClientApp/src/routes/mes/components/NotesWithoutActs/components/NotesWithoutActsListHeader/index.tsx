@@ -1,5 +1,5 @@
 import {
-  Button, Checkbox, Group, Stack, TextInput,
+  Button, Group, Radio, Stack, TextInput,
 } from '@mantine/core';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import React, { memo } from 'react';
@@ -77,17 +77,18 @@ function NotesWithoutActsListHeader(props: NotesWithoutActsListHeaderProps) {
         </Group>
 
         <Group w="calc((100% - 30px) / 2)">
-          <Checkbox.Group
-            value={notesWithoutActsParams.filter}
-            onChange={(values) => updateNotesWithoutActsParams('filter', values)}
+          <Radio.Group
             label="Выберите категории для поиска"
+            value={notesWithoutActsParams.filter}
+            onChange={(value) => updateNotesWithoutActsParams('filter', value)}
           >
             <Group mt="xs">
-              <Checkbox value="address" label="Адрес" />
-              <Checkbox value="tel" label="Телефон" />
-              <Checkbox value="comment" label="Комментарий" />
+              <Radio value="" label="Все категории" />
+              <Radio value="address" label="Адрес" />
+              <Radio value="tel" label="Телефон" />
+              <Radio value="comment" label="Комментарий" />
             </Group>
-          </Checkbox.Group>
+          </Radio.Group>
         </Group>
       </Group>
 

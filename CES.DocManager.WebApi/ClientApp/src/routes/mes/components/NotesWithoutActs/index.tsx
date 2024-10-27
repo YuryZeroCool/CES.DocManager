@@ -42,7 +42,7 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
   const [notesWithoutActsParams, setNotesWithoutActsParams] = useState<NotesWithoutActsParams>({
     minDate,
     maxDate,
-    filter: [],
+    filter: '',
     searchValue: '',
     page: 1,
     limit: LIMIT,
@@ -100,9 +100,7 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
   ) => {
     setNotesWithoutActsParams((prevState) => ({
       ...prevState,
-      [key]: Array.isArray(prevState[key])
-        ? [...(Array.isArray(value) ? value : [value])]
-        : value,
+      [key]: value,
     }));
   };
 
