@@ -4,6 +4,7 @@ import {
   Flex, Group, rem, Stack, Text,
 } from '@mantine/core';
 import React, { memo, useEffect, useState } from 'react';
+import { useDisclosure } from '@mantine/hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconX } from '@tabler/icons-react';
 import { showNotification } from '@mantine/notifications';
@@ -16,6 +17,11 @@ import getNotesWithoutActs from '../../../../redux/actions/mes/getNotesWithoutAc
 import { IAuthResponseType } from '../../../../redux/store/configureStore';
 import { RootState } from '../../../../redux/reducers/combineReducers';
 import getActDataFromFile from '../../../../redux/actions/mes/getActDataFromFile';
+import deleteNoteWithoutAct from '../../../../redux/actions/mes/deleteNoteWithoutAct';
+import {
+  editNotesWithoutActAfterAddAct,
+} from '../../../../redux/reducers/mes/mesReducer';
+import WarningModal from '../../../../components/WarningModal/WarningModal.container';
 import NotesWithoutActsTable from './components/NotesWithoutActsTable';
 import LIMIT from '../../MesPage.config';
 
@@ -47,6 +53,11 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
     page: 1,
     limit: LIMIT,
   });
+
+  const [
+    warningModalOpened,
+    { open: warningModalOpen, close: warningModalClose },
+  ] = useDisclosure(false);
 
   const {
     actDataFromFile,
@@ -117,6 +128,27 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
       .catch(() => showErrorNotification('Список заявок не был получен'));
   };
 
+  const handleDeleteNoteBtnClick = () => {
+    if (selectedNotesId.length > 1) {
+      showErrorNotification('Невозможно удалить несколько заявок одновременно');
+    } else {
+      warningModalOpen();
+    }
+  };
+
+  const cofirmDeleteNoteAction = () => {
+    dispatch(deleteNoteWithoutAct(selectedNotesId[0]))
+      .then(() => {
+        warningModalClose();
+        dispatch(editNotesWithoutActAfterAddAct(selectedNotesId));
+        handleSelectNote([]);
+      })
+      .catch(() => {
+        warningModalClose();
+        showErrorNotification('Заявка не была удалена');
+      });
+  };
+
   return (
     <>
       <Flex
@@ -155,12 +187,32 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
               ))}
             </Group>
           </Stack>
+
+          <Divider style={{ background: 'linear-gradient(#7950f2 0%, #15aabf 100%)', height: 3 }} />
+
+          <Stack>
+            <Text fw={600}>Удалить заявку</Text>
+            <Button
+              w={250}
+              variant="gradient"
+              gradient={{ from: 'violet', to: 'blue', deg: 90 }}
+              onClick={() => handleDeleteNoteBtnClick()}
+            >
+              Удалить заявку
+            </Button>
+          </Stack>
         </Stack>
       </Flex>
 
       <NotesWithoutActsTable
         selectedNotesId={selectedNotesId}
         handleSelectNote={handleSelectNote}
+      />
+
+      <WarningModal
+        warningModalOpened={warningModalOpened}
+        warningModalClose={warningModalClose}
+        cofirmAction={cofirmDeleteNoteAction}
       />
     </>
   );
