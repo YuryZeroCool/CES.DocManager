@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  Checkbox,
   Flex,
   Group,
   List,
@@ -22,6 +23,7 @@ interface ActModalProps {
   handleCarInputChange: (value: string | null) => void;
   handleDriverSelectChange: (value: string | null) => void;
   handleActAdditionDateChange: (value: Date | null) => void;
+  handleIsSignedChange: (value: boolean) => void;
   handleAddActSubmit: () => void;
   isAddActModalOpen: boolean;
   isEditActModalOpen: boolean;
@@ -37,6 +39,7 @@ interface ActModalProps {
   modalError: string;
   selectedNotesId: number[];
   selectedNotes: IFullNoteData[];
+  isSigned: boolean;
 }
 
 export default function ActModalComponent(props: ActModalProps) {
@@ -46,6 +49,7 @@ export default function ActModalComponent(props: ActModalProps) {
     handleCarInputChange,
     handleDriverSelectChange,
     handleActAdditionDateChange,
+    handleIsSignedChange,
     handleAddActSubmit,
     isAddActModalOpen,
     isEditActModalOpen,
@@ -61,6 +65,7 @@ export default function ActModalComponent(props: ActModalProps) {
     modalError,
     selectedNotesId,
     selectedNotes,
+    isSigned,
   } = props;
 
   const renderTitle = () => (
@@ -129,28 +134,39 @@ export default function ActModalComponent(props: ActModalProps) {
           />
         </Flex>
 
-        <DatesProvider
-          settings={{
-            locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'Europe/Minsk',
-          }}
-        >
-          <DatePickerInput
-            leftSection={<IconCalendar size="1.1rem" stroke={1.5} />}
-            label="Дата добавления акта"
-            placeholder="Выберите дату"
-            value={actAdditionDate ? new Date(actAdditionDate) : null}
-            onChange={(value: Date | null) => {
-              handleActAdditionDateChange(value);
+        <Flex gap={10} align="center">
+          <DatesProvider
+            settings={{
+              locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'Europe/Minsk',
             }}
+          >
+            <DatePickerInput
+              leftSection={<IconCalendar size="1.1rem" stroke={1.5} />}
+              label="Дата добавления акта"
+              placeholder="Выберите дату"
+              value={actAdditionDate ? new Date(actAdditionDate) : null}
+              onChange={(value: Date | null) => {
+                handleActAdditionDateChange(value);
+              }}
+              classNames={{
+                day: classes.day,
+              }}
+              w="50%"
+              clearable
+              leftSectionPointerEvents="none"
+              maxDate={new Date()}
+            />
+          </DatesProvider>
+          <Checkbox
+            label="Акт подписан"
+            mt={20}
+            checked={isSigned}
+            onChange={(event) => handleIsSignedChange(event.currentTarget.checked)}
             classNames={{
-              day: classes.day,
+              input: classes.input,
             }}
-            w="50%"
-            clearable
-            leftSectionPointerEvents="none"
-            maxDate={new Date()}
           />
-        </DatesProvider>
+        </Flex>
 
         {selectedNotes.length > 0 && (
           <Stack gap={10}>
