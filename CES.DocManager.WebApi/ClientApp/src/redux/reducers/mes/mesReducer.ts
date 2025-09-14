@@ -48,6 +48,7 @@ const actDataFromFileDefault: ActDataFromFileResponse = {
 };
 
 const initial: INotesState = {
+  mesError: '',
   allNotes: [],
   allFullNoteData: [],
   editedNoteId: 0,
@@ -551,6 +552,7 @@ const mesReducer = createSlice({
       stateCopy = {
         ...stateCopy,
         requestStatus: 'pending',
+        mesError: '',
       };
       return stateCopy;
     });
@@ -565,7 +567,15 @@ const mesReducer = createSlice({
       return stateCopy;
     });
     builder.addCase(getActsList.rejected, (state, action) => {
-      throw Error(action.payload?.message);
+      let stateCopy = state;
+      stateCopy = {
+        ...stateCopy,
+        requestStatus: 'rejected',
+        mesError: action.payload?.message || 'Произошла ошибка при загрузке актов',
+        actsList: [],
+        totalActsListCount: 0,
+      };
+      return stateCopy;
     });
 
     builder.addCase(deleteAct.pending, (state) => {

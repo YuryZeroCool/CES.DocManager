@@ -1,20 +1,17 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {
-  Drawer,
-  Stack,
-  Table,
-  Text,
+  Drawer, Group, Stack, Table, Text,
 } from '@mantine/core';
-import { ActsList } from '../../types/MesTypes';
-import classes from './DetailsInfoPanel.module.css';
+import { ActsList } from '../../../../../../types/MesTypes';
+import classes from './styles.module.css';
 
-interface DetailsInfoPanelCompnentProps {
+interface ActDetailsInfoPanelProps {
   currentAct: ActsList | null;
   detailsInfoPanelOpen: boolean;
   handleDrawerClose: () => void;
 }
 
-function DetailsInfoPanelCompnent(props: DetailsInfoPanelCompnentProps) {
+function ActDetailsInfoPanel(props: ActDetailsInfoPanelProps) {
   const { currentAct, detailsInfoPanelOpen, handleDrawerClose } = props;
 
   const tableHead = (
@@ -80,11 +77,19 @@ function DetailsInfoPanelCompnent(props: DetailsInfoPanelCompnentProps) {
       onClose={handleDrawerClose}
       title="Подробная информация"
       position="right"
-      size="xl"
+      size="50%"
       styles={{
         title: { fontSize: 20, fontWeight: 600 },
         header: { padding: 20 },
         body: { padding: 20 },
+        overlay: {
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 200,
+        },
       }}
     >
       <Stack gap={20}>
@@ -111,34 +116,41 @@ function DetailsInfoPanelCompnent(props: DetailsInfoPanelCompnentProps) {
             Адреса:
           </Text>
           {currentAct?.notesWithoutAct.map((note) => (
-            <Text key={note.id} className={classes.detailedInfoValue}>
-              {note.street && (
-                <>
-                  {note.street}
-                  ,&nbsp;
-                </>
+            <Group key={note.id} justify="space-between">
+              <Text className={classes.detailedInfoValue}>
+                {note.street && (
+                  <>
+                    {note.street}
+                    ,&nbsp;
+                  </>
+                )}
+                {note.houseNumber !== '' && note.houseNumber !== '0' && (
+                  <>
+                    д.&nbsp;
+                    {note.houseNumber}
+                    ,&nbsp;
+                  </>
+                )}
+                {note.entrance !== 0 && (
+                  <>
+                    п.&nbsp;
+                    {note.entrance}
+                    ,&nbsp;
+                  </>
+                )}
+                {note.tel !== '' && (
+                  <>
+                    т.&nbsp;
+                    {note.tel}
+                  </>
+                )}
+              </Text>
+              {note.date && (
+                <Text className={classes.detailedInfoValue}>
+                  {note.date.replace('T', ' ')}
+                </Text>
               )}
-              {note.houseNumber !== '' && note.houseNumber !== '0' && (
-                <>
-                  д.&nbsp;
-                  {note.houseNumber}
-                  ,&nbsp;
-                </>
-              )}
-              {note.entrance !== 0 && (
-                <>
-                  п.&nbsp;
-                  {note.entrance}
-                  ,&nbsp;
-                </>
-              )}
-              {note.tel !== '' && (
-                <>
-                  т.&nbsp;
-                  {note.tel}
-                </>
-              )}
-            </Text>
+            </Group>
           ))}
         </Stack>
 
@@ -168,4 +180,4 @@ function DetailsInfoPanelCompnent(props: DetailsInfoPanelCompnentProps) {
   );
 }
 
-export default DetailsInfoPanelCompnent;
+export default memo(ActDetailsInfoPanel);

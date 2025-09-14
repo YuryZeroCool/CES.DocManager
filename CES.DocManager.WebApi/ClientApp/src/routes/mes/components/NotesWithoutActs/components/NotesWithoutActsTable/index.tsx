@@ -6,8 +6,8 @@ import {
 import { RotatingLines } from 'react-loader-spinner';
 import { INotesState } from '../../../../../../types/MesTypes';
 import { RootState } from '../../../../../../redux/reducers/combineReducers';
-import classes from './NotesWithoutActsTable.module.css';
-import headCells from './NotesWithoutActsTable.config';
+import classes from './styles.module.css';
+import headCells from './config';
 
 interface Props {
   selectedNotesId: number[];
@@ -116,7 +116,7 @@ function NotesWithoutActsTable(props: Props) {
           loaderProps={{
             children: (
               <RotatingLines
-                strokeColor="white"
+                strokeColor="blue"
                 strokeWidth="5"
                 animationDuration="0.5"
                 width="80"

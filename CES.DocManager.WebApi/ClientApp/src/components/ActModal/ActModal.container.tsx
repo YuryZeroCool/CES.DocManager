@@ -59,6 +59,7 @@ function ActModalContainer(props: Props) {
   const [organization, setOrganization] = useInputState('');
   const [car, setCar] = useInputState('');
   const [driver, setDriver] = useState<string | null>(null);
+  const [isSigned, setIsSigned] = useState<boolean>(false);
   const [actAdditionDate, setActAdditionDate] = useState<Date | null>(null);
   const [modalError, setModalError] = useState<string>('');
 
@@ -112,6 +113,7 @@ function ActModalContainer(props: Props) {
     setCar('');
     setDriver(null);
     setActAdditionDate(null);
+    setIsSigned(false);
     dispatch(resetCarsByCarNumber());
     dispatch(resetDriversByCar());
     dispatch(resetActData(type));
@@ -186,6 +188,10 @@ function ActModalContainer(props: Props) {
     setActAdditionDate(value);
   };
 
+  const handleIsSignedChange = (value: boolean) => {
+    setIsSigned(value);
+  };
+
   const handleAddActSubmit = () => {
     if (organization && driver && car && actAdditionDate) {
       const request: AddNewActReq = {
@@ -198,6 +204,7 @@ function ActModalContainer(props: Props) {
         notesWithoutAct: selectedNotes,
         totalActSumm: +(+totalActSumm).toFixed(2),
         vat: +(+vat).toFixed(2),
+        isSigned,
       };
 
       dispatch(createNewAct(request))
@@ -227,11 +234,13 @@ function ActModalContainer(props: Props) {
       modalError={modalError}
       selectedNotesId={selectedNotesId}
       selectedNotes={selectedNotes}
+      isSigned={isSigned}
       handleClose={handleClose}
       handleOrganizationsInputChange={handleOrganizationsInputChange}
       handleCarInputChange={handleCarInputChange}
       handleDriverSelectChange={handleDriverSelectChange}
       handleActAdditionDateChange={handleActAdditionDateChange}
+      handleIsSignedChange={handleIsSignedChange}
       handleAddActSubmit={handleAddActSubmit}
     />
   );
