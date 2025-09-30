@@ -1,24 +1,26 @@
 import {
-  Button, Group, Radio, Stack, TextInput,
+  Button, Group, Radio, Select, Stack, TextInput,
 } from '@mantine/core';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
-import React, { memo } from 'react';
 import { IconCalendar } from '@tabler/icons-react';
-import { NotesWithoutActsParams } from '../../../../../../types/MesTypes';
-import classes from './styles.module.css';
+import React, { memo } from 'react';
+import { ActsHistoryParams, OrganizationType } from '../../../../../../types/MesTypes';
+import classes from '../../styles.module.css';
 
-interface NotesWithoutActsListHeaderProps {
-  notesWithoutActsParams: NotesWithoutActsParams;
-  updateNotesWithoutActsParams: <K extends keyof NotesWithoutActsParams>(
-    key: K, value: NotesWithoutActsParams[K]) => void;
-  handleGetNotesWithoutActsBtnClick: (params: NotesWithoutActsParams) => void;
+interface ActsListHeaderProps {
+  actsHistoryParams: ActsHistoryParams;
+  organizationTypes: OrganizationType[];
+  updateActsHistoryParams: <K extends keyof ActsHistoryParams>(
+    key: K, value: ActsHistoryParams[K]) => void;
+  handleGetActsListBtnClick: (params: ActsHistoryParams) => void;
 }
 
-function NotesWithoutActsListHeader(props: NotesWithoutActsListHeaderProps) {
+function ActsListHeader(props: ActsListHeaderProps) {
   const {
-    notesWithoutActsParams,
-    updateNotesWithoutActsParams,
-    handleGetNotesWithoutActsBtnClick,
+    actsHistoryParams,
+    organizationTypes,
+    updateActsHistoryParams,
+    handleGetActsListBtnClick,
   } = props;
 
   return (
@@ -35,9 +37,9 @@ function NotesWithoutActsListHeader(props: NotesWithoutActsListHeaderProps) {
                 leftSection={<IconCalendar size="1.1rem" stroke={1.5} />}
                 label="От"
                 placeholder="От"
-                value={notesWithoutActsParams.minDate}
+                value={actsHistoryParams.minDate}
                 onChange={(value: Date | null) => {
-                  if (value) updateNotesWithoutActsParams('minDate', value);
+                  if (value) updateActsHistoryParams('minDate', value);
                 }}
                 classNames={{
                   day: classes.day,
@@ -60,9 +62,9 @@ function NotesWithoutActsListHeader(props: NotesWithoutActsListHeaderProps) {
                 leftSection={<IconCalendar size="1.1rem" stroke={1.5} />}
                 label="До"
                 placeholder="До"
-                value={notesWithoutActsParams.maxDate}
+                value={actsHistoryParams.maxDate}
                 onChange={(value: Date | null) => {
-                  if (value) updateNotesWithoutActsParams('maxDate', value);
+                  if (value) updateActsHistoryParams('maxDate', value);
                 }}
                 classNames={{
                   day: classes.day,
@@ -79,38 +81,58 @@ function NotesWithoutActsListHeader(props: NotesWithoutActsListHeaderProps) {
         <Group w="calc((100% - 30px) / 2)">
           <Radio.Group
             label="Выберите категории для поиска"
-            value={notesWithoutActsParams.filter}
-            onChange={(value) => updateNotesWithoutActsParams('filter', value)}
+            value={actsHistoryParams.filter}
+            onChange={(value) => {
+              updateActsHistoryParams('filter', value);
+              updateActsHistoryParams('searchValue', '');
+            }}
           >
             <Group mt="xs">
               <Radio value="" label="Все категории" />
-              <Radio value="address" label="Адрес" />
-              <Radio value="tel" label="Телефон" />
-              <Radio value="comment" label="Комментарий" />
+              <Radio value="organization" label="Организация" />
+              <Radio value="employee" label="Водитель" />
+              <Radio value="street" label="Улица" />
+              <Radio value="numberPlateOfCar" label="Номер машины" />
+              <Radio value="isNotSigned" label="Неподписанные" />
             </Group>
           </Radio.Group>
         </Group>
       </Group>
 
       <Group gap={20} w="70%" align="end">
+        <Select
+          label="Тип организации"
+          data={[
+            { label: 'Все', value: '' },
+            ...organizationTypes.map((el) => ({ label: el.name, value: el.name })),
+          ]}
+          value={actsHistoryParams.organizationType}
+          onChange={(value) => {
+            if (value) updateActsHistoryParams('organizationType', value);
+          }}
+          allowDeselect={false}
+        />
+
         <TextInput
           label="Введите значение для поиска"
-          value={notesWithoutActsParams.searchValue}
-          onChange={(event) => updateNotesWithoutActsParams('searchValue', event.currentTarget.value)}
+          value={actsHistoryParams.searchValue}
+          onChange={(event) => updateActsHistoryParams('searchValue', event.currentTarget.value)}
           style={{ flexGrow: 1 }}
         />
 
         <Button
           variant="gradient"
           gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
-          onClick={() => handleGetNotesWithoutActsBtnClick(notesWithoutActsParams)}
-          disabled={notesWithoutActsParams.filter.length !== 0 && notesWithoutActsParams.searchValue === ''}
+          onClick={() => handleGetActsListBtnClick(actsHistoryParams)}
+          disabled={actsHistoryParams.filter !== ''
+            && actsHistoryParams.filter !== 'isNotSigned'
+            && actsHistoryParams.searchValue === ''}
         >
-          Получить заявки
+          Получить акты
         </Button>
       </Group>
     </Stack>
   );
 }
 
-export default memo(NotesWithoutActsListHeader);
+export default memo(ActsListHeader);

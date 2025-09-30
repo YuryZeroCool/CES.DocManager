@@ -19,6 +19,7 @@ export interface INoteContactInfo {
   entrance: number;
   houseNumber: string;
   tel: string;
+  date: string;
 }
 
 export interface ExistedNote {
@@ -65,6 +66,7 @@ export interface ISearchOrganization {
 }
 
 export interface INotesState {
+  mesError: string;
   allNotes: INote[];
   allFullNoteData: IFullNoteData[];
   editedNoteId: number;
@@ -139,6 +141,7 @@ export interface AddNewActReq {
   notesWithoutAct: IFullNoteData[];
   totalActSumm: number;
   vat: number;
+  isSigned: boolean;
 }
 
 export interface GetActsListReq {
@@ -164,6 +167,7 @@ export interface ActsList {
   actType: string;
   works: Work[];
   notesWithoutAct: INoteContactInfo[];
+  isSigned: boolean;
 }
 
 export interface ActsListRes {
@@ -183,6 +187,10 @@ export interface NotesWithoutActsParams {
   searchValue: string;
   page: number;
   limit: number;
+}
+
+export interface ActsHistoryParams extends NotesWithoutActsParams {
+  organizationType: string;
 }
 
 export interface NotesWithoutActsReq {

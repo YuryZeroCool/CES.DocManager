@@ -1,8 +1,8 @@
-import { Flex, Pagination } from '@mantine/core';
-import React from 'react';
-import classes from './Pagination.module.scss';
+import { Flex, Pagination as MantinePagination } from '@mantine/core';
+import React, { memo } from 'react';
+import classes from './styles.module.scss';
 
-interface Props {
+interface PaginationProps {
   page: number;
   totalPage: number;
   width: string;
@@ -10,7 +10,7 @@ interface Props {
   handleCurrentPageChange: (value: number) => void;
 }
 
-export default function PaginationComponent(props: Props) {
+function Pagination(props: PaginationProps) {
   const {
     page,
     totalPage,
@@ -21,7 +21,7 @@ export default function PaginationComponent(props: Props) {
 
   return (
     <Flex justify={justify} w={width}>
-      <Pagination
+      <MantinePagination
         value={page}
         total={totalPage}
         classNames={{
@@ -32,3 +32,5 @@ export default function PaginationComponent(props: Props) {
     </Flex>
   );
 }
+
+export default memo(Pagination);
