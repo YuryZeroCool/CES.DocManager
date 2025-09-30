@@ -30,6 +30,8 @@
 
         public string? WorkPerformAct { get; set; }
 
+        public bool IsSigned { get; set; }
+
         public ICollection<NoteEntity>? Notes { get; set; } = new List<NoteEntity>();
     }
 }

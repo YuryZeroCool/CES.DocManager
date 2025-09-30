@@ -55,7 +55,8 @@ namespace CES.Domain.Handlers.Mes.Acts
                     .FirstOrDefaultAsync(x => x.Name.Trim() == request.ActType.Trim(), cancellationToken)
                     ?? throw new System.Exception("Упс! Что-то пошло не так"),
                     WorkPerformAct = JsonSerializer.Serialize(request.CompletedWorks)
-                    ?? throw new System.Exception("Упс! Что-то пошло не так")
+                    ?? throw new System.Exception("Упс! Что-то пошло не так"),
+                    IsSigned = request.IsSigned,
                 }, cancellationToken);
                 await _ctx.SaveChangesAsync(cancellationToken);
                 foreach (var notesWithoutAct in request.NotesWithoutAct)

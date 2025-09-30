@@ -19,6 +19,9 @@
         public decimal TotalActSumm { get; set; }
 
         public decimal Vat { get; set; }
+
+        public bool IsSigned { get; set; }
+
     }
 
     public class Work

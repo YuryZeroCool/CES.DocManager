@@ -13,6 +13,9 @@ namespace CES.Infra.Config.Mes
 
             builder.Property(x => x.ActDateOfCreation)
                     .HasColumnType("DATETIME");
+
+            builder.Property(a => a.IsSigned)
+             .HasDefaultValue(true);
         }
     }
 }
