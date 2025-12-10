@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import downloadActOfWriteoffOfSpareParts from '../../redux/actions/report/materialReport/downloadActOfWriteoffOfSpareParts';

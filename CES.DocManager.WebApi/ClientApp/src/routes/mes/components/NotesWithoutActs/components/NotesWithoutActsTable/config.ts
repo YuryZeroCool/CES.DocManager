@@ -23,6 +23,10 @@ const headCells: readonly HeadCell[] = [
     id: 5,
     label: 'Комментарий',
   },
+  {
+    id: 6,
+    label: '',
+  },
 ];
 
 export default headCells;

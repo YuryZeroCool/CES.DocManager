@@ -158,14 +158,6 @@ namespace CES.Domain.Mapper
 
             CreateMap<NoteEntity, GetSortedNotesResponse>();
 
-            CreateMap<NoteEntity, GetAllNotesResponse>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
-                .ForMember(dest => dest.IsChecked, opt => opt.MapFrom(src => src.IsChecked))
-                .ForMember(dest => dest.Tel, opt => opt.MapFrom(src => src.Tel));
-            ;
-
             CreateMap<CreateOrganizationRequest, OrganizationEntity>()
                 .ForMember(dest => dest.OrganizationType, opt => opt.Ignore());
 
@@ -220,6 +212,16 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.HouseNumber!.Number))
                 .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street!.Name))
                 .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.HouseNumber!.Number));
+
+            CreateMap<NoteEntity, NoteResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Comment, opt => opt.MapFrom(src => src.Comment))
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
+                .ForMember(dest => dest.IsChecked, opt => opt.MapFrom(src => src.IsChecked))
+                .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street != null ? src.Street.Name : string.Empty))
+                .ForMember(dest => dest.HouseNumber, opt => opt.MapFrom(src => src.HouseNumber != null ? src.HouseNumber.Number : string.Empty))
+                .ForMember(dest => dest.Entrance, opt => opt.MapFrom(src => src.Entrance != null ? src.Entrance.Number : 0))
+                .ForMember(dest => dest.Tel, opt => opt.MapFrom(src => src.Tel ?? string.Empty));
 
             CreateMap<OrganizationTypeEntity, GetOrganizationTypesResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

@@ -41,6 +41,10 @@ main {
   background-size: cover;
 }
 
+:root {
+  --mantine-scroll-lock-margin: 0px;
+}
+
 .modal-title {
   margin-bottom: 15px !important;
   text-align: center;

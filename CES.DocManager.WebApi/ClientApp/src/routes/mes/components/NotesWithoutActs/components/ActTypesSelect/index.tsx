@@ -6,8 +6,9 @@ import {
 } from '@mantine/core';
 import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../../../../redux/reducers/combineReducers';
-import { INotesState } from '../../../../../../types/MesTypes';
+
+import { RootState } from 'redux/reducers/combineReducers';
+import { INotesState } from 'types/MesTypes';
 
 interface ActTypesSelectProps {
   actTypeSelectValue: string;
@@ -34,6 +35,7 @@ function ActTypesSelect(props: ActTypesSelectProps) {
       {`(${item.season.toLocaleLowerCase()})`}
     </Combobox.Option>
   ));
+
   return (
     <Combobox
       store={combobox}

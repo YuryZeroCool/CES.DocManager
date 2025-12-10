@@ -1,31 +1,47 @@
 import React, { memo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Checkbox, Group, LoadingOverlay, Stack, Table, Text,
 } from '@mantine/core';
 import { RotatingLines } from 'react-loader-spinner';
-import { INotesState } from '../../../../../../types/MesTypes';
-import { RootState } from '../../../../../../redux/reducers/combineReducers';
+
+import { NotesWithoutActState } from 'types/mes/NotesWithoutActTypes';
+import { RootState } from 'redux/reducers/combineReducers';
+import { changeSelectedNoteId } from 'redux/reducers/mes/notesWithoutActReducer';
+import { IAuthResponseType } from 'redux/store/configureStore';
+import { ReactComponent as EditIcon } from 'assets/icons/edit-icon.svg';
+
 import classes from './styles.module.css';
 import headCells from './config';
 
-interface Props {
+interface NotesWithoutActsTableProps {
   selectedNotesId: number[];
   handleSelectNote: (newValue: number[]) => void;
+  noteModalOpen: () => void;
+  changeIsEditModal: (value: boolean) => void;
 }
 
-function NotesWithoutActsTable(props: Props) {
+function NotesWithoutActsTable(props: NotesWithoutActsTableProps) {
   const {
     selectedNotesId,
     handleSelectNote,
+    noteModalOpen,
+    changeIsEditModal,
   } = props;
 
   const {
-    notesWithoutAct,
     requestStatus,
-  } = useSelector<RootState, INotesState>(
-    (state) => state.mes,
+  } = useSelector<RootState, NotesWithoutActState>(
+    (state) => state.notesWithoutAct,
   );
+
+  const {
+    notesWithoutAct,
+  } = useSelector<RootState, NotesWithoutActState>(
+    (state) => state.notesWithoutAct,
+  );
+
+  const dispatch: IAuthResponseType = useDispatch();
 
   const handleClick = (id: number, isChecked: boolean) => {
     const newSelected = isChecked
@@ -36,6 +52,12 @@ function NotesWithoutActsTable(props: Props) {
   };
 
   const isSelected = (id: number) => selectedNotesId.indexOf(id) !== -1;
+
+  const handleEditIconClick = (id: number) => {
+    dispatch(changeSelectedNoteId(id));
+    noteModalOpen();
+    changeIsEditModal(true);
+  };
 
   return (
     <div className="notes-table">
@@ -95,6 +117,15 @@ function NotesWithoutActsTable(props: Props) {
                   <Table.Td miw={200}>{row.date.replace('T', ' ')}</Table.Td>
                   <Table.Td>{row.tel}</Table.Td>
                   <Table.Td>{row.comment}</Table.Td>
+                  <Table.Td width="30px">
+                    {(!row.street || !row.houseNumber) && (
+                      <EditIcon
+                        width={20}
+                        height={20}
+                        onClick={() => handleEditIconClick(row.id)}
+                      />
+                    )}
+                  </Table.Td>
                 </Table.Tr>
               );
             })}
@@ -110,6 +141,7 @@ function NotesWithoutActsTable(props: Props) {
             </Stack>
         )}
       </Group>
+
       {notesWithoutAct.length === 0 && requestStatus !== 'fulfilled' && (
         <LoadingOverlay
           visible

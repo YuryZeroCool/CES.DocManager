@@ -6,7 +6,6 @@ using CES.Domain.Models.Request.Mes.Notes;
 using CES.Domain.Models.Response.Mes.Notes;
 using MediatR;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
@@ -28,22 +27,6 @@ namespace CES.DocManager.WebApi.Controllers
             _mediator = mediator;
             _mapper = mapper;
         }
-        // [Authorize(AuthenticationSchemes =
-        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        [HttpGet()]
-        [Produces(typeof(List<GetAllNotesResponse>))]
-        public async Task<object> GetAllNotes()
-        {
-            try
-            {
-                return await _mediator.Send(new GetAllNotesRequest());
-            }
-            catch (Exception e)
-            {
-                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
-                return new ErrorResponse(e.Message);
-            }
-        }
 
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
@@ -55,27 +38,6 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
                 return await _mediator.Send(_mapper.Map<CreateNoteRequest>(note));
-            }
-            catch (Exception e)
-            {
-                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
-                return new ErrorResponse(e.Message);
-            }
-        }
-
-        // [Authorize(AuthenticationSchemes =
-        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
-        [HttpPatch]
-        [Produces(typeof(EditNoteResponse))]
-        public async Task<object> EditNote(int id, [FromBody] JsonPatchDocument editedMaterial)
-        {
-            try
-            {
-                return await _mediator.Send(new EditNoteRequest()
-                {
-                    EditId = id,
-                    EditNote = editedMaterial
-                });
             }
             catch (Exception e)
             {
@@ -129,14 +91,14 @@ namespace CES.DocManager.WebApi.Controllers
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpPut()]
-        [Produces(typeof(int))]
+        [Produces(typeof(List<NoteResponse>))]
         public async Task<object> EditExistedNote([FromBody] EditExistedNoteViewModel note)
         {
             try
             {
-                var id = await _mediator.Send(_mapper.Map<EditExistedNoteRequest>(note));
+                var editedNotes = await _mediator.Send(_mapper.Map<EditExistedNoteRequest>(note));
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
-                return id;
+                return editedNotes;
             }
             catch (Exception e)
             {
@@ -146,14 +108,14 @@ namespace CES.DocManager.WebApi.Controllers
         }
 
         [HttpPost("existedNote")]
-        [Produces(typeof(string))]
+        [Produces(typeof(List<NoteResponse>))]
         public async Task<object> CreateExistedNote([FromBody] CreateExistedNoteViewModel note)
         {
             try
             {
-                var status = await _mediator.Send(_mapper.Map<CreateExistedNoteRequest>(note));
+                var createdNotes = await _mediator.Send(_mapper.Map<CreateExistedNoteRequest>(note));
                 HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
-                return status;
+                return createdNotes;
             }
             catch (Exception e)
             {

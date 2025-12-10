@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import {
   Drawer, Group, Stack, Table, Text,
 } from '@mantine/core';
-import { ActsList } from '../../../../../../types/MesTypes';
+import { ActsList } from 'types/MesTypes';
 import classes from './styles.module.css';
 
 interface ActDetailsInfoPanelProps {
