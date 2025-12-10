@@ -4,7 +4,8 @@ import {
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import React, { memo } from 'react';
 import { IconCalendar } from '@tabler/icons-react';
-import { NotesWithoutActsParams } from '../../../../../../types/MesTypes';
+
+import { NotesWithoutActsParams } from 'types/mes/NotesWithoutActTypes';
 import classes from './styles.module.css';
 
 interface NotesWithoutActsListHeaderProps {

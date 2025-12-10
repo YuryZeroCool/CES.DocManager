@@ -1,18 +1,20 @@
+import React, { memo, useEffect, useState } from 'react';
 import {
   Button, Group, rem, Text,
 } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import { showNotification } from '@mantine/notifications';
 import { format, getDaysInMonth } from 'date-fns';
-import React, { memo, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../../redux/reducers/combineReducers';
-import { GetActsListReq, INotesState, ActsHistoryParams } from '../../../../types/MesTypes';
-import getActsList from '../../../../redux/actions/mes/getActsList';
-import { IAuthResponseType } from '../../../../redux/store/configureStore';
+
+import { OrganizationState } from 'types/mes/OrganizationTypes';
+import { GetActsListReq, INotesState, ActsHistoryParams } from 'types/MesTypes';
+import { RootState } from 'redux/reducers/combineReducers';
+import Pagination from 'components/Pagination';
+import { getOrganizationType } from 'redux/actions/mes';
+import getActsList from 'redux/actions/mes/getActsList';
+import { IAuthResponseType } from 'redux/store/configureStore';
 import ActsListTable from './components/ActsListTable';
-import Pagination from '../../../../components/Pagination';
-import getOrganizationType from '../../../../redux/actions/mes/getOrganizationTypes';
 import ActsListHeader from './components/ActsListHeader';
 
 interface ActsHistoryProps {
@@ -43,13 +45,18 @@ function ActsHistory(props: ActsHistoryProps) {
   const dispatch: IAuthResponseType = useDispatch();
 
   const {
-    organizationTypes,
     totalActsListCount,
     requestStatus,
     mesError,
     actsList,
   } = useSelector<RootState, INotesState>(
     (state) => state.mes,
+  );
+
+  const {
+    organizationTypes,
+  } = useSelector<RootState, OrganizationState>(
+    (state) => state.organization,
   );
 
   const getActsListReq = () => {

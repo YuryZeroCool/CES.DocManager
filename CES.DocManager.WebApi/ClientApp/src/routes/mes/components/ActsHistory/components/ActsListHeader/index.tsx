@@ -1,10 +1,12 @@
+import React, { memo } from 'react';
 import {
   Button, Group, Radio, Select, Stack, TextInput,
 } from '@mantine/core';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import { IconCalendar } from '@tabler/icons-react';
-import React, { memo } from 'react';
-import { ActsHistoryParams, OrganizationType } from '../../../../../../types/MesTypes';
+
+import { ActsHistoryParams } from 'types/MesTypes';
+import { OrganizationType } from 'types/mes/OrganizationTypes';
 import classes from '../../styles.module.css';
 
 interface ActsListHeaderProps {

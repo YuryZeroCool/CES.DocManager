@@ -1,103 +1,23 @@
-export interface INote {
-  id: number;
-  date: string;
-  comment: string;
-  isChecked: boolean;
-}
-
-export interface ContactInfo {
-  id: number;
-  street: string;
-  entrance: string;
-  houseNumber: string;
-  tel: string;
-}
-
-export interface INoteContactInfo {
-  id: number;
-  street: string;
-  entrance: number;
-  houseNumber: string;
-  tel: string;
-  date: string;
-}
-
-export interface ExistedNote {
-  date: string;
-  comment: string;
-  isChecked: boolean;
-  noteContactsInfo: ContactInfo[];
-}
-
-export interface EditNoteRequest extends ExistedNote {
-  id: number;
-}
-
-export type CreateNoteRequest = ExistedNote;
-
-export interface IFullNoteData extends INote {
-  street: string;
-  entrance: number;
-  houseNumber: string;
-  tel: string;
-}
-
-export interface Organization {
-  name: string;
-  payerAccountNumber: string;
-  address: string;
-  email: string;
-  phone: string;
-  organizationType: string | null;
-}
-
-export interface OrganizationResponse extends Organization {
-  id: number;
-}
-
-export interface OrganizationType {
-  id: number;
-  name: string;
-}
-
-export interface ISearchOrganization {
-  totalPage: number;
-  organizations: OrganizationResponse[];
-}
+import {
+  NoteFullContactInfo,
+  NotesWithoutActsParams,
+  NoteWithoutAct,
+} from './mes/NotesWithoutActTypes';
 
 export interface INotesState {
   mesError: string;
-  allNotes: INote[];
-  allFullNoteData: IFullNoteData[];
-  editedNoteId: number;
-  selectedNoteId: number;
   requestStatus: string;
-  createdOrganization: OrganizationResponse;
-  allOrganizations: ISearchOrganization;
-  allOrganizationsBySearch: string[],
-  deletedOrganizationId: number;
-  editedOrganization: OrganizationResponse;
-  selectedOrganizationId: number;
   mesPageType: string;
-  notesWithoutAct: IFullNoteData[];
   actTypesFromFile: ActTypesFromFileResponse[];
   actDataFromFile: ActDataFromFileResponse;
   totalActSumm: string;
   deletedNoteId: number;
   vat: string;
-  streetsBySearch: string[];
   createdActId: number;
   actsList: ActsList[];
   totalActsListCount: number;
   selectedActId: number;
   deletedActId: number;
-  organizationTypes: OrganizationType[];
-}
-
-export interface SearchOrganization {
-  title: string;
-  page: number;
-  limit: number;
 }
 
 export interface ActTypesFromFileResponse {
@@ -131,6 +51,15 @@ export interface UpdateActDataFromFileReq {
   type: string;
 }
 
+export interface ActModalFormState {
+  selectedNotes: NoteWithoutAct[];
+  organization: string;
+  car: string;
+  driver: string | null;
+  isSigned: boolean;
+  actAdditionDate: Date | null;
+}
+
 export interface AddNewActReq {
   organization: string;
   vehicle: string;
@@ -138,7 +67,7 @@ export interface AddNewActReq {
   actAdditionDate: string;
   actType: string;
   completedWorks: Work[];
-  notesWithoutAct: IFullNoteData[];
+  notesWithoutAct: NoteWithoutAct[];
   totalActSumm: number;
   vat: number;
   isSigned: boolean;
@@ -166,8 +95,9 @@ export interface ActsList {
   numberPlateOfCar: string;
   actType: string;
   works: Work[];
-  notesWithoutAct: INoteContactInfo[];
+  notesWithoutAct: NoteFullContactInfo[];
   isSigned: boolean;
+  contractNumber: string;
 }
 
 export interface ActsListRes {
@@ -175,29 +105,6 @@ export interface ActsListRes {
   totalActsListPagesCount: number;
 }
 
-export interface StreetResponse {
-  id: number;
-  street: string
-}
-
-export interface NotesWithoutActsParams {
-  minDate: Date;
-  maxDate: Date;
-  filter: string;
-  searchValue: string;
-  page: number;
-  limit: number;
-}
-
 export interface ActsHistoryParams extends NotesWithoutActsParams {
   organizationType: string;
-}
-
-export interface NotesWithoutActsReq {
-  minDate: string;
-  maxDate: string;
-  filter: string;
-  searchValue: string;
-  page: number;
-  limit: number;
 }

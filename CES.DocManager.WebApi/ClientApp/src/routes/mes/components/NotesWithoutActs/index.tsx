@@ -9,21 +9,24 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IconX } from '@tabler/icons-react';
 import { showNotification } from '@mantine/notifications';
 import { format, getDaysInMonth } from 'date-fns';
-import NotesWithoutActsListHeader from './components/NotesWithoutActsListHeader';
-import { INotesState, NotesWithoutActsParams } from '../../../../types/MesTypes';
+
+import WarningModal from 'components/WarningModal';
+import { RootState } from 'redux/reducers/combineReducers';
+import { IAuthResponseType } from 'redux/store/configureStore';
+import getActTypesFromFile from 'redux/actions/mes/getActTypesFromFile';
+import getNotesWithoutActs from 'redux/actions/mes/notesWithoutAct/getNotesWithoutActs';
+import getActDataFromFile from 'redux/actions/mes/getActDataFromFile';
+import deleteNoteWithoutAct from 'redux/actions/mes/notesWithoutAct/deleteNoteWithoutAct';
+import { editNotesWithoutActAfterAddAct } from 'redux/reducers/mes/notesWithoutActReducer';
+import { INotesState } from 'types/MesTypes';
+import { NotesWithoutActsParams } from 'types/mes/NotesWithoutActTypes';
+
 import ActTypesSelect from './components/ActTypesSelect';
-import getActTypesFromFile from '../../../../redux/actions/mes/getActTypesFromFile';
-import getNotesWithoutActs from '../../../../redux/actions/mes/getNotesWithoutActs';
-import { IAuthResponseType } from '../../../../redux/store/configureStore';
-import { RootState } from '../../../../redux/reducers/combineReducers';
-import getActDataFromFile from '../../../../redux/actions/mes/getActDataFromFile';
-import deleteNoteWithoutAct from '../../../../redux/actions/mes/deleteNoteWithoutAct';
-import {
-  editNotesWithoutActAfterAddAct,
-} from '../../../../redux/reducers/mes/mesReducer';
-import WarningModal from '../../../../components/WarningModal/WarningModal.container';
+import ExistedNoteModal from './components/ExistedNoteModal';
+import NotesWithoutActsListHeader from './components/NotesWithoutActsListHeader';
 import NotesWithoutActsTable from './components/NotesWithoutActsTable';
-import LIMIT from '../../MesPage.config';
+
+const LIMIT = 10;
 
 interface NotesWithoutActsProps {
   selectedNotesId: number[];
@@ -53,6 +56,12 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
     page: 1,
     limit: LIMIT,
   });
+  const [isEditModal, setIsEditModal] = useState<boolean>(false);
+
+  const [
+    noteModalOpened,
+    { open: noteModalOpen, close: noteModalClose },
+  ] = useDisclosure(false);
 
   const [
     warningModalOpened,
@@ -136,6 +145,15 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
     }
   };
 
+  const changeIsEditModal = (value: boolean) => {
+    setIsEditModal(value);
+  };
+
+  const handleAddNoteBtnClick = () => {
+    noteModalOpen();
+    changeIsEditModal(false);
+  };
+
   const cofirmDeleteNoteAction = () => {
     dispatch(deleteNoteWithoutAct(selectedNotesId[0]))
       .then(() => {
@@ -190,8 +208,16 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
 
           <Divider style={{ background: 'linear-gradient(#7950f2 0%, #15aabf 100%)', height: 3 }} />
 
-          <Stack>
-            <Text fw={600}>Удалить заявку</Text>
+          <Group gap={10}>
+            <Button
+              w={250}
+              variant="gradient"
+              gradient={{ from: 'violet', to: 'blue', deg: 90 }}
+              onClick={() => handleAddNoteBtnClick()}
+            >
+              Добавить заявку
+            </Button>
+
             <Button
               w={250}
               variant="gradient"
@@ -200,19 +226,27 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
             >
               Удалить заявку
             </Button>
-          </Stack>
+          </Group>
         </Stack>
       </Flex>
 
       <NotesWithoutActsTable
         selectedNotesId={selectedNotesId}
         handleSelectNote={handleSelectNote}
+        noteModalOpen={noteModalOpen}
+        changeIsEditModal={changeIsEditModal}
       />
 
       <WarningModal
         warningModalOpened={warningModalOpened}
         warningModalClose={warningModalClose}
         cofirmAction={cofirmDeleteNoteAction}
+      />
+
+      <ExistedNoteModal
+        noteModalOpened={noteModalOpened}
+        isEditModal={isEditModal}
+        noteModalClose={noteModalClose}
       />
     </>
   );

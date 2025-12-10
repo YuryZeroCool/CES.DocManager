@@ -11,6 +11,8 @@ import driverLicenseReducer from './documents/driverLicense/driverLicenseReducer
 import materialsReducer from './report/materialsReducer';
 import commonInfoReducer from './commonInfo/commonInfoReducer';
 import mesReducer from './mes/mesReducer';
+import organizationReducer from './mes/organizationReducer';
+import notesWithoutActReducer from './mes/notesWithoutActReducer';
 
 export const rootReducer = combineReducers({
   login: loginReducer,
@@ -25,6 +27,8 @@ export const rootReducer = combineReducers({
   drivers: driversReducer,
   commonInfo: commonInfoReducer,
   mes: mesReducer,
+  organization: organizationReducer,
+  notesWithoutAct: notesWithoutActReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

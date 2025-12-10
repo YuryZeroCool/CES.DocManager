@@ -1,21 +1,25 @@
-﻿using CES.Domain.Models.Request.Mes.Notes;
+﻿using AutoMapper;
+using CES.Domain.Models.Request.Mes.Notes;
+using CES.Domain.Models.Response.Mes.Notes;
 using CES.Infra;
 using CES.Infra.Models.Mes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Linq;
 
 namespace CES.Domain.Handlers.Mes.Notes
 {
-    public class EditExistedNoteHandler : IRequestHandler<EditExistedNoteRequest, int>
+    public class EditExistedNoteHandler : IRequestHandler<EditExistedNoteRequest, List<NoteResponse>>
     {
         private readonly DocMangerContext _ctx;
+        private readonly IMapper _mapper;
 
-        public EditExistedNoteHandler(DocMangerContext ctx)
+        public EditExistedNoteHandler(DocMangerContext ctx, IMapper mapper)
         {
             _ctx = ctx;
+            _mapper = mapper;
         }
-        public async Task<int> Handle(EditExistedNoteRequest request, CancellationToken cancellationToken)
+        public async Task<List<NoteResponse>> Handle(EditExistedNoteRequest request, CancellationToken cancellationToken)
         {
             if (_ctx.NoteEntities is not null
                 && request is not null
@@ -27,7 +31,7 @@ namespace CES.Domain.Handlers.Mes.Notes
             {
                 if (!_ctx.NoteEntities.Any(p => p.Id == request.Id)) throw new System.Exception("Упс! Что-то пошло не так");
 
-                EntityEntry? note = null;
+                var editedNoteEntities = new List<NoteEntity>();
 
                 for (int i = 0; i < request.NoteContactsInfo.Length; i++)
                 {
@@ -61,7 +65,7 @@ namespace CES.Domain.Handlers.Mes.Notes
                             await _ctx.SaveChangesAsync(cancellationToken);
                         }
 
-                        var date = new NoteEntity()
+                        var noteEntity = new NoteEntity()
                         {
                             Comment = request.Comment,
                             Date = request.Date,
@@ -81,15 +85,28 @@ namespace CES.Domain.Handlers.Mes.Notes
 
                         if (i == 0)
                         {
-                            date.Id = request.Id;
-                            note = _ctx.NoteEntities.Update(date);
-                            continue;
+                            noteEntity.Id = request.Id;
+                            _ctx.NoteEntities.Update(noteEntity);
+                            editedNoteEntities.Add(noteEntity);
                         }
-                        await _ctx.NoteEntities.AddAsync(date, cancellationToken);
+                        else
+                        {
+                            var entry = await _ctx.NoteEntities.AddAsync(noteEntity, cancellationToken);
+                            editedNoteEntities.Add(entry.Entity);
+                        }
                     }
                 }
                 await _ctx.SaveChangesAsync(cancellationToken);
-                return await Task.FromResult(request.Id);
+
+                var editedNoteIds = editedNoteEntities.Select(n => n.Id).ToList();
+                var editedNotes = await _ctx.NoteEntities
+                    .Include(n => n.Street)
+                    .Include(n => n.HouseNumber)
+                    .Include(n => n.Entrance)
+                    .Where(n => editedNoteIds.Contains(n.Id))
+                    .ToListAsync(cancellationToken);
+
+                return _mapper.Map<List<NoteResponse>>(editedNotes);
             }
             throw new System.Exception("Упс! Что-то пошло не так");
         }

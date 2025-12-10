@@ -12,7 +12,7 @@ import DocumentsPage from './routes/documents/index.page';
 import TechniquePage from './routes/technique/index.page';
 import DriversPage from './routes/drivers/index.page';
 import LoginPage from './routes/login/index.page';
-import MesPage from './routes/mes/MesPage.container';
+import MesPage from './routes/mes/index.page';
 import RequireAuth from './hoc/RequireAuth';
 import Layout from './components/Layout';
 import 'bootstrap/dist/css/bootstrap.min.css';

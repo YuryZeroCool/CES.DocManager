@@ -6,13 +6,14 @@ import {
   ActionIcon, Group, LoadingOverlay, Stack, Table, Text,
 } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
-import { IAuthResponseType } from '../../../../../../redux/store/configureStore';
-import { ActsList, INotesState } from '../../../../../../types/MesTypes';
-import { changeSelectedActId, editActsListAfterDelete } from '../../../../../../redux/reducers/mes/mesReducer';
-import deleteAct from '../../../../../../redux/actions/mes/deleteAct';
+
+import { RootState } from 'redux/reducers/combineReducers';
+import { IAuthResponseType } from 'redux/store/configureStore';
+import { changeSelectedActId, editActsListAfterDelete } from 'redux/reducers/mes/mesReducer';
+import deleteAct from 'redux/actions/mes/deleteAct';
+import { ActsList, INotesState } from 'types/MesTypes';
 import classes from './styles.module.css';
 import ActDetailsInfoPanel from '../ActDetailsInfoPanel';
-import { RootState } from '../../../../../../redux/reducers/combineReducers';
 
 interface HeadCell {
   id: number;
@@ -38,18 +39,22 @@ const headCells: readonly HeadCell[] = [
   },
   {
     id: 4,
-    label: 'Сумма',
+    label: 'Номер договора',
   },
   {
     id: 5,
-    label: 'НДС',
+    label: 'Сумма',
   },
   {
     id: 6,
-    label: '',
+    label: 'НДС',
   },
   {
     id: 7,
+    label: '',
+  },
+  {
+    id: 8,
     label: '',
   },
 ];
@@ -131,6 +136,14 @@ function ActsListTable(props: ActsListTableProps) {
           <Table.Td w="10%">{act.dateOfWorkCompletion.split(' ')[0]}</Table.Td>
           <Table.Td>{act.organization}</Table.Td>
           <Table.Td w="10%">{act.payerAccountNumber}</Table.Td>
+          <Table.Td
+            w="10%"
+            onClick={(e: React.MouseEvent<HTMLTableCellElement, MouseEvent>) => {
+              e.stopPropagation();
+            }}
+          >
+            {act.contractNumber}
+          </Table.Td>
           <Table.Td w="7%">{act.total}</Table.Td>
           <Table.Td w="7%">{act.vat !== 0 ? act.vat : ''}</Table.Td>
           <Table.Td w="5%" align="center">
