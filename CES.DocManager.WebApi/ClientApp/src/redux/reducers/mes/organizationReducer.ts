@@ -6,7 +6,7 @@ import {
   editOrganization,
   getOrganizationType,
   searchOrganizations,
-  checkOneTimeContractExist,
+  getNextContractNumber,
   organizationsBySearch,
 } from 'redux/actions/mes';
 import {
@@ -38,7 +38,7 @@ const initial: OrganizationState = {
   editedOrganization: organizationDefault,
   deletedOrganizationId: 0,
   organizationTypes: [],
-  oneTimeContractCheck: null,
+  nextContractNumber: null,
 };
 
 const organizationReducer = createSlice({
@@ -68,8 +68,8 @@ const organizationReducer = createSlice({
     resetOrganizationsBySearch: (state) => {
       state.allOrganizationsBySearch = [];
     },
-    resetOneTimeContractCheck: (state) => {
-      state.oneTimeContractCheck = null;
+    resetNextContractNumber: (state) => {
+      state.nextContractNumber = null;
     },
   },
   extraReducers: (builder) => {
@@ -152,19 +152,19 @@ const organizationReducer = createSlice({
       state.organizationError = action.payload?.message ?? 'Ошибка загрузки типов организаций';
     });
 
-    // check one time contract exist
-    builder.addCase(checkOneTimeContractExist.pending, (state) => {
+    // get next contract number
+    builder.addCase(getNextContractNumber.pending, (state) => {
       state.requestStatus = 'pending';
-      state.oneTimeContractCheck = null;
+      state.nextContractNumber = null;
     });
-    builder.addCase(checkOneTimeContractExist.fulfilled, (state, action) => {
-      state.oneTimeContractCheck = action.payload;
+    builder.addCase(getNextContractNumber.fulfilled, (state, action) => {
+      state.nextContractNumber = action.payload;
       state.requestStatus = 'fulfilled';
     });
-    builder.addCase(checkOneTimeContractExist.rejected, (state, action) => {
+    builder.addCase(getNextContractNumber.rejected, (state, action) => {
       state.requestStatus = 'rejected';
-      state.oneTimeContractCheck = null;
-      state.organizationError = action.payload?.message ?? 'Ошибка проверки договора';
+      state.nextContractNumber = null;
+      state.organizationError = action.payload?.message ?? 'Ошибка получения номера договора';
     });
   },
 });
@@ -175,7 +175,7 @@ export const {
   editOrganizationsAfterEdit,
   changeSelectedOrganizationId,
   resetOrganizationsBySearch,
-  resetOneTimeContractCheck,
+  resetNextContractNumber,
 } = organizationReducer.actions;
 
 export default organizationReducer.reducer;

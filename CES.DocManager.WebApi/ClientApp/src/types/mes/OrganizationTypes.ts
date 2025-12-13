@@ -39,17 +39,16 @@ export interface OrganizationState {
   editedOrganization: OrganizationResponse;
   selectedOrganizationId: number;
   organizationTypes: OrganizationType[];
-  oneTimeContractCheck: CheckOneTimeContractExistResponse | null;
+  nextContractNumber: GetNextContractNumberResponse | null;
 }
 
-export interface CheckOneTimeContractExistResponse {
+export interface GetNextContractNumberResponse {
   exist: boolean;
   nextContractNumber?: number;
 }
 
-export interface CheckOneTimeContractExistParams {
+export interface GetNextContractNumberParams {
   organizationName: string;
   date: string;
-  noteIds: string;
   contractType: ContractTypes;
 }

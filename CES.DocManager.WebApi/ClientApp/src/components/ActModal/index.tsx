@@ -4,8 +4,6 @@ import { format } from 'date-fns';
 import {
   Checkbox, Flex, Group, List, Modal, Select, Stack, Text,
 } from '@mantine/core';
-import { DatePickerInput, DatesProvider } from '@mantine/dates';
-import { IconCalendar } from '@tabler/icons-react';
 
 import { IAuthResponseType } from 'redux/store/configureStore';
 import { resetDriversByCar } from 'redux/reducers/drivers/driversReducer';
@@ -14,7 +12,7 @@ import { organizationsBySearch } from 'redux/actions/mes';
 import getCarByCarNumber from 'redux/actions/vehicle/getCarByCarNumber';
 import getDriversByCarNumber from 'redux/actions/drivers/getDriversByCarNumber';
 import createNewAct from 'redux/actions/mes/createNewAct';
-import { resetOrganizationsBySearch, resetOneTimeContractCheck } from 'redux/reducers/mes/organizationReducer';
+import { resetOrganizationsBySearch } from 'redux/reducers/mes/organizationReducer';
 import {
   resetActData,
 } from 'redux/reducers/mes/mesReducer';
@@ -36,6 +34,7 @@ import { OrganizationState } from 'types/mes/OrganizationTypes';
 import handleError from 'utils';
 import AddActTable from 'components/AddActTable';
 import ModalButtons from 'components/ModalButtons';
+import DatePicker from 'components/DatePicker';
 
 import classes from './styles.module.css';
 
@@ -155,7 +154,6 @@ function ActModal(props: ActModalProps) {
     dispatch(resetActData(type));
     dispatch(resetOrganizationsBySearch());
     dispatch(resetStreetsBySearch());
-    dispatch(resetOneTimeContractCheck());
     setModalError('');
     handleSelectNote([]);
     if (addActModalOpened) {
@@ -314,28 +312,16 @@ function ActModal(props: ActModalProps) {
         </Flex>
 
         <Flex gap={10} align="center">
-          <DatesProvider
-            settings={{
-              locale: 'ru', firstDayOfWeek: 1, weekendDays: [0], timezone: 'Europe/Minsk',
+          <DatePicker
+            label="Дата добавления акта"
+            placeholder="Выберите дату"
+            value={actForm.actAdditionDate ? new Date(actForm.actAdditionDate) : null}
+            onChange={(value: Date | null) => {
+              updateActFormState('actAdditionDate', value);
             }}
-          >
-            <DatePickerInput
-              leftSection={<IconCalendar size="1.1rem" stroke={1.5} />}
-              label="Дата добавления акта"
-              placeholder="Выберите дату"
-              value={actForm.actAdditionDate ? new Date(actForm.actAdditionDate) : null}
-              onChange={(value: Date | null) => {
-                updateActFormState('actAdditionDate', value);
-              }}
-              classNames={{
-                day: classes.day,
-              }}
-              w="50%"
-              clearable
-              leftSectionPointerEvents="none"
-              maxDate={new Date()}
-            />
-          </DatesProvider>
+            maxDate={new Date()}
+            w="50%"
+          />
           <Checkbox
             label="Акт подписан"
             mt={20}
