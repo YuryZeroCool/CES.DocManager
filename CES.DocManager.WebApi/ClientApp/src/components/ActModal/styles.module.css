@@ -9,10 +9,6 @@
   text-align: center;
 }
 
-.day[data-selected] {
-  background-color: var(--mantine-color-cyan-filled);
-}
-
 .input:checked {
   background: linear-gradient(90deg, var(--mantine-color-violet-filled) 0%, var(--mantine-color-blue-filled) 100%) !important;
 }

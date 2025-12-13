@@ -1,10 +1,9 @@
 import React, { memo } from 'react';
-import { Button, Flex } from '@mantine/core';
+import { Button, ButtonProps, Flex } from '@mantine/core';
 
-interface ModalButtonsProps {
+interface ModalButtonsProps extends ButtonProps {
   confirmBtnTitle: string;
   cancelBtnTitle: string;
-  disabled: boolean;
   handleConfirm: () => void;
   handleCancel: () => void;
 }
@@ -13,9 +12,9 @@ function ModalButtons(props: ModalButtonsProps) {
   const {
     confirmBtnTitle,
     cancelBtnTitle,
-    disabled,
     handleConfirm,
     handleCancel,
+    ...rest
   } = props;
 
   return (
@@ -30,7 +29,9 @@ function ModalButtons(props: ModalButtonsProps) {
         variant="gradient"
         gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
         onClick={handleConfirm}
-        disabled={disabled}
+        disabled={rest.disabled || rest.loading}
+        /* eslint-disable-next-line react/jsx-props-no-spreading */
+        {...rest}
       >
         {confirmBtnTitle}
       </Button>

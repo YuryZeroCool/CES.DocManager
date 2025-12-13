@@ -13,6 +13,7 @@ import commonInfoReducer from './commonInfo/commonInfoReducer';
 import mesReducer from './mes/mesReducer';
 import organizationReducer from './mes/organizationReducer';
 import notesWithoutActReducer from './mes/notesWithoutActReducer';
+import contractReducer from './mes/contractReducer';
 
 export const rootReducer = combineReducers({
   login: loginReducer,
@@ -29,6 +30,7 @@ export const rootReducer = combineReducers({
   mes: mesReducer,
   organization: organizationReducer,
   notesWithoutAct: notesWithoutActReducer,
+  contract: contractReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
