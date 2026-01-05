@@ -13,13 +13,13 @@ namespace CES.Infra
 {
     public class DocMangerContext : DbContext
     {
-        //Add-Migration RemoveUnnecessaryColumnsAndTables -context DocMangerContext
+        //Add-Migration AddContractsTable -context DocMangerContext
 
         //update-database -context DocMangerContext   
 
         //update-database -context DocMangerContext -Args '--environment Production'
 
-        //update-database -context DocMangerContext   PriceOfWorkInActEntityWorkNameInActEntity
+        //update-database -context DocMangerContext AddContractAndContractTypeTablesWithDataMigration
 
         // Remove-migration -context DocMangerContext  
 
@@ -80,6 +80,10 @@ namespace CES.Infra
         public virtual DbSet<HouseNumberEntity>? HouseNumbers { get; set; }
 
         public virtual DbSet<OrganizationTypeEntity>? OrganizationTypes { get; set; }
+        
+        public virtual DbSet<ContractEntity>? Contracts { get; set; }
+
+        public virtual DbSet<ContractTypeEntity>? ContractTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -109,7 +113,9 @@ namespace CES.Infra
             modelBuilder.ApplyConfiguration(new ActTypeConfig());
             modelBuilder.ApplyConfiguration(new HouseNumberConfig());
             modelBuilder.ApplyConfiguration(new StreetConfig());
+            modelBuilder.ApplyConfiguration(new ContractConfig());
             modelBuilder.ApplyConfiguration(new OrganizationTypeConfig());
+            modelBuilder.ApplyConfiguration(new ContractTypeConfig());
         }
     }
 }

@@ -36,7 +36,7 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 return await _mediator.Send(new SearchOrganizationRequest()
                 {
-                    Title = title,
+                    Title = title ?? "",
                     Limit = limit,
                     Page = page
                 });
@@ -120,6 +120,28 @@ namespace CES.DocManager.WebApi.Controllers
                 return await _mediator.Send(new OrganizationsBySearchRequest()
                 {
                     Title = title,
+                });
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
+            }
+        }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpGet("getNextContractNumber")]
+        [Produces(typeof(GetNextContractNumberResponse))]
+        public async Task<object> GetNextContractNumber(string organizationName, string date, string contractType)
+        {
+            try
+            {
+                return await _mediator.Send(new GetNextContractNumberRequest()
+                {
+                    OrganizationName = organizationName,
+                    Date = DateTimeConverter.ConvertToDateTime(date, "yyyy-MM-dd HH:mm:ss"),
+                    ContractType = contractType
                 });
             }
             catch (Exception e)

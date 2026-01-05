@@ -139,7 +139,7 @@ namespace CES.DocManager.WebApi.Controllers
                     Page = page,
                     Limit = limit,
                     Filter = !string.IsNullOrEmpty(filter) ? JsonSerializer.Deserialize<string>(filter) : "",
-                    SearchValue = searchValue,
+                    SearchValue = searchValue ?? "",
                 });
             }
             catch (Exception e)

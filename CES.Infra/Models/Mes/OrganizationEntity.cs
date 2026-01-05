@@ -17,5 +17,7 @@
         public int? OrganizationTypeId { get; set; }
 
         public OrganizationTypeEntity? OrganizationType { get; set; }
+
+        public ICollection<ContractEntity>? Contracts { get; set; } = new List<ContractEntity>();
     }
 }

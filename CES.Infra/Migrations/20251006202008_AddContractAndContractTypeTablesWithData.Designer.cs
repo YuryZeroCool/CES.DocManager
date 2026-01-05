@@ -4,6 +4,7 @@ using CES.Infra;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CES.Infra.Migrations
 {
     [DbContext(typeof(DocMangerContext))]
-    partial class DocMangerContextModelSnapshot : ModelSnapshot
+    [Migration("20251006202008_AddContractAndContractTypeTablesWithData")]
+    partial class AddContractAndContractTypeTablesWithData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -449,9 +451,6 @@ namespace CES.Infra.Migrations
                     b.Property<int>("ActTypeEntityId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ContractId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DateOfWorkCompletion")
                         .HasColumnType("DATETIME");
 
@@ -464,6 +463,9 @@ namespace CES.Infra.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<int>("NumberPlateOfCarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrganizationId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Total")
@@ -479,11 +481,11 @@ namespace CES.Infra.Migrations
 
                     b.HasIndex("ActTypeEntityId");
 
-                    b.HasIndex("ContractId");
-
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("NumberPlateOfCarId");
+
+                    b.HasIndex("OrganizationId");
 
                     b.ToTable("Act");
                 });
@@ -506,65 +508,6 @@ namespace CES.Infra.Migrations
                         .IsUnique();
 
                     b.ToTable("ActTypes");
-                });
-
-            modelBuilder.Entity("CES.Infra.Models.Mes.ContractEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("ContractNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ContractTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("DATETIME");
-
-                    b.Property<DateTime?>("EndDateOfWork")
-                        .HasColumnType("DATETIME");
-
-                    b.Property<DateTime?>("ExpirationDate")
-                        .HasColumnType("DATETIME");
-
-                    b.Property<int?>("OrganizationId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("StartDateOfWork")
-                        .HasColumnType("DATETIME");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContractTypeId");
-
-                    b.HasIndex("OrganizationId");
-
-                    b.ToTable("Contracts");
-                });
-
-            modelBuilder.Entity("CES.Infra.Models.Mes.ContractTypeEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("ContractTypes");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.EntranceEntity", b =>
@@ -944,10 +887,6 @@ namespace CES.Infra.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CES.Infra.Models.Mes.ContractEntity", "Contract")
-                        .WithMany("Acts")
-                        .HasForeignKey("ContractId");
-
                     b.HasOne("CES.Infra.Models.EmployeeEntity", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId")
@@ -960,28 +899,17 @@ namespace CES.Infra.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ActType");
+                    b.HasOne("CES.Infra.Models.Mes.OrganizationEntity", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Contract");
+                    b.Navigation("ActType");
 
                     b.Navigation("Employee");
 
                     b.Navigation("NumberPlateOfCar");
-                });
-
-            modelBuilder.Entity("CES.Infra.Models.Mes.ContractEntity", b =>
-                {
-                    b.HasOne("CES.Infra.Models.Mes.ContractTypeEntity", "ContractType")
-                        .WithMany()
-                        .HasForeignKey("ContractTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CES.Infra.Models.Mes.OrganizationEntity", "Organization")
-                        .WithMany("Contracts")
-                        .HasForeignKey("OrganizationId");
-
-                    b.Navigation("ContractType");
 
                     b.Navigation("Organization");
                 });
@@ -1099,16 +1027,6 @@ namespace CES.Infra.Migrations
             modelBuilder.Entity("CES.Infra.Models.Mes.ActEntity", b =>
                 {
                     b.Navigation("Notes");
-                });
-
-            modelBuilder.Entity("CES.Infra.Models.Mes.ContractEntity", b =>
-                {
-                    b.Navigation("Acts");
-                });
-
-            modelBuilder.Entity("CES.Infra.Models.Mes.OrganizationEntity", b =>
-                {
-                    b.Navigation("Contracts");
                 });
 
             modelBuilder.Entity("CES.Infra.Models.Mes.OrganizationTypeEntity", b =>

@@ -7,6 +7,7 @@ using CES.Domain.Models.Request.Employee;
 using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Request.Mes;
 using CES.Domain.Models.Request.Mes.Acts;
+using CES.Domain.Models.Request.Mes.Contracts;
 using CES.Domain.Models.Request.Mes.Notes;
 using CES.Domain.Models.Request.Mes.Organization;
 using CES.Domain.Models.Response.CarMechanic;
@@ -97,6 +98,22 @@ namespace CES.DocManager.WebApi.Mapper
 
             CreateMap<Models.Mes.Work, Domain.Models.Request.Mes.Acts.Work>();
             CreateMap<Models.Mes.FullNoteData, Domain.Models.Request.Mes.Acts.FullNoteData>();
+
+            CreateMap<ContractViewModel, CreateContractRequest>()
+                .ForMember(dest => dest.CreationDate,
+                opt => opt.MapFrom(src => DateTime.ParseExact(src.CreationDate, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)))
+                .ForMember(dest => dest.StartDateOfWork,
+                opt => opt.MapFrom(src => string.IsNullOrWhiteSpace(src.StartDateOfWork) 
+                    ? null 
+                    : (DateTime?)DateTime.ParseExact(src.StartDateOfWork, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)))
+                .ForMember(dest => dest.EndDateOfWork,
+                opt => opt.MapFrom(src => string.IsNullOrWhiteSpace(src.EndDateOfWork) 
+                    ? null 
+                    : (DateTime?)DateTime.ParseExact(src.EndDateOfWork, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)))
+                .ForMember(dest => dest.ExpirationDate,
+                opt => opt.MapFrom(src => string.IsNullOrWhiteSpace(src.ExpirationDate) 
+                    ? null 
+                    : (DateTime?)DateTime.ParseExact(src.ExpirationDate, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)));
         }
     }
 }

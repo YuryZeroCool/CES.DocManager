@@ -34,5 +34,9 @@ namespace CES.Domain.Models.Response.Act
         public List<Work>? Works { get; set; }
 
         public List<FullNoteData>? NotesWithoutAct { get; set; }
+
+        public string ContractNumber {  get; set; } = string.Empty;
+
+        public bool IsSigned { get; set; } = false;
     }
 }

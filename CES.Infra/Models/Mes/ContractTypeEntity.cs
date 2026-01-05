@@ -1,6 +1,6 @@
 ﻿namespace CES.Infra.Models.Mes
 {
-    public class ActTypeEntity
+    public class ContractTypeEntity
     {
         public int Id { get; set; }
 

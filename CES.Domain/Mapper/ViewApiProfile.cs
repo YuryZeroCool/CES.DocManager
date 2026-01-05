@@ -195,13 +195,15 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.ActDateOfCreation, opt => opt.MapFrom(src => src.ActDateOfCreation.ToString("dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)))
                 .ForMember(dest => dest.DateOfWorkCompletion, opt => opt.MapFrom(src => src.DateOfWorkCompletion.ToString("dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)))
-                .ForMember(dest => dest.Organization, opt => opt.MapFrom(src => src.Organization!.Name))
-                .ForMember(dest => dest.PayerAccountNumber, opt => opt.MapFrom(src => src.Organization!.PayerAccountNumber))
+                .ForMember(dest => dest.Organization, opt => opt.MapFrom(src => src.Contract!.Organization!.Name))
+                .ForMember(dest => dest.PayerAccountNumber, opt => opt.MapFrom(src => src.Contract!.Organization!.PayerAccountNumber))
                 .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.Total))
                 .ForMember(dest => dest.NumberPlateOfCar, opt => opt.MapFrom(src => src.NumberPlateOfCar!.Number))
                 .ForMember(dest => dest.Driver, opt => opt.MapFrom(src => src.Employee!.LastName + " " + src.Employee.FirstName))
                 .ForMember(dest => dest.Vat, opt => opt.MapFrom(src => src.Vat))
-                .ForMember(dest => dest.ActType, opt => opt.MapFrom(src => src.ActType!.Name));
+                .ForMember(dest => dest.ActType, opt => opt.MapFrom(src => src.ActType!.Name))
+                .ForMember(dest => dest.ContractNumber, opt => opt.MapFrom(src => src.Contract!.ContractNumber))
+                .ForMember(dest => dest.IsSigned, opt => opt.MapFrom(src => src.IsSigned));
 
             CreateMap<NoteEntity, FullNoteData>()
                 .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street!.Name))

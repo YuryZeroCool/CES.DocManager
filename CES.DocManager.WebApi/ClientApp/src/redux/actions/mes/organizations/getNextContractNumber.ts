@@ -15,8 +15,7 @@ GetNextContractNumberParams, { rejectValue: FetchTodosError }>(
         throw Error('Упс, что-то пошло не так...');
       }
       const response = await $api.get<GetNextContractNumberResponse>(
-        `${process.env.REACT_APP_GET_NEXT_CONTRACT_NUMBER}?
-        organizationName=${params.organizationName}&date=${params.date}`,
+        `${process.env.REACT_APP_GET_NEXT_CONTRACT_NUMBER}?organizationName=${params.organizationName}&date=${params.date}&contractType=${params.contractType}`,
       );
       return response.data;
     } catch (err) {

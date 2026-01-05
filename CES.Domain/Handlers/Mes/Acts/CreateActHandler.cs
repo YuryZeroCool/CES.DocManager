@@ -43,9 +43,9 @@ namespace CES.Domain.Handlers.Mes.Acts
                     Employee = await _ctx.Employees
                     .FirstOrDefaultAsync(x => x.LastName.Trim() + " " + x.FirstName.Trim() == request.Driver, cancellationToken)
                     ?? throw new System.Exception("Упс! Что-то пошло не так"),
-                    Organization = await _ctx.OrganizationEntities
-                    .FirstOrDefaultAsync(x => x.Name.Trim() == request.Organization.Trim(), cancellationToken)
-                    ?? throw new System.Exception("Упс! Что-то пошло не так"),
+                    //Organization = await _ctx.OrganizationEntities
+                    //.FirstOrDefaultAsync(x => x.Name.Trim() == request.Organization.Trim(), cancellationToken)
+                    //?? throw new System.Exception("Упс! Что-то пошло не так"),
                     NumberPlateOfCar = await _ctx.NumberPlateOfCar
                     .FirstOrDefaultAsync(x => request.Vehicle.Trim().Contains(x!.Number!), cancellationToken)
                     ?? throw new System.Exception("Упс! Что-то пошло не так"),

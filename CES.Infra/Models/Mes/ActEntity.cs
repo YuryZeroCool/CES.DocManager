@@ -1,4 +1,6 @@
-﻿namespace CES.Infra.Models.Mes
+﻿using System.Text.Json.Serialization;
+
+namespace CES.Infra.Models.Mes
 {
     public class ActEntity
     {
@@ -11,10 +13,6 @@
         public decimal Total { get; set; }
 
         public decimal? Vat { get; set; }
-
-        public int OrganizationId { get; set; }
-
-        public OrganizationEntity? Organization { get; set; }
 
         public int EmployeeId { get; set; }
 
@@ -33,5 +31,10 @@
         public bool IsSigned { get; set; }
 
         public ICollection<NoteEntity>? Notes { get; set; } = new List<NoteEntity>();
+
+        public int? ContractId { get; set; }
+
+        [JsonIgnore]
+        public ContractEntity? Contract { get; set; }
     }
 }

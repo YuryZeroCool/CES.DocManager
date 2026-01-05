@@ -32,8 +32,9 @@ namespace CES.Domain.Handlers.Mes.Acts
                 var offset = (request.Page - 1) * request.Limit;
 
                 IQueryable<ActEntity> query = _ctx.Act
-                    .Include(x => x.Organization)
-                    .ThenInclude(x => x.OrganizationType)
+                    .Include(x => x.Contract)
+                    .ThenInclude(x => x!.Organization)
+                    .ThenInclude(x => x!.OrganizationType)
                     .Include(x => x.NumberPlateOfCar)
                     .Include(x => x.ActType)
                     .Include(x => x.Employee);
@@ -41,16 +42,30 @@ namespace CES.Domain.Handlers.Mes.Acts
                 // Применение фильтра по типу организации после Include
                 if (!string.IsNullOrEmpty(request.OrganizationType))
                 {
-                    query = query.Where(x => x.Organization!.OrganizationType!.Name == request.OrganizationType);
+                    query = query.Where(x => x.Contract != null &&
+                                             x.Contract.Organization != null &&
+                                             x.Contract.Organization.OrganizationType != null &&
+                                             x.Contract.Organization.OrganizationType.Name == request.OrganizationType.Trim());
                 }
                 // Apply filtering
                 query = request.Filter switch
                 {
-                    "organization" => query.Where(x => x.Organization!.Name.ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())),
-                    "employee" => query.Where(x => (x.Employee!.LastName + x.Employee.FirstName).ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())),
-                    "numberPlateOfCar" => query.Where(x => x.NumberPlateOfCar!.Number!.ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())),
+                    "organization" => query.Where(x => x.Contract != null &&
+                                                       x.Contract.Organization != null &&
+                                                       x.Contract.Organization.Name.ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())),
+                    "contractNumber" => query.Where(x => x.Contract != null &&
+                                                     x.Contract.ContractNumber.ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())),
+                    "isNotSigned" => query.Where(x => x.IsSigned == false),
+
+                    "employee" => query.Where(x => x.Employee != null &&
+                                                   (x.Employee.LastName + x.Employee.FirstName).ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())),
+                    "numberPlateOfCar" => query.Where(x => x.NumberPlateOfCar != null &&
+                                                           x.NumberPlateOfCar.Number != null &&
+                                                           x.NumberPlateOfCar.Number.ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())),
                     "street" => query.Include(x => x.Notes!).ThenInclude(p => p.Street)
-                                     .Where(x => x.Notes!.Any(n => n.Street!.Name.ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim()))),
+                                     .Where(x => x.Notes != null &&
+                                                x.Notes.Any(n => n.Street != null &&
+                                                                n.Street.Name.ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim()))),
                     _ => query
                 };
 

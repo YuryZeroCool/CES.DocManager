@@ -8,7 +8,7 @@
 
         public string Driver { set; get; } = string.Empty;
 
-        public string ActAdditionDate { get; set; }
+        public string ActAdditionDate { get; set; } = string.Empty;
 
         public string ActType { get; set; } = string.Empty;
 
@@ -21,7 +21,6 @@
         public decimal Vat { get; set; }
 
         public bool IsSigned { get; set; }
-
     }
 
     public class Work
