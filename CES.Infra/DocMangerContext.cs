@@ -15,13 +15,18 @@ namespace CES.Infra
     {
         //Add-Migration AddContractsTable -context DocMangerContext
 
-        //update-database -context DocMangerContext   
+        //update-database -context DocMangerContext
 
         //update-database -context DocMangerContext -Args '--environment Production'
 
         //update-database -context DocMangerContext AddContractAndContractTypeTablesWithDataMigration
 
-        // Remove-migration -context DocMangerContext  
+        // Remove-migration -context DocMangerContext
+
+        // Migrations using Mac
+
+        // ASPNETCORE_ENVIRONMENT=Development dotnet ef database update --project CES.Infra --startup-project CES.DocManager.WebApi --context DocMangerContext  (need to be in the root of the project)
+        // dotnet ef migrations add AddContractsTable --project CES.Infra --startup-project CES.DocManager.WebApi --context DocMangerContext  (need to be in the root of the project)
 
         public DocMangerContext(DbContextOptions<DocMangerContext> options)
             : base(options)
@@ -80,7 +85,7 @@ namespace CES.Infra
         public virtual DbSet<HouseNumberEntity>? HouseNumbers { get; set; }
 
         public virtual DbSet<OrganizationTypeEntity>? OrganizationTypes { get; set; }
-        
+
         public virtual DbSet<ContractEntity>? Contracts { get; set; }
 
         public virtual DbSet<ContractTypeEntity>? ContractTypes { get; set; }

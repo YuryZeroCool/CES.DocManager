@@ -7,3 +7,9 @@
 .tableBodyCell {
   padding: 15px !important;
 }
+
+.printIconDisabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}

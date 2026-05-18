@@ -58,6 +58,7 @@ export interface ActModalFormState {
   driver: string | null;
   isSigned: boolean;
   actAdditionDate: Date | null;
+  selectedContract: string | null;
 }
 
 export interface AddNewActReq {
@@ -71,6 +72,7 @@ export interface AddNewActReq {
   totalActSumm: number;
   vat: number;
   isSigned: boolean;
+  contractId: number;
 }
 
 export interface GetActsListReq {

@@ -1,23 +1,57 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button, Divider, Stack, Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { format, getDaysInMonth } from 'date-fns';
+import { useDispatch } from 'react-redux';
 
-import { ContractTypes, SearchContractParams } from 'types/mes/ContractTypes';
+import { ContractTypes, GetContractsListReq, SearchContractParams } from 'types/mes/ContractTypes';
+import { IAuthResponseType } from 'redux/store/configureStore';
+import { getContractsList } from 'redux/actions/mes';
 
 import ContractModal from './components/ContractModal';
 import SearchPanel from './components/SearchPanel';
+import ContractsTable from './components/ContractsTable';
 
 function Contracts() {
+  const minDate = new Date();
+  minDate.setDate(1);
+
+  const maxDate = new Date();
+  maxDate.setDate(getDaysInMonth(maxDate));
+
   const [contractsParams, setContractsParams] = useState<SearchContractParams>({
     contractType: ContractTypes.oneTime,
+    minDate,
+    maxDate,
+    searchValue: '',
+    filter: '',
   });
 
   const [
     addContractModalOpened,
     { open: addContractModalOpen, close: addContractModalClose },
   ] = useDisclosure(false);
+
+  const dispatch: IAuthResponseType = useDispatch();
+
+  const getContractsListReq = () => {
+    const params: GetContractsListReq = {
+      contractType: contractsParams.contractType.trim(),
+      min: format(contractsParams.minDate, 'dd-MM-yyyy HH:mm:ss'),
+      max: format(contractsParams.maxDate, 'dd-MM-yyyy HH:mm:ss'),
+      filter: contractsParams.filter.trim(),
+      searchValue: contractsParams.searchValue.trim(),
+    };
+
+    dispatch(getContractsList(params)).catch(() => {});
+  };
+
+  useEffect(() => {
+    getContractsListReq();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAddContractBtnClick = () => {
     addContractModalOpen();
@@ -33,6 +67,10 @@ function Contracts() {
     }));
   };
 
+  const handleGetContractsListBtnClick = () => {
+    getContractsListReq();
+  };
+
   return (
     <Stack>
       <Stack
@@ -45,6 +83,7 @@ function Contracts() {
           <SearchPanel
             contractsParams={contractsParams}
             updateContractsParams={updateContractsParams}
+            handleGetContractsListBtnClick={handleGetContractsListBtnClick}
           />
         </Stack>
 
@@ -62,6 +101,10 @@ function Contracts() {
           </Button>
         </Stack>
       </Stack>
+
+      <Divider style={{ background: 'linear-gradient(#7950f2 0%, #15aabf 100%)', height: 3 }} />
+
+      <ContractsTable />
 
       {addContractModalOpened && (
         <ContractModal

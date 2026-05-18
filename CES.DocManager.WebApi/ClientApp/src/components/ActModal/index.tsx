@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
 import {
-  Checkbox, Flex, Group, List, Modal, Select, Stack, Text,
+  Checkbox, Flex, Group, List, Modal, Select, Stack, Text, rem,
 } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
+import { IconX } from '@tabler/icons-react';
 
 import { IAuthResponseType } from 'redux/store/configureStore';
 import { resetDriversByCar } from 'redux/reducers/drivers/driversReducer';
 import { RootState } from 'redux/reducers/combineReducers';
-import { organizationsBySearch } from 'redux/actions/mes';
+import { organizationsBySearch, getContractsListForSelect } from 'redux/actions/mes';
 import getCarByCarNumber from 'redux/actions/vehicle/getCarByCarNumber';
 import getDriversByCarNumber from 'redux/actions/drivers/getDriversByCarNumber';
 import createNewAct from 'redux/actions/mes/createNewAct';
@@ -31,6 +33,8 @@ import { IVehicleResponse } from 'types/VehicleTypes';
 import { IDriverResponse } from 'types/DriversType';
 import { NotesWithoutActState } from 'types/mes/NotesWithoutActTypes';
 import { OrganizationState } from 'types/mes/OrganizationTypes';
+import { ContractState, GetContractsListForSelectRes } from 'types/mes/ContractTypes';
+import { resetContractsListForSelect } from 'redux/reducers/mes/contractReducer';
 import handleError from 'utils';
 import AddActTable from 'components/AddActTable';
 import ModalButtons from 'components/ModalButtons';
@@ -72,6 +76,7 @@ function ActModal(props: ActModalProps) {
     driver: null,
     isSigned: false,
     actAdditionDate: null,
+    selectedContract: null,
   });
   const [modalError, setModalError] = useState<string>('');
 
@@ -106,6 +111,12 @@ function ActModal(props: ActModalProps) {
     (state) => state.drivers,
   );
 
+  const {
+    contractsListForSelect,
+  } = useSelector<RootState, ContractState>(
+    (state) => state.contract,
+  );
+
   const dispatch: IAuthResponseType = useDispatch();
 
   const updateActFormState = <K extends keyof ActModalFormState>(
@@ -138,6 +149,39 @@ function ActModal(props: ActModalProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actForm.car]);
 
+  useEffect(() => {
+    if (actForm.organization && actForm.actAdditionDate) {
+      const params = {
+        organizationName: actForm.organization,
+        date: format(actForm.actAdditionDate, 'dd-MM-yyyy HH:mm:ss'),
+      };
+
+      dispatch(getContractsListForSelect(params))
+        .then((result) => {
+          if (result.type === 'getContractsListForSelect/fulfilled') {
+            const payload = result.payload as GetContractsListForSelectRes;
+            if (payload && payload.contracts.length === 0) {
+              showNotification({
+                title: 'Нет договоров',
+                message: 'Для данной организации на выбранную дату нет договоров. Необходимо сначала создать договор.',
+                icon: <IconX style={{ width: rem(20), height: rem(20) }} />,
+                styles: { icon: { background: 'orange' } },
+                color: 'orange',
+              });
+            }
+          }
+        })
+        .catch((error) => {
+          handleError(error, setModalError);
+          dispatch(resetContractsListForSelect());
+        });
+    } else {
+      dispatch(resetContractsListForSelect());
+      updateActFormState('selectedContract', null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actForm.organization, actForm.actAdditionDate]);
+
   const handleClose = () => {
     changeType('');
     resetCurrentActData();
@@ -148,12 +192,14 @@ function ActModal(props: ActModalProps) {
       driver: null,
       isSigned: false,
       actAdditionDate: null,
+      selectedContract: null,
     });
     dispatch(resetCarsByCarNumber());
     dispatch(resetDriversByCar());
     dispatch(resetActData(type));
     dispatch(resetOrganizationsBySearch());
     dispatch(resetStreetsBySearch());
+    dispatch(resetContractsListForSelect());
     setModalError('');
     handleSelectNote([]);
     if (addActModalOpened) {
@@ -222,6 +268,7 @@ function ActModal(props: ActModalProps) {
       actAdditionDate,
       selectedNotes,
       isSigned,
+      selectedContract,
     } = actForm;
 
     if (organization && driver && car && actAdditionDate) {
@@ -236,6 +283,7 @@ function ActModal(props: ActModalProps) {
         totalActSumm: +(+totalActSumm).toFixed(2),
         vat: +(+vat).toFixed(2),
         isSigned,
+        contractId: Number(selectedContract),
       };
 
       dispatch(createNewAct(request))
@@ -333,13 +381,29 @@ function ActModal(props: ActModalProps) {
           />
         </Flex>
 
+        <Select
+          classNames={{
+            dropdown: classes.selectDropdown,
+          }}
+          w="100%"
+          label="Список договоров организации"
+          placeholder="Выберите договор"
+          data={contractsListForSelect.length > 0 ? contractsListForSelect.map((contract) => ({
+            value: contract.id.toString(),
+            label: `Договор № ${contract.contractNumber} от ${format(new Date(contract.creationDate), 'dd.MM.yyyy')} - ${contract.contractType}`,
+          })) : []}
+          onChange={(value) => updateActFormState('selectedContract', value)}
+          clearable
+          value={actForm.selectedContract}
+        />
+
         {actForm.selectedNotes.length > 0 && (
           <Stack gap={10}>
             <Text>Заявки:</Text>
 
             <List size="md">
               {actForm.selectedNotes.map((el) => (
-                <List.Item>
+                <List.Item key={el.id}>
                   {el.street && (
                     <>
                       {el.street}
@@ -391,7 +455,9 @@ function ActModal(props: ActModalProps) {
             && actForm.driver
             && actForm.car
             && actForm.actAdditionDate
-            && actForm.selectedNotes.length)}
+            && actForm.selectedNotes.length
+            && actForm.selectedContract
+          )}
         />
       </Stack>
     </Modal>

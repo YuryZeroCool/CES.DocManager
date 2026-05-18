@@ -26,5 +26,7 @@ namespace CES.Infra.Models.Mes
         public int ContractTypeId { get; set; }
 
         public ContractTypeEntity? ContractType { get; set; }
+
+        public bool IsPrinted { get; set; }
     }
 }

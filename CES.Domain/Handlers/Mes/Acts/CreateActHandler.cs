@@ -27,7 +27,8 @@ namespace CES.Domain.Handlers.Mes.Acts
                 && _ctx.NoteEntities is not null
                 && request.ActType is not null
                 && _ctx.ActTypes is not null
-                && _ctx.Employees is not null)
+                && _ctx.Employees is not null
+                && _ctx.Contracts is not null)
             {
                 foreach (var notesWithoutAct in request.NotesWithoutAct)
                 {
@@ -36,6 +37,11 @@ namespace CES.Domain.Handlers.Mes.Acts
                         throw new System.Exception("Упс! Что-то пошло не так");
                     }
                 }
+
+                var contract = await _ctx.Contracts
+                    .FirstOrDefaultAsync(x => x.Id == request.ContractId, cancellationToken)
+                    ?? throw new System.Exception("Договор не найден");
+
                 var entityAct = await _ctx.Act.AddAsync(new ActEntity()
                 {
                     ActDateOfCreation = DateTime.Now,
@@ -43,9 +49,6 @@ namespace CES.Domain.Handlers.Mes.Acts
                     Employee = await _ctx.Employees
                     .FirstOrDefaultAsync(x => x.LastName.Trim() + " " + x.FirstName.Trim() == request.Driver, cancellationToken)
                     ?? throw new System.Exception("Упс! Что-то пошло не так"),
-                    //Organization = await _ctx.OrganizationEntities
-                    //.FirstOrDefaultAsync(x => x.Name.Trim() == request.Organization.Trim(), cancellationToken)
-                    //?? throw new System.Exception("Упс! Что-то пошло не так"),
                     NumberPlateOfCar = await _ctx.NumberPlateOfCar
                     .FirstOrDefaultAsync(x => request.Vehicle.Trim().Contains(x!.Number!), cancellationToken)
                     ?? throw new System.Exception("Упс! Что-то пошло не так"),
@@ -57,6 +60,7 @@ namespace CES.Domain.Handlers.Mes.Acts
                     WorkPerformAct = JsonSerializer.Serialize(request.CompletedWorks)
                     ?? throw new System.Exception("Упс! Что-то пошло не так"),
                     IsSigned = request.IsSigned,
+                    ContractId = contract.Id,
                 }, cancellationToken);
                 await _ctx.SaveChangesAsync(cancellationToken);
                 foreach (var notesWithoutAct in request.NotesWithoutAct)

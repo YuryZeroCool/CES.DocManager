@@ -243,6 +243,7 @@ function ContractModal(props: ContractModalProps) {
       ...(addContractParams.expirationDate && {
         expirationDate: format(addContractParams.expirationDate, 'dd-MM-yyyy HH:mm:ss'),
       }),
+      isPrinted: false,
     };
 
     dispatch(createContract(requestData))

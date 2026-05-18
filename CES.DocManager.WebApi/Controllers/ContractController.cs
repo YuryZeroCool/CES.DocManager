@@ -12,37 +12,78 @@ using System.Net;
 
 namespace CES.DocManager.WebApi.Controllers
 {
-    [EnableCors("MyPolicy")]
-    [Route("mes/contracts/")]
-    [ApiController]
+  [EnableCors("MyPolicy")]
+  [Route("mes/contracts/")]
+  [ApiController]
 
     public class ContractController : ControllerBase
     {
-        private readonly IMediator _mediator;
+      private readonly IMediator _mediator;
 
-        private readonly IMapper _mapper;
+      private readonly IMapper _mapper;
 
-        public ContractController(IMediator mediator, IMapper mapper)
+      public ContractController(IMediator mediator, IMapper mapper)
+      {
+        _mediator = mediator;
+        _mapper = mapper;
+      }
+
+      [HttpGet()]
+      [Produces(typeof(GetContractsResponse))]
+      public async Task<object> GetContracts(string min, string max, string? contractType, string? filter, string? searchValue)
+      {
+        try
         {
-            _mediator = mediator;
-            _mapper = mapper;
+          return await _mediator.Send(new GetContractsRequest()
+          {
+            Min = DateTimeConverter.ConvertToDateTime(min, "yyyy-MM-dd HH:mm:ss"),
+            Max = DateTimeConverter.ConvertToDateTime(max, "yyyy-MM-dd HH:mm:ss"),
+            ContractType = (contractType ?? string.Empty).Trim(),
+            Filter = (filter ?? string.Empty).Trim(),
+            SearchValue = (searchValue ?? string.Empty).Trim(),
+          });
         }
-
-        [HttpPost]
-        [Produces(typeof(CreateContractResponse))]
-        public async Task<object> CreateContract([FromBody] ContractViewModel contract)
+        catch (Exception e)
         {
-            try
-            {
-                var res = await _mediator.Send(_mapper.Map<CreateContractRequest>(contract));
-                HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
-                return res;
-            }
-            catch (Exception e)
-            {
-                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
-                return new ErrorResponse(e.Message);
-            }
+          HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+          return new ErrorResponse(e.Message);
         }
+      }
+
+      [HttpGet("searchByOrganization")]
+      [Produces(typeof(GetContractsByOrganizationResponse))]
+      public async Task<object> GetContractsByOrganization(string organizationName, string date)
+      {
+        try
+        {
+          return await _mediator.Send(new GetContractsByOrganizationRequest()
+          {
+            OrganizationName = organizationName?.Trim() ?? string.Empty,
+            Date = DateTimeConverter.ConvertToDateTime(date, "yyyy-MM-dd HH:mm:ss")
+          });
+        }
+        catch (Exception e)
+        {
+          HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+          return new ErrorResponse(e.Message);
+        }
+      }
+
+      [HttpPost]
+      [Produces(typeof(CreateContractResponse))]
+      public async Task<object> CreateContract([FromBody] ContractViewModel contract)
+      {
+        try
+        {
+          var res = await _mediator.Send(_mapper.Map<CreateContractRequest>(contract));
+          HttpContext.Response.StatusCode = ((int)HttpStatusCode.Created);
+          return res;
+        }
+        catch (Exception e)
+        {
+          HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+          return new ErrorResponse(e.Message);
+        }
+      }
     }
 }

@@ -21,6 +21,8 @@
         public decimal Vat { get; set; }
 
         public bool IsSigned { get; set; }
+
+        public int ContractId { get; set; }
     }
 
     public class Work

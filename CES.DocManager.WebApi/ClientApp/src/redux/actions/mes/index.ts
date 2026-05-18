@@ -14,6 +14,8 @@ import createStreet from './notesWithoutAct/createStreet';
 import getStreetsBySearch from './notesWithoutAct/getStreetsBySearch';
 
 import createContract from './contracts/createContract';
+import getContractsListForSelect from './contracts/getContractsListForSelect';
+import getContractsList from './contracts/getContractsList';
 
 export {
   createOrganization,
@@ -32,4 +34,6 @@ export {
   getStreetsBySearch,
 
   createContract,
+  getContractsListForSelect,
+  getContractsList,
 };
