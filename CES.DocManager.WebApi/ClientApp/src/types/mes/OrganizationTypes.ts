@@ -1,4 +1,4 @@
-import { ContractTypes } from './ContractTypes';
+import ContractTypes from './ContractTypesEnum';
 
 export interface Organization {
   name: string;
