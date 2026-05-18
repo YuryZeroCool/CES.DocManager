@@ -52,7 +52,7 @@ function ActTypesSelect(props: ActTypesSelectProps) {
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}
           styles={{
-            root: { minWidth: 250 },
+            root: { minWidth: 270 },
           }}
         >
           {actTypeSelectValue || <Input.Placeholder>Выберите тип акта</Input.Placeholder>}
