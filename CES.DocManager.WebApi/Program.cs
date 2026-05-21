@@ -54,7 +54,7 @@ builder.Services.AddAuthentication(auth =>
 
 string baseUrl = "https://localhost:3000";
 string basehttp = "http://localhost:3000";
-string[] paramHeader = { "X-Total-Count", "X-Total-Sum" };
+string[] paramHeader = { "X-Total-Count", "X-Total-Sum", "Content-Disposition" };
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyPolicy",

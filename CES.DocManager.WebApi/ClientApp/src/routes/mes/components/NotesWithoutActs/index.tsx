@@ -1,7 +1,7 @@
 import {
   Button,
   Divider,
-  Flex, Group, rem, Stack, Text,
+  Flex, Group, rem, Stack, Text, Tooltip,
 } from '@mantine/core';
 import React, { memo, useEffect, useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
@@ -27,6 +27,7 @@ import NotesWithoutActsListHeader from './components/NotesWithoutActsListHeader'
 import NotesWithoutActsTable from './components/NotesWithoutActsTable';
 
 const LIMIT = 10;
+const SELECT_NOTE_MESSAGE = 'Сначала выберите заявку';
 
 interface NotesWithoutActsProps {
   selectedNotesId: number[];
@@ -77,6 +78,8 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
 
   const dispatch: IAuthResponseType = useDispatch();
 
+  const hasSelectedNotes = selectedNotesId.length > 0;
+
   const showErrorNotification = (message: string) => {
     showNotification({
       title: message,
@@ -126,6 +129,19 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
 
   const handleActTypeSelectChange = (value: string) => {
     setActTypeSelectValue(value);
+  };
+
+  const handleActTypeButtonClick = (actType: string) => {
+    if (!hasSelectedNotes) {
+      showNotification({
+        title: 'Внимание',
+        message: SELECT_NOTE_MESSAGE,
+        color: 'orange',
+      });
+      return;
+    }
+
+    handleAddActBtnClick(actType);
   };
 
   const handleGetNotesWithoutActsBtnClick = () => {
@@ -194,14 +210,23 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
                 handleActTypeSelectChange={handleActTypeSelectChange}
               />
               {actDataFromFile.act.length !== 0 && actDataFromFile.act.map((act) => (
-                <Button
+                <Tooltip
                   key={act.type}
-                  variant="gradient"
-                  gradient={{ from: 'violet', to: 'blue', deg: 90 }}
-                  onClick={() => handleAddActBtnClick(act.type)}
+                  label={SELECT_NOTE_MESSAGE}
+                  disabled={hasSelectedNotes}
+                  withArrow
                 >
-                  {act.type}
-                </Button>
+                  <span style={{ display: 'inline-block' }}>
+                    <Button
+                      variant="gradient"
+                      gradient={{ from: 'violet', to: 'blue', deg: 90 }}
+                      disabled={!hasSelectedNotes}
+                      onClick={() => handleActTypeButtonClick(act.type)}
+                    >
+                      {act.type}
+                    </Button>
+                  </span>
+                </Tooltip>
               ))}
             </Group>
           </Stack>

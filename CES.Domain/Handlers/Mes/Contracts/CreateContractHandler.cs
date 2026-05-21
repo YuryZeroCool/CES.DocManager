@@ -78,7 +78,8 @@ namespace CES.Domain.Handlers.Mes.Contracts
                 StartDateOfWork = addedContract.Entity.StartDateOfWork,
                 EndDateOfWork = addedContract.Entity.EndDateOfWork,
                 ExpirationDate = addedContract.Entity.ExpirationDate,
-                IsPrinted = addedContract.Entity.IsPrinted
+                IsPrinted = addedContract.Entity.IsPrinted,
+                HasLinkedAct = false,
             };
         }
     }

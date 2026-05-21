@@ -2,6 +2,7 @@
 using CES.Domain.Models.Request.Mes.Contracts;
 using CES.Domain.Models.Request.Mes.Organization;
 using CES.Domain.Models.Response.Mes.Contracts;
+using CES.Domain.Services;
 using MediatR;
 using CES.Infra;
 using CES.Infra.Models.Mes;
@@ -55,6 +56,15 @@ namespace CES.Domain.Handlers.Mes.Contracts
           };
         }
 
+        var contractIds = contracts.Select(c => c.Id).ToList();
+        var actsCountByContractId = _ctx.Act is null
+          ? new Dictionary<int, int>()
+          : await _ctx.Act
+              .Where(a => a.ContractId != null && contractIds.Contains(a.ContractId.Value))
+              .GroupBy(a => a.ContractId!.Value)
+              .Select(g => new { ContractId = g.Key, Count = g.Count() })
+              .ToDictionaryAsync(x => x.ContractId, x => x.Count, cancellationToken);
+
         var contractsList = contracts.Select(c => new ContractBaseModel
         {
           Id = c.Id,
@@ -66,6 +76,8 @@ namespace CES.Domain.Handlers.Mes.Contracts
           EndDateOfWork = c.EndDateOfWork,
           ExpirationDate = c.ExpirationDate,
           IsPrinted = c.IsPrinted,
+          ActsCount = actsCountByContractId.GetValueOrDefault(c.Id, 0),
+          HasLinkedAct = actsCountByContractId.GetValueOrDefault(c.Id, 0) > 0,
           Organization = c.Organization != null ? new Organization
           {
             Id = c.Organization.Id,
@@ -76,9 +88,10 @@ namespace CES.Domain.Handlers.Mes.Contracts
             Phone = c.Organization.Phone,
             OrganizationType = c.Organization.OrganizationType?.Name ?? string.Empty
           } : null
-        }).ToList();
+        })
+        .ToList();
 
-        var sortedData = contractsList.OrderBy(c => c.CreationDate).ThenBy(c => c.OrganizationName).ToList();
+        var sortedData = ContractNumberSort.OrderByContractNumber(contractsList, c => c.ContractNumber).ToList();
 
         return new GetContractsResponse
         {

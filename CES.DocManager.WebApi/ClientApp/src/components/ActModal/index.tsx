@@ -36,6 +36,7 @@ import { OrganizationState } from 'types/mes/OrganizationTypes';
 import { ContractState, GetContractsListForSelectRes } from 'types/mes/ContractTypes';
 import { resetContractsListForSelect } from 'redux/reducers/mes/contractReducer';
 import handleError from 'utils';
+import { getSharedNotesWorkAddress } from 'utils/noteWorkAddress';
 import AddActTable from 'components/AddActTable';
 import ModalButtons from 'components/ModalButtons';
 import DatePicker from 'components/DatePicker';
@@ -151,9 +152,15 @@ function ActModal(props: ActModalProps) {
 
   useEffect(() => {
     if (actForm.organization && actForm.actAdditionDate) {
+      const workAddress = getSharedNotesWorkAddress(actForm.selectedNotes);
+
       const params = {
         organizationName: actForm.organization,
         date: format(actForm.actAdditionDate, 'dd-MM-yyyy HH:mm:ss'),
+        ...(workAddress && {
+          street: workAddress.street,
+          houseNumber: workAddress.houseNumber,
+        }),
       };
 
       dispatch(getContractsListForSelect(params))
@@ -163,7 +170,9 @@ function ActModal(props: ActModalProps) {
             if (payload && payload.contracts.length === 0) {
               showNotification({
                 title: 'Нет договоров',
-                message: 'Для данной организации на выбранную дату нет договоров. Необходимо сначала создать договор.',
+                message: workAddress
+                  ? 'Нет договоров для организации, даты и адреса заявок. Создайте договор или проверьте адрес.'
+                  : 'Для данной организации на выбранную дату нет договоров. Необходимо сначала создать договор.',
                 icon: <IconX style={{ width: rem(20), height: rem(20) }} />,
                 styles: { icon: { background: 'orange' } },
                 color: 'orange',
@@ -180,7 +189,7 @@ function ActModal(props: ActModalProps) {
       updateActFormState('selectedContract', null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actForm.organization, actForm.actAdditionDate]);
+  }, [actForm.organization, actForm.actAdditionDate, actForm.selectedNotes]);
 
   const handleClose = () => {
     changeType('');

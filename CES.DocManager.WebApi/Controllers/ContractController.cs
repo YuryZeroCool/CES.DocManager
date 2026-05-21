@@ -52,20 +52,54 @@ namespace CES.DocManager.WebApi.Controllers
 
       [HttpGet("searchByOrganization")]
       [Produces(typeof(GetContractsByOrganizationResponse))]
-      public async Task<object> GetContractsByOrganization(string organizationName, string date)
+      public async Task<object> GetContractsByOrganization(
+        string organizationName,
+        string date,
+        string? street = null,
+        string? houseNumber = null)
       {
         try
         {
           return await _mediator.Send(new GetContractsByOrganizationRequest()
           {
             OrganizationName = organizationName?.Trim() ?? string.Empty,
-            Date = DateTimeConverter.ConvertToDateTime(date, "yyyy-MM-dd HH:mm:ss")
+            Date = DateTimeConverter.ConvertToDateTime(date, "yyyy-MM-dd HH:mm:ss"),
+            Street = street?.Trim(),
+            HouseNumber = houseNumber?.Trim(),
           });
         }
         catch (Exception e)
         {
           HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
           return new ErrorResponse(e.Message);
+        }
+      }
+
+      [HttpGet("{id}/print")]
+      public async Task<IActionResult> PrintContract(int id)
+      {
+        try
+        {
+          var result = await _mediator.Send(new PrintContractRequest { ContractId = id });
+          return File(result.FileContent, result.ContentType, result.FileName);
+        }
+        catch (Exception e)
+        {
+          return NotFound(new ErrorResponse(e.Message));
+        }
+      }
+
+      [HttpPatch("{id}/printed")]
+      public async Task<IActionResult> MarkContractPrinted(int id)
+      {
+        try
+        {
+          await _mediator.Send(new MarkContractPrintedRequest { ContractId = id });
+          return Ok();
+        }
+        catch (Exception e)
+        {
+          return NotFound(new ErrorResponse(e.Message));
         }
       }
 
