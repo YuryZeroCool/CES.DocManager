@@ -23,6 +23,10 @@ namespace CES.Domain.Models
 
     public bool IsPrinted { get; set; }
 
+    public bool HasLinkedAct { get; set; }
+
+    public int ActsCount { get; set; }
+
     public Organization? Organization { get; set; }
 	}
 }

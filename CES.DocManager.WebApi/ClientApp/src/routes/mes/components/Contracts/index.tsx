@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Button, Divider, Stack, Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { format, getDaysInMonth } from 'date-fns';
+import { format } from 'date-fns';
 import { useDispatch } from 'react-redux';
 
 import { ContractTypes, GetContractsListReq, SearchContractParams } from 'types/mes/ContractTypes';
+import {
+  getInitialContractsSearchDates,
+  saveContractsSearchDatesToStorage,
+} from 'utils/contractsSearchDatesStorage';
 import { IAuthResponseType } from 'redux/store/configureStore';
 import { getContractsList } from 'redux/actions/mes';
 
@@ -15,18 +19,16 @@ import SearchPanel from './components/SearchPanel';
 import ContractsTable from './components/ContractsTable';
 
 function Contracts() {
-  const minDate = new Date();
-  minDate.setDate(1);
+  const [contractsParams, setContractsParams] = useState<SearchContractParams>(() => {
+    const { minDate, maxDate } = getInitialContractsSearchDates();
 
-  const maxDate = new Date();
-  maxDate.setDate(getDaysInMonth(maxDate));
-
-  const [contractsParams, setContractsParams] = useState<SearchContractParams>({
-    contractType: ContractTypes.oneTime,
-    minDate,
-    maxDate,
-    searchValue: '',
-    filter: '',
+    return {
+      contractType: ContractTypes.oneTime,
+      minDate,
+      maxDate,
+      searchValue: '',
+      filter: '',
+    };
   });
 
   const [
@@ -35,6 +37,7 @@ function Contracts() {
   ] = useDisclosure(false);
 
   const dispatch: IAuthResponseType = useDispatch();
+  const isInitialDatesMount = useRef(true);
 
   const getContractsListReq = () => {
     const params: GetContractsListReq = {
@@ -52,6 +55,15 @@ function Contracts() {
     getContractsListReq();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (isInitialDatesMount.current) {
+      isInitialDatesMount.current = false;
+      return;
+    }
+
+    saveContractsSearchDatesToStorage(contractsParams.minDate, contractsParams.maxDate);
+  }, [contractsParams.minDate, contractsParams.maxDate]);
 
   const handleAddContractBtnClick = () => {
     addContractModalOpen();
@@ -110,6 +122,7 @@ function Contracts() {
         <ContractModal
           addContractModalOpened={addContractModalOpened}
           addContractModalClose={addContractModalClose}
+          onContractCreated={getContractsListReq}
         />
       )}
     </Stack>

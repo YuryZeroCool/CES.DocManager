@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { createContract, getContractsList, getContractsListForSelect } from 'redux/actions/mes';
+import {
+  createContract, getContractsList, getContractsListForSelect, markContractPrinted,
+} from 'redux/actions/mes';
 import { ContractState, ContractTypes } from 'types/mes/ContractTypes';
 
 const initial: ContractState = {
@@ -25,15 +27,19 @@ const contractReducer = createSlice({
     changeSelectedContractType: (state, action: PayloadAction<ContractTypes>) => {
       state.selectedContractType = action.payload;
     },
+    setContractPrinted: (state, action: PayloadAction<number>) => {
+      const contract = state.contractsList.find((item) => item.id === action.payload);
+      if (contract) {
+        contract.isPrinted = true;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createContract.pending, (state) => {
       state.requestStatus = 'pending';
       state.contractError = '';
     });
-    builder.addCase(createContract.fulfilled, (state, action) => {
-      state.contractsList = [...state.contractsList, action.payload].sort((a, b) => (
-        new Date(a.creationDate).getTime() - new Date(b.creationDate).getTime()));
+    builder.addCase(createContract.fulfilled, (state) => {
       state.requestStatus = 'fulfilled';
     });
     builder.addCase(createContract.rejected, (state, action) => {
@@ -68,6 +74,13 @@ const contractReducer = createSlice({
       state.requestStatus = 'rejected';
       state.contractError = action.payload?.message || 'Произошла ошибка при загрузке договоров';
     });
+
+    builder.addCase(markContractPrinted.fulfilled, (state, action) => {
+      const contract = state.contractsList.find((item) => item.id === action.payload);
+      if (contract) {
+        contract.isPrinted = true;
+      }
+    });
   },
 });
 
@@ -75,6 +88,7 @@ export const {
   changeSelectedContractType,
   resetContractState,
   resetContractsListForSelect,
+  setContractPrinted,
 } = contractReducer.actions;
 
 export default contractReducer.reducer;

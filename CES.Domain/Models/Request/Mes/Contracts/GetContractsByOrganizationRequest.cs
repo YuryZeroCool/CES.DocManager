@@ -8,5 +8,9 @@ namespace CES.Domain.Models.Request.Mes.Contracts
 		public string OrganizationName { get; set; } = string.Empty;
 
 		public DateTime Date { get; set; }
+
+		public string? Street { get; set; }
+
+		public string? HouseNumber { get; set; }
 	}
 }

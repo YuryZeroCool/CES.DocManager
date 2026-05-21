@@ -1,15 +1,29 @@
 .tableHeadCell {
-  padding: 15px !important;
+  padding: 15px 5px !important;
   background-color: var(--mantine-color-cyan-filled) !important;
   color: var(--mantine-color-body);
+  text-align: center !important;
 }
 
 .tableBodyCell {
-  padding: 15px !important;
+  padding: 5px !important;
+}
+
+.printIconWrapper {
+  display: inline-flex;
+  align-items: center;
 }
 
 .printIconDisabled {
   opacity: 0.35;
   cursor: not-allowed;
-  pointer-events: none;
+}
+
+.printIconNoAct {
+  opacity: 0.9;
+  cursor: not-allowed;
+}
+
+.printIconReady {
+  cursor: pointer;
 }

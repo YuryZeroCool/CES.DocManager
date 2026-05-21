@@ -13,6 +13,8 @@ export interface Contract {
   endDateOfWork?: string;
   expirationDate?: string;
   isPrinted: boolean;
+  hasLinkedAct?: boolean;
+  actsCount?: number;
   organization?: Organization;
 }
 
@@ -54,13 +56,15 @@ export interface AddContractParams {
   contractType: string;
 }
 
-export type CreateContractRequest = Omit<Contract, 'id'>;
+export type CreateContractRequest = Omit<Contract, 'id' | 'hasLinkedAct'>;
 
 export type CreateContractResponse = Contract;
 
 export interface GetContractsListForSelectReq {
   organizationName: string;
   date: string;
+  street?: string;
+  houseNumber?: string;
 }
 
 export interface GetContractsListForSelectRes {

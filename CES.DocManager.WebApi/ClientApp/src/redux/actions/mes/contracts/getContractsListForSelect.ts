@@ -11,11 +11,22 @@ GetContractsListForSelectReq, { rejectValue: FetchTodosError }>(
       if (process.env.REACT_APP_GET_CONTRACTS_LIST_FOR_SELECT === undefined) {
         throw Error('Упс, что-то пошло не так...');
       }
+      const query = new URLSearchParams({
+        organizationName: params.organizationName,
+        date: params.date,
+      });
+
+      if (params.street) {
+        query.set('street', params.street);
+      }
+
+      if (params.houseNumber) {
+        query.set('houseNumber', params.houseNumber);
+      }
+
       const response = await $api.get<GetContractsListForSelectRes>(
-        `${process.env.REACT_APP_GET_CONTRACTS_LIST_FOR_SELECT}?organizationName=${params.organizationName}
-        &date=${params.date}`,
+        `${process.env.REACT_APP_GET_CONTRACTS_LIST_FOR_SELECT}?${query.toString()}`,
       );
-      console.log(response.data);
       return response.data;
     } catch (err) {
       return rejectWithValue({

@@ -22,10 +22,11 @@ import DatePicker from 'components/DatePicker';
 interface ContractModalProps {
   addContractModalOpened: boolean;
   addContractModalClose: () => void;
+  onContractCreated: () => void;
 }
 
 function ContractModal(props: ContractModalProps) {
-  const { addContractModalOpened, addContractModalClose } = props;
+  const { addContractModalOpened, addContractModalClose, onContractCreated } = props;
 
   const [addContractParams, setAddContractParams] = useState<AddContractParams>({
     creationDate: new Date(),
@@ -193,13 +194,15 @@ function ContractModal(props: ContractModalProps) {
     }
   };
 
-  const handleClose = () => {
+  const handleClose = (resetRequestState = true) => {
     addContractModalClose();
     setAddContractParams(resetContractParams());
     setOrganizationSearchValue('');
     dispatch(resetNextContractNumber());
     dispatch(resetOrganizationsBySearch());
-    dispatch(resetContractState());
+    if (resetRequestState) {
+      dispatch(resetContractState());
+    }
   };
 
   const isFormValid = (): boolean => {
@@ -255,7 +258,8 @@ function ContractModal(props: ContractModalProps) {
           icon: <IconCheck style={{ width: rem(20), height: rem(20) }} />,
           styles: { icon: { background: 'green' } },
         });
-        handleClose();
+        onContractCreated();
+        handleClose(false);
       })
       .catch(() => {});
   };
@@ -378,7 +382,7 @@ function ContractModal(props: ContractModalProps) {
         <ModalButtons
           confirmBtnTitle="Добавить договор"
           cancelBtnTitle="Отменить"
-          handleCancel={handleClose}
+          handleCancel={() => handleClose()}
           handleConfirm={handleAddContractSubmit}
           disabled={!isFormValid()}
           loading={requestStatus === 'pending'}
