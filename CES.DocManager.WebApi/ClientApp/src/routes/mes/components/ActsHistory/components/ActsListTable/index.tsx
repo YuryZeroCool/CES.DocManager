@@ -191,7 +191,12 @@ function ActsListTable(props: ActsListTableProps) {
 
   const renderTable = () => (
     actsList.length !== 0 && (
-      <Group w="100%">
+      <Stack w="100%" gap={10}>
+        <Text size="sm" ta="right" c="dimmed">
+          Количество актов:
+          {' '}
+          {actsList.length}
+        </Text>
         <Table
           striped
           highlightOnHover
@@ -209,7 +214,7 @@ function ActsListTable(props: ActsListTableProps) {
             {renderTableBody()}
           </Table.Tbody>
         </Table>
-      </Group>
+      </Stack>
     )
   );
 
