@@ -61,86 +61,95 @@ function NotesWithoutActsTable(props: NotesWithoutActsTableProps) {
 
   return (
     <div className="notes-table">
-      <Group w="100%">
-        <Table
-          striped
-          highlightOnHover
-          withTableBorder
-          classNames={{
-            th: classes.tableHeadCell,
-            td: classes.tableBodyCell,
-            tr: classes.tableRow,
-          }}
-        >
-          <Table.Thead>
-            <Table.Tr>
-              {headCells.map((headCell) => (
-                <Table.Th key={headCell.id}>{headCell.label}</Table.Th>
-              ))}
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {notesWithoutAct.length !== 0 && notesWithoutAct.map((row) => {
-              const isItemSelected = isSelected(row.id);
-              return (
-                <Table.Tr
-                  key={row.id}
-                  bg={isItemSelected ? 'var(--mantine-color-blue-light)' : undefined}
-                >
-                  <Table.Td>
-                    <Checkbox
-                      checked={isItemSelected}
-                      onChange={(event) => handleClick(row.id, event.currentTarget.checked)}
-                    />
-                  </Table.Td>
-                  <Table.Td>
-                    {row.street && (
-                      <>
-                        {row.street}
-                        ,&nbsp;
-                      </>
-                    )}
-                    {row.houseNumber && (
-                      <>
-                        д.&nbsp;
-                        {row.houseNumber}
-                      </>
-                    )}
-                    {row.entrance !== 0 && (
-                      <>
-                        ,&nbsp;
-                        п.&nbsp;
-                        {row.entrance}
-                      </>
-                    )}
-                  </Table.Td>
-                  <Table.Td miw={200}>{row.date.replace('T', ' ')}</Table.Td>
-                  <Table.Td>{row.tel}</Table.Td>
-                  <Table.Td>{row.comment}</Table.Td>
-                  <Table.Td width="30px">
-                    {(!row.street || !row.houseNumber) && (
-                      <EditIcon
-                        width={20}
-                        height={20}
-                        onClick={() => handleEditIconClick(row.id)}
-                      />
-                    )}
-                  </Table.Td>
-                </Table.Tr>
-              );
-            })}
-          </Table.Tbody>
-        </Table>
-
-        {notesWithoutAct.length === 0
-          && requestStatus === 'fulfilled' && (
-            <Stack align="center" justify="center" w="100%">
-              <Text style={{ fontSize: 18, color: 'red' }}>
-                Совпадений не найдено
-              </Text>
-            </Stack>
+      <Stack w="100%" gap={10}>
+        {notesWithoutAct.length > 0 && (
+          <Text size="sm" ta="right" c="dimmed">
+            Количество заявок:
+            {' '}
+            {notesWithoutAct.length}
+          </Text>
         )}
-      </Group>
+        <Group w="100%">
+          <Table
+            striped
+            highlightOnHover
+            withTableBorder
+            classNames={{
+              th: classes.tableHeadCell,
+              td: classes.tableBodyCell,
+              tr: classes.tableRow,
+            }}
+          >
+            <Table.Thead>
+              <Table.Tr>
+                {headCells.map((headCell) => (
+                  <Table.Th key={headCell.id}>{headCell.label}</Table.Th>
+                ))}
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {notesWithoutAct.length !== 0 && notesWithoutAct.map((row) => {
+                const isItemSelected = isSelected(row.id);
+                return (
+                  <Table.Tr
+                    key={row.id}
+                    bg={isItemSelected ? 'var(--mantine-color-blue-light)' : undefined}
+                  >
+                    <Table.Td>
+                      <Checkbox
+                        checked={isItemSelected}
+                        onChange={(event) => handleClick(row.id, event.currentTarget.checked)}
+                      />
+                    </Table.Td>
+                    <Table.Td>
+                      {row.street && (
+                        <>
+                          {row.street}
+                          ,&nbsp;
+                        </>
+                      )}
+                      {row.houseNumber && (
+                        <>
+                          д.&nbsp;
+                          {row.houseNumber}
+                        </>
+                      )}
+                      {row.entrance !== 0 && (
+                        <>
+                          ,&nbsp;
+                          п.&nbsp;
+                          {row.entrance}
+                        </>
+                      )}
+                    </Table.Td>
+                    <Table.Td miw={200}>{row.date.replace('T', ' ')}</Table.Td>
+                    <Table.Td>{row.tel}</Table.Td>
+                    <Table.Td>{row.comment}</Table.Td>
+                    <Table.Td width="30px">
+                      {(!row.street || !row.houseNumber) && (
+                        <EditIcon
+                          width={20}
+                          height={20}
+                          onClick={() => handleEditIconClick(row.id)}
+                        />
+                      )}
+                    </Table.Td>
+                  </Table.Tr>
+                );
+              })}
+            </Table.Tbody>
+          </Table>
+
+          {notesWithoutAct.length === 0
+            && requestStatus === 'fulfilled' && (
+              <Stack align="center" justify="center" w="100%">
+                <Text style={{ fontSize: 18, color: 'red' }}>
+                  Совпадений не найдено
+                </Text>
+              </Stack>
+          )}
+        </Group>
+      </Stack>
 
       {notesWithoutAct.length === 0 && requestStatus !== 'fulfilled' && (
         <LoadingOverlay

@@ -28,12 +28,17 @@ namespace CES.Domain.Services
 
         public static string BuildFileName(string contractNumber, string organizationName, string contractType)
         {
-            var invalidChars = Path.GetInvalidFileNameChars();
-            var safe = new[] { contractNumber, organizationName, contractType }
-                .Select(part => string.Concat(part.Trim().Select(ch => invalidChars.Contains(ch) ? '_' : ch)))
-                .ToArray();
+            var number = contractNumber.Trim().Replace('/', '-');
+            var organization = SanitizeFileNamePart(organizationName);
+            var type = SanitizeFileNamePart(contractType).ToLower(RuCulture);
 
-            return $"{safe[0]} {safe[1]} - {safe[2]}.doc";
+            return $"{number} {organization} - {type}.doc".Replace("_", string.Empty, StringComparison.Ordinal);
+        }
+
+        private static string SanitizeFileNamePart(string part)
+        {
+            var invalidChars = new HashSet<char>(Path.GetInvalidFileNameChars());
+            return string.Concat(part.Trim().Where(ch => !invalidChars.Contains(ch)));
         }
 
         public static string FormatMonthYear(DateTime date) =>
