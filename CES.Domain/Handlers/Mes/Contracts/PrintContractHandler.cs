@@ -42,7 +42,7 @@ namespace CES.Domain.Handlers.Mes.Contracts
 
             var contractTypeName = contract.ContractType?.Name?.Trim() ?? string.Empty;
             var isYearly = contractTypeName == "Годовой";
-            var templateFileName = isYearly ? "годовой.doc" : "разовый.doc";
+            var templateFileName = isYearly ? "годовой" + ".doc" : "разовый" + ".doc";
             var templatePath = Path.Combine(_environment.WebRootPath, "Contract", templateFileName);
 
             if (!File.Exists(templatePath))
