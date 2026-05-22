@@ -6,7 +6,9 @@ import { useDisclosure } from '@mantine/hooks';
 import { format } from 'date-fns';
 import { useDispatch } from 'react-redux';
 
-import { ContractTypes, GetContractsListReq, SearchContractParams } from 'types/mes/ContractTypes';
+import {
+  Contract, ContractTypes, GetContractsListReq, SearchContractParams,
+} from 'types/mes/ContractTypes';
 import {
   getInitialContractsSearchDates,
   saveContractsSearchDatesToStorage,
@@ -32,9 +34,10 @@ function Contracts() {
   });
 
   const [
-    addContractModalOpened,
-    { open: addContractModalOpen, close: addContractModalClose },
+    contractModalOpened,
+    { open: contractModalOpen, close: contractModalClose },
   ] = useDisclosure(false);
+  const [contractToEdit, setContractToEdit] = useState<Contract | null>(null);
 
   const dispatch: IAuthResponseType = useDispatch();
   const isInitialDatesMount = useRef(true);
@@ -66,7 +69,18 @@ function Contracts() {
   }, [contractsParams.minDate, contractsParams.maxDate]);
 
   const handleAddContractBtnClick = () => {
-    addContractModalOpen();
+    setContractToEdit(null);
+    contractModalOpen();
+  };
+
+  const handleEditContract = (contract: Contract) => {
+    setContractToEdit(contract);
+    contractModalOpen();
+  };
+
+  const handleContractModalClose = () => {
+    setContractToEdit(null);
+    contractModalClose();
   };
 
   const updateContractsParams = <K extends keyof SearchContractParams>(
@@ -116,13 +130,14 @@ function Contracts() {
 
       <Divider style={{ background: 'linear-gradient(#7950f2 0%, #15aabf 100%)', height: 3 }} />
 
-      <ContractsTable />
+      <ContractsTable onEditContract={handleEditContract} />
 
-      {addContractModalOpened && (
+      {contractModalOpened && (
         <ContractModal
-          addContractModalOpened={addContractModalOpened}
-          addContractModalClose={addContractModalClose}
-          onContractCreated={getContractsListReq}
+          modalOpened={contractModalOpened}
+          onModalClose={handleContractModalClose}
+          onSuccess={getContractsListReq}
+          contractToEdit={contractToEdit}
         />
       )}
     </Stack>

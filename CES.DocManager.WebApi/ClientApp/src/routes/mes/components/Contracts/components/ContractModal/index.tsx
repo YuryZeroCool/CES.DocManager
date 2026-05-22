@@ -9,24 +9,45 @@ import { showNotification } from '@mantine/notifications';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { OrganizationState } from 'types/mes/OrganizationTypes';
-import { AddContractParams, ContractTypes, ContractState } from 'types/mes/ContractTypes';
+import {
+  AddContractParams, Contract, ContractTypes, ContractState,
+} from 'types/mes/ContractTypes';
 import { RootState } from 'redux/reducers/combineReducers';
 import { resetNextContractNumber, resetOrganizationsBySearch } from 'redux/reducers/mes/organizationReducer';
 import { resetContractState } from 'redux/reducers/mes/contractReducer';
-import { organizationsBySearch, getNextContractNumber, createContract } from 'redux/actions/mes';
+import {
+  organizationsBySearch, getNextContractNumber, createContract, updateContract,
+} from 'redux/actions/mes';
 import { format } from 'date-fns';
 import { IAuthResponseType } from 'redux/store/configureStore';
 import ModalButtons from 'components/ModalButtons';
 import DatePicker from 'components/DatePicker';
 
+function parseContractDate(value?: string): Date | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
 interface ContractModalProps {
-  addContractModalOpened: boolean;
-  addContractModalClose: () => void;
-  onContractCreated: () => void;
+  modalOpened: boolean;
+  onModalClose: () => void;
+  onSuccess: () => void;
+  contractToEdit?: Contract | null;
 }
 
 function ContractModal(props: ContractModalProps) {
-  const { addContractModalOpened, addContractModalClose, onContractCreated } = props;
+  const {
+    modalOpened,
+    onModalClose,
+    onSuccess,
+    contractToEdit = null,
+  } = props;
+
+  const isEditMode = contractToEdit != null;
 
   const [addContractParams, setAddContractParams] = useState<AddContractParams>({
     creationDate: new Date(),
@@ -73,6 +94,36 @@ function ContractModal(props: ContractModalProps) {
   };
 
   useEffect(() => {
+    if (!modalOpened) {
+      return;
+    }
+
+    if (contractToEdit) {
+      const organizationName = contractToEdit.organizationName
+        || contractToEdit.organization?.name
+        || '';
+      setAddContractParams({
+        creationDate: parseContractDate(contractToEdit.creationDate) ?? new Date(),
+        startDateOfWork: parseContractDate(contractToEdit.startDateOfWork),
+        endDateOfWork: parseContractDate(contractToEdit.endDateOfWork),
+        expirationDate: parseContractDate(contractToEdit.expirationDate),
+        contractNumber: contractToEdit.contractNumber,
+        contractType: contractToEdit.contractType,
+        organization: organizationName,
+      });
+      setOrganizationSearchValue(organizationName);
+      return;
+    }
+
+    setAddContractParams(resetContractParams());
+    setOrganizationSearchValue('');
+  }, [modalOpened, contractToEdit]);
+
+  useEffect(() => {
+    if (isEditMode) {
+      return;
+    }
+
     const currentDate = new Date();
     setAddContractParams((prevState) => {
       const updates: Partial<AddContractParams> = {
@@ -91,9 +142,13 @@ function ContractModal(props: ContractModalProps) {
 
       return { ...prevState, ...updates };
     });
-  }, [addContractParams.contractType]);
+  }, [addContractParams.contractType, isEditMode]);
 
   useEffect(() => {
+    if (isEditMode) {
+      return;
+    }
+
     if (addContractParams.creationDate
       && addContractParams.contractType === ContractTypes.oneTime) {
       setAddContractParams((prevState) => {
@@ -110,7 +165,7 @@ function ContractModal(props: ContractModalProps) {
         };
       });
     }
-  }, [addContractParams.creationDate, addContractParams.contractType]);
+  }, [addContractParams.creationDate, addContractParams.contractType, isEditMode]);
 
   useEffect(() => {
     if (
@@ -126,6 +181,10 @@ function ContractModal(props: ContractModalProps) {
   }, [addContractParams.startDateOfWork, addContractParams.endDateOfWork]);
 
   useEffect(() => {
+    if (isEditMode) {
+      return;
+    }
+
     if (addContractParams.contractType === ContractTypes.yearly && addContractParams.creationDate) {
       const expirationDate = new Date(addContractParams.creationDate);
       expirationDate.setFullYear(expirationDate.getFullYear() + 1);
@@ -133,9 +192,13 @@ function ContractModal(props: ContractModalProps) {
     } else if (addContractParams.contractType === ContractTypes.oneTime) {
       setAddContractParams((prevState) => ({ ...prevState, expirationDate: undefined }));
     }
-  }, [addContractParams.contractType, addContractParams.creationDate]);
+  }, [addContractParams.contractType, addContractParams.creationDate, isEditMode]);
 
   useEffect(() => {
+    if (isEditMode) {
+      return;
+    }
+
     if (
       addContractParams.contractType
       && addContractParams.organization
@@ -151,27 +214,30 @@ function ContractModal(props: ContractModalProps) {
     addContractParams.organization,
     addContractParams.creationDate,
     dispatch,
+    isEditMode,
   ]);
 
   useEffect(() => {
-    if (nextContractNumber) {
-      if (nextContractNumber.exist) {
-        showNotification({
-          title: 'Ошибка',
-          message: 'Существует действующий договор',
-          icon: <IconX style={{ width: rem(20), height: rem(20) }} />,
-          styles: { icon: { background: 'red' } },
-          color: 'red',
-        });
-      } else if (nextContractNumber.nextContractNumber) {
-        setAddContractParams((prevState) => ({
-          ...prevState,
-          contractNumber: nextContractNumber.nextContractNumber
-            ? `${nextContractNumber.nextContractNumber.toString()}/п` : '',
-        }));
-      }
+    if (isEditMode || !nextContractNumber) {
+      return;
     }
-  }, [nextContractNumber]);
+
+    if (nextContractNumber.exist) {
+      showNotification({
+        title: 'Ошибка',
+        message: 'Существует действующий договор',
+        icon: <IconX style={{ width: rem(20), height: rem(20) }} />,
+        styles: { icon: { background: 'red' } },
+        color: 'red',
+      });
+    } else if (nextContractNumber.nextContractNumber) {
+      setAddContractParams((prevState) => ({
+        ...prevState,
+        contractNumber: nextContractNumber.nextContractNumber
+          ? `${nextContractNumber.nextContractNumber.toString()}/п` : '',
+      }));
+    }
+  }, [nextContractNumber, isEditMode]);
 
   const handleOrganizationSearchChange = (value: string) => {
     setOrganizationSearchValue(value);
@@ -195,7 +261,7 @@ function ContractModal(props: ContractModalProps) {
   };
 
   const handleClose = (resetRequestState = true) => {
-    addContractModalClose();
+    onModalClose();
     setAddContractParams(resetContractParams());
     setOrganizationSearchValue('');
     dispatch(resetNextContractNumber());
@@ -206,7 +272,7 @@ function ContractModal(props: ContractModalProps) {
   };
 
   const isFormValid = (): boolean => {
-    if (nextContractNumber?.exist) {
+    if (!isEditMode && nextContractNumber?.exist) {
       return false;
     }
 
@@ -227,38 +293,44 @@ function ContractModal(props: ContractModalProps) {
     return false;
   };
 
-  const handleAddContractSubmit = () => {
+  const buildRequestPayload = () => ({
+    organizationName: addContractParams.organization,
+    creationDate: format(addContractParams.creationDate, 'dd-MM-yyyy HH:mm:ss'),
+    contractNumber: addContractParams.contractNumber.trim(),
+    contractType: addContractParams.contractType,
+    ...(addContractParams.startDateOfWork && {
+      startDateOfWork: format(addContractParams.startDateOfWork, 'dd-MM-yyyy HH:mm:ss'),
+    }),
+    ...(addContractParams.endDateOfWork && {
+      endDateOfWork: format(addContractParams.endDateOfWork, 'dd-MM-yyyy HH:mm:ss'),
+    }),
+    ...(addContractParams.expirationDate && {
+      expirationDate: format(addContractParams.expirationDate, 'dd-MM-yyyy HH:mm:ss'),
+    }),
+    isPrinted: false,
+  });
+
+  const handleSubmit = () => {
     if (!isFormValid()) {
       return;
     }
 
-    const requestData = {
-      organizationName: addContractParams.organization,
-      creationDate: format(addContractParams.creationDate, 'dd-MM-yyyy HH:mm:ss'),
-      contractNumber: addContractParams.contractNumber.trim(),
-      contractType: addContractParams.contractType,
-      ...(addContractParams.startDateOfWork && {
-        startDateOfWork: format(addContractParams.startDateOfWork, 'dd-MM-yyyy HH:mm:ss'),
-      }),
-      ...(addContractParams.endDateOfWork && {
-        endDateOfWork: format(addContractParams.endDateOfWork, 'dd-MM-yyyy HH:mm:ss'),
-      }),
-      ...(addContractParams.expirationDate && {
-        expirationDate: format(addContractParams.expirationDate, 'dd-MM-yyyy HH:mm:ss'),
-      }),
-      isPrinted: false,
-    };
+    const requestData = buildRequestPayload();
 
-    dispatch(createContract(requestData))
+    const action = isEditMode && contractToEdit
+      ? dispatch(updateContract({ id: contractToEdit.id, ...requestData }))
+      : dispatch(createContract(requestData));
+
+    action
       .unwrap()
       .then(() => {
         showNotification({
           title: 'Успешно',
-          message: 'Договор успешно создан',
+          message: isEditMode ? 'Договор успешно обновлён' : 'Договор успешно создан',
           icon: <IconCheck style={{ width: rem(20), height: rem(20) }} />,
           styles: { icon: { background: 'green' } },
         });
-        onContractCreated();
+        onSuccess();
         handleClose(false);
       })
       .catch(() => {});
@@ -266,13 +338,13 @@ function ContractModal(props: ContractModalProps) {
 
   return (
     <Modal
-      opened={addContractModalOpened}
-      onClose={addContractModalClose}
+      opened={modalOpened}
+      onClose={onModalClose}
       withCloseButton
       centered
       closeOnClickOutside={false}
       lockScroll={false}
-      title="Добавить договор"
+      title={isEditMode ? 'Редактировать договор' : 'Добавить договор'}
       styles={{
         content: { flex: '0 0 800px', borderRadius: 10 },
       }}
@@ -289,6 +361,7 @@ function ContractModal(props: ContractModalProps) {
               }
             }}
             allowDeselect={false}
+            disabled={isEditMode}
             w="30%"
           />
 
@@ -380,10 +453,10 @@ function ContractModal(props: ContractModalProps) {
         <Divider style={{ background: 'linear-gradient(#7950f2 0%, #15aabf 100%)', height: 3 }} />
 
         <ModalButtons
-          confirmBtnTitle="Добавить договор"
+          confirmBtnTitle={isEditMode ? 'Сохранить' : 'Добавить договор'}
           cancelBtnTitle="Отменить"
           handleCancel={() => handleClose()}
-          handleConfirm={handleAddContractSubmit}
+          handleConfirm={handleSubmit}
           disabled={!isFormValid()}
           loading={requestStatus === 'pending'}
         />

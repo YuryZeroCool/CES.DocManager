@@ -119,5 +119,22 @@ namespace CES.DocManager.WebApi.Controllers
           return new ErrorResponse(e.Message);
         }
       }
+
+      [HttpPut("{id}")]
+      [Produces(typeof(UpdateContractResponse))]
+      public async Task<object> UpdateContract(int id, [FromBody] ContractViewModel contract)
+      {
+        try
+        {
+          var request = _mapper.Map<UpdateContractRequest>(contract);
+          request.ContractId = id;
+          return await _mediator.Send(request);
+        }
+        catch (Exception e)
+        {
+          HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+          return new ErrorResponse(e.Message);
+        }
+      }
     }
 }
