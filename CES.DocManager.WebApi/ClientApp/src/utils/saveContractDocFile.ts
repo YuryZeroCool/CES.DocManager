@@ -53,7 +53,7 @@ async function saveWithFilePicker(blob: Blob, fileName: string): Promise<boolean
     return true;
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
-      return true;
+      throw new Error('Сохранение отменено');
     }
     throw error;
   }

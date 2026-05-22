@@ -1,7 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-  createContract, getContractsList, getContractsListForSelect, markContractPrinted,
+  createContract,
+  getContractsList,
+  getContractsListForSelect,
+  markContractPrinted,
+  updateContract,
 } from 'redux/actions/mes';
 import { ContractState, ContractTypes } from 'types/mes/ContractTypes';
 
@@ -45,6 +49,27 @@ const contractReducer = createSlice({
     builder.addCase(createContract.rejected, (state, action) => {
       state.requestStatus = 'rejected';
       state.contractError = action.payload?.message || 'Ошибка создания договора';
+    });
+
+    builder.addCase(updateContract.pending, (state) => {
+      state.requestStatus = 'pending';
+      state.contractError = '';
+    });
+    builder.addCase(updateContract.fulfilled, (state, action) => {
+      state.requestStatus = 'fulfilled';
+      const index = state.contractsList.findIndex((item) => item.id === action.payload.id);
+      if (index !== -1) {
+        const previous = state.contractsList[index];
+        state.contractsList[index] = {
+          ...action.payload,
+          actsCount: action.payload.actsCount ?? previous.actsCount,
+          organization: action.payload.organization ?? previous.organization,
+        };
+      }
+    });
+    builder.addCase(updateContract.rejected, (state, action) => {
+      state.requestStatus = 'rejected';
+      state.contractError = action.payload?.message || 'Ошибка обновления договора';
     });
 
     builder.addCase(getContractsListForSelect.pending, (state) => {

@@ -48,7 +48,12 @@ const yearlyHeadCells: readonly HeadCell[] = [
   { id: 7, label: '' },
 ];
 
-function ContractsTable() {
+interface ContractsTableProps {
+  onEditContract: (contract: Contract) => void;
+}
+
+function ContractsTable(props: ContractsTableProps) {
+  const { onEditContract } = props;
   const dispatch: IAuthResponseType = useDispatch();
 
   const {
@@ -177,9 +182,8 @@ function ContractsTable() {
     </Tooltip>
   );
 
-  const handleEditIconClick = (id: number) => {
-    console.log('Edit contract:', id);
-    // TODO: Implement edit functionality
+  const handleEditIconClick = (contract: Contract) => {
+    onEditContract(contract);
   };
 
   const handleDeleteIconClick = (id: number) => {
@@ -242,7 +246,7 @@ function ContractsTable() {
           width={20}
           height={20}
           style={{ cursor: 'pointer' }}
-          onClick={() => handleEditIconClick(contract.id)}
+          onClick={() => handleEditIconClick(contract)}
         />
         <DeleteIcon
           width={20}

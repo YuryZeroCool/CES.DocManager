@@ -56,9 +56,20 @@ export interface AddContractParams {
   contractType: string;
 }
 
-export type CreateContractRequest = Omit<Contract, 'id' | 'hasLinkedAct'>;
+export type CreateContractRequest = Omit<Contract, 'id' | 'hasLinkedAct' | 'actsCount'>;
 
 export type CreateContractResponse = Contract;
+
+export interface UpdateContractRequest {
+  id: number;
+  contractType: string;
+  organizationName: string;
+  contractNumber: string;
+  creationDate: string;
+  startDateOfWork?: string;
+  endDateOfWork?: string;
+  expirationDate?: string;
+}
 
 export interface GetContractsListForSelectReq {
   organizationName: string;

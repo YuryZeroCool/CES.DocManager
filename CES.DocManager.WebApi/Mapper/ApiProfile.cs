@@ -114,6 +114,23 @@ namespace CES.DocManager.WebApi.Mapper
                 opt => opt.MapFrom(src => string.IsNullOrWhiteSpace(src.ExpirationDate) 
                     ? null 
                     : (DateTime?)DateTime.ParseExact(src.ExpirationDate, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)));
+
+            CreateMap<ContractViewModel, UpdateContractRequest>()
+                .ForMember(dest => dest.ContractId, opt => opt.Ignore())
+                .ForMember(dest => dest.CreationDate,
+                opt => opt.MapFrom(src => DateTime.ParseExact(src.CreationDate, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)))
+                .ForMember(dest => dest.StartDateOfWork,
+                opt => opt.MapFrom(src => string.IsNullOrWhiteSpace(src.StartDateOfWork)
+                    ? null
+                    : (DateTime?)DateTime.ParseExact(src.StartDateOfWork, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)))
+                .ForMember(dest => dest.EndDateOfWork,
+                opt => opt.MapFrom(src => string.IsNullOrWhiteSpace(src.EndDateOfWork)
+                    ? null
+                    : (DateTime?)DateTime.ParseExact(src.EndDateOfWork, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)))
+                .ForMember(dest => dest.ExpirationDate,
+                opt => opt.MapFrom(src => string.IsNullOrWhiteSpace(src.ExpirationDate)
+                    ? null
+                    : (DateTime?)DateTime.ParseExact(src.ExpirationDate, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)));
         }
     }
 }
