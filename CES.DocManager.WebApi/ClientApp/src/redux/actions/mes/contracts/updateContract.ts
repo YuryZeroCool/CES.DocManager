@@ -12,7 +12,7 @@ UpdateContractRequest, { rejectValue: FetchTodosError }>(
   'updateContract',
   async (req, { rejectWithValue }) => {
     try {
-      if (process.env.REACT_APP_CREATE_CONTRACT === undefined) {
+      if (process.env.REACT_APP_UPDATE_CONTRACT === undefined) {
         throw Error('Упс, что-то пошло не так...');
       }
       const { id, ...body } = req;
@@ -27,7 +27,7 @@ UpdateContractRequest, { rejectValue: FetchTodosError }>(
         isPrinted: false,
       };
       const response = await $api.put<Contract>(
-        `${process.env.REACT_APP_CREATE_CONTRACT}/${id}`,
+        `${process.env.REACT_APP_UPDATE_CONTRACT}/${id}`,
         requestBody,
       );
       return response.data;
