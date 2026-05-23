@@ -1,6 +1,5 @@
 import {
   NoteFullContactInfo,
-  NotesWithoutActsParams,
   NoteWithoutAct,
 } from './mes/NotesWithoutActTypes';
 
@@ -15,7 +14,6 @@ export interface INotesState {
   vat: string;
   createdActId: number;
   actsList: ActsList[];
-  totalActsListCount: number;
   selectedActId: number;
   deletedActId: number;
 }
@@ -78,8 +76,6 @@ export interface AddNewActReq {
 export interface GetActsListReq {
   min: string;
   max: string;
-  page: number;
-  limit: number;
   searchValue: string;
   filter: string;
   organizationType: string;
@@ -104,9 +100,12 @@ export interface ActsList {
 
 export interface ActsListRes {
   actsList: ActsList[];
-  totalActsListPagesCount: number;
 }
 
-export interface ActsHistoryParams extends NotesWithoutActsParams {
+export interface ActsHistoryParams {
+  minDate: Date;
+  maxDate: Date;
+  filter: string;
+  searchValue: string;
   organizationType: string;
 }

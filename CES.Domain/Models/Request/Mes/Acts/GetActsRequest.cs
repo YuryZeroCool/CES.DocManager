@@ -11,10 +11,6 @@ namespace CES.Domain.Models.Request.Mes.Acts
 
         public string OrganizationType { get; set; } = string.Empty;
 
-        public int Page { get; set; }
-
-        public int Limit { get; set; }
-
         public string SearchValue { get; set; } = string.Empty;
 
         public string Filter { get; set; } = string.Empty;

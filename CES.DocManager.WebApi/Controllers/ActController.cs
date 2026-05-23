@@ -31,7 +31,12 @@ namespace CES.DocManager.WebApi.Controllers
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet()]
         [Produces(typeof(GetActsResponse))]
-        public async Task<object> GetActs(string min, string max, string? organizationType, int page, string? filter, string? searchValue, int limit)
+        public async Task<object> GetActs(
+            string min,
+            string max,
+            string? organizationType,
+            string? filter,
+            string? searchValue)
         {
             try
             {
@@ -39,11 +44,9 @@ namespace CES.DocManager.WebApi.Controllers
                 {
                     Min = DateTimeConverter.ConvertToDateTime(min, "yyyy-MM-dd HH:mm:ss"),
                     Max = DateTimeConverter.ConvertToDateTime(max, "yyyy-MM-dd HH:mm:ss"),
-                    OrganizationType = organizationType,
-                    Page = page,
-                    Limit = limit,
-                    Filter = filter,
-                    SearchValue = searchValue,
+                    OrganizationType = organizationType ?? string.Empty,
+                    Filter = filter ?? string.Empty,
+                    SearchValue = searchValue ?? string.Empty,
                 });
             }
             catch (Exception e)
