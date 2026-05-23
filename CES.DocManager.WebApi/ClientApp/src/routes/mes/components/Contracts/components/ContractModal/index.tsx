@@ -36,7 +36,7 @@ interface ContractModalProps {
   modalOpened: boolean;
   onModalClose: () => void;
   onSuccess: () => void;
-  contractToEdit?: Contract | null;
+  contractToEdit: Contract | null;
 }
 
 function ContractModal(props: ContractModalProps) {

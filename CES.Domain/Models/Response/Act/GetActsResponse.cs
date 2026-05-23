@@ -4,8 +4,6 @@ namespace CES.Domain.Models.Response.Act
 {
     public class GetActsResponse
     {
-        public int TotalActsListPagesCount { get; set; }
-
         public List<Act> ActsList { get; set; } = new();
     }
 

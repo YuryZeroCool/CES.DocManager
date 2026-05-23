@@ -110,7 +110,7 @@ function ActsListHeader(props: ActsListHeaderProps) {
           ]}
           value={actsHistoryParams.organizationType}
           onChange={(value) => {
-            if (value) updateActsHistoryParams('organizationType', value);
+            updateActsHistoryParams('organizationType', value ?? '');
           }}
           allowDeselect={false}
         />

@@ -28,7 +28,6 @@ const initial: INotesState = {
   vat: '0',
   createdActId: 0,
   actsList: [],
-  totalActsListCount: 0,
   selectedActId: 0,
   deletedActId: 0,
 };
@@ -178,14 +177,12 @@ const mesReducer = createSlice({
     });
     builder.addCase(getActsList.fulfilled, (state, action) => {
       state.actsList = action.payload.actsList;
-      state.totalActsListCount = action.payload.totalActsListPagesCount;
       state.requestStatus = 'fulfilled';
     });
     builder.addCase(getActsList.rejected, (state, action) => {
       state.requestStatus = 'rejected';
       state.mesError = action.payload?.message || 'Произошла ошибка при загрузке актов';
       state.actsList = [];
-      state.totalActsListCount = 0;
     });
 
     builder.addCase(deleteAct.pending, (state) => {
