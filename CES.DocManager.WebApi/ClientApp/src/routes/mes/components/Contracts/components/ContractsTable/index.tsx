@@ -9,7 +9,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconPrinter } from '@tabler/icons-react';
 
 import { RootState } from 'redux/reducers/combineReducers';
-import { markContractPrinted, printContract } from 'redux/actions/mes';
+import { deleteContract, markContractPrinted, printContract } from 'redux/actions/mes';
 import { IAuthResponseType } from 'redux/store/configureStore';
 import { Contract, ContractState, ContractTypes } from 'types/mes/ContractTypes';
 
@@ -192,15 +192,14 @@ function ContractsTable(props: ContractsTableProps) {
   };
 
   const confirmAction = () => {
-    if (selectedContractId) {
-      // TODO: Implement delete functionality
-      // dispatch(deleteContract(selectedContractId)).unwrap()
-      //   .then(() => warningModalClose())
-      //   .catch(() => {});
-      console.log('Delete contract:', selectedContractId);
-      warningModalClose();
-      setSelectedContractId(null);
-    }
+    if (!selectedContractId) return;
+
+    dispatch(deleteContract(selectedContractId)).unwrap()
+      .then(() => {
+        warningModalClose();
+        setSelectedContractId(null);
+      })
+      .catch(() => {});
   };
 
   const formatDate = (dateString?: string) => {
