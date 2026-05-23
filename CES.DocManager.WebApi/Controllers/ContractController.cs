@@ -136,5 +136,20 @@ namespace CES.DocManager.WebApi.Controllers
           return new ErrorResponse(e.Message);
         }
       }
+
+      [HttpDelete("{id}")]
+      [Produces(typeof(int))]
+      public async Task<object> DeleteContract(int id)
+      {
+        try
+        {
+          return await _mediator.Send(new DeleteContractRequest { Id = id });
+        }
+        catch (Exception e)
+        {
+          HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+          return new ErrorResponse(e.Message);
+        }
+      }
     }
 }

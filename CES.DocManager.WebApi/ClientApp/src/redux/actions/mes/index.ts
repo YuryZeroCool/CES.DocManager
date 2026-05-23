@@ -15,6 +15,7 @@ import getStreetsBySearch from './notesWithoutAct/getStreetsBySearch';
 
 import createContract from './contracts/createContract';
 import updateContract from './contracts/updateContract';
+import deleteContract from './contracts/deleteContract';
 import getContractsListForSelect from './contracts/getContractsListForSelect';
 import getContractsList from './contracts/getContractsList';
 import printContract from './contracts/printContract';
@@ -38,6 +39,7 @@ export {
 
   createContract,
   updateContract,
+  deleteContract,
   getContractsListForSelect,
   getContractsList,
   printContract,

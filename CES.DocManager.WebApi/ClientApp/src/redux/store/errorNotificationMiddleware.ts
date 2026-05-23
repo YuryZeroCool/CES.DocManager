@@ -88,6 +88,7 @@ const errorNotificationMiddleware: Middleware = () => (next) => (action: AnyActi
       'createOrganization/rejected': 'Не удалось создать организацию. Проверьте поля формы.',
       'editOrganization/rejected': 'Не удалось сохранить изменения организации.',
       'deleteOrganization/rejected': 'Не удалось удалить организацию.',
+      'deleteContract/rejected': 'Не удалось удалить договор.',
       'searchOrganizations/rejected': 'Не удалось получить список организаций.',
       'getOrganizationType/rejected': 'Не удалось загрузить типы организаций.',
     };

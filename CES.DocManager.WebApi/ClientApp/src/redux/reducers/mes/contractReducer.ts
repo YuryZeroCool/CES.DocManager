@@ -2,6 +2,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   createContract,
+  deleteContract,
   getContractsList,
   getContractsListForSelect,
   markContractPrinted,
@@ -105,6 +106,19 @@ const contractReducer = createSlice({
       if (contract) {
         contract.isPrinted = true;
       }
+    });
+
+    builder.addCase(deleteContract.pending, (state) => {
+      state.requestStatus = 'pending';
+      state.contractError = '';
+    });
+    builder.addCase(deleteContract.fulfilled, (state, action) => {
+      state.requestStatus = 'fulfilled';
+      state.contractsList = state.contractsList.filter((item) => item.id !== action.payload);
+    });
+    builder.addCase(deleteContract.rejected, (state, action) => {
+      state.requestStatus = 'rejected';
+      state.contractError = action.payload?.message || 'Ошибка удаления договора';
     });
   },
 });
