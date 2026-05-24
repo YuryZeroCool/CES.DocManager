@@ -35,6 +35,8 @@ namespace CES.Domain.Models.Response.Act
 
         public string ContractNumber {  get; set; } = string.Empty;
 
+        public int ContractId { get; set; }
+
         public bool IsSigned { get; set; } = false;
     }
 }

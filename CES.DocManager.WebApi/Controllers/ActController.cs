@@ -113,6 +113,23 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
+        [HttpPut("{id}")]
+        [Produces(typeof(Act))]
+        public async Task<object> UpdateAct(int id, [FromBody] ActViewModel act)
+        {
+            try
+            {
+                var request = _mapper.Map<UpdateActRequest>(act);
+                request.ActId = id;
+                return await _mediator.Send(request);
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
+            }
+        }
+
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpDelete]

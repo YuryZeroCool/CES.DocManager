@@ -118,6 +118,7 @@ function ActsHistory(props: ActsHistoryProps) {
 
       <ActsListTable
         editActModalOpen={editActModalOpen}
+        filter={actsHistoryParams.filter}
       />
     </>
   );

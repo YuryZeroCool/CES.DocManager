@@ -11,7 +11,7 @@ string, { rejectValue: FetchTodosError }>(
         throw Error('Упс, что-то пошло не так...');
       }
       const response = await $api.get<string[]>(
-        `${process.env.REACT_APP_STREETS_BY_SEARCH}?value=${params}`,
+        `${process.env.REACT_APP_STREETS_BY_SEARCH}?value=${encodeURIComponent(params)}`,
       );
       return response.data;
     } catch (err) {

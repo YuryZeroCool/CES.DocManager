@@ -2,14 +2,25 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import {
   ActDataFromFileResponse,
+  ActsList,
   INotesState,
   UpdateActDataFromFileReq,
+  Work,
 } from 'types/MesTypes';
 import getActTypesFromFile from 'redux/actions/mes/getActTypesFromFile';
 import getActDataFromFile from 'redux/actions/mes/getActDataFromFile';
 import createNewAct from 'redux/actions/mes/createNewAct';
+import updateAct from 'redux/actions/mes/updateAct';
 import getActsList from 'redux/actions/mes/getActsList';
 import deleteAct from 'redux/actions/mes/deleteAct';
+
+const sortActsList = (acts: ActsList[]) => [...acts].sort((a, b) => {
+  const dateCompare = a.dateOfWorkCompletion.localeCompare(b.dateOfWorkCompletion);
+  if (dateCompare !== 0) {
+    return dateCompare;
+  }
+  return a.organization.localeCompare(b.organization);
+});
 
 const actDataFromFileDefault: ActDataFromFileResponse = {
   actType: '',
@@ -144,6 +155,29 @@ const mesReducer = createSlice({
     editActsListAfterDelete: (state, action: PayloadAction<number>) => {
       state.actsList = state.actsList.filter((el) => el.id !== action.payload);
     },
+    editActsListAfterUpdate: (state, action: PayloadAction<ActsList>) => {
+      const index = state.actsList.findIndex((item) => item.id === action.payload.id);
+      if (index !== -1) {
+        state.actsList[index] = action.payload;
+      }
+      state.actsList = sortActsList(state.actsList);
+    },
+    setActDataForEdit: (state, action: PayloadAction<{
+      type: string;
+      works: Work[];
+      total: number;
+      vat: number;
+    }>) => {
+      state.actDataFromFile = {
+        ...state.actDataFromFile,
+        act: [{
+          type: action.payload.type,
+          works: action.payload.works.map((work) => ({ ...work })),
+        }],
+      };
+      state.totalActSumm = action.payload.total.toFixed(2);
+      state.vat = action.payload.vat.toFixed(2);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getActTypesFromFile.fulfilled, (state, action) => {
@@ -169,6 +203,17 @@ const mesReducer = createSlice({
     });
     builder.addCase(createNewAct.rejected, (state, action) => {
       throw Error(action.payload?.message);
+    });
+
+    builder.addCase(updateAct.pending, (state) => {
+      state.requestStatus = 'pending';
+    });
+    builder.addCase(updateAct.fulfilled, (state) => {
+      state.requestStatus = 'fulfilled';
+    });
+    builder.addCase(updateAct.rejected, (state, action) => {
+      state.requestStatus = 'rejected';
+      state.mesError = action.payload?.message || 'Не удалось обновить акт';
     });
 
     builder.addCase(getActsList.pending, (state) => {
@@ -208,6 +253,8 @@ export const {
   changeVat,
   resetActData,
   editActsListAfterDelete,
+  editActsListAfterUpdate,
+  setActDataForEdit,
 } = mesReducer.actions;
 
 export default mesReducer.reducer;

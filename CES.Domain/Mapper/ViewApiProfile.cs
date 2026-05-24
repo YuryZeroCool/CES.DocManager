@@ -203,6 +203,7 @@ namespace CES.Domain.Mapper
                 .ForMember(dest => dest.Vat, opt => opt.MapFrom(src => src.Vat))
                 .ForMember(dest => dest.ActType, opt => opt.MapFrom(src => src.ActType!.Name))
                 .ForMember(dest => dest.ContractNumber, opt => opt.MapFrom(src => src.Contract!.ContractNumber))
+                .ForMember(dest => dest.ContractId, opt => opt.MapFrom(src => src.ContractId ?? 0))
                 .ForMember(dest => dest.IsSigned, opt => opt.MapFrom(src => src.IsSigned));
 
             CreateMap<NoteEntity, FullNoteData>()
