@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FetchTodosError } from '../../../types/type';
-import $api from '../../../http/loginHttp';
-import { ActsListRes, GetActsListReq } from '../../../types/MesTypes';
+import { FetchTodosError } from 'types/type';
+import $api from 'http/loginHttp';
+import { ActsListRes, GetActsListReq } from 'types/MesTypes';
 
 const getActsList = createAsyncThunk<ActsListRes,
 GetActsListReq, { rejectValue: FetchTodosError }>(
