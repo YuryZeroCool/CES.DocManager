@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FetchTodosError } from '../../../types/type';
-import $api from '../../../http/loginHttp';
+import { FetchTodosError } from 'types/type';
+import $api from 'http/loginHttp';
 
 const deleteAct = createAsyncThunk<number,
 number, { rejectValue: FetchTodosError }>(

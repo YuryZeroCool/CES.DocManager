@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useEffect, useMemo, useRef, useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { format, parse } from 'date-fns';
 import {
@@ -10,11 +12,14 @@ import { IconX } from '@tabler/icons-react';
 import { IAuthResponseType } from 'redux/store/configureStore';
 import { resetDriversByCar } from 'redux/reducers/drivers/driversReducer';
 import { RootState } from 'redux/reducers/combineReducers';
-import { organizationsBySearch, getContractsListForSelect } from 'redux/actions/mes';
+import {
+  createNewAct,
+  getContractsListForSelect,
+  organizationsBySearch,
+  updateAct,
+} from 'redux/actions/mes';
 import getCarByCarNumber from 'redux/actions/vehicle/getCarByCarNumber';
 import getDriversByCarNumber from 'redux/actions/drivers/getDriversByCarNumber';
-import createNewAct from 'redux/actions/mes/createNewAct';
-import updateAct from 'redux/actions/mes/updateAct';
 import { resetOrganizationsBySearch } from 'redux/reducers/mes/organizationReducer';
 import {
   changeSelectedActId,
@@ -72,11 +77,26 @@ const getCarNumberFromValue = (car: string) => {
   return car.trim();
 };
 
-const withCurrentOption = (currentValue: string, options: string[]) => (
-  currentValue && !options.includes(currentValue)
-    ? [currentValue, ...options]
-    : options
-);
+const getFilteredSelectOptions = (
+  currentValue: string,
+  searchValue: string,
+  sourceOptions: string[],
+) => {
+  const query = searchValue.trim();
+  const queryLower = query.toLowerCase();
+
+  let filtered = sourceOptions;
+  if (query.length > 1) {
+    filtered = sourceOptions.filter((item) => item.toLowerCase().includes(queryLower));
+  }
+
+  const valueToInclude = currentValue || query;
+  if (valueToInclude && !filtered.includes(valueToInclude)) {
+    return [valueToInclude, ...filtered];
+  }
+
+  return filtered;
+};
 
 interface ActModalProps {
   selectedNotesId: number[];
@@ -117,6 +137,8 @@ function ActModal(props: ActModalProps) {
   const [modalError, setModalError] = useState<string>('');
   const [organizationSearchValue, setOrganizationSearchValue] = useState('');
   const [carSearchValue, setCarSearchValue] = useState('');
+  const lastOrganizationSearchFetchRef = useRef<string | null>(null);
+  const lastCarSearchFetchRef = useRef<string | null>(null);
 
   const {
     totalActSumm,
@@ -197,7 +219,9 @@ function ActModal(props: ActModalProps) {
       if (act.numberPlateOfCar) {
         try {
           const cars = await dispatch(getCarByCarNumber(act.numberPlateOfCar)).unwrap();
-          const matchedCar = cars.find((item) => item.includes(`(${act.numberPlateOfCar})`));
+          const plateNumber = act.numberPlateOfCar.trim();
+          const matchedCar = cars.find((item) => item.includes(`(${plateNumber})`))
+            || cars.find((item) => getCarNumberFromValue(item) === plateNumber);
           if (matchedCar) {
             carValue = matchedCar;
           }
@@ -305,6 +329,8 @@ function ActModal(props: ActModalProps) {
     dispatch(changeSelectedActId(0));
     setOrganizationSearchValue('');
     setCarSearchValue('');
+    lastOrganizationSearchFetchRef.current = null;
+    lastCarSearchFetchRef.current = null;
     setModalError('');
     handleSelectNote([]);
     if (addActModalOpened) {
@@ -317,25 +343,27 @@ function ActModal(props: ActModalProps) {
 
   const handleOrganizationSearchChange = (value: string) => {
     setOrganizationSearchValue(value);
-    if (value.length === 1) {
-      dispatch(organizationsBySearch(value)).catch((error) => {
-        handleError(error, setModalError);
-      });
-      updateActFormState('organization', value);
-      return;
-    }
     if (value.length === 0) {
-      updateActFormState('organization', '');
+      lastOrganizationSearchFetchRef.current = null;
       dispatch(resetOrganizationsBySearch());
       return;
     }
-    updateActFormState('organization', value);
+    if (value.length === 1) {
+      if (lastOrganizationSearchFetchRef.current === value) {
+        return;
+      }
+      lastOrganizationSearchFetchRef.current = value;
+      dispatch(organizationsBySearch(value)).catch((error) => {
+        handleError(error, setModalError);
+      });
+    }
   };
 
   const handleOrganizationChange = (value: string | null) => {
     if (value === null) {
       updateActFormState('organization', '');
       setOrganizationSearchValue('');
+      lastOrganizationSearchFetchRef.current = null;
       dispatch(resetOrganizationsBySearch());
       return;
     }
@@ -345,25 +373,27 @@ function ActModal(props: ActModalProps) {
 
   const handleCarSearchChange = (value: string) => {
     setCarSearchValue(value);
-    if (value.length === 1) {
-      dispatch(getCarByCarNumber(value)).catch((error) => {
-        handleError(error, setModalError);
-      });
-      updateActFormState('car', value);
-      return;
-    }
     if (value.length === 0) {
-      updateActFormState('car', '');
+      lastCarSearchFetchRef.current = null;
       dispatch(resetCarsByCarNumber());
       return;
     }
-    updateActFormState('car', value);
+    if (value.length === 1) {
+      if (lastCarSearchFetchRef.current === value) {
+        return;
+      }
+      lastCarSearchFetchRef.current = value;
+      dispatch(getCarByCarNumber(value)).catch((error) => {
+        handleError(error, setModalError);
+      });
+    }
   };
 
   const handleCarChange = (value: string | null) => {
     if (value === null) {
       updateActFormState('car', '');
       setCarSearchValue('');
+      lastCarSearchFetchRef.current = null;
       dispatch(resetCarsByCarNumber());
       return;
     }
@@ -373,17 +403,21 @@ function ActModal(props: ActModalProps) {
   };
 
   const organizationOptions = useMemo(
-    () => withCurrentOption(actForm.organization, allOrganizationsBySearch),
-    [actForm.organization, allOrganizationsBySearch],
+    () => getFilteredSelectOptions(
+      actForm.organization,
+      organizationSearchValue,
+      allOrganizationsBySearch,
+    ),
+    [actForm.organization, organizationSearchValue, allOrganizationsBySearch],
   );
 
   const carOptions = useMemo(
-    () => withCurrentOption(actForm.car, carsByCarNumber),
-    [actForm.car, carsByCarNumber],
+    () => getFilteredSelectOptions(actForm.car, carSearchValue, carsByCarNumber),
+    [actForm.car, carSearchValue, carsByCarNumber],
   );
 
   const driverOptions = useMemo(
-    () => withCurrentOption(actForm.driver ?? '', driversByCarNumber),
+    () => getFilteredSelectOptions(actForm.driver ?? '', actForm.driver ?? '', driversByCarNumber),
     [actForm.driver, driversByCarNumber],
   );
 
@@ -426,9 +460,9 @@ function ActModal(props: ActModalProps) {
 
     if (organization && driver && car && actAdditionDate && selectedContract) {
       const requestBody = {
-        organization,
-        vehicle: car,
-        driver,
+        organization: organization.trim(),
+        vehicle: car.trim(),
+        driver: driver.trim(),
         actAdditionDate: format(actAdditionDate, 'dd-MM-yyyy HH:mm:ss'),
         actType: currentActData.type,
         completedWorks: currentActData.works,
@@ -490,6 +524,7 @@ function ActModal(props: ActModalProps) {
           data={organizationOptions}
           searchable
           searchValue={organizationSearchValue}
+          filter={({ options }) => options}
           onSearchChange={handleOrganizationSearchChange}
           onChange={handleOrganizationChange}
           clearable
@@ -507,6 +542,7 @@ function ActModal(props: ActModalProps) {
             data={carOptions}
             searchable
             searchValue={carSearchValue}
+            filter={({ options }) => options}
             onSearchChange={handleCarSearchChange}
             onChange={handleCarChange}
             clearable

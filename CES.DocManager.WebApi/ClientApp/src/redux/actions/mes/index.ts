@@ -21,6 +21,13 @@ import getContractsList from './contracts/getContractsList';
 import printContract from './contracts/printContract';
 import markContractPrinted from './contracts/markContractPrinted';
 
+import createNewAct from './acts/createNewAct';
+import updateAct from './acts/updateAct';
+import deleteAct from './acts/deleteAct';
+import getActsList from './acts/getActsList';
+import getActTypesFromFile from './acts/getActTypesFromFile';
+import getActDataFromFile from './acts/getActDataFromFile';
+
 export {
   createOrganization,
   deleteOrganization,
@@ -44,4 +51,11 @@ export {
   getContractsList,
   printContract,
   markContractPrinted,
+
+  createNewAct,
+  updateAct,
+  deleteAct,
+  getActsList,
+  getActTypesFromFile,
+  getActDataFromFile,
 };

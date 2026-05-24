@@ -7,12 +7,13 @@ import {
   UpdateActDataFromFileReq,
   Work,
 } from 'types/MesTypes';
-import getActTypesFromFile from 'redux/actions/mes/getActTypesFromFile';
-import getActDataFromFile from 'redux/actions/mes/getActDataFromFile';
-import createNewAct from 'redux/actions/mes/createNewAct';
-import updateAct from 'redux/actions/mes/updateAct';
-import getActsList from 'redux/actions/mes/getActsList';
-import deleteAct from 'redux/actions/mes/deleteAct';
+import {
+  createNewAct,
+  deleteAct,
+  getActDataFromFile,
+  getActsList,
+  getActTypesFromFile,
+} from 'redux/actions/mes';
 
 const sortActsList = (acts: ActsList[]) => [...acts].sort((a, b) => {
   const dateCompare = a.dateOfWorkCompletion.localeCompare(b.dateOfWorkCompletion);
@@ -203,17 +204,6 @@ const mesReducer = createSlice({
     });
     builder.addCase(createNewAct.rejected, (state, action) => {
       throw Error(action.payload?.message);
-    });
-
-    builder.addCase(updateAct.pending, (state) => {
-      state.requestStatus = 'pending';
-    });
-    builder.addCase(updateAct.fulfilled, (state) => {
-      state.requestStatus = 'fulfilled';
-    });
-    builder.addCase(updateAct.rejected, (state, action) => {
-      state.requestStatus = 'rejected';
-      state.mesError = action.payload?.message || 'Не удалось обновить акт';
     });
 
     builder.addCase(getActsList.pending, (state) => {
