@@ -1,4 +1,5 @@
 ﻿using CES.Domain.Models.Request.Mes.Acts;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models.Mes;
 using MediatR;
@@ -49,8 +50,10 @@ namespace CES.Domain.Handlers.Mes.Acts
                     Employee = await _ctx.Employees
                     .FirstOrDefaultAsync(x => x.LastName.Trim() + " " + x.FirstName.Trim() == request.Driver, cancellationToken)
                     ?? throw new System.Exception("Упс! Что-то пошло не так"),
-                    NumberPlateOfCar = await _ctx.NumberPlateOfCar
-                    .FirstOrDefaultAsync(x => request.Vehicle.Trim().Contains(x!.Number!), cancellationToken)
+                    NumberPlateOfCar = await ActVehicleMatcher.FindAsync(
+                        _ctx.NumberPlateOfCar,
+                        request.Vehicle,
+                        cancellationToken: cancellationToken)
                     ?? throw new System.Exception("Упс! Что-то пошло не так"),
                     Total = request.TotalActSumm,
                     Vat = request.Vat == 0 ? null : request.Vat,

@@ -10,7 +10,7 @@ import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { RootState } from 'redux/reducers/combineReducers';
 import { IAuthResponseType } from 'redux/store/configureStore';
 import { changeSelectedActId, editActsListAfterDelete } from 'redux/reducers/mes/mesReducer';
-import deleteAct from 'redux/actions/mes/deleteAct';
+import { deleteAct } from 'redux/actions/mes';
 import { ActsList, INotesState } from 'types/MesTypes';
 import classes from './styles.module.css';
 import ActDetailsInfoPanel from '../ActDetailsInfoPanel';
@@ -78,7 +78,6 @@ function ActsListTable(props: ActsListTableProps) {
   const dispatch: IAuthResponseType = useDispatch();
 
   const {
-    mesError,
     actsList,
     requestStatus,
   } = useSelector<RootState, INotesState>(
@@ -228,17 +227,6 @@ function ActsListTable(props: ActsListTableProps) {
     )
   );
 
-  const renderError = () => (
-    mesError !== ''
-      && (
-        <Stack align="center" justify="center" w="100%" h={200}>
-          <Text style={{ fontSize: 18, color: 'red' }}>
-            {mesError}
-          </Text>
-        </Stack>
-      )
-  );
-
   const renderLoaderModal = () => (
     <LoadingOverlay
       visible
@@ -271,9 +259,8 @@ function ActsListTable(props: ActsListTableProps) {
 
   return (
     <Stack className="notes-table">
-      {renderError()}
       {renderTable()}
-      {requestStatus === 'pending' && mesError === '' && renderLoaderModal()}
+      {requestStatus === 'pending' && renderLoaderModal()}
       {opened && (
         <ActDetailsInfoPanel
           currentAct={currentAct}

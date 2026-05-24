@@ -1,6 +1,7 @@
 using AutoMapper;
 using CES.Domain.Models.Request.Mes.Acts;
 using CES.Domain.Models.Response.Act;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models.Mes;
 using MediatR;
@@ -67,8 +68,11 @@ namespace CES.Domain.Handlers.Mes.Acts
             act.Employee = await _ctx.Employees
                 .FirstOrDefaultAsync(x => x.LastName.Trim() + " " + x.FirstName.Trim() == request.Driver, cancellationToken)
                 ?? throw new System.Exception("Водитель не найден");
-            act.NumberPlateOfCar = await _ctx.NumberPlateOfCar
-                .FirstOrDefaultAsync(x => request.Vehicle.Trim().Contains(x!.Number!), cancellationToken)
+            act.NumberPlateOfCar = await ActVehicleMatcher.FindAsync(
+                _ctx.NumberPlateOfCar,
+                request.Vehicle,
+                act.NumberPlateOfCar,
+                cancellationToken)
                 ?? throw new System.Exception("Машина не найдена");
             act.Total = request.TotalActSumm;
             act.Vat = request.Vat == 0 ? null : request.Vat;
