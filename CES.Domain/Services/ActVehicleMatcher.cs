@@ -27,14 +27,17 @@ namespace CES.Domain.Services
         {
             var normalizedVehicle = vehicle.Trim();
             var plateFromVehicle = ExtractPlateNumber(normalizedVehicle);
+            var normalizedVehicleLower = normalizedVehicle.ToLower();
+            var plateFromVehicleLower = plateFromVehicle.ToLower();
 
             var matchedCar = await query
-                .FirstOrDefaultAsync(x => x.Number != null && (
-                    normalizedVehicle.Contains(x.Number.Trim(), StringComparison.OrdinalIgnoreCase)
-                    || x.Number.Trim().Contains(normalizedVehicle, StringComparison.OrdinalIgnoreCase)
-                    || x.Number.Trim().Equals(plateFromVehicle, StringComparison.OrdinalIgnoreCase)
-                    || x.Number.Trim().Equals(normalizedVehicle, StringComparison.OrdinalIgnoreCase)
-                ), cancellationToken);
+                .Where(x => x.Number != null)
+                .FirstOrDefaultAsync(x =>
+                    normalizedVehicleLower.Contains(x.Number!.Trim().ToLower())
+                    || x.Number!.Trim().ToLower().Contains(normalizedVehicleLower)
+                    || x.Number!.Trim().ToLower() == plateFromVehicleLower
+                    || x.Number!.Trim().ToLower() == normalizedVehicleLower,
+                    cancellationToken);
 
             if (matchedCar is not null || currentNumberPlate?.Number is null)
             {
