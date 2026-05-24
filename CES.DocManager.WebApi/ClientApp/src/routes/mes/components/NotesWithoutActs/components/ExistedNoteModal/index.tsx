@@ -1,4 +1,6 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, {
+  memo, useEffect, useRef, useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInputState } from '@mantine/hooks';
 import { format } from 'date-fns';
@@ -43,10 +45,13 @@ interface ExistedNoteModalContainerProps {
   noteModalOpened: boolean;
   isEditModal: boolean;
   noteModalClose: () => void;
+  handleSelectNote: (newValue: number[]) => void;
 }
 
 function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
-  const { noteModalOpened, isEditModal, noteModalClose } = props;
+  const {
+    noteModalOpened, isEditModal, noteModalClose, handleSelectNote,
+  } = props;
 
   const [formState, setFormState] = useInputState<ExistedNote>(defaultFormValues);
   const [counter, setCounter] = useState<number>(1);
@@ -65,6 +70,7 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
   );
 
   const dispatch: IAuthResponseType = useDispatch();
+  const lastStreetSearchFetchRef = useRef<string | null>(null);
 
   const addEmptyContactsInfoBlock = () => {
     setFormState({
@@ -85,7 +91,9 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
 
   useEffect(() => {
     if (isEditModal && notesWithoutAct.length !== 0 && noteModalOpened) {
-      const elem = notesWithoutAct.filter((el) => el.id === selectedNoteId)[0];
+      const elem = notesWithoutAct.find((el) => el.id === selectedNoteId);
+
+      if (!elem) return;
 
       setNoteId(elem.id);
       setFormState({
@@ -95,10 +103,10 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
         noteContactsInfo: [
           {
             id: counter,
-            street: '',
-            entrance: '',
-            houseNumber: '',
-            tel: '',
+            street: elem.street ?? '',
+            entrance: elem.entrance ? String(elem.entrance) : '',
+            houseNumber: elem.houseNumber ?? '',
+            tel: elem.tel ?? '',
           },
         ],
       });
@@ -109,11 +117,13 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
       addEmptyContactsInfoBlock();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [noteModalOpened]);
+  }, [noteModalOpened, isEditModal, selectedNoteId]);
 
   const handleClose = () => {
     noteModalClose();
     dispatch(changeSelectedNoteId(0));
+    lastStreetSearchFetchRef.current = null;
+    dispatch(resetStreetsBySearch());
     setFormState(defaultFormValues);
     setNoteDate(undefined);
     setCounter(1);
@@ -143,22 +153,30 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
     });
   };
 
-  const handleStreetChange = (value: string | null, index: number) => {
-    if (value === null) {
-      updateStreetInFormState('', index);
+  const handleStreetSearchChange = (value: string, index: number) => {
+    if (value.length === 0) {
+      lastStreetSearchFetchRef.current = null;
       dispatch(resetStreetsBySearch());
       return;
     }
+
+    updateStreetInFormState(value, index);
+
     if (value.length === 1) {
+      if (lastStreetSearchFetchRef.current === value) {
+        return;
+      }
+      lastStreetSearchFetchRef.current = value;
       dispatch(getStreetsBySearch(value))
         .catch((error) => {
           handleError(error, setModalError);
         });
-
-      updateStreetInFormState(value, index);
-      return;
     }
-    if (value.length === 0) {
+  };
+
+  const handleStreetSelectChange = (value: string | null, index: number) => {
+    if (value === null) {
+      lastStreetSearchFetchRef.current = null;
       updateStreetInFormState('', index);
       dispatch(resetStreetsBySearch());
       return;
@@ -225,6 +243,7 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
         .then((payload) => {
           if (payload && Array.isArray(payload)) {
             dispatch(editNotesAfterUpdate(payload));
+            handleSelectNote([]);
             handleClose();
           }
         })
@@ -334,7 +353,8 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
               handleDeleteButtonClick={handleDeleteButtonClick}
               handleEntranceChange={handleEntranceChange}
               handleHouseNumberChange={handleHouseNumberChange}
-              handleStreetChange={handleStreetChange}
+              handleStreetSearchChange={handleStreetSearchChange}
+              handleStreetSelectChange={handleStreetSelectChange}
               handleTelChange={handleTelChange}
             />
 

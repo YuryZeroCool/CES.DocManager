@@ -5,7 +5,7 @@ import {
 } from '@mantine/core';
 import { RotatingLines } from 'react-loader-spinner';
 
-import { NotesWithoutActState } from 'types/mes/NotesWithoutActTypes';
+import { NoteWithoutAct, NotesWithoutActState } from 'types/mes/NotesWithoutActTypes';
 import { RootState } from 'redux/reducers/combineReducers';
 import { changeSelectedNoteId } from 'redux/reducers/mes/notesWithoutActReducer';
 import { IAuthResponseType } from 'redux/store/configureStore';
@@ -31,11 +31,6 @@ function NotesWithoutActsTable(props: NotesWithoutActsTableProps) {
 
   const {
     requestStatus,
-  } = useSelector<RootState, NotesWithoutActState>(
-    (state) => state.notesWithoutAct,
-  );
-
-  const {
     notesWithoutAct,
   } = useSelector<RootState, NotesWithoutActState>(
     (state) => state.notesWithoutAct,
@@ -55,9 +50,13 @@ function NotesWithoutActsTable(props: NotesWithoutActsTableProps) {
 
   const handleEditIconClick = (id: number) => {
     dispatch(changeSelectedNoteId(id));
-    noteModalOpen();
     changeIsEditModal(true);
+    noteModalOpen();
   };
+
+  const isIncompleteMobileNote = (row: NoteWithoutAct) => (
+    !row.street || !row.houseNumber
+  );
 
   return (
     <div className="notes-table">
@@ -126,10 +125,11 @@ function NotesWithoutActsTable(props: NotesWithoutActsTableProps) {
                     <Table.Td>{row.tel}</Table.Td>
                     <Table.Td>{row.comment}</Table.Td>
                     <Table.Td width="30px">
-                      {(!row.street || !row.houseNumber) && (
+                      {isIncompleteMobileNote(row) && (
                         <EditIcon
                           width={20}
                           height={20}
+                          style={{ cursor: 'pointer' }}
                           onClick={() => handleEditIconClick(row.id)}
                         />
                       )}

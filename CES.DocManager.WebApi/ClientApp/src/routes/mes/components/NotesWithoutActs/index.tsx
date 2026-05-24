@@ -3,7 +3,9 @@ import {
   Divider,
   Flex, Group, rem, Stack, Text, Tooltip,
 } from '@mantine/core';
-import React, { memo, useEffect, useState } from 'react';
+import React, {
+  memo, useEffect, useMemo, useState,
+} from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconX } from '@tabler/icons-react';
@@ -17,9 +19,9 @@ import getActTypesFromFile from 'redux/actions/mes/getActTypesFromFile';
 import getNotesWithoutActs from 'redux/actions/mes/notesWithoutAct/getNotesWithoutActs';
 import getActDataFromFile from 'redux/actions/mes/getActDataFromFile';
 import deleteNoteWithoutAct from 'redux/actions/mes/notesWithoutAct/deleteNoteWithoutAct';
-import { editNotesWithoutActAfterAddAct } from 'redux/reducers/mes/notesWithoutActReducer';
+import { changeSelectedNoteId, editNotesWithoutActAfterAddAct } from 'redux/reducers/mes/notesWithoutActReducer';
 import { INotesState } from 'types/MesTypes';
-import { NotesWithoutActsParams } from 'types/mes/NotesWithoutActTypes';
+import { NotesWithoutActsParams, NotesWithoutActState } from 'types/mes/NotesWithoutActTypes';
 
 import ActTypesSelect from './components/ActTypesSelect';
 import ExistedNoteModal from './components/ExistedNoteModal';
@@ -28,6 +30,12 @@ import NotesWithoutActsTable from './components/NotesWithoutActsTable';
 
 const LIMIT = 10;
 const SELECT_NOTE_MESSAGE = 'Сначала выберите заявку';
+const INCOMPLETE_NOTE_EDIT_MESSAGE = 'Заполните адрес заявки через иконку редактирования в таблице';
+const SELECT_SINGLE_NOTE_MESSAGE = 'Выберите одну заявку';
+
+const isNoteAddressComplete = (street: string, houseNumber: string) => (
+  Boolean(street?.trim() && houseNumber?.trim())
+);
 
 interface NotesWithoutActsProps {
   selectedNotesId: number[];
@@ -76,9 +84,34 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
     (state) => state.mes,
   );
 
+  const { notesWithoutAct } = useSelector<RootState, NotesWithoutActState>(
+    (state) => state.notesWithoutAct,
+  );
+
   const dispatch: IAuthResponseType = useDispatch();
 
   const hasSelectedNotes = selectedNotesId.length > 0;
+
+  const canEditSelectedNote = useMemo(() => {
+    if (selectedNotesId.length !== 1) return false;
+
+    const note = notesWithoutAct.find((item) => item.id === selectedNotesId[0]);
+    if (!note) return false;
+
+    return isNoteAddressComplete(note.street, note.houseNumber);
+  }, [selectedNotesId, notesWithoutAct]);
+
+  const editNoteButtonTooltip = useMemo(() => {
+    if (selectedNotesId.length === 0) return SELECT_NOTE_MESSAGE;
+    if (selectedNotesId.length > 1) return SELECT_SINGLE_NOTE_MESSAGE;
+
+    const note = notesWithoutAct.find((item) => item.id === selectedNotesId[0]);
+    if (note && !isNoteAddressComplete(note.street, note.houseNumber)) {
+      return INCOMPLETE_NOTE_EDIT_MESSAGE;
+    }
+
+    return '';
+  }, [selectedNotesId, notesWithoutAct]);
 
   const showErrorNotification = (message: string) => {
     showNotification({
@@ -154,20 +187,43 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
   };
 
   const handleDeleteNoteBtnClick = () => {
+    if (selectedNotesId.length === 0) {
+      showNotification({
+        title: 'Внимание',
+        message: SELECT_NOTE_MESSAGE,
+        color: 'orange',
+      });
+      return;
+    }
     if (selectedNotesId.length > 1) {
       showErrorNotification('Невозможно удалить несколько заявок одновременно');
-    } else {
-      warningModalOpen();
+      return;
     }
+    warningModalOpen();
   };
 
-  const changeIsEditModal = (value: boolean) => {
-    setIsEditModal(value);
+  const handleEditNoteBtnClick = () => {
+    if (selectedNotesId.length === 0) {
+      showNotification({
+        title: 'Внимание',
+        message: SELECT_NOTE_MESSAGE,
+        color: 'orange',
+      });
+      return;
+    }
+    if (selectedNotesId.length > 1) {
+      showErrorNotification('Невозможно редактировать несколько заявок одновременно');
+      return;
+    }
+
+    dispatch(changeSelectedNoteId(selectedNotesId[0]));
+    setIsEditModal(true);
+    noteModalOpen();
   };
 
   const handleAddNoteBtnClick = () => {
+    setIsEditModal(false);
     noteModalOpen();
-    changeIsEditModal(false);
   };
 
   const cofirmDeleteNoteAction = () => {
@@ -251,6 +307,24 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
             >
               Удалить заявку
             </Button>
+
+            <Tooltip
+              label={editNoteButtonTooltip}
+              disabled={canEditSelectedNote}
+              withArrow
+            >
+              <span style={{ display: 'inline-block' }}>
+                <Button
+                  w={250}
+                  variant="gradient"
+                  gradient={{ from: 'violet', to: 'blue', deg: 90 }}
+                  disabled={!canEditSelectedNote}
+                  onClick={() => handleEditNoteBtnClick()}
+                >
+                  Отредактировать
+                </Button>
+              </span>
+            </Tooltip>
           </Group>
         </Stack>
       </Flex>
@@ -259,7 +333,7 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
         selectedNotesId={selectedNotesId}
         handleSelectNote={handleSelectNote}
         noteModalOpen={noteModalOpen}
-        changeIsEditModal={changeIsEditModal}
+        changeIsEditModal={setIsEditModal}
       />
 
       <WarningModal
@@ -272,6 +346,7 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
         noteModalOpened={noteModalOpened}
         isEditModal={isEditModal}
         noteModalClose={noteModalClose}
+        handleSelectNote={handleSelectNote}
       />
     </>
   );
