@@ -8,3 +8,11 @@
 .tableBodyCell {
   padding: 5px !important;
 }
+
+.unsignedActRow {
+  background-color: #fff4e6 !important;
+}
+
+.unsignedActRow:hover {
+  background-color: #ffe8cc !important;
+}

@@ -96,6 +96,10 @@ namespace CES.DocManager.WebApi.Mapper
                 .ForMember(dest => dest.ActAdditionDate,
                 opt => opt.MapFrom(src => DateTime.ParseExact(src.ActAdditionDate, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)));
 
+            CreateMap<ActViewModel, UpdateActRequest>()
+                .ForMember(dest => dest.ActAdditionDate,
+                opt => opt.MapFrom(src => DateTime.ParseExact(src.ActAdditionDate, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture)));
+
             CreateMap<Models.Mes.Work, Domain.Models.Request.Mes.Acts.Work>();
             CreateMap<Models.Mes.FullNoteData, Domain.Models.Request.Mes.Acts.FullNoteData>();
 

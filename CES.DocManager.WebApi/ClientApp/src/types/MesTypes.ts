@@ -73,6 +73,10 @@ export interface AddNewActReq {
   contractId: number;
 }
 
+export interface UpdateActReq extends AddNewActReq {
+  id: number;
+}
+
 export interface GetActsListReq {
   min: string;
   max: string;
@@ -96,6 +100,7 @@ export interface ActsList {
   notesWithoutAct: NoteFullContactInfo[];
   isSigned: boolean;
   contractNumber: string;
+  contractId: number;
 }
 
 export interface ActsListRes {

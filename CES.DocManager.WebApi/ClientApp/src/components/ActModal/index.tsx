@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import {
   Checkbox, Flex, Group, List, Modal, Select, Stack, Text, rem,
 } from '@mantine/core';
@@ -14,9 +14,13 @@ import { organizationsBySearch, getContractsListForSelect } from 'redux/actions/
 import getCarByCarNumber from 'redux/actions/vehicle/getCarByCarNumber';
 import getDriversByCarNumber from 'redux/actions/drivers/getDriversByCarNumber';
 import createNewAct from 'redux/actions/mes/createNewAct';
+import updateAct from 'redux/actions/mes/updateAct';
 import { resetOrganizationsBySearch } from 'redux/reducers/mes/organizationReducer';
 import {
+  changeSelectedActId,
+  editActsListAfterUpdate,
   resetActData,
+  setActDataForEdit,
 } from 'redux/reducers/mes/mesReducer';
 import { resetCarsByCarNumber } from 'redux/reducers/vehicle/vehicleReducer';
 import {
@@ -26,12 +30,11 @@ import {
 import {
   Act,
   ActModalFormState,
-  AddNewActReq,
   INotesState,
 } from 'types/MesTypes';
 import { IVehicleResponse } from 'types/VehicleTypes';
 import { IDriverResponse } from 'types/DriversType';
-import { NotesWithoutActState } from 'types/mes/NotesWithoutActTypes';
+import { NoteFullContactInfo, NotesWithoutActState, NoteWithoutAct } from 'types/mes/NotesWithoutActTypes';
 import { OrganizationState } from 'types/mes/OrganizationTypes';
 import { ContractState, GetContractsListForSelectRes } from 'types/mes/ContractTypes';
 import { resetContractsListForSelect } from 'redux/reducers/mes/contractReducer';
@@ -42,6 +45,38 @@ import ModalButtons from 'components/ModalButtons';
 import DatePicker from 'components/DatePicker';
 
 import classes from './styles.module.css';
+
+const mapActNoteToNoteWithoutAct = (note: NoteFullContactInfo): NoteWithoutAct => ({
+  id: note.id,
+  date: note.date,
+  comment: '',
+  isChecked: true,
+  street: note.street,
+  entrance: note.entrance,
+  houseNumber: note.houseNumber,
+  tel: note.tel,
+});
+
+const parseActDate = (dateString: string) => {
+  try {
+    return parse(dateString, 'dd-MM-yyyy HH:mm:ss', new Date());
+  } catch {
+    return new Date(dateString);
+  }
+};
+
+const getCarNumberFromValue = (car: string) => {
+  if (car.includes('(') && car.includes(')')) {
+    return car.split('(')[1].replace(')', '').trim();
+  }
+  return car.trim();
+};
+
+const withCurrentOption = (currentValue: string, options: string[]) => (
+  currentValue && !options.includes(currentValue)
+    ? [currentValue, ...options]
+    : options
+);
 
 interface ActModalProps {
   selectedNotesId: number[];
@@ -80,10 +115,14 @@ function ActModal(props: ActModalProps) {
     selectedContract: null,
   });
   const [modalError, setModalError] = useState<string>('');
+  const [organizationSearchValue, setOrganizationSearchValue] = useState('');
+  const [carSearchValue, setCarSearchValue] = useState('');
 
   const {
     totalActSumm,
     vat,
+    actsList,
+    selectedActId,
   } = useSelector<RootState, INotesState>(
     (state) => state.mes,
   );
@@ -131,22 +170,76 @@ function ActModal(props: ActModalProps) {
   };
 
   useEffect(() => {
+    if (editActModalOpened) return;
+
     const newSelectedNotes = notesWithoutAct.filter((note) => selectedNotesId.includes(note.id));
     updateActFormState('selectedNotes', newSelectedNotes);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedNotesId]);
+  }, [selectedNotesId, editActModalOpened]);
 
   useEffect(() => {
-    if (actForm.car !== '' && actForm.car.includes('(') && actForm.car.includes(')')) {
-      const carNumber = actForm.car.split('(');
-      dispatch(getDriversByCarNumber(carNumber[1].replace(')', '')))
-        .catch((error) => {
+    if (!editActModalOpened || !selectedActId) return;
+
+    const act = actsList.find((item) => item.id === selectedActId);
+    if (!act) return;
+
+    changeType(act.actType);
+    dispatch(setActDataForEdit({
+      type: act.actType,
+      works: act.works ?? [],
+      total: act.total,
+      vat: act.vat,
+    }));
+
+    const loadEditData = async () => {
+      let carValue = act.numberPlateOfCar;
+
+      if (act.numberPlateOfCar) {
+        try {
+          const cars = await dispatch(getCarByCarNumber(act.numberPlateOfCar)).unwrap();
+          const matchedCar = cars.find((item) => item.includes(`(${act.numberPlateOfCar})`));
+          if (matchedCar) {
+            carValue = matchedCar;
+          }
+        } catch (error) {
           handleError(error, setModalError);
-        });
-    } else {
+        }
+      }
+
+      setOrganizationSearchValue(act.organization);
+      setCarSearchValue(carValue);
+
+      setActForm({
+        selectedNotes: (act.notesWithoutAct ?? []).map(mapActNoteToNoteWithoutAct),
+        organization: act.organization,
+        car: carValue,
+        driver: act.driver,
+        isSigned: act.isSigned,
+        actAdditionDate: parseActDate(act.dateOfWorkCompletion),
+        selectedContract: act.contractId ? String(act.contractId) : null,
+      });
+    };
+
+    loadEditData().catch((error) => {
+      handleError(error, setModalError);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editActModalOpened, selectedActId]);
+
+  useEffect(() => {
+    if (!actForm.car) {
       updateActFormState('driver', null);
       dispatch(resetDriversByCar());
+      return;
     }
+
+    const carNumber = getCarNumberFromValue(actForm.car);
+    if (!carNumber) return;
+
+    dispatch(getDriversByCarNumber(carNumber))
+      .catch((error) => {
+        handleError(error, setModalError);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actForm.car]);
 
@@ -209,6 +302,9 @@ function ActModal(props: ActModalProps) {
     dispatch(resetOrganizationsBySearch());
     dispatch(resetStreetsBySearch());
     dispatch(resetContractsListForSelect());
+    dispatch(changeSelectedActId(0));
+    setOrganizationSearchValue('');
+    setCarSearchValue('');
     setModalError('');
     handleSelectNote([]);
     if (addActModalOpened) {
@@ -219,57 +315,105 @@ function ActModal(props: ActModalProps) {
     }
   };
 
-  const handleOrganizationsInputChange = (value: string | null) => {
-    if (value === null) {
-      updateActFormState('organization', '');
-      dispatch(resetOrganizationsBySearch());
-      return;
-    }
+  const handleOrganizationSearchChange = (value: string) => {
+    setOrganizationSearchValue(value);
     if (value.length === 1) {
-      dispatch(organizationsBySearch(value))
-        .then(() => {
-          updateActFormState('organization', value);
-        })
-        .catch((error) => {
-          handleError(error, setModalError);
-        });
-
+      dispatch(organizationsBySearch(value)).catch((error) => {
+        handleError(error, setModalError);
+      });
+      updateActFormState('organization', value);
       return;
     }
     if (value.length === 0) {
       updateActFormState('organization', '');
       dispatch(resetOrganizationsBySearch());
+      return;
     }
-
     updateActFormState('organization', value);
   };
 
-  const handleCarInputChange = (value: string | null) => {
+  const handleOrganizationChange = (value: string | null) => {
     if (value === null) {
-      updateActFormState('car', '');
-      dispatch(resetCarsByCarNumber());
+      updateActFormState('organization', '');
+      setOrganizationSearchValue('');
+      dispatch(resetOrganizationsBySearch());
       return;
     }
-    if (value.length === 1) {
-      dispatch(getCarByCarNumber(value))
-        .then(() => {
-          updateActFormState('car', value);
-        })
-        .catch((error) => {
-          handleError(error, setModalError);
-        });
+    updateActFormState('organization', value);
+    setOrganizationSearchValue(value);
+  };
 
+  const handleCarSearchChange = (value: string) => {
+    setCarSearchValue(value);
+    if (value.length === 1) {
+      dispatch(getCarByCarNumber(value)).catch((error) => {
+        handleError(error, setModalError);
+      });
+      updateActFormState('car', value);
       return;
     }
     if (value.length === 0) {
       updateActFormState('car', '');
       dispatch(resetCarsByCarNumber());
+      return;
     }
-
     updateActFormState('car', value);
   };
 
-  const handleAddActSubmit = () => {
+  const handleCarChange = (value: string | null) => {
+    if (value === null) {
+      updateActFormState('car', '');
+      setCarSearchValue('');
+      dispatch(resetCarsByCarNumber());
+      return;
+    }
+    updateActFormState('car', value);
+    setCarSearchValue(value);
+    updateActFormState('driver', null);
+  };
+
+  const organizationOptions = useMemo(
+    () => withCurrentOption(actForm.organization, allOrganizationsBySearch),
+    [actForm.organization, allOrganizationsBySearch],
+  );
+
+  const carOptions = useMemo(
+    () => withCurrentOption(actForm.car, carsByCarNumber),
+    [actForm.car, carsByCarNumber],
+  );
+
+  const driverOptions = useMemo(
+    () => withCurrentOption(actForm.driver ?? '', driversByCarNumber),
+    [actForm.driver, driversByCarNumber],
+  );
+
+  const { selectedContract: selectedContractId } = actForm;
+
+  const contractOptions = useMemo(() => {
+    const options = contractsListForSelect.map((contract) => {
+      const creationDate = format(new Date(contract.creationDate), 'dd.MM.yyyy');
+      return {
+        value: contract.id.toString(),
+        label: `Договор № ${contract.contractNumber} от ${creationDate} - ${contract.contractType}`,
+      };
+    });
+
+    const hasSelectedContract = selectedContractId
+      && !options.some((item) => item.value === selectedContractId);
+    if (hasSelectedContract) {
+      const act = actsList.find((item) => item.id === selectedActId);
+      if (act?.contractNumber) {
+        options.unshift({
+          value: selectedContractId,
+          label: `Договор № ${act.contractNumber}`,
+        });
+      }
+    }
+
+    return options;
+  }, [actsList, selectedContractId, contractsListForSelect, selectedActId]);
+
+  const handleActSubmit = () => {
     const {
       organization,
       driver,
@@ -280,8 +424,8 @@ function ActModal(props: ActModalProps) {
       selectedContract,
     } = actForm;
 
-    if (organization && driver && car && actAdditionDate) {
-      const request: AddNewActReq = {
+    if (organization && driver && car && actAdditionDate && selectedContract) {
+      const requestBody = {
         organization,
         vehicle: car,
         driver,
@@ -295,7 +439,20 @@ function ActModal(props: ActModalProps) {
         contractId: Number(selectedContract),
       };
 
-      dispatch(createNewAct(request))
+      if (editActModalOpened) {
+        dispatch(updateAct({ id: selectedActId, ...requestBody }))
+          .unwrap()
+          .then((payload) => {
+            dispatch(editActsListAfterUpdate(payload));
+            handleClose();
+          })
+          .catch((error) => {
+            handleError(error, setModalError);
+          });
+        return;
+      }
+
+      dispatch(createNewAct(requestBody))
         .then(() => {
           dispatch(editNotesWithoutActAfterAddAct(selectedNotesId));
           handleClose();
@@ -330,10 +487,11 @@ function ActModal(props: ActModalProps) {
           w="100%"
           label="Организация"
           placeholder="Введите значение"
-          data={allOrganizationsBySearch}
+          data={organizationOptions}
           searchable
-          onSearchChange={(value) => handleOrganizationsInputChange(value)}
-          onChange={(value) => handleOrganizationsInputChange(value)}
+          searchValue={organizationSearchValue}
+          onSearchChange={handleOrganizationSearchChange}
+          onChange={handleOrganizationChange}
           clearable
           value={actForm.organization}
           name="organizationSelect"
@@ -346,10 +504,11 @@ function ActModal(props: ActModalProps) {
             w="50%"
             label="Машина"
             placeholder="Введите номер машины"
-            data={carsByCarNumber}
+            data={carOptions}
             searchable
-            onSearchChange={(value) => handleCarInputChange(value)}
-            onChange={(value) => handleCarInputChange(value)}
+            searchValue={carSearchValue}
+            onSearchChange={handleCarSearchChange}
+            onChange={handleCarChange}
             clearable
             value={actForm.car}
           />
@@ -361,7 +520,7 @@ function ActModal(props: ActModalProps) {
             w="50%"
             label="Водитель"
             placeholder="Выберите водителя"
-            data={driversByCarNumber}
+            data={driverOptions}
             onChange={(value) => updateActFormState('driver', value)}
             clearable
             value={actForm.driver}
@@ -397,10 +556,7 @@ function ActModal(props: ActModalProps) {
           w="100%"
           label="Список договоров организации"
           placeholder="Выберите договор"
-          data={contractsListForSelect.length > 0 ? contractsListForSelect.map((contract) => ({
-            value: contract.id.toString(),
-            label: `Договор № ${contract.contractNumber} от ${format(new Date(contract.creationDate), 'dd.MM.yyyy')} - ${contract.contractType}`,
-          })) : []}
+          data={contractOptions}
           onChange={(value) => updateActFormState('selectedContract', value)}
           clearable
           value={actForm.selectedContract}
@@ -456,10 +612,10 @@ function ActModal(props: ActModalProps) {
         )}
 
         <ModalButtons
-          confirmBtnTitle="Добавить акт"
+          confirmBtnTitle={editActModalOpened ? 'Сохранить' : 'Добавить акт'}
           cancelBtnTitle="Отменить"
           handleCancel={handleClose}
-          handleConfirm={handleAddActSubmit}
+          handleConfirm={handleActSubmit}
           disabled={!(actForm.organization
             && actForm.driver
             && actForm.car
