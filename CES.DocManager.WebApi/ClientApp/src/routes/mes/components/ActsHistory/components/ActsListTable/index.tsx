@@ -117,6 +117,7 @@ function ActsListTable(props: ActsListTableProps) {
 
   const handleDeleteIconClick = (id: number) => {
     dispatch(deleteAct(id))
+      .unwrap()
       .then(() => dispatch(editActsListAfterDelete(id)))
       .catch(() => {});
   };

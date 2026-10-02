@@ -29,7 +29,6 @@ import {
   editExistedNote,
 } from 'redux/actions/mes';
 import { ExistedNote, NotesWithoutActState } from 'types/mes/NotesWithoutActTypes';
-import handleError from 'utils';
 
 import NoteContactsInfo from './components/NoteContactsInfo';
 import classes from './styles.module.css';
@@ -56,7 +55,6 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
   const [formState, setFormState] = useInputState<ExistedNote>(defaultFormValues);
   const [counter, setCounter] = useState<number>(1);
   const [noteId, setNoteId] = useState<number>(1);
-  const [modalError, setModalError] = useState<string>('');
   const [noteDate, setNoteDate] = useState<Date>();
   const [newStreet, setNewStreet] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -167,10 +165,7 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
         return;
       }
       lastStreetSearchFetchRef.current = value;
-      dispatch(getStreetsBySearch(value))
-        .catch((error) => {
-          handleError(error, setModalError);
-        });
+      dispatch(getStreetsBySearch(value)).catch(() => {});
     }
   };
 
@@ -247,12 +242,10 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
             handleClose();
           }
         })
-        .catch((error) => {
-          handleError(error, setModalError);
-        })
         .finally(() => {
           setIsLoading(false);
-        });
+        })
+        .catch(() => {});
     } else {
       if (noteDate) {
         stateCopy.date = format(noteDate, 'dd-MM-yyyy HH:mm:ss');
@@ -267,12 +260,10 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
             handleClose();
           }
         })
-        .catch((error) => {
-          handleError(error, setModalError);
-        })
         .finally(() => {
           setIsLoading(false);
-        });
+        })
+        .catch(() => {});
     }
   };
 
@@ -297,10 +288,9 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
 
   const handleAddStreet = () => {
     dispatch(createStreet(newStreet))
+      .unwrap()
       .then(() => setNewStreet(''))
-      .catch((error) => {
-        handleError(error, setModalError);
-      });
+      .catch(() => {});
   };
 
   return (

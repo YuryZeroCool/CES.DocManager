@@ -185,14 +185,16 @@ const mesReducer = createSlice({
       state.actTypesFromFile = action.payload;
     });
     builder.addCase(getActTypesFromFile.rejected, (state, action) => {
-      throw Error(action.payload?.message);
+      state.requestStatus = 'rejected';
+      state.mesError = action.payload?.message || 'Список типов актов не был получен';
     });
 
     builder.addCase(getActDataFromFile.fulfilled, (state, action) => {
       state.actDataFromFile = action.payload;
     });
     builder.addCase(getActDataFromFile.rejected, (state, action) => {
-      throw Error(action.payload?.message);
+      state.requestStatus = 'rejected';
+      state.mesError = action.payload?.message || 'Данные акта не были получены';
     });
 
     builder.addCase(createNewAct.pending, (state) => {
@@ -203,7 +205,8 @@ const mesReducer = createSlice({
       state.requestStatus = 'fulfilled';
     });
     builder.addCase(createNewAct.rejected, (state, action) => {
-      throw Error(action.payload?.message);
+      state.requestStatus = 'rejected';
+      state.mesError = action.payload?.message || 'Не удалось создать новый акт.';
     });
 
     builder.addCase(getActsList.pending, (state) => {
@@ -228,7 +231,8 @@ const mesReducer = createSlice({
       state.requestStatus = 'fulfilled';
     });
     builder.addCase(deleteAct.rejected, (state, action) => {
-      throw Error(action.payload?.message);
+      state.requestStatus = 'rejected';
+      state.mesError = action.payload?.message || 'Не удалось удалить акт';
     });
   },
 });

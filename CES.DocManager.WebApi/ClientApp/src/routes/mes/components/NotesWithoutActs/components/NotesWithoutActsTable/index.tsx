@@ -151,7 +151,7 @@ function NotesWithoutActsTable(props: NotesWithoutActsTableProps) {
         </Group>
       </Stack>
 
-      {notesWithoutAct.length === 0 && requestStatus !== 'fulfilled' && (
+      {notesWithoutAct.length === 0 && (requestStatus === 'pending' || requestStatus === '') && (
         <LoadingOverlay
           visible
           loaderProps={{

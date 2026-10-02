@@ -122,14 +122,12 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
   };
 
   useEffect(() => {
-    dispatch(getActTypesFromFile())
-      .catch(() => showErrorNotification('Список типов актов не был получен'));
+    dispatch(getActTypesFromFile()).catch(() => {});
     dispatch(getNotesWithoutActs({
       ...notesWithoutActsParams,
       minDate: format(notesWithoutActsParams.minDate, 'dd-MM-yyyy HH:mm:ss'),
       maxDate: format(notesWithoutActsParams.maxDate, 'dd-MM-yyyy HH:mm:ss'),
-    }))
-      .catch(() => showErrorNotification('Список заявок не был получен'));
+    })).catch(() => {});
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -140,10 +138,7 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
         `${el.actType} (${el.season.toLocaleLowerCase()})` === actTypeSelectValue
       ))[0];
 
-      dispatch(getActDataFromFile(fileName))
-        .catch(() => {
-          showErrorNotification('Данные акта не были получены');
-        });
+      dispatch(getActDataFromFile(fileName)).catch(() => {});
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -181,8 +176,7 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
       ...notesWithoutActsParams,
       minDate: format(notesWithoutActsParams.minDate, 'dd-MM-yyyy HH:mm:ss'),
       maxDate: format(notesWithoutActsParams.maxDate, 'dd-MM-yyyy HH:mm:ss'),
-    }))
-      .catch(() => showErrorNotification('Список заявок не был получен'));
+    })).catch(() => {});
   };
 
   const handleDeleteNoteBtnClick = () => {
@@ -227,6 +221,7 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
 
   const cofirmDeleteNoteAction = () => {
     dispatch(deleteNoteWithoutAct(selectedNotesId[0]))
+      .unwrap()
       .then(() => {
         warningModalClose();
         dispatch(editNotesWithoutActAfterAddAct(selectedNotesId));
@@ -234,7 +229,6 @@ function NotesWithoutActs(props: NotesWithoutActsProps) {
       })
       .catch(() => {
         warningModalClose();
-        showErrorNotification('Заявка не была удалена');
       });
   };
 
