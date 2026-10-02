@@ -61,13 +61,11 @@ const headCells: readonly HeadCell[] = [
 
 interface ActsListTableProps {
   editActModalOpen: () => void;
-  filter: string;
 }
 
 function ActsListTable(props: ActsListTableProps) {
   const {
     editActModalOpen,
-    filter,
   } = props;
 
   const [currentAct, setCurrentAct] = useState<ActsList | null>(null);
@@ -132,62 +130,58 @@ function ActsListTable(props: ActsListTableProps) {
 
   const renderTableBody = () => (
     <>
-      {actsList.map((act, index) => {
-        const shouldHighlightUnsigned = filter === '' && !act.isSigned;
-
-        return (
-          <Table.Tr
-            key={act.id}
-            className={shouldHighlightUnsigned ? classes.unsignedActRow : undefined}
-            onClick={() => handleDrawerOpen(act.id)}
+      {actsList.map((act, index) => (
+        <Table.Tr
+          key={act.id}
+          className={!act.isSigned ? classes.unsignedActRow : undefined}
+          onClick={() => handleDrawerOpen(act.id)}
+        >
+          <Table.Td align="center">{index + 1}</Table.Td>
+          <Table.Td w="10%">{act.dateOfWorkCompletion.split(' ')[0]}</Table.Td>
+          <Table.Td>{act.organization}</Table.Td>
+          <Table.Td w="10%">{act.payerAccountNumber}</Table.Td>
+          <Table.Td
+            w="10%"
+            onClick={(e: React.MouseEvent<HTMLTableCellElement, MouseEvent>) => {
+              e.stopPropagation();
+            }}
           >
-            <Table.Td align="center">{index + 1}</Table.Td>
-            <Table.Td w="10%">{act.dateOfWorkCompletion.split(' ')[0]}</Table.Td>
-            <Table.Td>{act.organization}</Table.Td>
-            <Table.Td w="10%">{act.payerAccountNumber}</Table.Td>
-            <Table.Td
-              w="10%"
-              onClick={(e: React.MouseEvent<HTMLTableCellElement, MouseEvent>) => {
+            {act.contractNumber}
+          </Table.Td>
+          <Table.Td w="7%">{act.total}</Table.Td>
+          <Table.Td w="7%">{act.vat !== 0 ? act.vat : ''}</Table.Td>
+          <Table.Td w="5%" align="center">
+            <ActionIcon
+              onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
                 e.stopPropagation();
+                handleEditIconClick(act.id);
               }}
+              variant="subtle"
             >
-              {act.contractNumber}
-            </Table.Td>
-            <Table.Td w="7%">{act.total}</Table.Td>
-            <Table.Td w="7%">{act.vat !== 0 ? act.vat : ''}</Table.Td>
-            <Table.Td w="5%" align="center">
-              <ActionIcon
-                onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-                  e.stopPropagation();
-                  handleEditIconClick(act.id);
-                }}
-                variant="subtle"
-              >
-                <IconEdit
-                  width={25}
-                  height={25}
-                  color="#000"
-                />
-              </ActionIcon>
-            </Table.Td>
-            <Table.Td w="5%" align="center">
-              <ActionIcon
-                onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-                  e.stopPropagation();
-                  handleDeleteIconClick(act.id);
-                }}
-                variant="subtle"
-              >
-                <IconTrash
-                  width={25}
-                  height={25}
-                  color="#000"
-                />
-              </ActionIcon>
-            </Table.Td>
-          </Table.Tr>
-        );
-      })}
+              <IconEdit
+                width={25}
+                height={25}
+                color="#000"
+              />
+            </ActionIcon>
+          </Table.Td>
+          <Table.Td w="5%" align="center">
+            <ActionIcon
+              onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                e.stopPropagation();
+                handleDeleteIconClick(act.id);
+              }}
+              variant="subtle"
+            >
+              <IconTrash
+                width={25}
+                height={25}
+                color="#000"
+              />
+            </ActionIcon>
+          </Table.Td>
+        </Table.Tr>
+      ))}
       <Table.Tr>
         <Table.Td fw={900} align="center">ИТОГО</Table.Td>
         <Table.Td colSpan={7} fw={900} align="right">{totalActSumm}</Table.Td>
@@ -199,14 +193,23 @@ function ActsListTable(props: ActsListTableProps) {
     </>
   );
 
+  const unsignedActsCount = actsList.filter((act) => !act.isSigned).length;
+
   const renderTable = () => (
     actsList.length !== 0 && (
       <Stack w="100%" gap={10}>
-        <Text size="sm" ta="right" c="dimmed">
-          Количество актов:
-          {' '}
-          {actsList.length}
-        </Text>
+        <Stack gap={2}>
+          <Text size="sm" ta="right" c="dimmed">
+            Количество актов:
+            {' '}
+            {actsList.length}
+          </Text>
+          <Text size="sm" ta="right" c="dimmed">
+            Количество неподписанных актов:
+            {' '}
+            {unsignedActsCount}
+          </Text>
+        </Stack>
         <Table
           striped
           highlightOnHover

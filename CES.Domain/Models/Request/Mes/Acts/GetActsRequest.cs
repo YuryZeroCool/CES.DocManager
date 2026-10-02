@@ -14,5 +14,7 @@ namespace CES.Domain.Models.Request.Mes.Acts
         public string SearchValue { get; set; } = string.Empty;
 
         public string Filter { get; set; } = string.Empty;
+
+        public bool OnlyUnsigned { get; set; }
     }
 }

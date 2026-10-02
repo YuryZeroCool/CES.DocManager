@@ -43,6 +43,11 @@ namespace CES.Domain.Handlers.Mes.Acts
                                              x.Contract.Organization.OrganizationType.Name == request.OrganizationType.Trim());
                 }
 
+                if (request.OnlyUnsigned)
+                {
+                    query = query.Where(x => x.IsSigned == false);
+                }
+
                 query = request.Filter switch
                 {
                     "organization" => query.Where(x => x.Contract != null &&
@@ -50,8 +55,6 @@ namespace CES.Domain.Handlers.Mes.Acts
                                                        x.Contract.Organization.Name.ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())),
                     "contractNumber" => query.Where(x => x.Contract != null &&
                                                      x.Contract.ContractNumber.ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())),
-                    "isNotSigned" => query.Where(x => x.IsSigned == false),
-
                     "employee" => query.Where(x => x.Employee != null &&
                                                    (x.Employee.LastName + x.Employee.FirstName).ToUpper().Trim().Contains(request.SearchValue.ToUpper().Trim())),
                     "numberPlateOfCar" => query.Where(x => x.NumberPlateOfCar != null &&

@@ -31,6 +31,7 @@ function ActsHistory(props: ActsHistoryProps) {
     filter: '',
     searchValue: '',
     organizationType: '',
+    onlyUnsigned: false,
   });
 
   const dispatch: IAuthResponseType = useDispatch();
@@ -48,6 +49,7 @@ function ActsHistory(props: ActsHistoryProps) {
       max: format(actsHistoryParams.maxDate, 'dd-MM-yyyy HH:mm:ss'),
       filter: actsHistoryParams.filter,
       searchValue: actsHistoryParams.searchValue,
+      onlyUnsigned: actsHistoryParams.onlyUnsigned,
     };
 
     dispatch(getActsList(params)).catch(() => {});
@@ -88,7 +90,6 @@ function ActsHistory(props: ActsHistoryProps) {
 
       <ActsListTable
         editActModalOpen={editActModalOpen}
-        filter={actsHistoryParams.filter}
       />
     </>
   );

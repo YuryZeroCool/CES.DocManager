@@ -83,6 +83,7 @@ export interface GetActsListReq {
   searchValue: string;
   filter: string;
   organizationType: string;
+  onlyUnsigned: boolean;
 }
 
 export interface ActsList {
@@ -113,4 +114,5 @@ export interface ActsHistoryParams {
   filter: string;
   searchValue: string;
   organizationType: string;
+  onlyUnsigned: boolean;
 }

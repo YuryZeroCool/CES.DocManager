@@ -36,7 +36,8 @@ namespace CES.DocManager.WebApi.Controllers
             string max,
             string? organizationType,
             string? filter,
-            string? searchValue)
+            string? searchValue,
+            bool onlyUnsigned = false)
         {
             try
             {
@@ -47,6 +48,7 @@ namespace CES.DocManager.WebApi.Controllers
                     OrganizationType = organizationType ?? string.Empty,
                     Filter = filter ?? string.Empty,
                     SearchValue = searchValue ?? string.Empty,
+                    OnlyUnsigned = onlyUnsigned,
                 });
             }
             catch (Exception e)
