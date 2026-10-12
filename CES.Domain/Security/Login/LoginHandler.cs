@@ -40,7 +40,14 @@ namespace CES.Domain.Security.Login
             var res = await _userMgr.SetAuthenticationTokenAsync(user, "MyApp", "RefreshToken", refreshToken) ?? throw new System.Exception("Server Error");
             var refresh = await _userMgr.GetAuthenticationTokenAsync(user, "MyApp", "RefreshToken");
 
-            return new LoginResponse() { AccessToken = token, RefreshToken = refresh, Email = user.Email, UserName = user.UserName };
+            return new LoginResponse()
+            {
+                AccessToken = token,
+                RefreshToken = refresh,
+                Email = user.Email,
+                UserName = user.UserName,
+                Role = userRole.FirstOrDefault() ?? string.Empty
+            };
         }
     }
 }

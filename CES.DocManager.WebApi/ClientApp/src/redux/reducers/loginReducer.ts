@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { UserState } from '../../types/UserTypes';
-import login from '../actions/login';
+import { UserState } from 'types/UserTypes';
+import login from 'redux/actions/login';
 
 const initial: UserState = {
   userName: localStorage.getItem('userName') ?? '',
   email: localStorage.getItem('email') ?? '',
   accessToken: localStorage.getItem('accessToken') ?? '',
+  role: localStorage.getItem('role') ?? '',
   status: '',
 };
 
@@ -26,6 +27,10 @@ const loginReducer = createSlice({
       const stateCopy = state;
       stateCopy.email = action.payload;
     },
+    setRole: (state, action: PayloadAction<string>) => {
+      const stateCopy = state;
+      stateCopy.role = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(login.pending, (state) => {
@@ -39,6 +44,7 @@ const loginReducer = createSlice({
         localStorage.setItem('accessToken', action.payload.accessToken);
         localStorage.setItem('email', action.payload.email);
         localStorage.setItem('userName', action.payload.userName);
+        localStorage.setItem('role', action.payload.role ?? '');
         stateCopy = Object.assign(state, action.payload);
       }
     });
@@ -56,5 +62,6 @@ export const {
   setUserName,
   setToken,
   setEmail,
+  setRole,
 } = loginReducer.actions;
 export default loginReducer.reducer;

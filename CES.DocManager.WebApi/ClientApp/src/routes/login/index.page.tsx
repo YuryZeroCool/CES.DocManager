@@ -10,10 +10,12 @@ import {
   rem,
 } from '@mantine/core';
 import { IconLock, IconUserFilled } from '@tabler/icons-react';
-import login from '../../redux/actions/login';
-import { setEmail, setToken, setUserName } from '../../redux/reducers/loginReducer';
-import { IAuthResponseType } from '../../redux/store/configureStore';
-import { IUserRequest } from '../../types/UserTypes';
+import login from 'redux/actions/login';
+import {
+  setEmail, setRole, setToken, setUserName,
+} from 'redux/reducers/loginReducer';
+import { IAuthResponseType } from 'redux/store/configureStore';
+import { IUserRequest } from 'types/UserTypes';
 import classes from './login.module.scss';
 
 interface CustomizedState {
@@ -57,11 +59,13 @@ function LoginPage() {
     const userName = localStorage.getItem('userName');
     const token = localStorage.getItem('accessToken');
     const email = localStorage.getItem('email');
+    const role = localStorage.getItem('role');
 
     if (userName && token && email) {
       dispatch(setUserName(userName));
       dispatch(setToken(token));
       dispatch(setEmail(email));
+      dispatch(setRole(role ?? ''));
       navigate(fromPage, { replace: true });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -17,4 +17,5 @@ export interface IAuthResponse {
   userName: string;
   email: string;
   accessToken: string;
+  role: string;
 }
