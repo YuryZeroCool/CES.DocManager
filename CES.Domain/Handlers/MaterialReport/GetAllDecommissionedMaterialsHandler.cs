@@ -1,5 +1,6 @@
 ﻿using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Response.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
@@ -15,9 +16,12 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private readonly List<GetAllDecommissionedMaterialsResponse> _materialsResponses;
 
-        public GetAllDecommissionedMaterialsHandler(DocMangerContext ctx)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public GetAllDecommissionedMaterialsHandler(DocMangerContext ctx, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
+            _currentUserRole = currentUserRole;
             _materialsResponses = new List<GetAllDecommissionedMaterialsResponse>();
         }
         public async Task<List<GetAllDecommissionedMaterialsResponse>> Handle(GetAllDecommissionedMaterialsRequest request, CancellationToken cancellationToken)
@@ -52,6 +56,8 @@ namespace CES.Domain.Handlers.MaterialReport
 
             if (materials == null) throw new SystemException("Упс! Что-то пошло не так");
 
+            var visibleRoles = MaterialOwnerRole.VisibleFor(_currentUserRole.GetRole());
+
             foreach (var item in materials)
             {
                 var decommissionedMaterials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(item.Materials);
@@ -60,12 +66,21 @@ namespace CES.Domain.Handlers.MaterialReport
 
                 if (item.CarMechanic == null) throw new System.Exception("Упс! Что-то пошло не так");
 
+                var visibleMaterials = decommissionedMaterials
+                    .Where(material => material.OwnerRole != null && visibleRoles.Contains(material.OwnerRole))
+                    .ToList();
+
+                if (visibleMaterials.Count == 0)
+                {
+                    continue;
+                }
+
                 _materialsResponses.Add(new GetAllDecommissionedMaterialsResponse()
                 {
                     Id = item.Id,
                     CarMechanic = item.CarMechanic.FIO,
                     CurrentDate = item.CurrentDate,
-                    Materials = decommissionedMaterials
+                    Materials = visibleMaterials
                 });
             }
             return await Task.FromResult(_materialsResponses);

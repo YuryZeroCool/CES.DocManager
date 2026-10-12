@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Response.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,14 @@ namespace CES.Domain.Handlers.MaterialReport
     {
         private readonly DocMangerContext _ctx;
         private readonly IMapper _mapper;
-        public GetAllUsedMaterialsHandler(DocMangerContext ctx, IMapper mapper)
+
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public GetAllUsedMaterialsHandler(DocMangerContext ctx, IMapper mapper, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
             _mapper = mapper;
+            _currentUserRole = currentUserRole;
         }
 
         public async Task<List<GetAllUsedMaterialsResponse>> Handle(GetAllUsedMaterialsRequest request, CancellationToken cancellationToken)
@@ -28,6 +33,11 @@ namespace CES.Domain.Handlers.MaterialReport
 
             var materials = JsonSerializer.Deserialize<List<UsedMaterial>>(data.Materials);
             if (materials == null) throw new SystemException("Упс! Что-то пошло не так");
+
+            var visibleRoles = MaterialOwnerRole.VisibleFor(_currentUserRole.GetRole());
+            materials = materials
+                .Where(item => item.OwnerRole != null && visibleRoles.Contains(item.OwnerRole))
+                .ToList();
 
             return await Task.FromResult(materials.Select(p => _mapper.Map<GetAllUsedMaterialsResponse>(p)).ToList());
         }

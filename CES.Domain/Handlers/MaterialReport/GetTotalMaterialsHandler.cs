@@ -2,6 +2,7 @@
 using CES.Domain.Models;
 using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Response.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
@@ -14,10 +15,13 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private readonly IMapper _mapper;
 
-        public GetTotalMaterialsHandler(DocMangerContext ctx, IMapper mapper)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public GetTotalMaterialsHandler(DocMangerContext ctx, IMapper mapper, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
             _mapper = mapper;
+            _currentUserRole = currentUserRole;
         }
 
         public async Task<List<GetTotalMaterialsResponse>> Handle(GetTotalMaterialsRequest request, CancellationToken cancellationToken)
@@ -34,6 +38,7 @@ namespace CES.Domain.Handlers.MaterialReport
                                    where p.AccountName == item
                                    from pr in _ctx.Products
                                    where pr.ProductGroupAccountId == p.Id
+                                       && visibleRoles.Contains(pr.OwnerRole)
                                    orderby pr.Name ascending
                                    join unit in _ctx.Units on pr.UnitId equals unit.Id
                                    select new GetTotalMaterialsResponse()
