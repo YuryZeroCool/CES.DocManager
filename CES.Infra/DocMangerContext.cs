@@ -13,7 +13,7 @@ namespace CES.Infra
 {
     public class DocMangerContext : DbContext
     {
-        //Add-Migration AddContractsTable -context DocMangerContext
+        //Add-Migration AddOwnerRoleToMaterials -context DocMangerContext
 
         //update-database -context DocMangerContext
 

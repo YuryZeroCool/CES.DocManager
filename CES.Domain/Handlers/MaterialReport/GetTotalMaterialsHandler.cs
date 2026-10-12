@@ -30,6 +30,7 @@ namespace CES.Domain.Handlers.MaterialReport
             {
                 var arrAccounts = request.Accounts.Split(", ").ToList();
                 if (arrAccounts == null) throw new System.Exception("Упс! Что-то пошло не так");
+                var visibleRoles = MaterialOwnerRole.VisibleFor(_currentUserRole.GetRole());
                 var totalMaterials = new List<GetTotalMaterialsResponse>();
 
                 foreach (var item in arrAccounts)

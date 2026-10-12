@@ -293,6 +293,10 @@ namespace CES.Infra.Migrations
                     b.Property<string>("NumberPlateCar")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OwnerRole")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<DateTime>("PartyDate")
                         .HasColumnType("smalldatetime");
 
@@ -364,6 +368,13 @@ namespace CES.Infra.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("OwnerRole")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)")
+                        .HasDefaultValue("admin");
 
                     b.Property<int>("ProductGroupAccountId")
                         .HasColumnType("int");
