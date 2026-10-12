@@ -16,6 +16,9 @@ namespace CES.Infra.Config.MaterialReport
             builder.Property(e => e.NameParty)
             .HasMaxLength(100);
 
+            builder.Property(e => e.OwnerRole)
+                .HasMaxLength(256);
+
             builder.Property(x => x.Price).HasPrecision(12, 2);
 
             builder.Property(p => p.PartyDate)

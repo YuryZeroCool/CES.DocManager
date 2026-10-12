@@ -1,4 +1,5 @@
 ﻿using CES.Domain.Models.Request.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
@@ -17,15 +18,19 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private readonly Workbook _workbook;
 
-        public AddMaterialsHandler(DocMangerContext ctx)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public AddMaterialsHandler(DocMangerContext ctx, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
             _workbook = new Workbook();
             _isCurrentAccount = false;
+            _currentUserRole = currentUserRole;
         }
 
         public async Task<Unit> Handle(AddMaterialReportRequest request, CancellationToken cancellationToken)
         {
+            var ownerRole = _currentUserRole.GetRole();
             _workbook.LoadFromStream(request.File!.OpenReadStream());
             var sheet = _workbook.Worksheets[0];
             var currentRow = 0;
@@ -71,13 +76,13 @@ namespace CES.Domain.Handlers.MaterialReport
 
                                 if (products == null)
                                 {
-                                    await CreateProduct(CreateUnit(sheetUnit, cancellationToken).Result, account);
+                                    await CreateProduct(CreateUnit(sheetUnit, cancellationToken).Result, account, ownerRole);
                                 }
                                 else
                                 {
                                     if (!products.Any(x => x.ProductGroupAccountId == account.Id))
                                     {
-                                        await CreateProduct(CreateUnit(sheetUnit, cancellationToken).Result, account); //  DELETE FROM Products WHERE ID = 252  DELETE FROM Parties 
+                                        await CreateProduct(CreateUnit(sheetUnit, cancellationToken).Result, account, ownerRole);
                                     }
                                 }
                             }
@@ -151,13 +156,14 @@ namespace CES.Domain.Handlers.MaterialReport
             await _ctx.SaveChangesAsync();
         }
 
-        private async Task CreateProduct(UnitEntity? unit, ProductGroupAccountEntity? account)
+        private async Task CreateProduct(UnitEntity? unit, ProductGroupAccountEntity? account, string ownerRole)
         {
             await _ctx.Products.AddAsync(new ProductEntity()
             {
                 Name = _nameProduct,
                 Account = account,
-                Unit = unit
+                Unit = unit,
+                OwnerRole = ownerRole
             });
             await _ctx.SaveChangesAsync();
         }

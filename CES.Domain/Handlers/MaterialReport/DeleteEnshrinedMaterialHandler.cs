@@ -39,7 +39,8 @@ namespace CES.Domain.Handlers.MaterialReport
                     {
                         Account = account,
                         Unit = unit,
-                        Name = enshrinedMaterial.NameMaterial
+                        Name = enshrinedMaterial.NameMaterial,
+                        OwnerRole = enshrinedMaterial.OwnerRole ?? "admin"
                     };
                 }
 

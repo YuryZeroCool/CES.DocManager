@@ -17,6 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddTransient<JwtGeneratorAccessToken>();
 builder.Services.AddTransient<JwtGeneratorRefreshToken>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<CES.Domain.Services.ICurrentUserRole, CES.Domain.Services.CurrentUserRole>();
 
 
 var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(x => x.FullName!.Contains("CES")).ToArray();

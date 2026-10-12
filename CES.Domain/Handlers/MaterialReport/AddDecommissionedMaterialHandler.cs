@@ -45,6 +45,7 @@ namespace CES.Domain.Handlers.MaterialReport
                     if (enshrinedMaterial.Count < 0) throw new System.Exception("Упс! Что-то пошло не так");
                     _ctx.Update(enshrinedMaterial);
                 }
+                material.OwnerRole = enshrinedMaterial.OwnerRole;
                 _materials.Add(material);
                 _numberPlateOfCar = await _ctx.NumberPlateOfCar
                     .FirstOrDefaultAsync(x => x.Number == material.NumberPlateCar, cancellationToken);

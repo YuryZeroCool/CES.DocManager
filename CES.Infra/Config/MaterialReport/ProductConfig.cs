@@ -14,6 +14,11 @@ namespace CES.Infra.Config.MaterialReport
                 .IsRequired()
                 .HasMaxLength(200);
 
+            builder.Property(e => e.OwnerRole)
+                .IsRequired()
+                .HasMaxLength(256)
+                .HasDefaultValue("admin");
+
             builder.HasMany(x => x.Parties)
                 .WithOne(p => p.Product);
         }

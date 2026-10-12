@@ -75,6 +75,7 @@ namespace CES.Domain.Handlers.MaterialReport
                             Price = party.Price,
                             Unit = product.Unit!.Name,
                             PartyDate = party.PartyDate,
+                            OwnerRole = product.OwnerRole,
                         }
                     })
 
@@ -103,6 +104,7 @@ namespace CES.Domain.Handlers.MaterialReport
                         Price = party.Price,
                         Unit = product.Unit!.Name,
                         PartyDate = party.PartyDate,
+                        OwnerRole = product.OwnerRole,
                     });
                 }
                 else
