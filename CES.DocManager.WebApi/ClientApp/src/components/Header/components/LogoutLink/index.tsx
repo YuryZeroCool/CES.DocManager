@@ -28,25 +28,23 @@ function LogoutLinkContainer() {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    async function logOut() {
-      try {
-        await dispatch(logout(user.email)).unwrap();
+    dispatch(logout(user.email))
+      .unwrap()
+      .then(() => {
         clearClientSession();
         dispatch(setUserName(''));
         dispatch(setToken(''));
         dispatch(setEmail(''));
         navigate('/login', { replace: true, state: { fromPage: '/' } });
-      } catch {
+      })
+      .catch(() => {
         showNotification({
           title: 'Не удалось выйти из аккаунта',
           message: 'Произошла ошибка во время выхода из аккаунта.',
           icon: <IconX style={{ width: rem(20), height: rem(20) }} />,
           styles: { icon: { background: 'red' } },
         });
-      }
-    }
-
-    logOut();
+      });
   };
 
   return (
