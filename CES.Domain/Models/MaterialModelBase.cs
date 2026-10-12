@@ -13,5 +13,7 @@
         public double Count { get; set; }
 
         public decimal Price { get; set; }
+
+        public string? OwnerRole { get; set; }
     }
 }

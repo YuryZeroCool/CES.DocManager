@@ -9,5 +9,7 @@
         public virtual string? AccessToken { get; set; }
 
         public virtual string? RefreshToken { get; set; }
+
+        public virtual string? Role { get; set; }
     }
 }

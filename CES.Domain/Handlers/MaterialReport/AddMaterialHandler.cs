@@ -18,10 +18,13 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private PartyEntity? updatedMaterial = null;
 
-        public AddMaterialHandler(DocMangerContext ctx, IMapper mapper)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public AddMaterialHandler(DocMangerContext ctx, IMapper mapper, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
             _mapper = mapper;
+            _currentUserRole = currentUserRole;
         }
 
         public async Task<AddMaterialResponse> Handle(AddMaterialRequest request, CancellationToken cancellationToken)
@@ -61,6 +64,7 @@ namespace CES.Domain.Handlers.MaterialReport
                             Name = request.Name,
                             ProductGroupAccountId = request.ProductGroupAccountId,
                             UnitId = request.UnitId,
+                            OwnerRole = _currentUserRole.GetRole(),
                         },
                         TotalSum = request.Price * (decimal)request.Count,
                     }, cancellationToken).Result.Entity;

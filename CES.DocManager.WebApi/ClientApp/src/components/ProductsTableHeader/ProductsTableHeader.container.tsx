@@ -9,12 +9,12 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDisclosure } from '@mantine/hooks';
-import getAllGroupAccounts from '../../redux/actions/report/materialReport/getAllGroupAccounts';
-import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
-import getAllUsedMaterials from '../../redux/actions/report/materialReport/getAllUsedMaterials';
-import uploadNewMaterials from '../../redux/actions/report/materialReport/uploadNewMaterials';
-import { RootState } from '../../redux/reducers/combineReducers';
-import { toggleAddMaterialsWriteOffModal, toggleLoaderModal } from '../../redux/reducers/modals/modalsReducer';
+import getAllGroupAccounts from 'redux/actions/report/materialReport/getAllGroupAccounts';
+import getAllMaterials from 'redux/actions/report/materialReport/getAllMaterials';
+import getAllUsedMaterials from 'redux/actions/report/materialReport/getAllUsedMaterials';
+import uploadNewMaterials from 'redux/actions/report/materialReport/uploadNewMaterials';
+import { RootState } from 'redux/reducers/combineReducers';
+import { toggleAddMaterialsWriteOffModal, toggleLoaderModal } from 'redux/reducers/modals/modalsReducer';
 import {
   changeAttachedMaterialsSearchValue,
   changeDecommissionedMaterialsSearchValue,
@@ -27,10 +27,11 @@ import {
   resetAllMaterials,
   resetAllUsedMaterials,
   toggleCheckboxByDateInMaterials,
-} from '../../redux/reducers/report/materialsReducer';
-import { IAuthResponseType } from '../../redux/store/configureStore';
-import { IMaterialsResponse, IPeriod } from '../../types/ReportTypes';
-import { IModal } from '../../types/type';
+} from 'redux/reducers/report/materialsReducer';
+import { IAuthResponseType } from 'redux/store/configureStore';
+import { IMaterialsResponse, IPeriod } from 'types/ReportTypes';
+import { UserState } from 'types/UserTypes';
+import { IModal } from 'types/type';
 import ProductsTableHeaderComponent from './ProductsTableHeader.component';
 
 function ProductsTableHeaderContainer() {
@@ -44,6 +45,8 @@ function ProductsTableHeaderContainer() {
   ] = useDisclosure(false);
 
   const dispatch: IAuthResponseType = useDispatch();
+  const { role } = useSelector<RootState, UserState>((state) => state.login);
+  const canWriteOffSpareParts = role !== 'superadmin';
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -231,6 +234,7 @@ function ProductsTableHeaderContainer() {
       allAttachedMaterials={allAttachedMaterials}
       calendarPeriod={calendarPeriod}
       addMaterialModalOpened={addMaterialModalOpened}
+      canWriteOffSpareParts={canWriteOffSpareParts}
       handleUsedMaterialsCalendarChange={handleUsedMaterialsCalendarChange}
       handleUsedMaterialsCalendarClose={handleUsedMaterialsCalendarClose}
       handleChange={handleChange}

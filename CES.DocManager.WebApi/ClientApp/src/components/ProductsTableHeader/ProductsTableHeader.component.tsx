@@ -18,9 +18,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Button } from '@mantine/core';
-import { IMaterialAttachedResponse, ISearch } from '../../types/ReportTypes';
+import AddMaterialModal from 'components/AddMaterialModal';
+import { IMaterialAttachedResponse, ISearch } from 'types/ReportTypes';
 import TABLE_TYPES from './ProductsTableHeader.config';
-import AddMaterialModal from '../AddMaterialModal';
 
 interface Props {
   materialsTableType: string;
@@ -36,6 +36,7 @@ interface Props {
   allAttachedMaterials: IMaterialAttachedResponse[];
   calendarPeriod: Dayjs | null;
   addMaterialModalOpened: boolean;
+  canWriteOffSpareParts: boolean;
   handleUsedMaterialsCalendarChange: (value: Dayjs | null) => void;
   handleUsedMaterialsCalendarClose: () => void;
   handleChange: (event: SelectChangeEvent) => void;
@@ -73,6 +74,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
     allAttachedMaterials,
     calendarPeriod,
     addMaterialModalOpened,
+    canWriteOffSpareParts,
     handleUsedMaterialsCalendarChange,
     handleUsedMaterialsCalendarClose,
     handleChange,
@@ -263,7 +265,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
       <div className="table-header-wrapper">
         {renderUploadFileForm()}
         {pageType === 'Материалы' && renderTableTypesSelect()}
-        {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && renderAddRepairButton()}
+        {pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && canWriteOffSpareParts && renderAddRepairButton()}
         {pageType === 'Материалы' && materialsTableType === 'Списанные' && renderUsedMaterialsCalendar()}
       </div>
       <div className="search-block">

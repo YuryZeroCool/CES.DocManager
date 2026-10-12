@@ -10,16 +10,19 @@ import {
 import { IconLogout, IconX } from '@tabler/icons-react';
 import { showNotification } from '@mantine/notifications';
 
-import logout from '../../../../redux/actions/logout';
-import { RootState } from '../../../../redux/reducers/combineReducers';
-import { setEmail, setToken, setUserName } from '../../../../redux/reducers/loginReducer';
-import { IAuthResponseType } from '../../../../redux/store/configureStore';
-import { UserState } from '../../../../types/UserTypes';
+import logout from 'redux/actions/logout';
+import { RootState } from 'redux/reducers/combineReducers';
+import {
+  setEmail, setRole, setToken, setUserName,
+} from 'redux/reducers/loginReducer';
+import { IAuthResponseType } from 'redux/store/configureStore';
+import { UserState } from 'types/UserTypes';
 
 function clearClientSession() {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('email');
   localStorage.removeItem('userName');
+  localStorage.removeItem('role');
 }
 
 function LogoutLinkContainer() {
@@ -35,6 +38,7 @@ function LogoutLinkContainer() {
         dispatch(setUserName(''));
         dispatch(setToken(''));
         dispatch(setEmail(''));
+        dispatch(setRole(''));
         navigate('/login', { replace: true, state: { fromPage: '/' } });
       })
       .catch(() => {

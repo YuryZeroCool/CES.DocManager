@@ -25,5 +25,7 @@
         public string? NumberPlateCar { get; set; }
 
         public string? AccountName { get; set; }
+
+        public string? OwnerRole { get; set; }
     }
 }

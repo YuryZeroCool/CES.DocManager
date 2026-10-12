@@ -48,6 +48,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
                 if (enshrinedMaterial == null) throw new System.Exception("Упс! Что-то пошло не так");
                 enshrinedMaterial.Count += request.Count;
+                enshrinedMaterial.OwnerRole ??= product.OwnerRole;
                 _ctx.EnshrinedMaterial.Update(enshrinedMaterial);
 
                 await _ctx.SaveChangesAsync(cancellationToken);
@@ -66,7 +67,8 @@ namespace CES.Domain.Handlers.MaterialReport
                     Price = party.Price,
                     DateCreated = party.DateCreated,
                     AccountName = product.Account!.AccountName,
-                    Unit = product.Unit!.Name
+                    Unit = product.Unit!.Name,
+                    OwnerRole = product.OwnerRole
                 };
 
                 var car = await _ctx.NumberPlateOfCar

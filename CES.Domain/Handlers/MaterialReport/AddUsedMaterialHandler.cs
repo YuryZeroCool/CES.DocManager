@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Response.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
@@ -15,10 +16,13 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private readonly IMapper _mapper;
 
-        public AddUsedMaterialHandler(DocMangerContext ctx, IMapper mapper)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public AddUsedMaterialHandler(DocMangerContext ctx, IMapper mapper, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
             _mapper = mapper;
+            _currentUserRole = currentUserRole;
         }
         public async Task<AddUsedMaterialResponse> Handle(AddUsedMaterialRequest request, CancellationToken cancellationToken)
         {
@@ -33,6 +37,8 @@ namespace CES.Domain.Handlers.MaterialReport
                 .FirstOrDefaultAsync(x => x.Id == party.ProductId, cancellationToken);
 
             if (product == null || product.Parties == null || product.Parties.Count == 0) throw new System.Exception("Упс! Что-то пошло не так");
+
+            MaterialOwnerRole.EnsureOwn(_currentUserRole.GetRole(), product.OwnerRole);
 
             var difference = Math.Abs(party.Count * .00001);
 
@@ -75,6 +81,7 @@ namespace CES.Domain.Handlers.MaterialReport
                             Price = party.Price,
                             Unit = product.Unit!.Name,
                             PartyDate = party.PartyDate,
+                            OwnerRole = product.OwnerRole,
                         }
                     })
 
@@ -103,6 +110,7 @@ namespace CES.Domain.Handlers.MaterialReport
                         Price = party.Price,
                         Unit = product.Unit!.Name,
                         PartyDate = party.PartyDate,
+                        OwnerRole = product.OwnerRole,
                     });
                 }
                 else

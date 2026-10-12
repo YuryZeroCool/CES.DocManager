@@ -14,18 +14,16 @@ import {
   IconCalendar,
 } from '@tabler/icons-react';
 import Button from '@mui/material/Button';
-import AccountGroupCheckboxes from '../../components/AccountGroupCheckboxes';
-import ProductsTableHeader from '../../components/ProductsTableHeader/ProductsTableHeader.container';
-import ProductsTable from '../../components/ProductTable/ProductsTable.container';
-import CarAttachmentModal from '../../components/CarAttachmentModal/CarAttachmentModal.container';
-import AddMaterialsWriteOffModal from '../../components/AddMaterialsWriteOffModal/AddMaterialsWriteOffModal.container';
-import DetailedInformationModal from '../../components/DetailedInformationModal/DetailedInformationModal.container';
-import AddUsedMaterialModal from '../../components/AddUsedMaterialModal/AddUsedMaterialModal.container';
-import EditAttachedMaterialModal from '../../components/EditAttachedMaterialModal/EditAttachedMaterialModal.container';
-import { ReportErrors } from '../../types/ReportTypes';
+import AccountGroupCheckboxes from 'components/AccountGroupCheckboxes';
+import ProductsTableHeader from 'components/ProductsTableHeader/ProductsTableHeader.container';
+import ProductsTable from 'components/ProductTable/ProductsTable.container';
+import CarAttachmentModal from 'components/CarAttachmentModal/CarAttachmentModal.container';
+import AddMaterialsWriteOffModal from 'components/AddMaterialsWriteOffModal/AddMaterialsWriteOffModal.container';
+import DetailedInformationModal from 'components/DetailedInformationModal/DetailedInformationModal.container';
+import AddUsedMaterialModal from 'components/AddUsedMaterialModal/AddUsedMaterialModal.container';
+import EditAttachedMaterialModal from 'components/EditAttachedMaterialModal/EditAttachedMaterialModal.container';
+import { ReportErrors } from 'types/ReportTypes';
 import './MaterialReportPage.style.scss';
-
-const reportTypes = ['Акт списания запчастей', 'Акт списания материалов'];
 
 interface Props {
   productsTableError: string;
@@ -39,6 +37,7 @@ interface Props {
   reportName: string | null;
   period: Date | null;
   errorMessage: ReportErrors;
+  canWriteOffSpareParts: boolean;
   setProductsTableError: React.Dispatch<React.SetStateAction<string>>;
   handleClick: () => void;
   handleChangePageType: (value: string) => void;
@@ -60,6 +59,7 @@ export default function MaterialReportPageComponent(props: Props) {
     reportName,
     period,
     errorMessage,
+    canWriteOffSpareParts,
     setProductsTableError,
     handleClick,
     handleChangePageType,
@@ -69,6 +69,9 @@ export default function MaterialReportPageComponent(props: Props) {
   } = props;
 
   const iconStyle = { width: rem(20), height: rem(20) };
+  const reportTypes = canWriteOffSpareParts
+    ? ['Акт списания запчастей', 'Акт списания материалов']
+    : ['Акт списания материалов'];
 
   const renderSelectReportType = () => (
     <Flex mih="80vh" justify="center">

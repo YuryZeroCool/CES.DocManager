@@ -2,17 +2,18 @@ import { AxiosError } from 'axios';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import downloadActOfWriteoffOfSpareParts from '../../redux/actions/report/materialReport/downloadActOfWriteoffOfSpareParts';
-import downloadActOfWritingOffMaterials from '../../redux/actions/report/materialReport/downloadActOfWritingOffMaterials';
-import getAllAttachedMaterials from '../../redux/actions/report/materialReport/getAllAttachedMaterials';
-import getAllDecommissionedMaterials from '../../redux/actions/report/materialReport/getAllDecommissionedMaterials';
-import getAllMaterials from '../../redux/actions/report/materialReport/getAllMaterials';
-import { RootState } from '../../redux/reducers/combineReducers';
-import { toggleMaterialReportDialog } from '../../redux/reducers/modals/modalsReducer';
-import { changePageType, changeRowActiveId } from '../../redux/reducers/report/materialsReducer';
-import { IAuthResponseType } from '../../redux/store/configureStore';
-import { IMaterialsResponse, IPeriod, ReportErrors } from '../../types/ReportTypes';
-import { IModal } from '../../types/type';
+import downloadActOfWriteoffOfSpareParts from 'redux/actions/report/materialReport/downloadActOfWriteoffOfSpareParts';
+import downloadActOfWritingOffMaterials from 'redux/actions/report/materialReport/downloadActOfWritingOffMaterials';
+import getAllAttachedMaterials from 'redux/actions/report/materialReport/getAllAttachedMaterials';
+import getAllDecommissionedMaterials from 'redux/actions/report/materialReport/getAllDecommissionedMaterials';
+import getAllMaterials from 'redux/actions/report/materialReport/getAllMaterials';
+import { RootState } from 'redux/reducers/combineReducers';
+import { toggleMaterialReportDialog } from 'redux/reducers/modals/modalsReducer';
+import { changePageType, changeRowActiveId } from 'redux/reducers/report/materialsReducer';
+import { IAuthResponseType } from 'redux/store/configureStore';
+import { IMaterialsResponse, IPeriod, ReportErrors } from 'types/ReportTypes';
+import { UserState } from 'types/UserTypes';
+import { IModal } from 'types/type';
 import MONTHS from './MaterialReportPage.config';
 import MaterialReportPageComponent from './MaterialReportPage.component';
 
@@ -44,6 +45,8 @@ function MaterialReportPageContainer() {
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
+  const { role } = useSelector<RootState, UserState>((state) => state.login);
+  const canWriteOffSpareParts = role !== 'superadmin';
 
   useEffect(() => {
     async function getMaterials(): Promise<void> {
@@ -173,6 +176,7 @@ function MaterialReportPageContainer() {
       reportName={reportName}
       period={period}
       errorMessage={errorMessage}
+      canWriteOffSpareParts={canWriteOffSpareParts}
       setProductsTableError={setProductsTableError}
       handleClick={handleClick}
       handleChangePageType={handleChangePageType}

@@ -49,6 +49,7 @@ namespace CES.Domain.Handlers.MaterialReport
                             .FirstOrDefaultAsync(x => x.AccountName == material.AccountName, cancellationToken).Result,
                         Unit = _ctx.Units
                             .FirstOrDefaultAsync(x => x.Name == material.Unit, cancellationToken).Result,
+                        OwnerRole = material.OwnerRole ?? "admin"
                     };
                 }
 

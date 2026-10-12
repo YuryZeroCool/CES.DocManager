@@ -15,5 +15,7 @@
         public int ProductGroupAccountId { get; set; }
 
         public ProductGroupAccountEntity? Account { get; set; }
+
+        public string OwnerRole { get; set; } = string.Empty;
     }
 }

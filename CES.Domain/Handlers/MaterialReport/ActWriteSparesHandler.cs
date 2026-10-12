@@ -1,4 +1,5 @@
 ﻿using CES.Domain.Models.Request.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
@@ -12,12 +13,21 @@ namespace CES.Domain.Handlers.MaterialReport
     {
         private readonly DocMangerContext _ctx;
 
-        public ActWriteSparesHandler(DocMangerContext ctx)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public ActWriteSparesHandler(DocMangerContext ctx, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
+            _currentUserRole = currentUserRole;
         }
         public async Task<byte[]> Handle(ActWriteSparesRequest request, CancellationToken cancellationToken)
         {
+            var role = _currentUserRole.GetRole();
+            if (role == MaterialOwnerRole.SuperAdmin)
+            {
+                throw new System.Exception("Недостаточно прав для этой операции");
+            }
+
             var startRow = 31;
             decimal totalSum = 0;
             double totalCount = 0;
@@ -27,7 +37,8 @@ namespace CES.Domain.Handlers.MaterialReport
                     x.CurrentDate.Month == request.Month &&
                     x.CurrentDate.Year == request.Year).ToListAsync(cancellationToken);
 
-            var materials = JoinMaterials(decommissionedMaterials);
+            var materials = JoinMaterials(decommissionedMaterials, role);
+            if (materials.Count == 0) throw new SystemException("Упс! Что-то пошло не так");
 
             var workbook = new Workbook();
             workbook.LoadFromFile(request.Path + "/Docs/materialAct.xls");
@@ -94,7 +105,7 @@ namespace CES.Domain.Handlers.MaterialReport
             return await File.ReadAllBytesAsync(request.Path + "/Docs/materialAct_Out.xls", cancellationToken);
         }
 
-        private List<AddDecommissionedMaterial> JoinMaterials(List<DecommissionedMaterialEntity>? decommissionedMaterials)
+        private List<AddDecommissionedMaterial> JoinMaterials(List<DecommissionedMaterialEntity>? decommissionedMaterials, string role)
         {
             if (decommissionedMaterials == null) throw new SystemException("Упс! Что-то пошло не так");
 
@@ -105,6 +116,8 @@ namespace CES.Domain.Handlers.MaterialReport
                 var materials = JsonSerializer.Deserialize<List<AddDecommissionedMaterial>>(item.Materials);
 
                 if (materials == null) throw new System.Exception("Упс! Что-то пошло не так");
+
+                materials = materials.Where(material => material.OwnerRole == role).ToList();
 
                 foreach (var material in from material in materials let res = materialsList.FirstOrDefault(x => x.NameMaterial == material.NameMaterial && x.NameParty == material.NameParty) select material)
                 {
