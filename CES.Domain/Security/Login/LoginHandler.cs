@@ -46,7 +46,7 @@ namespace CES.Domain.Security.Login
                 RefreshToken = refresh,
                 Email = user.Email,
                 UserName = user.UserName,
-                Role = userRole.FirstOrDefault() ?? string.Empty
+                Role = userRole.FirstOrDefault()?.ToLowerInvariant() ?? string.Empty
             };
         }
     }

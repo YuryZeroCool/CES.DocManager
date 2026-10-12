@@ -4,6 +4,7 @@ using CES.Infra;
 using CES.InfraSecurity;
 using CES.InfraSecurity.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -48,7 +49,12 @@ builder.Services.AddAuthentication(auth =>
         {
             OnMessageReceived = context =>
             {
-                if (context.Request.Cookies.TryGetValue("refreshToken", out var refreshToken)
+                var authorization = context.Request.Headers.Authorization.ToString();
+                var hasBearer = authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+                    && authorization.Length > "Bearer ".Length;
+
+                if (!hasBearer
+                    && context.Request.Cookies.TryGetValue("refreshToken", out var refreshToken)
                     && !string.IsNullOrEmpty(refreshToken))
                 {
                     context.Token = refreshToken;
@@ -110,6 +116,12 @@ builder.Services.AddIdentity<UserEntity, AppRoleEntity>(options =>
     .AddRoleManager<RoleManager<AppRoleEntity>>()
     .AddDefaultTokenProviders()
     .AddSignInManager<SignInManager<UserEntity>>();
+
+builder.Services.Configure<AuthenticationOptions>(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+});
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetIsPersonalNumberHandler).Assembly));
 
 
@@ -133,12 +145,11 @@ var app = builder.Build();
 //    //});
 //}
 app.UseRouting();
+app.UseCors();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 //app.UseHttpsRedirection();
-
-app.UseCors();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute("default", "{controller}/{action=Index}/{id?}");

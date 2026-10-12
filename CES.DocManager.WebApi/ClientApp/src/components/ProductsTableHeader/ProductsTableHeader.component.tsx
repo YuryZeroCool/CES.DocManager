@@ -87,6 +87,10 @@ export default function ProductsTableHeaderComponent(props: Props) {
     addMaterialModalClose,
   } = props;
 
+  const tableTypes = canWriteOffSpareParts
+    ? TABLE_TYPES
+    : TABLE_TYPES.filter((type) => type !== 'Прикрепленные');
+
   const renderUploadFileForm = () => (
     pageType === 'Материалы' && materialsTableType === 'Свободные' && (
       <>
@@ -213,7 +217,7 @@ export default function ProductsTableHeaderComponent(props: Props) {
           onChange={handleChange}
           className="table-header-select"
         >
-          {TABLE_TYPES.map((el, index) => (
+          {tableTypes.map((el, index) => (
             // eslint-disable-next-line react/no-array-index-key
             <MenuItem key={index} value={el}>{el}</MenuItem>
           ))}

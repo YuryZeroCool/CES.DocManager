@@ -17,6 +17,7 @@ export interface ReportDialogProps {
   offSetTop: number;
   isDialogHightBigger: boolean;
   pageType: string;
+  canAttachCar: boolean;
   handleClose: (event: SyntheticEvent, value: string) => void;
 }
 
@@ -27,8 +28,12 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
     offSetTop,
     isDialogHightBigger,
     pageType,
+    canAttachCar,
     handleClose,
   } = props;
+
+  const isShortMenu = (pageType === 'Материалы' && (materialsTableType === 'Прикрепленные' || materialsTableType === 'Списанные'))
+    || (pageType === 'Материалы' && materialsTableType === 'Свободные' && !canAttachCar);
 
   return (
     <div
@@ -37,7 +42,7 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
       {
         top: offSetTop,
         left: offSetX,
-        height: (pageType === 'Материалы' && (materialsTableType === 'Прикрепленные' || materialsTableType === 'Списанные')) ? '100px' : '150px',
+        height: isShortMenu ? '100px' : '150px',
         zIndex: isDialogHightBigger ? 15 : 5,
       }
       }
@@ -45,12 +50,14 @@ export default function MaterialReportDialogComponent(props: ReportDialogProps) 
       <List sx={{ pt: 0 }}>
         {pageType === 'Материалы' && materialsTableType === 'Свободные' && (
           <>
-            <ListItemButton onClick={(event) => handleClose(event, 'Прикрепить авто')}>
-              <ListItemIcon>
-                <AttachFileIcon />
-              </ListItemIcon>
-              <ListItemText primary="Прикрепить авто" />
-            </ListItemButton>
+            {canAttachCar && (
+              <ListItemButton onClick={(event) => handleClose(event, 'Прикрепить авто')}>
+                <ListItemIcon>
+                  <AttachFileIcon />
+                </ListItemIcon>
+                <ListItemText primary="Прикрепить авто" />
+              </ListItemButton>
+            )}
             <ListItemButton onClick={(event) => handleClose(event, 'Списать')}>
               <ListItemIcon>
                 <BorderColorIcon />

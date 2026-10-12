@@ -14,6 +14,7 @@ import {
 } from '../../redux/reducers/report/materialsReducer';
 import { IAuthResponseType } from '../../redux/store/configureStore';
 import { IMaterialsResponse } from '../../types/ReportTypes';
+import { UserState } from '../../types/UserTypes';
 import MaterialReportDialogComponent from './MaterialReportDialog.component';
 import {
   toggleAddUsedMaterialModal,
@@ -40,6 +41,8 @@ function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger
   } = useSelector<RootState, IMaterialsResponse>((state) => state.materials);
 
   const dispatch: IAuthResponseType = useDispatch();
+  const { role } = useSelector<RootState, UserState>((state) => state.login);
+  const canAttachCar = role.toLowerCase() !== 'superadmin';
 
   const [dialogError, setDialogError] = useState<string>('');
 
@@ -96,6 +99,7 @@ function MaterialReportDialogContainer({ offSetX, offSetTop, isDialogHightBigger
       offSetTop={offSetTop}
       isDialogHightBigger={isDialogHightBigger}
       pageType={pageType}
+      canAttachCar={canAttachCar}
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       handleClose={handleClose}
     />
