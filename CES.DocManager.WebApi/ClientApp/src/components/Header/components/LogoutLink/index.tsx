@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
@@ -17,6 +16,12 @@ import { setEmail, setToken, setUserName } from '../../../../redux/reducers/logi
 import { IAuthResponseType } from '../../../../redux/store/configureStore';
 import { UserState } from '../../../../types/UserTypes';
 
+function clearClientSession() {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('email');
+  localStorage.removeItem('userName');
+}
+
 function LogoutLinkContainer() {
   const user = useSelector<RootState, UserState>((state) => state.login);
   const dispatch: IAuthResponseType = useDispatch();
@@ -24,14 +29,14 @@ function LogoutLinkContainer() {
 
   const handleClick = () => {
     async function logOut() {
-      await dispatch(logout(user.email));
-      dispatch(setUserName(''));
-      dispatch(setToken(''));
-      dispatch(setEmail(''));
-      navigate('/login', { replace: true, state: { from: '/' } });
-    }
-    logOut().catch((error) => {
-      if (error instanceof Error || error instanceof AxiosError) {
+      try {
+        await dispatch(logout(user.email)).unwrap();
+        clearClientSession();
+        dispatch(setUserName(''));
+        dispatch(setToken(''));
+        dispatch(setEmail(''));
+        navigate('/login', { replace: true, state: { fromPage: '/' } });
+      } catch {
         showNotification({
           title: 'Не удалось выйти из аккаунта',
           message: 'Произошла ошибка во время выхода из аккаунта.',
@@ -39,7 +44,9 @@ function LogoutLinkContainer() {
           styles: { icon: { background: 'red' } },
         });
       }
-    });
+    }
+
+    logOut();
   };
 
   return (

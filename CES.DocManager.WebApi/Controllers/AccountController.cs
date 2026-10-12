@@ -26,10 +26,13 @@ namespace CES.DocManager.WebApi.Controllers
 
         private const int LifeTimeToken = 2;
 
-        public AccountController(IMediator mediator, IMapper mapper)
+        private readonly string? _siteDomain;
+
+        public AccountController(IMediator mediator, IMapper mapper, IConfiguration configuration)
         {
             _mediator = mediator;
             _mapper = mapper;
+            _siteDomain = configuration["Site:Domain"];
         }
 
         [HttpPost("login")]
@@ -42,20 +45,13 @@ namespace CES.DocManager.WebApi.Controllers
 
                 if (result.RefreshToken == null) throw new Exception("Упс! Что-то пошло не так");
 
-                HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
-                {
-                    Expires = DateTimeOffset.Now.AddDays(LifeTimeToken),
-                    HttpOnly = true,
-                    Secure = true,
-                    Domain = "ces-docmanager.ru",
-                    Path = "/account/"
-                });
+                HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, CreateRefreshCookieOptions());
                 return _mapper.Map<LoginResponse, LoginViewModel>(result);
             }
 
             catch (RestException e)
             {
-                HttpContext.Response.Cookies.Delete("refreshToken");
+                DeleteRefreshCookie();
                 HttpContext.Response.StatusCode = ((int)e.Code);
                 return new
                 {
@@ -91,20 +87,13 @@ namespace CES.DocManager.WebApi.Controllers
 
                 if (result.RefreshToken == null) throw new SystemException("Упс! Что-то пошло не так");
 
-                HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
-                {
-                    Expires = DateTimeOffset.Now.AddDays(LifeTimeToken),
-                    HttpOnly = true,
-                    Secure = true,
-                    Domain = "ces-docmanager.ru",
-                    Path = "/account/"
-                });
+                HttpContext.Response.Cookies.Append("refreshToken", result.RefreshToken, CreateRefreshCookieOptions());
                 return result.AccessToken;
             }
 
             catch (TokenException e)
             {
-                HttpContext.Response.Cookies.Delete("refreshToken");
+                DeleteRefreshCookie();
 
                 HttpContext.Response.StatusCode = ((int)e.Code);
                 return new
@@ -114,7 +103,7 @@ namespace CES.DocManager.WebApi.Controllers
             }
             catch (Microsoft.Data.SqlClient.SqlException)
             {
-                HttpContext.Response.Cookies.Delete("refreshToken");
+                DeleteRefreshCookie();
                 HttpContext.Response.StatusCode = 500;
                 return new
                 {
@@ -123,31 +112,51 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-        [Authorize(AuthenticationSchemes =
-        JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("logout")]
         public async Task LogoutAsync([FromBody] string email)
         {
             try
             {
-                var token = HttpContext.Request.Cookies["refreshToken"] ?? throw new RestException(HttpStatusCode.Unauthorized);
                 var model = new LogoutRequest
                 {
                     EmailAddress = email,
                 };
                 await _mediator.Send(model);
-                HttpContext.Response.Cookies.Delete("refreshToken", new CookieOptions
-                {
-                    Domain = "ces-docmanager.ru",
-                    Path = "/account/"
-                });
+                DeleteRefreshCookie();
                 HttpContext.Response.StatusCode = 200;
             }
             catch (RestException e)
             {
                 HttpContext.Response.StatusCode = ((int)e.Code);
-                HttpContext.Response.Cookies.Delete("refreshToken");
+                DeleteRefreshCookie();
             }
+        }
+
+        private CookieOptions CreateRefreshCookieOptions()
+        {
+            var isHttps = HttpContext.Request.IsHttps;
+            var host = HttpContext.Request.Host.Host;
+            var isSiteHost = !string.IsNullOrWhiteSpace(_siteDomain)
+                && (host.Equals(_siteDomain, StringComparison.OrdinalIgnoreCase)
+                    || host.EndsWith("." + _siteDomain, StringComparison.OrdinalIgnoreCase));
+
+            return new CookieOptions
+            {
+                Expires = DateTimeOffset.Now.AddDays(LifeTimeToken),
+                HttpOnly = true,
+                Secure = isHttps,
+                SameSite = isHttps ? SameSiteMode.None : SameSiteMode.Lax,
+                Path = "/account/",
+                Domain = isSiteHost ? _siteDomain : null
+            };
+        }
+
+        private void DeleteRefreshCookie()
+        {
+            var options = CreateRefreshCookieOptions();
+            options.Expires = null;
+            HttpContext.Response.Cookies.Delete("refreshToken", options);
         }
 
         [HttpPost("registration")]

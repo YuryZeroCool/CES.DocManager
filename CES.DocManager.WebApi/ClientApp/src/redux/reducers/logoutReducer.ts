@@ -14,11 +14,7 @@ const logoutReducer = createSlice({
       const stateCopy = state;
       if (typeof action.payload !== 'undefined') {
         stateCopy.status = action.payload;
-        localStorage.clear();
       }
-    });
-    builder.addCase(logout.rejected, (state, action) => {
-      throw Error(action.payload?.message);
     });
   },
 });
