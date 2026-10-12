@@ -68,8 +68,7 @@ namespace CES.DocManager.WebApi.Controllers
             }
         }
 
-        [Authorize(AuthenticationSchemes =
-        JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("updateTokenPair")]
         [Produces(typeof(string))]
         public async Task<object> UpdateTokenPair([FromBody] string email)
@@ -129,7 +128,6 @@ namespace CES.DocManager.WebApi.Controllers
             catch (RestException e)
             {
                 HttpContext.Response.StatusCode = ((int)e.Code);
-                DeleteRefreshCookie();
             }
         }
 
@@ -137,6 +135,9 @@ namespace CES.DocManager.WebApi.Controllers
         {
             var isHttps = HttpContext.Request.IsHttps;
             var host = HttpContext.Request.Host.Host;
+            var isLocalhost = host.Equals("localhost", StringComparison.OrdinalIgnoreCase)
+                || host.Equals("127.0.0.1", StringComparison.OrdinalIgnoreCase);
+            var secure = isHttps || isLocalhost;
             var isSiteHost = !string.IsNullOrWhiteSpace(_siteDomain)
                 && (host.Equals(_siteDomain, StringComparison.OrdinalIgnoreCase)
                     || host.EndsWith("." + _siteDomain, StringComparison.OrdinalIgnoreCase));
@@ -145,8 +146,8 @@ namespace CES.DocManager.WebApi.Controllers
             {
                 Expires = DateTimeOffset.Now.AddDays(LifeTimeToken),
                 HttpOnly = true,
-                Secure = isHttps,
-                SameSite = isHttps ? SameSiteMode.None : SameSiteMode.Lax,
+                Secure = secure,
+                SameSite = secure ? SameSiteMode.None : SameSiteMode.Lax,
                 Path = "/account/",
                 Domain = isSiteHost ? _siteDomain : null
             };

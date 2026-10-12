@@ -28,7 +28,7 @@ namespace CES.Domain.Services
                 throw new System.Exception("Не удалось определить роль пользователя");
             }
 
-            return role;
+            return role.ToLowerInvariant();
         }
     }
 }

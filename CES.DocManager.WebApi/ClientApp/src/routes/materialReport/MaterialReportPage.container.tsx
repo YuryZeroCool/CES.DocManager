@@ -46,7 +46,7 @@ function MaterialReportPageContainer() {
 
   const dispatch: IAuthResponseType = useDispatch();
   const { role } = useSelector<RootState, UserState>((state) => state.login);
-  const canWriteOffSpareParts = role !== 'superadmin';
+  const canWriteOffSpareParts = role.toLowerCase() !== 'superadmin';
 
   useEffect(() => {
     async function getMaterials(): Promise<void> {

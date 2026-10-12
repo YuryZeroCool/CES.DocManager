@@ -44,7 +44,7 @@ const loginReducer = createSlice({
         localStorage.setItem('accessToken', action.payload.accessToken);
         localStorage.setItem('email', action.payload.email);
         localStorage.setItem('userName', action.payload.userName);
-        localStorage.setItem('role', action.payload.role ?? '');
+        localStorage.setItem('role', (action.payload.role ?? '').toLowerCase());
         stateCopy = Object.assign(state, action.payload);
       }
     });

@@ -1,6 +1,6 @@
 import { SelectChangeEvent } from '@mui/material/Select';
 import { AxiosError } from 'axios';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import React, {
   ChangeEvent,
   useEffect,
@@ -46,7 +46,7 @@ function ProductsTableHeaderContainer() {
 
   const dispatch: IAuthResponseType = useDispatch();
   const { role } = useSelector<RootState, UserState>((state) => state.login);
-  const canWriteOffSpareParts = role !== 'superadmin';
+  const canWriteOffSpareParts = role.toLowerCase() !== 'superadmin';
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -67,6 +67,12 @@ function ProductsTableHeaderContainer() {
   );
 
   const [calendarPeriod, setCalendarPeriod] = useState<Dayjs | null>(period);
+
+  useEffect(() => {
+    if (!canWriteOffSpareParts && materialsTableType === 'Прикрепленные') {
+      dispatch(changeMaterialsTableType('Свободные'));
+    }
+  }, [canWriteOffSpareParts, materialsTableType, dispatch]);
 
   const countCurrentPeriod = (): IPeriod => {
     let currentMonth = 0;
@@ -135,13 +141,39 @@ function ProductsTableHeaderContainer() {
   }, [fileName]);
 
   useEffect(() => {
-    if (period) {
-      if (!calendarPeriod) {
-        setCalendarPeriod(period);
-      }
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      getMaterials();
+    if (materialsTableType !== 'Списанные') {
+      return;
     }
+
+    const currentMonth = dayjs().month();
+    const currentYear = dayjs().year();
+    const month = currentMonth === 0 ? 12 : currentMonth;
+    const year = currentMonth === 0 ? currentYear - 1 : currentYear;
+    const requestPeriod = period ?? dayjs().set('year', year).set('month', month - 1);
+
+    if (!period) {
+      dispatch(changePeriod(requestPeriod));
+    }
+
+    dispatch(resetAllUsedMaterials());
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    dispatch(getAllUsedMaterials({
+      month: requestPeriod.month() + 1,
+      year: requestPeriod.year(),
+    }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [materialsTableType]);
+
+  useEffect(() => {
+    if (!period) {
+      return;
+    }
+    if (!calendarPeriod) {
+      setCalendarPeriod(period);
+      return;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    getMaterials();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period]);
 

@@ -141,9 +141,11 @@ export default function MaterialReportPageComponent(props: Props) {
           <Tabs.Tab value="Материалы" leftSection={<IconSquareLetterM style={iconStyle} />}>
             Материалы
           </Tabs.Tab>
-          <Tabs.Tab value="История ремонтов" leftSection={<IconHistory style={iconStyle} />}>
-            История ремонтов
-          </Tabs.Tab>
+          {canWriteOffSpareParts && (
+            <Tabs.Tab value="История ремонтов" leftSection={<IconHistory style={iconStyle} />}>
+              История ремонтов
+            </Tabs.Tab>
+          )}
           <Tabs.Tab value="Отчеты" leftSection={<IconReport style={iconStyle} />}>
             Отчеты
           </Tabs.Tab>
