@@ -1,5 +1,6 @@
 ﻿using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Response.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models;
 using CES.Infra.Models.MaterialReport;
@@ -17,13 +18,22 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private readonly List<AddDecommissionedMaterial> _materials;
 
-        public AddDecommissionedMaterialHandler(DocMangerContext ctx)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public AddDecommissionedMaterialHandler(DocMangerContext ctx, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
+            _currentUserRole = currentUserRole;
             _materials = new List<AddDecommissionedMaterial>();
         }
         public async Task<AddDecommissionedMaterialResponse> Handle(AddDecommissionedMaterialRequest request, CancellationToken cancellationToken)
         {
+            var role = _currentUserRole.GetRole();
+            if (role == MaterialOwnerRole.SuperAdmin)
+            {
+                throw new System.Exception("Недостаточно прав для этой операции");
+            }
+
             if (request.Materials == null || request.Materials.Count == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
             foreach (var material in request.Materials)
@@ -32,6 +42,8 @@ namespace CES.Domain.Handlers.MaterialReport
                     x.Id == material.Id, cancellationToken);
 
                 if (enshrinedMaterial == null || material.Count == 0) throw new System.Exception("Упс! Что-то пошло не так");
+
+                MaterialOwnerRole.EnsureOwn(role, enshrinedMaterial.OwnerRole);
 
                 var difference = Math.Abs(material.Count * .00001);
 

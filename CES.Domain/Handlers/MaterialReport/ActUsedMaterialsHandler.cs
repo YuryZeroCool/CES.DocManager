@@ -1,4 +1,5 @@
 ﻿using CES.Domain.Models.Request.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,12 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private readonly DocMangerContext _ctx;
 
-        public ActUsedMaterialsHandler(DocMangerContext ctx)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public ActUsedMaterialsHandler(DocMangerContext ctx, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
+            _currentUserRole = currentUserRole;
         }
         public async Task<byte[]> Handle(ActUsedMaterialsRequest request, CancellationToken cancellationToken)
         {
@@ -30,7 +34,14 @@ namespace CES.Domain.Handlers.MaterialReport
             var materials = JsonSerializer.Deserialize<List<UsedMaterial>>(usedMaterials.Materials);
 
             if (materials == null) throw new SystemException("Упс! Что-то пошло не так");
-            materials = materials.OrderBy(p => p.NameMaterial).ToList();
+
+            var role = _currentUserRole.GetRole();
+            materials = materials
+                .Where(item => item.OwnerRole == role)
+                .OrderBy(p => p.NameMaterial)
+                .ToList();
+
+            if (materials.Count == 0) throw new SystemException("Упс! Что-то пошло не так");
             var workbook = new Workbook();
             workbook.LoadFromFile(request.Path + "/Docs/materialAct.xls");
             var sheet = workbook.Worksheets[0];
