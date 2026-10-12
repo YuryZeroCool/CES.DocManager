@@ -46,24 +46,39 @@ builder.Services.AddAuthentication(auth =>
         {
             OnMessageReceived = context =>
             {
-                context.Token = context.Request.Cookies["refreshToken"];
+                if (context.Request.Cookies.TryGetValue("refreshToken", out var refreshToken)
+                    && !string.IsNullOrEmpty(refreshToken))
+                {
+                    context.Token = refreshToken;
+                }
+
                 return System.Threading.Tasks.Task.CompletedTask;
             }
         };
     });
 
-string baseUrl = "https://localhost:3000";
-string basehttp = "http://localhost:3000";
 string[] paramHeader = { "X-Total-Count", "X-Total-Sum", "Content-Disposition" };
+var siteDomain = builder.Configuration["Site:Domain"];
+var allowedOrigins = new List<string>
+{
+    "https://localhost:3000",
+    "http://localhost:3000"
+};
+if (!string.IsNullOrWhiteSpace(siteDomain))
+{
+    allowedOrigins.Add($"https://{siteDomain}");
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyPolicy",
-        builder =>
+        policy =>
         {
-            builder.WithOrigins(baseUrl)
-                .WithMethods("PUT", "POST", "DELETE", "GET").AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithExposedHeaders(paramHeader);
-            builder.WithOrigins(basehttp)
-               .WithMethods("PUT", "POST", "DELETE", "GET").AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithExposedHeaders(paramHeader);
+            policy.WithOrigins(allowedOrigins.ToArray())
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+                .WithExposedHeaders(paramHeader);
         });
 });
 
