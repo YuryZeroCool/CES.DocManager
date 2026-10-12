@@ -487,13 +487,12 @@ function ActModal(props: ActModalProps) {
       }
 
       dispatch(createNewAct(requestBody))
+        .unwrap()
         .then(() => {
           dispatch(editNotesWithoutActAfterAddAct(selectedNotesId));
           handleClose();
         })
-        .catch((error) => {
-          handleError(error, setModalError);
-        });
+        .catch(() => {});
     }
   };
 

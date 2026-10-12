@@ -17,6 +17,7 @@ GetActsListReq, { rejectValue: FetchTodosError }>(
         organizationType: params.organizationType,
         filter: params.filter,
         searchValue: params.searchValue,
+        onlyUnsigned: String(params.onlyUnsigned),
       });
       const response = await $api.get<ActsListRes>(
         `${process.env.REACT_APP_GET_ACTS_LIST}?${query.toString()}`,

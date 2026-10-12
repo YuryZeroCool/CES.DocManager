@@ -80,25 +80,83 @@ function getErrorMessage(action: RejectedAction): string {
   return 'Произошла ошибка';
 }
 
+interface CustomRejectedNotification {
+  title: string;
+  message?: string;
+}
+
+const customErrors: Record<string, CustomRejectedNotification> = {
+  'createOrganization/rejected': {
+    title: 'Ошибка',
+    message: 'Не удалось создать организацию. Проверьте поля формы.',
+  },
+  'editOrganization/rejected': {
+    title: 'Ошибка',
+    message: 'Не удалось сохранить изменения организации.',
+  },
+  'deleteOrganization/rejected': {
+    title: 'Ошибка',
+    message: 'Не удалось удалить организацию.',
+  },
+  'deleteContract/rejected': {
+    title: 'Ошибка',
+    message: 'Не удалось удалить договор.',
+  },
+  'searchOrganizations/rejected': {
+    title: 'Ошибка',
+    message: 'Не удалось получить список организаций.',
+  },
+  'getOrganizationType/rejected': {
+    title: 'Ошибка',
+    message: 'Не удалось загрузить типы организаций.',
+  },
+  'getActsList/rejected': {
+    title: 'Ошибка загрузки актов',
+  },
+  'getActTypesFromFile/rejected': {
+    title: 'Список типов актов не был получен',
+  },
+  'getActDataFromFile/rejected': {
+    title: 'Данные акта не были получены',
+  },
+  'createNewAct/rejected': {
+    title: 'Ошибка создания акта',
+  },
+  'deleteAct/rejected': {
+    title: 'Ошибка удаления акта',
+    message: 'Не удалось удалить акт',
+  },
+  'getNotesWithoutActs/rejected': {
+    title: 'Список заявок не был получен',
+  },
+  'deleteNoteWithoutAct/rejected': {
+    title: 'Заявка не была удалена',
+  },
+  'getStreetsBySearch/rejected': {
+    title: 'Ошибка поиска улицы',
+  },
+  'createExistedNote/rejected': {
+    title: 'Заявка не создана',
+  },
+  'editExistedNote/rejected': {
+    title: 'Ошибка редактирования заявки',
+    message: 'Не удалось сохранить заявку',
+  },
+  'createStreet/rejected': {
+    title: 'Не удалось добавить улицу',
+  },
+};
+
 const errorNotificationMiddleware: Middleware = () => (next) => (action: AnyAction) => {
   const result = next(action);
 
   if (typeof action.type === 'string' && action.type.endsWith('/rejected')) {
-    const customMessages: Record<string, string> = {
-      'createOrganization/rejected': 'Не удалось создать организацию. Проверьте поля формы.',
-      'editOrganization/rejected': 'Не удалось сохранить изменения организации.',
-      'deleteOrganization/rejected': 'Не удалось удалить организацию.',
-      'deleteContract/rejected': 'Не удалось удалить договор.',
-      'searchOrganizations/rejected': 'Не удалось получить список организаций.',
-      'getOrganizationType/rejected': 'Не удалось загрузить типы организаций.',
-    };
-
     const rejectedAction = action as RejectedAction;
-    const message = customMessages[rejectedAction.type] ?? getErrorMessage(rejectedAction);
+    const customError = customErrors[rejectedAction.type];
     showNotification({
-      title: 'Ошибка',
+      title: customError?.title ?? 'Ошибка',
       color: 'red',
-      message,
+      message: customError?.message ?? getErrorMessage(rejectedAction),
       withCloseButton: true,
       styles: { root: { borderColor: 'red' } },
     });

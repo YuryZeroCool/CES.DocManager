@@ -1,6 +1,6 @@
-import React, { memo } from 'react';
+import React, { ChangeEvent, memo } from 'react';
 import {
-  Button, Group, Radio, Select, Stack, TextInput,
+  Button, Checkbox, Group, Radio, Select, Stack, TextInput,
 } from '@mantine/core';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import { IconCalendar } from '@tabler/icons-react';
@@ -95,9 +95,16 @@ function ActsListHeader(props: ActsListHeaderProps) {
               <Radio value="employee" label="Водитель" />
               <Radio value="street" label="Улица" />
               <Radio value="numberPlateOfCar" label="Номер машины" />
-              <Radio value="isNotSigned" label="Неподписанные" />
             </Group>
           </Radio.Group>
+
+          <Checkbox
+            label="Только неподписанные"
+            checked={actsHistoryParams.onlyUnsigned === true}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              updateActsHistoryParams('onlyUnsigned', event.currentTarget.checked);
+            }}
+          />
         </Group>
       </Group>
 
@@ -126,9 +133,7 @@ function ActsListHeader(props: ActsListHeaderProps) {
           variant="gradient"
           gradient={{ from: 'violet', to: 'cyan', deg: 90 }}
           onClick={() => handleGetActsListBtnClick(actsHistoryParams)}
-          disabled={actsHistoryParams.filter !== ''
-            && actsHistoryParams.filter !== 'isNotSigned'
-            && actsHistoryParams.searchValue === ''}
+          disabled={actsHistoryParams.filter !== '' && actsHistoryParams.searchValue === ''}
         >
           Получить акты
         </Button>

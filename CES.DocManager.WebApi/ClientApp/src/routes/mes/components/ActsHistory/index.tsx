@@ -1,12 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
-import { rem } from '@mantine/core';
-import { IconX } from '@tabler/icons-react';
-import { showNotification } from '@mantine/notifications';
 import { format, getDaysInMonth } from 'date-fns';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { OrganizationState } from 'types/mes/OrganizationTypes';
-import { GetActsListReq, INotesState, ActsHistoryParams } from 'types/MesTypes';
+import { GetActsListReq, ActsHistoryParams } from 'types/MesTypes';
 import { RootState } from 'redux/reducers/combineReducers';
 import { getActsList, getOrganizationType } from 'redux/actions/mes';
 import { IAuthResponseType } from 'redux/store/configureStore';
@@ -34,16 +31,10 @@ function ActsHistory(props: ActsHistoryProps) {
     filter: '',
     searchValue: '',
     organizationType: '',
+    onlyUnsigned: false,
   });
 
   const dispatch: IAuthResponseType = useDispatch();
-
-  const {
-    requestStatus,
-    mesError,
-  } = useSelector<RootState, INotesState>(
-    (state) => state.mes,
-  );
 
   const {
     organizationTypes,
@@ -58,21 +49,14 @@ function ActsHistory(props: ActsHistoryProps) {
       max: format(actsHistoryParams.maxDate, 'dd-MM-yyyy HH:mm:ss'),
       filter: actsHistoryParams.filter,
       searchValue: actsHistoryParams.searchValue,
+      onlyUnsigned: actsHistoryParams.onlyUnsigned,
     };
 
     dispatch(getActsList(params)).catch(() => {});
   };
 
   useEffect(() => {
-    dispatch(getOrganizationType())
-      .catch(() => {
-        showNotification({
-          title: 'Список типов организаций не был получен',
-          message: 'Произошла ошибка во время получения списка типов организаций.',
-          icon: <IconX style={{ width: rem(20), height: rem(20) }} />,
-          styles: { icon: { background: 'red' } },
-        });
-      });
+    dispatch(getOrganizationType()).catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -80,17 +64,6 @@ function ActsHistory(props: ActsHistoryProps) {
     getActsListReq();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (requestStatus === 'rejected' && mesError) {
-      showNotification({
-        title: 'Ошибка загрузки актов',
-        message: mesError,
-        icon: <IconX style={{ width: rem(20), height: rem(20) }} />,
-        styles: { icon: { background: 'red' } },
-      });
-    }
-  }, [requestStatus, mesError]);
 
   const updateActsHistoryParams = <K extends keyof ActsHistoryParams>(
     key: K,
@@ -117,7 +90,6 @@ function ActsHistory(props: ActsHistoryProps) {
 
       <ActsListTable
         editActModalOpen={editActModalOpen}
-        filter={actsHistoryParams.filter}
       />
     </>
   );

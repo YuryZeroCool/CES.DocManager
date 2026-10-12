@@ -57,15 +57,16 @@ const notesWithoutActReducer = createSlice({
       state.notesWithoutAct = action.payload;
       state.requestStatus = 'fulfilled';
     });
-    builder.addCase(getNotesWithoutActs.rejected, (_, action) => {
-      throw Error(action.payload?.message);
+    builder.addCase(getNotesWithoutActs.rejected, (state, action) => {
+      state.requestStatus = 'rejected';
+      state.notesWithoutActError = action.payload?.message || 'Список заявок не был получен';
     });
 
     builder.addCase(deleteNoteWithoutAct.fulfilled, (state) => {
       state.requestStatus = 'fulfilled';
     });
     builder.addCase(deleteNoteWithoutAct.rejected, (state, action) => {
-      throw Error(action.payload?.message);
+      state.notesWithoutActError = action.payload?.message || 'Заявка не была удалена';
     });
 
     builder.addCase(getStreetsBySearch.pending, (state) => {
@@ -76,7 +77,8 @@ const notesWithoutActReducer = createSlice({
       state.requestStatus = 'fulfilled';
     });
     builder.addCase(getStreetsBySearch.rejected, (state, action) => {
-      throw Error(action.payload?.message);
+      state.streetsBySearch = [];
+      state.notesWithoutActError = action.payload?.message || 'Нет данных по запросу';
     });
   },
 });
