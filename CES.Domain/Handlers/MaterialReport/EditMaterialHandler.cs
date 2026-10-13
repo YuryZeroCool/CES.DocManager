@@ -1,5 +1,6 @@
 ﻿using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Response.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +11,12 @@ namespace CES.Domain.Handlers.MaterialReport
     {
         private readonly DocMangerContext _ctx;
 
-        public EditMaterialHandler(DocMangerContext ctx)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public EditMaterialHandler(DocMangerContext ctx, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
+            _currentUserRole = currentUserRole;
         }
         public async Task<EditMaterialResponse> Handle(EditMaterialRequest request, CancellationToken cancellationToken)
         {
@@ -22,6 +26,8 @@ namespace CES.Domain.Handlers.MaterialReport
             var material = await _ctx.Products.FindAsync(currentMaterial.ProductId);
 
             if (material == null) throw new System.Exception("Упс! Что-то пошло не так");
+
+            MaterialOwnerRole.EnsureOwn(_currentUserRole.GetRole(), material.OwnerRole);
 
             request.EditedMaterial!.ApplyTo(material);
 

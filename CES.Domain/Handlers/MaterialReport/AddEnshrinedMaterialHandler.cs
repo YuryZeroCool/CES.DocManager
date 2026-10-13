@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Response.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
@@ -14,18 +15,29 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private readonly IMapper _mapper;
 
-        public AddEnshrinedMaterialHandler(DocMangerContext ctx, IMapper mapper)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public AddEnshrinedMaterialHandler(DocMangerContext ctx, IMapper mapper, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
 
             _mapper = mapper;
+            _currentUserRole = currentUserRole;
         }
 
         public async Task<AddEnshrinedMaterialResponse> Handle(AddEnshrinedMaterialRequest request, CancellationToken cancellationToken)
         {
             EnshrinedMaterialEntity? enshrine;
 
-            var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.Party, cancellationToken);
+            var role = _currentUserRole.GetRole();
+            if (role == MaterialOwnerRole.SuperAdmin)
+            {
+                throw new System.Exception("Недостаточно прав для этой операции");
+            }
+
+            var party = await _ctx.Parties.FirstOrDefaultAsync(
+                x => x.Name == request.Party && x.Product!.OwnerRole == role,
+                cancellationToken);
 
             if (party == null || party.ProductId == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
@@ -37,14 +49,17 @@ namespace CES.Domain.Handlers.MaterialReport
 
             if (product == null || product.Parties == null || product.Parties.Count == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
+            MaterialOwnerRole.EnsureOwn(role, product.OwnerRole);
+
             if (_ctx.EnshrinedMaterial.Any(x => x.VehicleBrand == request.Brand &&
-               x.NumberPlateCar == request.NumberPlateOfCar && x.NameParty == request.Party)) // если существует такой закрепленный материал
+               x.NumberPlateCar == request.NumberPlateOfCar && x.NameParty == request.Party && x.OwnerRole == role)) // если существует такой закрепленный материал
             {
                 var enshrinedMaterial = await _ctx.EnshrinedMaterial
                     .FirstOrDefaultAsync(x =>
                     x.VehicleBrand == request.Brand &&
                     x.NumberPlateCar == request.NumberPlateOfCar &&
-                    x.NameParty == request.Party, cancellationToken);
+                    x.NameParty == request.Party &&
+                    x.OwnerRole == role, cancellationToken);
 
                 if (enshrinedMaterial == null) throw new System.Exception("Упс! Что-то пошло не так");
                 enshrinedMaterial.Count += request.Count;
@@ -54,7 +69,7 @@ namespace CES.Domain.Handlers.MaterialReport
                 await _ctx.SaveChangesAsync(cancellationToken);
 
                 enshrine = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x => x.VehicleBrand == request.Brand &&
-               x.NumberPlateCar == request.NumberPlateOfCar && x.NameParty == request.Party, cancellationToken);
+               x.NumberPlateCar == request.NumberPlateOfCar && x.NameParty == request.Party && x.OwnerRole == role, cancellationToken);
             }
             else
             {

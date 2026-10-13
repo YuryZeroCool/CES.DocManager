@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CES.Domain.Models.Request.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
@@ -15,11 +16,14 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private readonly IMapper _mapper;
 
+        private readonly ICurrentUserRole _currentUserRole;
+
         private int _id;
-        public DeleteDecommissionedMaterialHandler(DocMangerContext ctx, IMapper mapper)
+        public DeleteDecommissionedMaterialHandler(DocMangerContext ctx, IMapper mapper, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
             _mapper = mapper;
+            _currentUserRole = currentUserRole;
         }
         public async Task<int> Handle(DeleteDecommissionedMaterialRequest request, CancellationToken cancellationToken)
         {
@@ -33,13 +37,23 @@ namespace CES.Domain.Handlers.MaterialReport
 
             if (materials == null) throw new System.Exception("Упс! Что-то пошло не так");
 
+            var role = _currentUserRole.GetRole();
+            if (role == MaterialOwnerRole.SuperAdmin)
+            {
+                throw new System.Exception("Недостаточно прав для этой операции");
+            }
 
             foreach (var mater in materials)
             {
+                var ownerRole = string.IsNullOrWhiteSpace(mater.OwnerRole) ? "admin" : mater.OwnerRole;
+                MaterialOwnerRole.EnsureOwn(role, ownerRole);
+                mater.OwnerRole = ownerRole;
+
                 var enshrinedMaterial = await _ctx.EnshrinedMaterial.FirstOrDefaultAsync(x =>
                     x.NameMaterial == mater.NameMaterial
                     && x.NameParty == mater.NameParty
-                    && x.NumberPlateCar == mater.NumberPlateCar, cancellationToken);
+                    && x.NumberPlateCar == mater.NumberPlateCar
+                    && x.OwnerRole == ownerRole, cancellationToken);
 
                 if (enshrinedMaterial != null)
                 {
