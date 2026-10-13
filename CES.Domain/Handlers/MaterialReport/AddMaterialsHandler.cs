@@ -14,6 +14,8 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private string? _nameProduct;
 
+        private ProductEntity? _currentProduct;
+
         private bool _isCurrentAccount;
 
         private readonly Workbook _workbook;
@@ -75,20 +77,28 @@ namespace CES.Domain.Handlers.MaterialReport
                                     .Where(x => x.Name == _nameProduct && x.OwnerRole == ownerRole)
                                     .ToListAsync(cancellationToken);
 
-                                if (!products.Any(x => x.ProductGroupAccountId == account.Id))
+                                _currentProduct = products.FirstOrDefault(x => x.ProductGroupAccountId == account.Id);
+                                if (_currentProduct == null)
                                 {
-                                    await CreateProduct(CreateUnit(sheetUnit, cancellationToken).Result, account, ownerRole);
+                                    var unit = await CreateUnit(sheetUnit, cancellationToken);
+                                    _currentProduct = await CreateProduct(unit, account, ownerRole);
                                 }
                             }
                             else
                             {
                                 if (sheet.Rows[k].CellList[2].Text == null) continue;
 
-                                var currentProduct = await _ctx.Products.FirstOrDefaultAsync(p =>
-                                    p.Name == _nameProduct
-                                    && p.OwnerRole == ownerRole
-                                    && p.ProductGroupAccountId == account.Id, cancellationToken);
+                                var currentProduct = _currentProduct != null
+                                    && _currentProduct.Name == _nameProduct
+                                    && _currentProduct.OwnerRole == ownerRole
+                                    && _currentProduct.ProductGroupAccountId == account.Id
+                                    ? _currentProduct
+                                    : await _ctx.Products.FirstOrDefaultAsync(p =>
+                                        p.Name == _nameProduct
+                                        && p.OwnerRole == ownerRole
+                                        && p.ProductGroupAccountId == account.Id, cancellationToken);
                                 if (currentProduct == null) throw new System.Exception("Упс! Что-то пошло не так");
+                                _currentProduct = currentProduct;
 
                                 var partyArr = sheet.Rows[k].CellList[2].Text.Split(" от ");
                                 var partyName = partyArr[0][7..];
@@ -155,16 +165,20 @@ namespace CES.Domain.Handlers.MaterialReport
             await _ctx.SaveChangesAsync();
         }
 
-        private async Task CreateProduct(UnitEntity? unit, ProductGroupAccountEntity? account, string ownerRole)
+        private async Task<ProductEntity> CreateProduct(UnitEntity? unit, ProductGroupAccountEntity? account, string ownerRole)
         {
-            await _ctx.Products.AddAsync(new ProductEntity()
+            var product = new ProductEntity()
             {
                 Name = _nameProduct,
                 Account = account,
+                ProductGroupAccountId = account!.Id,
                 Unit = unit,
+                UnitId = unit!.Id,
                 OwnerRole = ownerRole
-            });
+            };
+            await _ctx.Products.AddAsync(product);
             await _ctx.SaveChangesAsync();
+            return product;
         }
 
         private async Task<UnitEntity> CreateUnit(string sheetUnit, CancellationToken cancellationToken)

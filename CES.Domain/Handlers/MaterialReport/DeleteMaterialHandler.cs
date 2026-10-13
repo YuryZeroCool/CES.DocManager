@@ -1,4 +1,5 @@
 ﻿using CES.Domain.Models.Request.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -9,9 +10,12 @@ namespace CES.Domain.Handlers.MaterialReport
     {
         private readonly DocMangerContext _ctx;
 
-        public DeleteMaterialHandler(DocMangerContext ctx)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public DeleteMaterialHandler(DocMangerContext ctx, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
+            _currentUserRole = currentUserRole;
         }
 
         public async Task<int> Handle(DeleteMaterialRequest request, CancellationToken cancellationToken)
@@ -25,6 +29,8 @@ namespace CES.Domain.Handlers.MaterialReport
                 .FirstOrDefaultAsync(x => x.Id == material.ProductId, cancellationToken);
 
             if (product == null) throw new System.Exception("Материал не найден");
+
+            MaterialOwnerRole.EnsureOwn(_currentUserRole.GetRole(), product.OwnerRole);
 
             if (product.Parties!.Count > 1)
             {

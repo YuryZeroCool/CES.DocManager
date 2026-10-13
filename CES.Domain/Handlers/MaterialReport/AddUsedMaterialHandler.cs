@@ -26,7 +26,11 @@ namespace CES.Domain.Handlers.MaterialReport
         }
         public async Task<AddUsedMaterialResponse> Handle(AddUsedMaterialRequest request, CancellationToken cancellationToken)
         {
-            var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.PartyName, cancellationToken);
+            var role = _currentUserRole.GetRole();
+
+            var party = await _ctx.Parties.FirstOrDefaultAsync(
+                x => x.Name == request.PartyName && x.Product!.OwnerRole == role,
+                cancellationToken);
 
             if (party == null || party.ProductId == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
@@ -38,7 +42,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
             if (product == null || product.Parties == null || product.Parties.Count == 0) throw new System.Exception("Упс! Что-то пошло не так");
 
-            MaterialOwnerRole.EnsureOwn(_currentUserRole.GetRole(), product.OwnerRole);
+            MaterialOwnerRole.EnsureOwn(role, product.OwnerRole);
 
             var difference = Math.Abs(party.Count * .00001);
 
@@ -97,7 +101,7 @@ namespace CES.Domain.Handlers.MaterialReport
 
                 if (res == null) throw new SystemException("Упс! Что-то пошло не так");
 
-                var index = res.FindIndex(x => x.NameParty == request.PartyName);
+                var index = res.FindIndex(x => x.NameParty == request.PartyName && x.OwnerRole == role);
 
                 if (index == -1)
                 {
@@ -129,7 +133,8 @@ namespace CES.Domain.Handlers.MaterialReport
 
             if (lastMaterial == null) throw new SystemException("Упс! Что-то пошло не так");
 
-            return await Task.FromResult(_mapper.Map<AddUsedMaterialResponse>(lastMaterial.FirstOrDefault(x => x.NameParty == request.PartyName)));
+            return await Task.FromResult(_mapper.Map<AddUsedMaterialResponse>(
+                lastMaterial.FirstOrDefault(x => x.NameParty == request.PartyName && x.OwnerRole == role)));
         }
     }
 }

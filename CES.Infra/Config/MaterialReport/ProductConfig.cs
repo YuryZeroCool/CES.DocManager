@@ -1,5 +1,6 @@
 ﻿using CES.Infra.Models.MaterialReport;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CES.Infra.Config.MaterialReport
@@ -18,6 +19,8 @@ namespace CES.Infra.Config.MaterialReport
                 .IsRequired()
                 .HasMaxLength(256)
                 .HasDefaultValue("admin");
+            builder.Property(e => e.OwnerRole).Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Save);
+            builder.Property(e => e.OwnerRole).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Save);
 
             builder.HasMany(x => x.Parties)
                 .WithOne(p => p.Product);

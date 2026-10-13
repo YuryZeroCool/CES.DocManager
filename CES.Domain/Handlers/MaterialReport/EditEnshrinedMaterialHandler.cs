@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CES.Domain.Models.Request.MaterialReport;
 using CES.Domain.Models.Response.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
@@ -14,10 +15,13 @@ namespace CES.Domain.Handlers.MaterialReport
 
         private readonly IMapper _mapper;
 
-        public EditEnshrinedMaterialHandler(DocMangerContext ctx, IMapper mapper)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public EditEnshrinedMaterialHandler(DocMangerContext ctx, IMapper mapper, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
             _mapper = mapper;
+            _currentUserRole = currentUserRole;
         }
 
         public async Task<EditEnshrinedMaterialResponse> Handle(EditEnshrinedMaterialRequest request, CancellationToken cancellationToken)
@@ -26,19 +30,30 @@ namespace CES.Domain.Handlers.MaterialReport
 
             if (material == null) throw new System.Exception("Упс! Что-то пошло не так");
 
+            var ownerRole = string.IsNullOrWhiteSpace(material.OwnerRole) ? "admin" : material.OwnerRole;
+            MaterialOwnerRole.EnsureOwn(_currentUserRole.GetRole(), ownerRole);
+
             var countNew = material.Count;
 
             request.EnshrinedMaterial!.ApplyTo(material);
+            material.OwnerRole = ownerRole;
             await _ctx.SaveChangesAsync(cancellationToken);
 
             countNew -= material.Count;
 
-            var res = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == material.NameParty, cancellationToken);
+            var res = await _ctx.Parties.FirstOrDefaultAsync(x =>
+                x.Name == material.NameParty
+                && x.Product!.Name == material.NameMaterial
+                && x.Product.OwnerRole == ownerRole
+                && x.Product.Account!.AccountName == material.AccountName, cancellationToken);
 
             if (res == null) // Если не существует партии
             {
                 var nameMaterial = await _ctx.Products
-                    .FirstOrDefaultAsync(x => x.Name == material.NameMaterial, cancellationToken);
+                    .FirstOrDefaultAsync(x =>
+                        x.Name == material.NameMaterial
+                        && x.OwnerRole == ownerRole
+                        && x.Account!.AccountName == material.AccountName, cancellationToken);
 
                 if (nameMaterial == null) // Если не существует материала
                 {
@@ -49,7 +64,7 @@ namespace CES.Domain.Handlers.MaterialReport
                             .FirstOrDefaultAsync(x => x.AccountName == material.AccountName, cancellationToken).Result,
                         Unit = _ctx.Units
                             .FirstOrDefaultAsync(x => x.Name == material.Unit, cancellationToken).Result,
-                        OwnerRole = material.OwnerRole ?? "admin"
+                        OwnerRole = ownerRole
                     };
                 }
 

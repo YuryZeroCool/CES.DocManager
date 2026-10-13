@@ -1,4 +1,5 @@
 ﻿using CES.Domain.Models.Request.MaterialReport;
+using CES.Domain.Services;
 using CES.Infra;
 using CES.Infra.Models.MaterialReport;
 using MediatR;
@@ -10,9 +11,12 @@ namespace CES.Domain.Handlers.MaterialReport
     {
         private readonly DocMangerContext _ctx;
 
-        public DeleteEnshrinedMaterialHandler(DocMangerContext ctx)
+        private readonly ICurrentUserRole _currentUserRole;
+
+        public DeleteEnshrinedMaterialHandler(DocMangerContext ctx, ICurrentUserRole currentUserRole)
         {
             _ctx = ctx;
+            _currentUserRole = currentUserRole;
         }
         public async Task<int> Handle(DeleteEnshrinedMaterialRequest request, CancellationToken cancellationToken)
         {
@@ -20,7 +24,16 @@ namespace CES.Domain.Handlers.MaterialReport
 
             if (enshrinedMaterial == null) throw new System.Exception("Упс! Что-то пошло не так");
 
-            var party = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.NameParty, cancellationToken);
+            var ownerRole = string.IsNullOrWhiteSpace(enshrinedMaterial.OwnerRole)
+                ? "admin"
+                : enshrinedMaterial.OwnerRole;
+            MaterialOwnerRole.EnsureOwn(_currentUserRole.GetRole(), ownerRole);
+
+            var party = await _ctx.Parties.FirstOrDefaultAsync(x =>
+                x.Name == enshrinedMaterial.NameParty
+                && x.Product!.Name == enshrinedMaterial.NameMaterial
+                && x.Product.OwnerRole == ownerRole
+                && x.Product.Account!.AccountName == enshrinedMaterial.AccountName, cancellationToken);
 
             var unit = await _ctx.Units.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.Unit, cancellationToken);
             if (unit == null) throw new System.Exception("Упс! Что-то пошло не так");
@@ -31,7 +44,8 @@ namespace CES.Domain.Handlers.MaterialReport
             if (party == null)
             {
                 var material = _ctx.Products.FirstOrDefault(x => x.Name == enshrinedMaterial.NameMaterial &&
-                 x.Account!.AccountName == enshrinedMaterial.AccountName);
+                 x.Account!.AccountName == enshrinedMaterial.AccountName &&
+                 x.OwnerRole == ownerRole);
 
                 if (material == null)
                 {
@@ -40,7 +54,7 @@ namespace CES.Domain.Handlers.MaterialReport
                         Account = account,
                         Unit = unit,
                         Name = enshrinedMaterial.NameMaterial,
-                        OwnerRole = enshrinedMaterial.OwnerRole ?? "admin"
+                        OwnerRole = ownerRole
                     };
                 }
 
@@ -58,13 +72,9 @@ namespace CES.Domain.Handlers.MaterialReport
             }
             else
             {
-                var par = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == enshrinedMaterial.NameParty, cancellationToken);
-
-                if (par == null) throw new System.Exception("Упс! Что-то пошло не так");
-
-                par.Count += enshrinedMaterial.Count;
-                par.TotalSum = (decimal)par.Count * par.Price;
-                _ctx.Parties.Update(par);
+                party.Count += enshrinedMaterial.Count;
+                party.TotalSum = (decimal)party.Count * party.Price;
+                _ctx.Parties.Update(party);
             }
             _ctx.EnshrinedMaterial.Remove(enshrinedMaterial);
             return _ctx.SaveChangesAsync(cancellationToken).Result;
