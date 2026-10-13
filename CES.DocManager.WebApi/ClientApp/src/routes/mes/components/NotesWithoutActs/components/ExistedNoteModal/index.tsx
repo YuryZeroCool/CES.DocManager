@@ -1,8 +1,7 @@
 import React, {
-  memo, useEffect, useRef, useState,
+  memo, useRef, useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useInputState } from '@mantine/hooks';
 import { format } from 'date-fns';
 import {
   Button,
@@ -28,17 +27,27 @@ import {
   getStreetsBySearch,
   editExistedNote,
 } from 'redux/actions/mes';
-import { ExistedNote, NotesWithoutActState } from 'types/mes/NotesWithoutActTypes';
+import {
+  ContactInfo, ExistedNote, NotesWithoutActState,
+} from 'types/mes/NotesWithoutActTypes';
 
 import NoteContactsInfo from './components/NoteContactsInfo';
 import classes from './styles.module.css';
 
-const defaultFormValues: ExistedNote = {
+const createEmptyContact = (id: number): ContactInfo => ({
+  id,
+  street: '',
+  entrance: '',
+  houseNumber: '',
+  tel: '',
+});
+
+const createEmptyForm = (): ExistedNote => ({
   comment: '',
   date: '',
   isChecked: false,
   noteContactsInfo: [],
-};
+});
 
 interface ExistedNoteModalContainerProps {
   noteModalOpened: boolean;
@@ -52,8 +61,8 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
     noteModalOpened, isEditModal, noteModalClose, handleSelectNote,
   } = props;
 
-  const [formState, setFormState] = useInputState<ExistedNote>(defaultFormValues);
-  const [counter, setCounter] = useState<number>(1);
+  const [formState, setFormState] = useState<ExistedNote>(createEmptyForm);
+  const [loadedFormKey, setLoadedFormKey] = useState<number | null>(null);
   const [noteId, setNoteId] = useState<number>(1);
   const [noteDate, setNoteDate] = useState<Date>();
   const [newStreet, setNewStreet] = useState<string>('');
@@ -69,86 +78,98 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
 
   const dispatch: IAuthResponseType = useDispatch();
   const lastStreetSearchFetchRef = useRef<string | null>(null);
+  const loadedFormKeyRef = useRef<number | null>(null);
 
-  const addEmptyContactsInfoBlock = () => {
-    setFormState({
-      ...formState,
-      noteContactsInfo: [
-        ...formState.noteContactsInfo,
-        {
-          id: counter,
-          street: '',
-          entrance: '',
-          houseNumber: '',
-          tel: '',
-        },
-      ],
+  let formKey: number | null = null;
+  if (noteModalOpened) {
+    formKey = isEditModal ? selectedNoteId : 0;
+  }
+
+  if (formKey !== loadedFormKey) {
+    const noteToEdit = formKey
+      ? notesWithoutAct.find((el) => el.id === formKey)
+      : undefined;
+
+    if (formKey === null || formKey === 0 || noteToEdit) {
+      loadedFormKeyRef.current = formKey;
+      setLoadedFormKey(formKey);
+
+      if (!noteToEdit) {
+        setNoteId(1);
+        setNoteDate(undefined);
+        setFormState(formKey === 0
+          ? { ...createEmptyForm(), noteContactsInfo: [createEmptyContact(1)] }
+          : createEmptyForm());
+      } else {
+        setNoteId(noteToEdit.id);
+        setNoteDate(undefined);
+        setFormState({
+          date: noteToEdit.date,
+          comment: noteToEdit.comment,
+          isChecked: noteToEdit.isChecked,
+          noteContactsInfo: [
+            {
+              id: 1,
+              street: noteToEdit.street ?? '',
+              entrance: noteToEdit.entrance ? String(noteToEdit.entrance) : '',
+              houseNumber: noteToEdit.houseNumber ?? '',
+              tel: noteToEdit.tel ?? '',
+            },
+          ],
+        });
+      }
+    }
+  } else {
+    loadedFormKeyRef.current = loadedFormKey;
+  }
+
+  const updateForm = (
+    noteKey: number | null,
+    recipe: (current: ExistedNote) => ExistedNote,
+  ) => {
+    setFormState((current) => {
+      if (loadedFormKeyRef.current !== noteKey) return current;
+      return recipe(current);
     });
-    setCounter((prevCounter) => (prevCounter + 1));
   };
 
-  useEffect(() => {
-    if (isEditModal && notesWithoutAct.length !== 0 && noteModalOpened) {
-      const elem = notesWithoutAct.find((el) => el.id === selectedNoteId);
+  const addEmptyContactsInfoBlock = () => {
+    updateForm(formKey, (current) => {
+      const nextId = current.noteContactsInfo.reduce(
+        (maxId, contact) => Math.max(maxId, contact.id),
+        0,
+      ) + 1;
 
-      if (!elem) return;
-
-      setNoteId(elem.id);
-      setFormState({
-        date: elem.date,
-        comment: elem.comment,
-        isChecked: elem.isChecked,
-        noteContactsInfo: [
-          {
-            id: counter,
-            street: elem.street ?? '',
-            entrance: elem.entrance ? String(elem.entrance) : '',
-            houseNumber: elem.houseNumber ?? '',
-            tel: elem.tel ?? '',
-          },
-        ],
-      });
-      setCounter((prevCounter) => (prevCounter + 1));
-    }
-
-    if (!isEditModal && noteModalOpened) {
-      addEmptyContactsInfoBlock();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [noteModalOpened, isEditModal, selectedNoteId]);
+      return {
+        ...current,
+        noteContactsInfo: [...current.noteContactsInfo, createEmptyContact(nextId)],
+      };
+    });
+  };
 
   const handleClose = () => {
     noteModalClose();
     dispatch(changeSelectedNoteId(0));
     lastStreetSearchFetchRef.current = null;
     dispatch(resetStreetsBySearch());
-    setFormState(defaultFormValues);
-    setNoteDate(undefined);
-    setCounter(1);
     setNewStreet('');
     setIsLoading(false);
   };
 
   const handleTextAreaChange = (value: string) => {
-    const updatedFormState = {
-      ...formState,
+    updateForm(formKey, (current) => ({
+      ...current,
       comment: value,
-    };
-    setFormState(updatedFormState);
+    }));
   };
 
   const updateStreetInFormState = (value: string, index: number) => {
-    const updatedContacts = formState.noteContactsInfo.map((el, i) => {
-      if (i === index) {
-        return { ...el, street: value };
-      }
-      return el;
-    });
-
-    setFormState({
-      ...formState,
-      noteContactsInfo: updatedContacts,
-    });
+    updateForm(formKey, (current) => ({
+      ...current,
+      noteContactsInfo: current.noteContactsInfo.map((el, i) => (
+        i === index ? { ...el, street: value } : el
+      )),
+    }));
   };
 
   const handleStreetSearchChange = (value: string, index: number) => {
@@ -180,43 +201,29 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
     updateStreetInFormState(value, index);
   };
 
+  const updateContactField = (
+    index: number,
+    field: 'entrance' | 'houseNumber' | 'tel',
+    value: string,
+  ) => {
+    updateForm(formKey, (current) => ({
+      ...current,
+      noteContactsInfo: current.noteContactsInfo.map((el, i) => (
+        i === index ? { ...el, [field]: value } : el
+      )),
+    }));
+  };
+
   const handleEntranceChange = (value: string, index: number) => {
-    const newArr = formState.noteContactsInfo.map((el, i) => {
-      if (i === index) {
-        return { ...el, entrance: value };
-      }
-      return el;
-    });
-    setFormState({
-      ...formState,
-      noteContactsInfo: [...newArr],
-    });
+    updateContactField(index, 'entrance', value);
   };
 
   const handleHouseNumberChange = (value: string, index: number) => {
-    const newArr = formState.noteContactsInfo.map((el, i) => {
-      if (i === index) {
-        return { ...el, houseNumber: value };
-      }
-      return el;
-    });
-    setFormState({
-      ...formState,
-      noteContactsInfo: [...newArr],
-    });
+    updateContactField(index, 'houseNumber', value);
   };
 
   const handleTelChange = (value: string, index: number) => {
-    const newArr = formState.noteContactsInfo.map((el, i) => {
-      if (i === index) {
-        return { ...el, tel: value };
-      }
-      return el;
-    });
-    setFormState({
-      ...formState,
-      noteContactsInfo: [...newArr],
-    });
+    updateContactField(index, 'tel', value);
   };
 
   const handleNoteDateChange = (value: Date | null) => {
@@ -228,8 +235,12 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const stateCopy = formState;
-    stateCopy.noteContactsInfo = stateCopy.noteContactsInfo.filter((el) => el.street !== '');
+    const stateCopy: ExistedNote = {
+      ...formState,
+      noteContactsInfo: formState.noteContactsInfo
+        .filter((el) => el.street !== '')
+        .map((el) => ({ ...el })),
+    };
     setIsLoading(true);
 
     if (isEditModal) {
@@ -272,14 +283,14 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
   };
 
   const handleDeleteButtonClick = (id: number) => {
-    const stateCopy = formState;
-    if (stateCopy.noteContactsInfo.length > 1) {
-      const newArr = stateCopy.noteContactsInfo.filter((el) => el.id !== id);
-      setFormState({
-        ...formState,
-        noteContactsInfo: [...newArr],
-      });
-    }
+    updateForm(formKey, (current) => {
+      if (current.noteContactsInfo.length <= 1) return current;
+
+      return {
+        ...current,
+        noteContactsInfo: current.noteContactsInfo.filter((el) => el.id !== id),
+      };
+    });
   };
 
   const handleNewStreetChange = (value: string) => {
@@ -337,6 +348,7 @@ function ExistedNoteModal(props: ExistedNoteModalContainerProps) {
             />
 
             <NoteContactsInfo
+              instanceKey={formKey ?? 'closed'}
               noteContactsInfo={formState.noteContactsInfo}
               streetsBySearch={streetsBySearch}
               handleAddButtonClick={handleAddButtonClick}
