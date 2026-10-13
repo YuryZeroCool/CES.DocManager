@@ -41,10 +41,15 @@ namespace CES.Domain.Handlers.MaterialReport
                 && await _ctx.Units.AnyAsync(x => x.Id == request.UnitId, cancellationToken)
                 && await _ctx.ProductsGroupAccount.AnyAsync(x => x.Id == request.ProductGroupAccountId, cancellationToken))
             {
+                var ownerRole = _currentUserRole.GetRole();
                 if (await _ctx.Parties.AnyAsync(x => x.Name == request.partyName
-                && x.Product!.Name == request.Name, cancellationToken))
+                && x.Product!.Name == request.Name
+                && x.Product.OwnerRole == ownerRole, cancellationToken))
                 {
-                    var material = await _ctx.Parties.FirstOrDefaultAsync(x => x.Name == request.partyName && x.Product!.Name == request.Name, cancellationToken) ?? throw new System.Exception("Упс! Что-то пошло не так");
+                    var material = await _ctx.Parties.FirstOrDefaultAsync(x =>
+                        x.Name == request.partyName
+                        && x.Product!.Name == request.Name
+                        && x.Product.OwnerRole == ownerRole, cancellationToken) ?? throw new System.Exception("Упс! Что-то пошло не так");
                     material.Count += request.Count;
                     material.TotalSum = (decimal)material.Count * material.Price;
                     updatedMaterial = _ctx.Parties.Update(material).Entity;
@@ -64,7 +69,7 @@ namespace CES.Domain.Handlers.MaterialReport
                             Name = request.Name,
                             ProductGroupAccountId = request.ProductGroupAccountId,
                             UnitId = request.UnitId,
-                            OwnerRole = _currentUserRole.GetRole(),
+                            OwnerRole = ownerRole,
                         },
                         TotalSum = request.Price * (decimal)request.Count,
                     }, cancellationToken).Result.Entity;
