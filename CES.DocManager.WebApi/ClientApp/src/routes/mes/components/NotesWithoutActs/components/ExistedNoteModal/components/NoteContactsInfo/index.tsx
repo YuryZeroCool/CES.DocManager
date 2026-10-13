@@ -26,6 +26,7 @@ function getStreetOptions(street: string, streetsBySearch: string[]): string[] {
 }
 
 interface NoteContactsInfoProps {
+  instanceKey: number | string;
   noteContactsInfo: ContactInfo[] | NoteWithoutAct[];
   streetsBySearch: string[];
   handleStreetSearchChange: (value: string, index: number) => void;
@@ -39,6 +40,7 @@ interface NoteContactsInfoProps {
 
 function NoteContactsInfo(props: NoteContactsInfoProps) {
   const {
+    instanceKey,
     noteContactsInfo,
     streetsBySearch,
     handleStreetSearchChange,
@@ -56,7 +58,7 @@ function NoteContactsInfo(props: NoteContactsInfoProps) {
         const streetOptions = getStreetOptions(el.street, streetsBySearch);
 
         return (
-          <Flex key={el.id} align="start" gap="2%" py={10} style={{ borderBottom: '1px solid gray' }}>
+          <Flex key={`${instanceKey}-${el.id}`} align="start" gap="2%" py={10} style={{ borderBottom: '1px solid gray' }}>
             <Stack gap={10} style={{ flexGrow: 1 }}>
               <Flex gap={10}>
                 <Select
