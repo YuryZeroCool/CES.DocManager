@@ -72,6 +72,7 @@ interface Props {
     id?: number | undefined,
     el?: Party | undefined,
     material?: IAllDecommissionedMaterials | undefined,
+    usedMaterial?: IUsedMaterialResponse | undefined,
   ) => void;
 }
 
@@ -258,8 +259,10 @@ export default function ProductsTableComponent(props: Props) {
       (material: IUsedMaterialResponse, index: number) => (
         <StyledTableRow
           className={rowActiveId === material.id ? 'active' : ''}
-          key={material.id}
-          onContextMenu={(event) => handleContextMenu(event, material.id)}
+          key={`${material.id}-${material.nameParty}`}
+          onContextMenu={(event) => (
+            handleContextMenu(event, material.id, undefined, undefined, material)
+          )}
         >
           <StyledTableCell align="center">{tableIndexArr[index]}</StyledTableCell>
           <StyledTableCell sx={{ maxWidth: 350 }} component="th" scope="row">

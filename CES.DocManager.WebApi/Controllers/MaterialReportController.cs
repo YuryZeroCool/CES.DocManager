@@ -427,6 +427,29 @@ namespace CES.DocManager.WebApi.Controllers
 
         // [Authorize(AuthenticationSchemes =
         //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
+        [HttpDelete("deleteUsedMaterial")]
+        [Produces(typeof(int))]
+        public async Task<object> DeleteUsedMaterialAsync(int id, string nameParty, int month, int year)
+        {
+            try
+            {
+                return await _mediator.Send(new DeleteUsedMaterialRequest()
+                {
+                    Id = id,
+                    NameParty = nameParty,
+                    Month = month,
+                    Year = year
+                });
+            }
+            catch (Exception e)
+            {
+                HttpContext.Response.StatusCode = ((int)HttpStatusCode.NotFound);
+                return new ErrorResponse(e.Message);
+            }
+        }
+
+        // [Authorize(AuthenticationSchemes =
+        //JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpGet("getAllUsedMaterials")]
         [Produces(typeof(List<GetAllUsedMaterialsResponse>))]
         public async Task<object> GetAllUsedMaterialsAsync(int month, int year)
