@@ -12,6 +12,7 @@ import createAttachedMaterial from '../../actions/report/materialReport/createAt
 import deleteAttachedMaterial from '../../actions/report/materialReport/deleteAttachedMaterial';
 import deleteDecommissionedMaterial from '../../actions/report/materialReport/deleteDecommissionedMaterial';
 import deleteMaterial from '../../actions/report/materialReport/deleteMaterial';
+import deleteUsedMaterial from '../../actions/report/materialReport/deleteUsedMaterial';
 import downloadActOfWriteoffOfSpareParts from '../../actions/report/materialReport/downloadActOfWriteoffOfSpareParts';
 import downloadActOfWritingOffMaterials from '../../actions/report/materialReport/downloadActOfWritingOffMaterials';
 import getAllAttachedMaterials from '../../actions/report/materialReport/getAllAttachedMaterials';
@@ -328,6 +329,16 @@ const materialsReducer = createSlice({
       };
       return stateCopy;
     },
+    deleteFromUsedMaterials: (state, action: PayloadAction<{ id: number; nameParty: string }>) => {
+      let stateCopy: IMaterialsResponse = state;
+      stateCopy = {
+        ...stateCopy,
+        allUsedMaterials: stateCopy.allUsedMaterials.filter(
+          (el) => !(el.id === action.payload.id && el.nameParty === action.payload.nameParty),
+        ),
+      };
+      return stateCopy;
+    },
     changeMaterialsTableType: (state, action: PayloadAction<string>) => {
       let stateCopy: IMaterialsResponse = state;
       stateCopy = {
@@ -615,6 +626,10 @@ const materialsReducer = createSlice({
       throw Error(action.payload?.message);
     });
 
+    builder.addCase(deleteUsedMaterial.rejected, (state, action) => {
+      throw Error(action.payload?.message);
+    });
+
     builder.addCase(deleteDecommissionedMaterial.fulfilled, (state, action) => {
       let stateCopy = state;
       stateCopy = { ...stateCopy, deletedDecommissionedMaterialId: action.payload };
@@ -670,6 +685,7 @@ export const {
   resetCreatedAttachedMaterial,
   deleteFromAttachedMaterials,
   deleteFromDecommissionedMaterials,
+  deleteFromUsedMaterials,
   changeMaterialsTableType,
   changePageType,
   resetDefectiveSheet,

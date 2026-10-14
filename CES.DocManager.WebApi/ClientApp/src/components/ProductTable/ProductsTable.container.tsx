@@ -348,6 +348,7 @@ function ProductsTableContainer(props: Props) {
     id?: number,
     el?: Party,
     material?: IAllDecommissionedMaterials,
+    usedMaterial?: IUsedMaterialResponse,
   ) => {
     event.preventDefault();
     if (event.button === 2 && event.currentTarget.offsetParent) {
@@ -363,8 +364,13 @@ function ProductsTableContainer(props: Props) {
       if (pageType === 'Материалы' && materialsTableType === 'Прикрепленные' && id) {
         dispatch(changeRowActiveId(id));
       }
-      if (pageType === 'Материалы' && materialsTableType === 'Списанные' && id) {
-        dispatch(changeRowActiveId(id));
+      if (pageType === 'Материалы' && materialsTableType === 'Списанные' && usedMaterial) {
+        dispatch(changeAttachedMaterial({
+          party: usedMaterial.nameParty,
+          count: usedMaterial.count,
+          unit: usedMaterial.unit,
+        }));
+        dispatch(changeRowActiveId(usedMaterial.id));
       }
       if (pageType === 'История ремонтов' && material) {
         dispatch(changeRowActiveId(material.id));
