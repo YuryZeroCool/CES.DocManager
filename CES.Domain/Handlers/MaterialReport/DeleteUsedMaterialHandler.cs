@@ -45,7 +45,53 @@ namespace CES.Domain.Handlers.MaterialReport
             var materialOwnerRole = string.IsNullOrWhiteSpace(usedMaterial.OwnerRole) ? "admin" : usedMaterial.OwnerRole;
             MaterialOwnerRole.EnsureOwn(role, materialOwnerRole);
 
-            await ReturnToStock(usedMaterial, materialOwnerRole, cancellationToken);
+            var party = await _ctx.Parties.FirstOrDefaultAsync(x =>
+                x.Name == usedMaterial.NameParty
+                && x.Product!.Name == usedMaterial.NameMaterial
+                && x.Product.OwnerRole == materialOwnerRole
+                && x.Product.Account!.AccountName == usedMaterial.AccountName, cancellationToken);
+
+            var unit = await _ctx.Units.FirstOrDefaultAsync(x => x.Name == usedMaterial.Unit, cancellationToken);
+            if (unit == null) throw new System.Exception("Упс! Что-то пошло не так");
+
+            var account = await _ctx.ProductsGroupAccount
+                .FirstOrDefaultAsync(x => x.AccountName == usedMaterial.AccountName, cancellationToken);
+
+            if (party == null)
+            {
+                var material = await _ctx.Products.FirstOrDefaultAsync(x =>
+                    x.Name == usedMaterial.NameMaterial
+                    && x.Account!.AccountName == usedMaterial.AccountName
+                    && x.OwnerRole == materialOwnerRole, cancellationToken);
+
+                if (material == null)
+                {
+                    material = new ProductEntity
+                    {
+                        Account = account,
+                        Unit = unit,
+                        Name = usedMaterial.NameMaterial,
+                        OwnerRole = materialOwnerRole
+                    };
+                }
+
+                _ctx.Parties.Add(new PartyEntity()
+                {
+                    Name = usedMaterial.NameParty,
+                    PartyDate = usedMaterial.PartyDate,
+                    Price = usedMaterial.Price,
+                    Count = usedMaterial.Count,
+                    DateCreated = usedMaterial.DateCreated,
+                    Product = material,
+                    TotalSum = (decimal)usedMaterial.Count * usedMaterial.Price
+                });
+            }
+            else
+            {
+                party.Count += usedMaterial.Count;
+                party.TotalSum = (decimal)party.Count * party.Price;
+                _ctx.Parties.Update(party);
+            }
 
             materials.RemoveAt(index);
             data.Materials = JsonSerializer.SerializeToUtf8Bytes(materials);
@@ -53,99 +99,6 @@ namespace CES.Domain.Handlers.MaterialReport
             await _ctx.SaveChangesAsync(cancellationToken);
 
             return usedMaterial.Id;
-        }
-
-        private async Task ReturnToStock(UsedMaterial usedMaterial, string ownerRole, CancellationToken cancellationToken)
-        {
-            var party = await _ctx.Parties.FirstOrDefaultAsync(x =>
-                x.Name == usedMaterial.NameParty
-                && x.Product!.Name == usedMaterial.NameMaterial
-                && x.Product.OwnerRole == ownerRole, cancellationToken);
-
-            if (party != null)
-            {
-                party.Count += usedMaterial.Count;
-                party.TotalSum = (decimal)party.Count * party.Price;
-                _ctx.Parties.Update(party);
-                return;
-            }
-
-            var products = await _ctx.Products
-                .Where(x => x.Name == usedMaterial.NameMaterial && x.OwnerRole == ownerRole)
-                .ToListAsync(cancellationToken);
-
-            var product = products.Count == 1 ? products[0] : null;
-            if (products.Count > 1)
-            {
-                throw new System.Exception("Не удалось вернуть материал на склад");
-            }
-
-            if (product == null)
-            {
-                product = await CreateProduct(usedMaterial, ownerRole, cancellationToken);
-                await _ctx.Products.AddAsync(product, cancellationToken);
-            }
-
-            _ctx.Parties.Add(new PartyEntity
-            {
-                Name = usedMaterial.NameParty,
-                PartyDate = usedMaterial.PartyDate,
-                Price = usedMaterial.Price,
-                Count = usedMaterial.Count,
-                DateCreated = DateTime.Now,
-                Product = product,
-                TotalSum = (decimal)usedMaterial.Count * usedMaterial.Price
-            });
-        }
-
-        private async Task<ProductEntity> CreateProduct(UsedMaterial usedMaterial, string ownerRole, CancellationToken cancellationToken)
-        {
-            var unit = await _ctx.Units.FirstOrDefaultAsync(x => x.Name == usedMaterial.Unit, cancellationToken);
-            if (unit == null)
-            {
-                unit = new UnitEntity { Name = usedMaterial.Unit };
-                await _ctx.Units.AddAsync(unit, cancellationToken);
-            }
-
-            var accountSource = await _ctx.Products
-                .FirstOrDefaultAsync(x => x.Name == usedMaterial.NameMaterial, cancellationToken);
-
-            if (accountSource != null)
-            {
-                return new ProductEntity
-                {
-                    Name = usedMaterial.NameMaterial,
-                    Unit = unit,
-                    ProductGroupAccountId = accountSource.ProductGroupAccountId,
-                    OwnerRole = ownerRole
-                };
-            }
-
-            var accountName = await _ctx.EnshrinedMaterial
-                .Where(x => x.NameMaterial == usedMaterial.NameMaterial && x.AccountName != null && x.AccountName != "")
-                .Select(x => x.AccountName)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (string.IsNullOrEmpty(accountName))
-            {
-                throw new System.Exception("Не удалось вернуть материал на склад");
-            }
-
-            var account = await _ctx.ProductsGroupAccount
-                .FirstOrDefaultAsync(x => x.AccountName == accountName, cancellationToken);
-
-            if (account == null)
-            {
-                throw new System.Exception("Не удалось вернуть материал на склад");
-            }
-
-            return new ProductEntity
-            {
-                Name = usedMaterial.NameMaterial,
-                Unit = unit,
-                ProductGroupAccountId = account.Id,
-                OwnerRole = ownerRole
-            };
         }
     }
 }
