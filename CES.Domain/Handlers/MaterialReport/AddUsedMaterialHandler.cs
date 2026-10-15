@@ -45,96 +45,89 @@ namespace CES.Domain.Handlers.MaterialReport
             MaterialOwnerRole.EnsureOwn(role, product.OwnerRole);
 
             var difference = Math.Abs(party.Count * .00001);
-
-            if (Math.Abs(party.Count - request.Count) <= difference)
+            var isFullWriteOff = Math.Abs(party.Count - request.Count) <= difference;
+            if (!isFullWriteOff && request.Count > party.Count)
             {
-                _ctx.Parties.Remove(party);
-
-                if (product.Parties.Count == 1)
-                {
-                    _ctx.Products.Remove(product);
-                }
+                throw new System.Exception("Упс! Что-то пошло не так");
             }
-            else
-            {
-                party.Count -= request.Count;
-
-                if (party.Count < 0) throw new System.Exception("Упс! Что-то пошло не так");
-
-                _ctx.Parties.Update(party);
-            }
-            await _ctx.SaveChangesAsync(cancellationToken);
 
             var currentDate = DateTime.UtcNow;
             currentDate = new DateTime(currentDate.Year, currentDate.Month, 1).AddMonths(-1);
 
-            if (!_ctx.UsedMaterials.Any(x => x.Period == currentDate))
+            var data = await _ctx.UsedMaterials.FirstOrDefaultAsync(x => x.Period == currentDate, cancellationToken);
+            UsedMaterial used;
+
+            if (data == null)
             {
+                used = CreateUsedMaterial(party, product, request.Count);
                 await _ctx.UsedMaterials.AddAsync(new UsedMaterialEntity()
                 {
                     Period = currentDate,
-                    Materials = JsonSerializer.SerializeToUtf8Bytes(
-                    new List<UsedMaterial>
-                    {
-                        new UsedMaterial
-                        {
-                            Id = party.Id,
-                            NameMaterial = product.Name,
-                            NameParty = party.Name,
-                            Count = request.Count,
-                            Price = party.Price,
-                            Unit = product.Unit!.Name,
-                            PartyDate = party.PartyDate,
-                            OwnerRole = product.OwnerRole,
-                        }
-                    })
-
+                    Materials = JsonSerializer.SerializeToUtf8Bytes(new List<UsedMaterial> { used })
                 }, cancellationToken);
             }
             else
             {
-                var data = await _ctx.UsedMaterials.FirstOrDefaultAsync(x => x.Period == currentDate, cancellationToken);
+                var materials = JsonSerializer.Deserialize<List<UsedMaterial>>(data.Materials);
+                if (materials == null) throw new SystemException("Упс! Что-то пошло не так");
 
-                if (data == null) throw new SystemException("Упс! Что-то пошло не так");
-
-                var res = JsonSerializer.Deserialize<List<UsedMaterial>>(data.Materials);
-
-                if (res == null) throw new SystemException("Упс! Что-то пошло не так");
-
-                var index = res.FindIndex(x => x.NameParty == request.PartyName && x.OwnerRole == role);
-
+                var index = materials.FindIndex(x => x.NameParty == request.PartyName && x.OwnerRole == role);
                 if (index == -1)
                 {
-                    res.Add(new UsedMaterial
-                    {
-                        Id = party.Id,
-                        NameMaterial = product.Name,
-                        NameParty = party.Name,
-                        Count = request.Count,
-                        Price = party.Price,
-                        Unit = product.Unit!.Name,
-                        PartyDate = party.PartyDate,
-                        OwnerRole = product.OwnerRole,
-                    });
+                    used = CreateUsedMaterial(party, product, request.Count);
+                    materials.Add(used);
                 }
                 else
                 {
-                    res[index].Count += request.Count;
+                    materials[index].Count += request.Count;
+                    materials[index].OwnerRole ??= product.OwnerRole;
+                    if (string.IsNullOrWhiteSpace(materials[index].AccountName))
+                    {
+                        materials[index].AccountName = product.Account!.AccountName;
+                    }
+
+                    used = materials[index];
                 }
 
-                data.Materials = JsonSerializer.SerializeToUtf8Bytes(res);
+                data.Materials = JsonSerializer.SerializeToUtf8Bytes(materials);
                 _ctx.UsedMaterials.Update(data);
             }
+
+            if (isFullWriteOff)
+            {
+                if (product.Parties.Count == 1)
+                {
+                    _ctx.Products.Remove(party.Product!);
+                }
+                _ctx.Parties.Remove(party);
+            }
+            else
+            {
+                party.Count -= request.Count;
+                party.TotalSum -= (decimal)request.Count * party.Price;
+                _ctx.Parties.Update(party);
+            }
+
             await _ctx.SaveChangesAsync(cancellationToken);
 
-            var updatedMaterial = await _ctx.UsedMaterials.FirstOrDefaultAsync(x => x.Period == currentDate, cancellationToken);
+            return await Task.FromResult(_mapper.Map<AddUsedMaterialResponse>(used));
+        }
 
-            var lastMaterial = JsonSerializer.Deserialize<List<UsedMaterial>>(updatedMaterial!.Materials);
-
-            if (lastMaterial == null) throw new SystemException("Упс! Что-то пошло не так");
-
-            return await Task.FromResult(_mapper.Map<AddUsedMaterialResponse>(
-                lastMaterial.FirstOrDefault(x => x.NameParty == request.PartyName && x.OwnerRole == role)));
+        private static UsedMaterial CreateUsedMaterial(PartyEntity party, ProductEntity product, double count)
+        {
+            return new UsedMaterial
+            {
+                Id = party.Id,
+                Count = count,
+                NameMaterial = product.Name,
+                NameParty = party.Name,
+                PartyDate = party.PartyDate,
+                Price = party.Price,
+                DateCreated = party.DateCreated,
+                AccountName = product.Account!.AccountName,
+                Unit = product.Unit!.Name,
+                OwnerRole = product.OwnerRole,
+            };
         }
     }
 }
